@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="Little_System_Cleaner.Privacy_Cleaner.Controls.Start"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
+             mc:Ignorable="d" 
+             MinWidth="579" MinHeight="384"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+            <RowDefinition Height="47"/>
+        </Grid.RowDefinitions>
+        <Border CornerRadius="5" Margin="0,0,0,0" Grid.Row="0">
+            <Border.Effect>
+                <DropShadowEffect Color="#FF474747" />
+            </Border.Effect>
+            <Border.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Gray" Offset="1"/>
+                </RadialGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Label FontSize="14" Content="Privacy Cleaner" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 1 of 3</Label>
+            </Grid>
+        </Border>
+        <TabControl Margin="0,10,0,0" Grid.Row="1">
+            <TabItem Header="Sections">
+                <tree:TreeList x:Name="_tree" MinHeight="290" MinWidth="563">
+                    <tree:TreeList.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <tree:RowExpander/>
+                                <CheckBox IsChecked="{Binding IsChecked}" />
+                                <Image Width="16" Height="16" Source="{Binding bMapImg}" />
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </tree:TreeList.ItemTemplate>
+                </tree:TreeList>
+            </TabItem>
+            <TabItem Header="Options">
+                <StackPanel>
+                    <GroupBox Header="Select a folder to save the log files to">
+                        <Grid Margin="5,5,5,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="483*" />
+                                <ColumnDefinition Width="66" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" />
+                            <Button x:Name="buttonBrowse" Margin="2,0,0,0" Content="Browse..." Grid.Column="1" Style="{DynamicResource GlassButton}" Click="buttonBrowse_Click" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Select how files will be cleaned from the disk">
+                        <StackPanel Margin="5,5,5,5">
+                            <RadioButton x:Name="radioButtonPerm" Content="Permanently remove files from hard disk (recommended)" Click="UpdateSettings" />
+                            <RadioButton x:Name="radioButtonMove" Content="Remove files and move them to the recycle bin" Click="UpdateSettings" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Search options">
+                        <StackPanel Margin="5,5,5,5">
+                            <DockPanel LastChildFill="False">
+                                <CheckBox x:Name="checkBoxReadOnly" Content="Include read-only files" DockPanel.Dock="Left" Click="UpdateSettings" />
+                                <CheckBox x:Name="checkBoxSystem" Content="Include system files" DockPanel.Dock="Right" Click="UpdateSettings" />
+                            </DockPanel>
+                            <DockPanel LastChildFill="False" Margin="0,5,0,0">
+                                <CheckBox x:Name="checkBoxHidden" Content="Include hidden files" DockPanel.Dock="Left" Click="UpdateSettings" />
+                                <CheckBox x:Name="checkBoxZeroByte" Content="Include zero-byte files" DockPanel.Dock="Right" Click="UpdateSettings" />
+                            </DockPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <Button x:Name="buttonScan" Foreground="#FFFFFFFF" Style="{DynamicResource GlassButton}" Margin="0,5,0,5" Grid.Row="2" HorizontalAlignment="Center" Width="130" Click="buttonScan_Click">
+            <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
+                <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
+                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

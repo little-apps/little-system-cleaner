@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="Little_System_Cleaner.Controls.Welcome"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             MinWidth="579" MinHeight="363" d:DesignHeight="385" d:DesignWidth="579" Loaded="UserControl_Loaded">
+    <StackPanel>
+        <Border CornerRadius="5" Height="30">
+            <Border.Effect>
+                <DropShadowEffect Color="#FF474747" />
+            </Border.Effect>
+            <Border.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Gray" Offset="1"/>
+                </RadialGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Label FontSize="14" Content="Overview" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+            </Grid>
+        </Border>
+        <GroupBox Header="Last Scan" Margin="3,6,0,0" Height="116">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="494" />
+                </Grid.ColumnDefinitions>
+                <Image Height="64" HorizontalAlignment="Center" Name="image1" VerticalAlignment="Center" Width="64" Source="/Resources/chart_bar.png" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,6,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Date And Time:</TextBlock>
+                    <TextBlock Name="lastDateTime" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,28,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Errors Found:</TextBlock>
+                    <TextBlock Name="errorsFound" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,50,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Errors Repaired:</TextBlock>
+                    <TextBlock Name="errorsRepaired" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,72,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Elapsed Time:</TextBlock>
+                    <TextBlock Name="elapsedTime" Margin="3,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Program Stats" Margin="3,2,0,0" Height="97">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="72" />
+                    <ColumnDefinition Width="492" />
+                </Grid.ColumnDefinitions>
+                <Image Height="64" HorizontalAlignment="Center" Name="image2" VerticalAlignment="Center" Width="64" Source="/Resources/Performance.png" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,6,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Number Of Scans:</TextBlock>
+                    <TextBlock Name="totalScans" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,28,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Total Errors Found:</TextBlock>
+                    <TextBlock Name="totalErrors" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,50,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Total Errors Fixed:</TextBlock>
+                    <TextBlock Name="totalErrorsFixed" Margin="3,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="System Information" Margin="3,2,0,0" Height="95">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="74" />
+                    <ColumnDefinition Width="490" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Height="64" HorizontalAlignment="Center" Name="image3" VerticalAlignment="Center" Width="64" Source="/Resources/computervista22.png" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,6,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Processor:</TextBlock>
+                    <TextBlock Name="cpuType" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,28,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Memory:</TextBlock>
+                    <TextBlock Name="totalRAM" Margin="3,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,50,0,0" VerticalAlignment="Top" Grid.Column="1">
+                    <TextBlock FontWeight="Bold">Operating System:</TextBlock>
+                    <TextBlock Name="osVersion" Margin="3,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <TextBlock Height="38" Name="textBlockTrialMode" TextAlignment="Center" FontWeight="Bold" Foreground="Red" />
+    </StackPanel>
+</UserControl>

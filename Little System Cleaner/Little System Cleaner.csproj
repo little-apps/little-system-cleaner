@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <DefaultClrNameSpace>Little_Registry_Cleaner</DefaultClrNameSpace>
+    <AssemblyName>Little_System_Cleaner</AssemblyName>
+    <RootNamespace>Little_System_Cleaner</RootNamespace>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AlwaysCompileMarkupFilesInSeparateDomain>false</AlwaysCompileMarkupFilesInSeparateDomain>
+    <ExpressionBlendCreationVersion>2.0.1523.0</ExpressionBlendCreationVersion>
+    <ProjectGuid>{6EDCB204-95DF-46BE-866F-D1BDC42AB289}</ProjectGuid>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputType>WinExe</OutputType>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ApplicationManifest>Properties/app.manifest</ApplicationManifest>
+    <ExpressionBlendVersion>4.0.20525.0</ExpressionBlendVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <Utf8Output>true</Utf8Output>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <LangVersion>default</LangVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Page Include="Disk Cleaner\Controls\Analyze.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Disk Cleaner\Controls\Misc\AddExcludeFileType.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Disk Cleaner\Controls\Misc\AddExcludeFolder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Disk Cleaner\Controls\Misc\AddIncludeFolder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Disk Cleaner\Controls\Results.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Disk Cleaner\Controls\Start.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Privacy Cleaner\Controls\Analyze.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Privacy Cleaner\Controls\Start.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Privacy Cleaner\Helpers\RunningMsg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+    <Page Include="Registry Optimizer\Controls\Analyze.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Optimizer\Controls\AnalyzeResults.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Optimizer\Controls\Compact.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Optimizer\Controls\Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Optimizer\Controls\SecureDesktop.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SplashScreen\SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tab Controls\Options\AddExcludeItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tab Controls\StartupManager\AddEditEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tab Controls\Welcome.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Compile Include="App.cs" />
+    <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
+      <DependentUpon>Analyze.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Disk Cleaner\Controls\Misc\AddExcludeFileType.xaml.cs">
+      <DependentUpon>AddExcludeFileType.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Disk Cleaner\Controls\Misc\AddExcludeFolder.xaml.cs">
+      <DependentUpon>AddExcludeFolder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Disk Cleaner\Controls\Misc\AddIncludeFolder.xaml.cs">
+      <DependentUpon>AddIncludeFolder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Disk Cleaner\Controls\Results.xaml.cs">
+      <DependentUpon>Results.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Disk Cleaner\Controls\Start.xaml.cs">
+      <DependentUpon>Start.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Disk Cleaner\Controls\Wizard.cs" />
+    <Compile Include="Misc\OSVersion.cs" />
+    <Compile Include="Misc\RegEditGo.cs" />
+    <Compile Include="Misc\SysRestore.cs" />
+    <Compile Include="Misc\Permissions.cs" />
+    <Compile Include="Misc\WindowWrapper.cs" />
+    <Compile Include="Privacy Cleaner\Controls\Analyze.xaml.cs">
+      <DependentUpon>Analyze.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Privacy Cleaner\Controls\Start.xaml.cs">
+      <DependentUpon>Start.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Privacy Cleaner\Controls\Wizard.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\RunningMsg.xaml.cs">
+      <DependentUpon>RunningMsg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Privacy Cleaner\Helpers\SectionModel.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\Applications.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\Firefox.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\gChrome.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\InternetExplorer.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\Misc.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\Multimedia.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\Plugins.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\ScannerBase.cs" />
+    <Compile Include="Registry Cleaner\Helpers\SectionModel.cs" />
+    <Compile Include="Registry Cleaner\Scanners\ActivexComObjects.cs" />
+    <Compile Include="Registry Cleaner\Scanners\ApplicationPaths.cs" />
+    <Compile Include="Registry Cleaner\Scanners\ApplicationSettings.cs" />
+    <Compile Include="Registry Cleaner\Scanners\RecentDocs.cs" />
+    <Compile Include="Registry Cleaner\Scanners\StartupFiles.cs" />
+    <Compile Include="Registry Cleaner\Scanners\Strings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Cleaner\Scanners\WindowsHelpFiles.cs" />
+    <Compile Include="Registry Cleaner\Scanners\WindowsSounds.cs" />
+    <Compile Include="Registry Optimizer\Controls\Analyze.xaml.cs">
+      <DependentUpon>Analyze.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Optimizer\Controls\AnalyzeResults.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>AnalyzeResults.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Optimizer\Controls\Compact.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>Compact.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Optimizer\Controls\Main.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Optimizer\Controls\SecureDesktop.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>SecureDesktop.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Optimizer\Controls\Wizard.cs" />
+    <Compile Include="Registry Optimizer\Helpers\HiveManager.cs" />
+    <Compile Include="SplashScreen\DispatcherHelper.cs" />
+    <Compile Include="SplashScreen\MessageListener.cs" />
+    <Compile Include="SplashScreen\Splasher.cs" />
+    <Compile Include="SplashScreen\SplashScreen.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tab Controls\Options\AddExcludeItem.xaml.cs">
+      <DependentUpon>AddExcludeItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tab Controls\Options\Options.xaml.cs">
+      <DependentUpon>Options.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tab Controls\StartupManager\Restore.xaml.cs">
+      <DependentUpon>Restore.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tab Controls\StartupManager\AddEditEntry.xaml.cs">
+      <DependentUpon>AddEditEntry.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tab Controls\StartupManager\StartupManager.xaml.cs">
+      <DependentUpon>StartupManager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tab Controls\UninstallManager.xaml.cs">
+      <DependentUpon>UninstallManager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Misc\BadRegKey.cs" />
+    <Compile Include="Misc\ExcludeItem.cs" />
+    <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Misc\ProgramInfo.cs" />
+    <Compile Include="Misc\Utils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registry Cleaner\Scanners\ApplicationInfo.cs" />
+    <Compile Include="Registry Cleaner\Scanners\SharedDLLs.cs" />
+    <Compile Include="Registry Cleaner\Scanners\SystemDrivers.cs" />
+    <Compile Include="Registry Cleaner\Scanners\WindowsFonts.cs" />
+    <Compile Include="Registry Cleaner\Scanners\ScannerBase.cs" />
+    <Compile Include="Registry Cleaner\Controls\Results.xaml.cs">
+      <DependentUpon>Results.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Cleaner\Controls\Scan.xaml.cs">
+      <DependentUpon>Scan.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registry Cleaner\Controls\ScanWizard.cs" />
+    <Compile Include="Registry Cleaner\Controls\Sections.xaml.cs">
+      <DependentUpon>Sections.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CrashReporter.xaml.cs">
+      <DependentUpon>CrashReporter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Tab Controls\Welcome.xaml.cs">
+      <DependentUpon>Welcome.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XML Registry\keyValue.cs" />
+    <Compile Include="XML Registry\xmlElement.cs" />
+    <Compile Include="XML Registry\xmlReader.cs" />
+    <Compile Include="XML Registry\xmlRegistry.cs" />
+    <Compile Include="XML Registry\xmlWriter.cs" />
+    <Page Include="Tab Controls\Options\Options.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tab Controls\StartupManager\Restore.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tab Controls\StartupManager\StartupManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tab Controls\UninstallManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Cleaner\Controls\Results.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Cleaner\Controls\Scan.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Registry Cleaner\Controls\Sections.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CrashReporter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TreeStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExtendedWPFToolkit\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+    <Resource Include="Resources\Analyze.png" />
+    <Resource Include="Resources\Help.png" />
+    <Resource Include="Resources\Options.png" />
+    <Resource Include="Resources\Repair.png" />
+    <Resource Include="Resources\Restore.png" />
+    <Resource Include="Resources\startup manager.png" />
+    <Resource Include="Resources\uninstall manager.png" />
+    <Resource Include="update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Registry Cleaner\Scanners\Strings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common Tools\Common Tools.csproj">
+      <Project>{E059BE5F-FCEF-4977-90AE-3335EFBC248A}</Project>
+      <Name>Common Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="gpl.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ajax-loader.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\activexcom.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\appinfo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\drivers.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\fonts.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\helpfiles.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\historylist.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\mycomputer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\programlocations.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\shareddlls.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\softwaresettings.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\soundevents.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sections\startup.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\startup manager\add.png" />
+    <Resource Include="Resources\startup manager\delete.png" />
+    <Resource Include="Resources\startup manager\edit.png" />
+    <Resource Include="Resources\startup manager\refresh.png" />
+    <Resource Include="Resources\startup manager\run.png" />
+    <Resource Include="Resources\startup manager\view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\startup manager\User.png" />
+    <Resource Include="Resources\startup manager\Users.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\startup manager\app.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\button_cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ajax-loader-blue.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\optimizer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\win7logo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\winvistalogo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\chart_bar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Performance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\computervista22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\internet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon--icon4 copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo_whitetext.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\contracted.png" />
+    <Resource Include="Resources\expanded.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\stars\1.png" />
+    <Resource Include="Resources\stars\2.png" />
+    <Resource Include="Resources\stars\3.png" />
+    <Resource Include="Resources\stars\4.png" />
+    <Resource Include="Resources\stars\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\disk cleaner.png" />
+    <Resource Include="Resources\privacy cleaner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ajax-loader-big.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Firefox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gChrome.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\InternetExplorer.png" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

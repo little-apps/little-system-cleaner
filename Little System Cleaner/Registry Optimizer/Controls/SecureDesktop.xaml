@@ -1,0 +1,8 @@
+﻿<Window x:Class="Little_System_Cleaner.Registry_Optimizer.Controls.SecureDesktop"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SecureDesktop" Height="300" Width="300" WindowStyle="None" WindowState="Maximized" Background="Black" Opacity="0.7" ShowInTaskbar="False" AllowsTransparency="True">
+    <Grid>
+        
+    </Grid>
+</Window>

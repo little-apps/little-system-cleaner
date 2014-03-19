@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="Little_System_Cleaner.Disk_Cleaner.Controls.Results"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             MinWidth="579" MinHeight="384"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition />
+            <RowDefinition Height="80" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <Border CornerRadius="5" Margin="0,0,0,0" Grid.Row="0">
+            <Border.Effect>
+                <DropShadowEffect Color="#FF474747" />
+            </Border.Effect>
+            <Border.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Gray" Offset="1"/>
+                </RadialGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Label FontSize="14" Content="Disk Cleaner" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
+            </Grid>
+        </Border>
+        <ListView x:Name="listViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click"  />
+                    <MenuItem x:Name="selectNone" Header="Select None" Click="selectNone_Click" />
+                    <MenuItem x:Name="selectInvert" Header="Invert Selection" Click="selectInvert_Click" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Header="Name" Width="140">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <CheckBox IsChecked="{Binding Checked}" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Location" Width="140" DisplayMemberBinding="{Binding Location}" />
+                    <GridViewColumn Header="Size" Width="140" DisplayMemberBinding="{Binding Size}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <DockPanel Grid.Row="2">
+            <Image x:Name="Icon" Width="64" Height="64" Margin="5,0,5,0" DockPanel.Dock="Left" />
+            <DockPanel LastChildFill="False" DockPanel.Dock="Left" Margin="0,10,10,10">
+                <DockPanel DockPanel.Dock="Left" LastChildFill="False">
+                    <TextBlock x:Name="FileName" Text="File Name:" DockPanel.Dock="Top" HorizontalAlignment="Left" />
+                    <TextBlock x:Name="Location" Text="Location:" DockPanel.Dock="Bottom" HorizontalAlignment="Left" />
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Right" LastChildFill="False">
+                    <TextBlock x:Name="FileSize" Text="File Size:" DockPanel.Dock="Top" HorizontalAlignment="Right" />
+                    <TextBlock x:Name="LastAccessed" Text="Last Accessed:" DockPanel.Dock="Bottom" HorizontalAlignment="Right" />
+                </DockPanel>
+            </DockPanel>
+        </DockPanel>
+
+        <Button Name="buttonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="87" HorizontalAlignment="Right" Margin="0,5,5,5" />
+        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="66" HorizontalAlignment="Left" Margin="5,5,0,5">Cancel</Button>
+    </Grid>
+</UserControl>

@@ -1,0 +1,84 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Little_System_Cleaner.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d" 
+	x:Class="Little_System_Cleaner.Registry_Cleaner.Controls.Results"
+	MinWidth="579" MinHeight="384"
+    xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools" 
+    Loaded="UserControl_Loaded" 
+    
+    d:DesignHeight="384" d:DesignWidth="579">
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="259*" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <Border CornerRadius="5" Margin="0,0,3,1">
+            <Border.Effect>
+                <DropShadowEffect Color="#FF474747" />
+            </Border.Effect>
+            <Border.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Gray" Offset="1"/>
+                </RadialGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Label FontSize="14" Content="Registry Scan" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
+            </Grid>
+        </Border>
+        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="textBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of problems found in your registry</TextBlock>
+        <Button Content="Fix Problems" Click="buttonFix_Click" Name="buttonFix" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="87" HorizontalAlignment="Right" Margin="0,5,0,5" />
+        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="66" HorizontalAlignment="Left" Margin="0,5,0,5">Cancel</Button>
+        <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1">
+            <tree:TreeList.ContextMenu>
+                <ContextMenu Name="contextMenuResults">
+                    <MenuItem Header="Select All" Click="contextMenuResults_Clicked" />
+                    <MenuItem Header="Select None" Click="contextMenuResults_Clicked" />
+                    <MenuItem Header="Invert Selection" Click="contextMenuResults_Clicked" />
+                    <Separator />
+                    <MenuItem Header="Exclude Selection" Click="contextMenuResults_Clicked" />
+                    <MenuItem Header="View In RegEdit" Click="contextMenuResults_Clicked" />
+                </ContextMenu>
+            </tree:TreeList.ContextMenu>
+            <tree:TreeList.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridView.Columns>
+
+                        <GridViewColumn Header="Problem" x:Name="_problem">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <tree:RowExpander/>
+                                        <CheckBox IsChecked="{Binding Path=IsChecked}"/>
+                                        <ContentPresenter Content="{Binding Path=bMapImg}" Width="16" Height="16" />
+                                        <TextBlock Text="{Binding Problem}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Location" DisplayMemberBinding="{Binding RegKeyPath}" x:Name="_location" />
+                        <GridViewColumn Header="Value Name" DisplayMemberBinding="{Binding ValueName}" x:Name="_valuename" />
+                        <GridViewColumn Header="Severity" x:Name="_severity">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ContentPresenter Content="{Binding Path=SeverityImg}" Height="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
+                </GridView>
+            </tree:TreeList.View>
+        </tree:TreeList>
+        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" />
+        <TextBlock Grid.Row="3" Height="30" Name="progressBarText" VerticalAlignment="Top" MinWidth="567" TextAlignment="Center" Margin="0,5,0,5" />
+    </Grid>
+</UserControl>
