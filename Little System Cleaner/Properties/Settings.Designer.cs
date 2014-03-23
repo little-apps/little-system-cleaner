@@ -142,19 +142,19 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public long lastUpdate {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool updateAuto {
             get {
-                return ((long)(this["lastUpdate"]));
+                return ((bool)(this["updateAuto"]));
             }
             set {
-                this["lastUpdate"] = value;
+                this["updateAuto"] = value;
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.little-apps.com/little-system-cleaner/update.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://updates.little-apps.org/little-system-cleaner.xml")]
         public string updateURL {
             get {
                 return ((string)(this["updateURL"]));

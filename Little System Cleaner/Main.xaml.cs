@@ -113,12 +113,9 @@ namespace Little_System_Cleaner
             this.timerCheck.Start();
 
             // See if we have the current version
-            if (Properties.Settings.Default.optionsUpdate)
+            if (Properties.Settings.Default.updateAuto)
             {
-                string strVersion = "", strChangeLogURL = "", strDownloadURL = "", strReleaseDate = "";
-                if (Utils.FindUpdate(ref strVersion, ref strReleaseDate, ref strChangeLogURL, ref strDownloadURL, true))
-                    if (System.Windows.MessageBox.Show(this, "A newer version(" + strVersion + ") has been found. Would you like to update now?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-                        Utils.LaunchURI(strDownloadURL);
+                AutoUpdaterWPF.AutoUpdater.Start(Properties.Settings.Default.updateURL);
             }
         }
 
@@ -194,14 +191,7 @@ namespace Little_System_Cleaner
                     }
                 case "Check for updates":
                     {
-                        string strVersion = "", strChangeLogURL = "", strDownloadURL = "", strReleaseDate = "";
-                        if (Utils.FindUpdate(ref strVersion, ref strReleaseDate, ref strChangeLogURL, ref strDownloadURL, false))
-                        {
-                            if (System.Windows.MessageBox.Show(this, "A newer version(" + strVersion + ") has been found. Would you like to update now?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-                                Utils.LaunchURI(strDownloadURL);
-                        } 
-                        else
-                            System.Windows.MessageBox.Show(this, "You already have the latest version", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        AutoUpdaterWPF.AutoUpdater.Start(true);
                         break;
                     }
                 case "About...":

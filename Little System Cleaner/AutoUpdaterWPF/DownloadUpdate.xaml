@@ -1,8 +1,12 @@
-﻿<Window x:Class="Little_System_Cleaner.AutoUpdaterWPF.DownloadUpdate"
+﻿<Window x:Name="DownloadUpdateWindow" x:Class="Little_System_Cleaner.AutoUpdaterWPF.DownloadUpdate" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DownloadUpdate" Height="300" Width="300">
+        Title="Software update" Height="117" Width="370" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Icon="pack://siteoforigin:,,,/Resources/update.png">
     <Grid>
-        
+        <Grid Margin="13,12,0,0" Width="53" Height="53" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Image Source="pack://siteoforigin:,,,/Resources/download_32.png" Stretch="None" />
+        </Grid>
+        <TextBlock x:Name="textBlockInformation" HorizontalAlignment="Left" Margin="72,12,0,0" TextWrapping="Wrap" Text="Downloading Update..." VerticalAlignment="Top" FontSize="14"/>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="23" Margin="72,42,0,0" VerticalAlignment="Top" Width="270"/>
     </Grid>
 </Window>

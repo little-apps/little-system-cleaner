@@ -1,8 +1,38 @@
-﻿<Window x:Class="Little_System_Cleaner.AutoUpdaterWPF.Update"
+﻿<Window x:Name="UpdateWindow" x:Class="Little_System_Cleaner.AutoUpdaterWPF.Update"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Update" Height="300" Width="300">
+        Title="Software Update" Height="648" Width="659" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Icon="pack://siteoforigin:,,,/Resources/update.png" Loaded="UpdateWindow_Loaded">
     <Grid>
-        
+        <Image Height="66" Margin="12,14,0,0" VerticalAlignment="Top" Width="70" Source="pack://siteoforigin:,,,/Resources/update.png" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" >
+
+        </Image>
+        <TextBlock x:Name="textBlockUpdate" HorizontalAlignment="Left" Margin="91,14,0,0" TextWrapping="Wrap" Text="A new version of {0} is available!" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <TextBlock x:Name="textBlockDescription" HorizontalAlignment="Left" Margin="91,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top">{0} {1} is now available. You have version {2} installed. Would you like to download it now?</TextBlock>
+        <TextBlock x:Name="textBlockReleaseNotes" HorizontalAlignment="Left" Margin="91,90,0,0" TextWrapping="Wrap" Text="Release Notes :" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <WebBrowser x:Name="webBrowser" HorizontalAlignment="Left" Height="432" Margin="91,120,0,0" VerticalAlignment="Top" Width="538" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+        <Button x:Name="buttonSkip" HorizontalAlignment="Left" Margin="91,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonSkip_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="16" Height="16" Source="pack://siteoforigin:,,,/Resources/hand_point.png" />
+                    <TextBlock>Skip this version</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <Button x:Name="buttonRemindLater" HorizontalAlignment="Left" Margin="321,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonRemindLater_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="16" Height="16" Source="pack://siteoforigin:,,,/Resources/clock_go.png" />
+                    <TextBlock>Remind me later</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <Button x:Name="buttonUpdate" HorizontalAlignment="Left" Margin="478,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonUpdate_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="16" Height="16" Source="pack://siteoforigin:,,,/Resources/download.png" />
+                    <TextBlock>Update</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
     </Grid>
 </Window>

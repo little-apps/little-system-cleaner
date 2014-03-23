@@ -78,6 +78,18 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutoUpdaterWPF\RemindLater.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutoUpdaterWPF\Update.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Disk Cleaner\Controls\Analyze.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -180,6 +192,16 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Compile Include="App.cs" />
+    <Compile Include="AutoUpdaterWPF\AutoUpdater.cs" />
+    <Compile Include="AutoUpdaterWPF\DownloadUpdate.xaml.cs">
+      <DependentUpon>DownloadUpdate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AutoUpdaterWPF\RemindLater.xaml.cs">
+      <DependentUpon>RemindLater.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AutoUpdaterWPF\Update.xaml.cs">
+      <DependentUpon>Update.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
       <DependentUpon>Analyze.xaml</DependentUpon>
     </Compile>
@@ -479,9 +501,6 @@
     <None Include="Resources\sections\startup.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\update.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\startup manager\add.png" />
     <Resource Include="Resources\startup manager\delete.png" />
     <Resource Include="Resources\startup manager\edit.png" />
@@ -592,6 +611,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\InternetExplorer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\update.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clock_go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clock_go_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clock_go1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clock_play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hand_point.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
