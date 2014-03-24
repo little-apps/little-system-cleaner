@@ -27,12 +27,19 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (!remindLater)
             {
-                InitializeComponent();
-                var resources = new System.ComponentModel.ComponentResourceManager(this.GetType());
+                try
+                {
+                    InitializeComponent();
+                }
+                catch (Exception e)
+                {
+                    Debug.Write(e);
+                }
+                
                 this.Text = AutoUpdater.DialogTitle;
-                this.textBlockUpdate.Text = string.Format(resources.GetString("labelUpdate.Text", CultureInfo.CurrentCulture), AutoUpdater.AppTitle);
+                this.textBlockUpdate.Text = string.Format(this.textBlockUpdate.Text, AutoUpdater.AppTitle);
                 this.textBlockDescription.Text =
-                    string.Format(resources.GetString("labelDescription.Text", CultureInfo.CurrentCulture),
+                    string.Format(this.textBlockDescription.Text,
                         AutoUpdater.AppTitle, AutoUpdater.CurrentVersion, AutoUpdater.InstalledVersion);
             }
         }

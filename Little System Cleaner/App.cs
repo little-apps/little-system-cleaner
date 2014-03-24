@@ -77,6 +77,9 @@ namespace Little_System_Cleaner
 
                     string strHivePath = rkHives.GetValue(strValueName) as string;
 
+                    if (string.IsNullOrEmpty(strHivePath))
+                        continue;
+
                     if (strHivePath[strHivePath.Length - 1] == 0)
                         strHivePath = strHivePath.Substring(0, strHivePath.Length - 1);
 

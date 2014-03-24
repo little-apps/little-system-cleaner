@@ -428,7 +428,6 @@
     <Resource Include="Resources\Restore.png" />
     <Resource Include="Resources\startup manager.png" />
     <Resource Include="Resources\uninstall manager.png" />
-    <Resource Include="update.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -541,7 +540,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ajax-loader-blue.gif" />
+    <Resource Include="Resources\ajax-loader-blue.gif" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\optimizer.png" />
@@ -568,16 +567,16 @@
     <Resource Include="Resources\info.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\internet.png" />
+    <Resource Include="Resources\internet.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Lock.png" />
+    <Resource Include="Resources\Lock.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\icon--icon4 copy.png" />
+    <Resource Include="Resources\icon--icon4 copy.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\logo_whitetext.png" />
@@ -601,43 +600,43 @@
     <Resource Include="Resources\privacy cleaner.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ajax-loader-big.gif" />
+    <Resource Include="Resources\ajax-loader-big.gif" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Firefox.png" />
+    <Resource Include="Resources\Firefox.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\gChrome.png" />
+    <Resource Include="Resources\gChrome.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\InternetExplorer.png" />
+    <Resource Include="Resources\InternetExplorer.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\update.png" />
+    <Resource Include="Resources\update.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\clock_go.png" />
+    <Resource Include="Resources\clock_go.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\clock_go_32.png" />
+    <Resource Include="Resources\clock_go_32.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\clock_go1.png" />
+    <Resource Include="Resources\clock_go1.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\clock_play.png" />
+    <Resource Include="Resources\clock_play.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\download.png" />
+    <Resource Include="Resources\download.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\download_32.png" />
+    <Resource Include="Resources\download_32.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\download1.png" />
+    <Resource Include="Resources\download1.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\hand_point.png" />
+    <Resource Include="Resources\hand_point.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

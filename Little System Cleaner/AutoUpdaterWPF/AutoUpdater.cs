@@ -132,7 +132,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
                     int compareResult = DateTime.Compare(DateTime.Now, remindLater);
 
-                    //if (compareResult < 0)
+                    if (compareResult < 0)
                     {
                         var updateForm = new Update(true);
                         updateForm.SetTimer(remindLater);
@@ -168,6 +168,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             XmlNodeList appCastItems = receivedAppCastDocument.SelectNodes("item");
 
             if (appCastItems != null)
+            {
                 foreach (XmlNode item in appCastItems)
                 {
                     XmlNode appCastVersion = item.SelectSingleNode("version");
@@ -194,6 +195,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
                     DownloadURL = appCastUrl != null ? appCastUrl.InnerText : "";
                 }
+            }
 
             if (updateKey != null)
             {
