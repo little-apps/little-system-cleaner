@@ -154,7 +154,7 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.little-apps.com/little-system-cleaner/update.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://updates.little-apps.com/little-system-cleaner.xml")]
         public string updateURL {
             get {
                 return ((string)(this["updateURL"]));
