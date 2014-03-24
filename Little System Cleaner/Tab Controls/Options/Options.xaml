@@ -36,7 +36,7 @@
                 <StackPanel>
                     <GroupBox Header="Options" x:Name="groupBox3">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
                                 <CheckBox Name="checkBoxAutoUpdate" HorizontalAlignment="Left" VerticalAlignment="Center" Click="UpdateSettings">Automatically check for updates every</CheckBox>
                                 <ComboBox SelectedIndex="0" Margin="3,0,0,0" Name="comboBoxUpdateDelay" IsReadOnly="True" SelectionChanged="UpdateSettings">
                                     <ComboBoxItem>3 Days</ComboBoxItem>
@@ -45,8 +45,8 @@
                                     <ComboBoxItem>14 Days</ComboBoxItem>
                                 </ComboBox>
                             </StackPanel>
-                            <CheckBox x:Name="checkBoxSysRestore" Content="Automatically create system restore points" Click="UpdateSettings" />
-                            <CheckBox x:Name="checkBoxUsageStats" Content="Send anonymous usage statistics" Click="UpdateSettings" />
+                            <CheckBox x:Name="checkBoxSysRestore" Margin="0,3,0,3" Click="UpdateSettings">Automatically create system restore points</CheckBox>
+                            <CheckBox x:Name="checkBoxUsageStats" Margin="0,3,0,3" Click="UpdateSettings">Send anonymous usage statistics</CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
