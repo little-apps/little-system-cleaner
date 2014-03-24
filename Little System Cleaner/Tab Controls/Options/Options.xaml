@@ -56,10 +56,6 @@
                     <TextBlock><Run Text="About"/></TextBlock>
                 </TabItem.Header>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="23*"/>
-                        <ColumnDefinition Width="550*"/>
-                    </Grid.ColumnDefinitions>
                     <Image HorizontalAlignment="Left" Margin="11,5,0,0" VerticalAlignment="Top" Source="/Little_System_Cleaner;component/Resources/icon.png" Height="65" Width="64" />
                     <Label HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Little Registry Cleaner" Height="75" Width="218" Margin="83,0,0,0" FontSize="20" FontWeight="Bold" VerticalContentAlignment="Center" />
                     <Separator Height="2" HorizontalAlignment="Stretch" Margin="11,75,11,0" Name="separator1" VerticalAlignment="Top" Grid.ColumnSpan="2" />
