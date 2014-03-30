@@ -31,7 +31,6 @@ using System.Threading;
 using Microsoft.Win32;
 using System.Xml;
 using System.Diagnostics;
-using Little_System_Cleaner.SplashScreen;
 
 namespace Little_System_Cleaner
 {
@@ -55,40 +54,12 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            Splasher.Splash = new SplashScreen.SplashScreen();
-            Splasher.ShowSplash();
+            //Splasher.Splash = new SplashScreen.SplashScreen();
+            //Splasher.ShowSplash();
 
-            // Enumerate through hivelist
-            RegistryKey rkHives = null;
-            Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives = new System.Collections.ObjectModel.ObservableCollection<Little_System_Cleaner.Registry_Optimizer.Helpers.Hive>();
-
-            using (rkHives = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\hivelist"))
-            {
-                if (rkHives == null)
-                    throw new ApplicationException("Unable to open hive list... this can be a problem!");
-
-                foreach (string strValueName in rkHives.GetValueNames())
-                {
-                    MessageListener.Instance.ReceiveMessage(string.Format("Loading {0}/{1} Hives", ++i, rkHives.ValueCount));
-
-                    // Don't touch these hives because they are critical for Windows
-                    if (strValueName.Contains("BCD") || strValueName.Contains("HARDWARE"))
-                        continue;
-
-                    string strHivePath = rkHives.GetValue(strValueName) as string;
-
-                    if (string.IsNullOrEmpty(strHivePath))
-                        continue;
-
-                    if (strHivePath[strHivePath.Length - 1] == 0)
-                        strHivePath = strHivePath.Substring(0, strHivePath.Length - 1);
-
-                    if (!string.IsNullOrEmpty(strValueName) && !string.IsNullOrEmpty(strHivePath))
-                        Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Add(new Little_System_Cleaner.Registry_Optimizer.Helpers.Hive(strValueName, strHivePath));
-                }
-            }
-
-            Splasher.CloseSplash();
+            //Thread thread = new Thread(new ThreadStart(InitHives));
+            //thread.Start();
+            //thread.Join();
 
             new App();
 
@@ -136,6 +107,8 @@ namespace Little_System_Cleaner
             crashReporter.Show();
             e.Handled = true;
         }
+
+        
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {

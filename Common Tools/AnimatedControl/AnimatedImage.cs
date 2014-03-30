@@ -45,6 +45,7 @@ namespace CommonTools
         private int _nCurrentFrame = 0;
         private List<int> Delays = null;
         private Timer timer = null;
+        private Thread _thread;
 
         private bool _bIsAnimating = false;
 
@@ -119,7 +120,6 @@ namespace CommonTools
         /// </summary>
         private void UpdateAnimatedBitmap()
         {
-
             try
             {
                 int nTimeFrames = GetFramesCount(); //get frames count

@@ -32,6 +32,8 @@ using System.ComponentModel;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using CommonTools;
 using System.Drawing;
+using System.Windows.Media.Imaging;
+using CommonTools.WpfAnimatedGif;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
@@ -296,13 +298,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public void LoadGif()
         {
-            this.Image = new AnimatedImage();
-            (this.Image as AnimatedImage).LoadGif(Properties.Resources.ajax_loader);
+            this.Image = new System.Windows.Controls.Image();
+
+            BitmapSource gif = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            ImageBehavior.SetAnimatedSource(this.Image, gif);
         }
 
         public void UnloadGif()
         {
-            (this.Image as AnimatedImage).Dispose();
+            this.Image = null;
             
             this.Image = new System.Windows.Controls.Image();
             this.Image.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.Repair.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());

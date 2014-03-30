@@ -42,6 +42,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public Wizard()
         {
+            this.arrayControls.Add(typeof(LoadHives));
             this.arrayControls.Add(typeof(Main));
             this.arrayControls.Add(typeof(AnalyzeResults));
 

@@ -66,10 +66,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             this.progressBar1.Maximum = Wizard.RegistryHives.Count;
             this.progressBar1.Value = 0;
 
-            // Create ajax loader
-            this.loadingImg.Content = new AnimatedImage();
-            (this.loadingImg.Content as AnimatedImage).LoadGif(Properties.Resources.ajax_loader_blue);
-
             threadScan = new Thread(new ThreadStart(AnalyzeHives));
             threadScan.Start();
         }

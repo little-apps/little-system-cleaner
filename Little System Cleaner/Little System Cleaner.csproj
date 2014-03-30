@@ -143,15 +143,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Registry Optimizer\Controls\LoadHives.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Registry Optimizer\Controls\Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Registry Optimizer\Controls\SecureDesktop.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SplashScreen\SplashScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -270,6 +270,9 @@
       <SubType>Code</SubType>
       <DependentUpon>Compact.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Registry Optimizer\Controls\LoadHives.xaml.cs">
+      <DependentUpon>LoadHives.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Registry Optimizer\Controls\Main.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>Main.xaml</DependentUpon>
@@ -280,13 +283,6 @@
     </Compile>
     <Compile Include="Registry Optimizer\Controls\Wizard.cs" />
     <Compile Include="Registry Optimizer\Helpers\HiveManager.cs" />
-    <Compile Include="SplashScreen\DispatcherHelper.cs" />
-    <Compile Include="SplashScreen\MessageListener.cs" />
-    <Compile Include="SplashScreen\Splasher.cs" />
-    <Compile Include="SplashScreen\SplashScreen.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>SplashScreen.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tab Controls\Options\AddExcludeItem.xaml.cs">
       <DependentUpon>AddExcludeItem.xaml</DependentUpon>
     </Compile>

@@ -34,6 +34,7 @@ using System.Windows.Controls;
 using CommonTools;
 using System.Windows;
 using System.Windows.Media;
+using CommonTools.WpfAnimatedGif;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -185,7 +186,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             set;
         }
 
-        public Image AniImage
+        public Image Image
         {
             get;
             set;
@@ -195,16 +196,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public void LoadGif()
         {
-            this.AniImage = new AnimatedImage();
-            (this.AniImage as AnimatedImage).LoadGif(Properties.Resources.ajax_loader);
+            this.Image = new System.Windows.Controls.Image();
+
+            BitmapSource gif = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            ImageBehavior.SetAnimatedSource(this.Image, gif);
         }
 
         public void UnloadGif()
         {
-            (this.AniImage as AnimatedImage).Dispose();
+            this.Image = null;
 
-            this.AniImage = new System.Windows.Controls.Image();
-            this.AniImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.Repair.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            this.Image = new System.Windows.Controls.Image();
+            this.Image.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.Repair.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
         }
 
         public ResultNode Results;
