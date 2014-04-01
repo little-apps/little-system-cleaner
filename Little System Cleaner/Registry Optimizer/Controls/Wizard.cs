@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
@@ -40,13 +41,55 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public static ObservableCollection<Hive> RegistryHives { get; set; }
 
+        public static bool IsBusy { get; set; }
+
+        public bool HivesLoaded = false;
+
         public Wizard()
         {
             this.arrayControls.Add(typeof(LoadHives));
             this.arrayControls.Add(typeof(Main));
             this.arrayControls.Add(typeof(AnalyzeResults));
 
+            IsBusy = false;
+        }
+
+        public void OnLoaded()
+        {
             this.SetCurrentControl(0);
+        }
+
+        public bool OnUnloaded()
+        {
+            if (!HivesLoaded)
+            {
+                // Registry hives not completley loaded, unload them
+                Wizard.RegistryHives.Clear();
+            }
+
+            if (Wizard.IsBusy)
+            {
+                MessageBox.Show(Application.Current.MainWindow, "The Windows Registry is currently being analyzed/compacted. The operation cannot be completed at the moment.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            if (this.userControl is AnalyzeResults)
+            {
+                if (MessageBox.Show(App.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    foreach (Hive h in Wizard.RegistryHives) {
+                        h.Reset();
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -61,10 +104,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 return;
             }
 
-            if (index > 0)
-                Little_System_Cleaner.Main.IsTabsEnabled = false;
-            else
-                Little_System_Cleaner.Main.IsTabsEnabled = true;
+            if (this.userControl != null)
+                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
 
             System.Reflection.ConstructorInfo constructorInfo = this.arrayControls[index].GetConstructor(new Type[] { typeof(Wizard) });
 

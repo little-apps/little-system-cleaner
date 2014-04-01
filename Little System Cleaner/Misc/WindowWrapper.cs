@@ -30,6 +30,8 @@ namespace Little_System_Cleaner.Misc
     /// </summary>
     public class WindowWrapper : System.Windows.Forms.IWin32Window
     {
+        private IntPtr _hwnd;
+
         public WindowWrapper(IntPtr handle)
         {
             _hwnd = handle;
@@ -46,6 +48,11 @@ namespace Little_System_Cleaner.Misc
             get { return _hwnd; }
         }
 
-        private IntPtr _hwnd;
+        internal static WindowWrapper GetCurrentWindowHandle()
+        {
+            WindowWrapper winWrapper = new WindowWrapper(App.Current.MainWindow);
+
+            return winWrapper;
+        }
     }
 }

@@ -16,12 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
@@ -58,8 +60,47 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             this.arrayControls.Add(typeof(Start));
             this.arrayControls.Add(typeof(Analyze));
             this.arrayControls.Add(typeof(Results));
+        }
 
+        public void OnLoaded()
+        {
             this.SetCurrentControl(0);
+        }
+
+        public bool OnUnloaded()
+        {
+            if (this.userControl is Analyze)
+            {
+                if (MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) {
+                    (this.userControl as Analyze).timerUpdate.Stop();
+
+                    if ((this.userControl as Analyze).threadMain != null)
+                        (this.userControl as Analyze).threadMain.Abort();
+
+                    Analyze.CurrentFile = "";
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (this.userControl is Results)
+            {
+                if (MessageBox.Show(App.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Wizard.fileList.Clear();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -74,10 +115,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return;
             }
 
-            if (index > 0)
-                Main.IsTabsEnabled = false;
-            else
-                Main.IsTabsEnabled = true;
+            if (this.userControl != null)
+                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
 
             System.Reflection.ConstructorInfo constructorInfo = this.arrayControls[index].GetConstructor(new Type[] { typeof(Wizard) });
 

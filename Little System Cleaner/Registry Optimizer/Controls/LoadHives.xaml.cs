@@ -29,8 +29,15 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             this.scanBase = sb;
 
-            Thread t = new Thread(new ThreadStart(InitHives));
-            t.Start();
+            if (!this.scanBase.HivesLoaded)
+            {
+                Thread t = new Thread(new ThreadStart(InitHives));
+                t.Start();
+            }
+            else
+            {
+                this.scanBase.MoveNext();
+            }
         }
 
         private void InitHives()
@@ -47,7 +54,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 foreach (string strValueName in rkHives.GetValueNames())
                 {
                     this.Dispatcher.Invoke(new Action(() => this.label1.Text = string.Format("Loading {0}/{1} Hives", ++i, rkHives.ValueCount)));
-                    //MessageListener.Instance.ReceiveMessage(string.Format("Loading {0}/{1} Hives", ++i, rkHives.ValueCount));
 
                     // Don't touch these hives because they are critical for Windows
                     if (strValueName.Contains("BCD") || strValueName.Contains("HARDWARE"))
@@ -65,6 +71,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                         Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Add(new Little_System_Cleaner.Registry_Optimizer.Helpers.Hive(strValueName, strHivePath));
                 }
             }
+
+            this.scanBase.HivesLoaded = true;
 
             this.scanBase.MoveNext();
         }

@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
@@ -68,8 +69,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             this.arrayControls.Add(typeof(Start));
             this.arrayControls.Add(typeof(Analyze));
+        }
 
-            SetCurrentControl(0);
+        public void OnLoaded()
+        {
+            this.SetCurrentControl(0);
+        }
+
+        public bool OnUnloaded()
+        {
+            if (this.currentControl > 0)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -84,10 +96,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 return;
             }
 
-            if (index > 0)
-                Main.IsTabsEnabled = false;
-            else
-                Main.IsTabsEnabled = true;
+            if (this.userControl != null)
+                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
 
             System.Reflection.ConstructorInfo constructorInfo = this.arrayControls[index].GetConstructor(new Type[] { typeof(Wizard) });
 

@@ -120,6 +120,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             ScanWizard.ScanThread.Start();
         }
 
+        public void AbortScanThread()
+        {
+            if (ScanWizard.ScanThread.IsAlive)
+                ScanWizard.ScanThread.Abort();
+
+            if (this.threadScan.IsAlive)
+                this.threadScan.Abort();
+        }
+
         void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
@@ -265,17 +274,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Would you like to cancel the scan thats in progress?", "Little Registry Cleaner", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                ScanWizard.ScanThread.Abort();
-                this.threadScan.Abort();
+                this.AbortScanThread();
                 this.scanBase.MoveFirst();
             }
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            ScanWizard.ScanThread.Abort();
+            this.AbortScanThread();
         }
        
 	}

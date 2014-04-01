@@ -42,8 +42,6 @@ namespace Little_System_Cleaner
         [STAThread]
         static void Main()
         {
-            int i = 0;
-
             bool bMutexCreated = false;
             Mutex mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated);
 
@@ -53,13 +51,6 @@ namespace Little_System_Cleaner
                 MessageBox.Show("Another program seems to be already running...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
-            //Splasher.Splash = new SplashScreen.SplashScreen();
-            //Splasher.ShowSplash();
-
-            //Thread thread = new Thread(new ThreadStart(InitHives));
-            //thread.Start();
-            //thread.Join();
 
             new App();
 

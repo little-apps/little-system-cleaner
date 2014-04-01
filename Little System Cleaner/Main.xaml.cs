@@ -221,8 +221,35 @@ namespace Little_System_Cleaner
 
         private void comboBoxTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.tabControl != null)
-                this.tabControl.SelectedIndex = this.comboBoxTab.SelectedIndex;
+            this.setTabControl(this.comboBoxTab.SelectedIndex);
+        }
+
+        private void setTabControl(int index)
+        {
+            if (this.tabControl == null)
+                return;
+
+            bool? bUnload = null;
+
+            UserControl lastCtrl = (this.tabControl.SelectedContent as UserControl);
+            System.Reflection.MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
+            if (methodUnload != null)
+                bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { });
+
+            if (bUnload == true || !bUnload.HasValue)
+            {
+                this.tabControl.SelectedIndex = index;
+
+                UserControl nextCtrl = (this.tabControl.SelectedContent as UserControl);
+                System.Reflection.MethodBase methodLoad = nextCtrl.GetType().GetMethod("OnLoaded");
+                if (methodLoad != null)
+                    methodLoad.Invoke(nextCtrl, new object[] { });
+            }
+            else
+            {
+                // Change combobox back
+                this.comboBoxTab.SelectedIndex = this.tabControl.SelectedIndex;
+            }
         }
 	}
 }

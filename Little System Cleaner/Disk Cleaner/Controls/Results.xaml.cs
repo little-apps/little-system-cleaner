@@ -207,6 +207,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
+            this.ResetInfo();
+            Wizard.fileList.Clear();
+
             this.scanBase.MoveFirst();
         }
     }

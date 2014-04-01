@@ -85,6 +85,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "You must close running programs before optimizing the registry.\nPlease save your work and close any running programs now.", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Information) != MessageBoxResult.OK)
                 return;
 
+            Wizard.IsBusy = true;
+
             SecureDesktop secureDesktop = new SecureDesktop();
             secureDesktop.Show();
 
@@ -92,6 +94,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             analyzeWnd.ShowDialog();
 
             secureDesktop.Close();
+
+            Wizard.IsBusy = false;
 
             // Check registry size before continuing
             if (Utils.GetNewRegistrySize() <= 0 || IsCompacted)

@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
     /// </summary>
     public partial class Analyze : UserControl
     {
-        System.Timers.Timer timerUpdate = new System.Timers.Timer(100);
+        internal System.Timers.Timer timerUpdate = new System.Timers.Timer(100);
         public Wizard scanBase;
 
         public Thread threadMain
@@ -124,7 +124,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
             catch (ThreadAbortException)
             {
-                this.scanBase.MovePrev();
+                // Will end up here if user accepts to change tab
+                // No need to change tab
             }
         }
 

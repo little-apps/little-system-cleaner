@@ -110,8 +110,48 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.arrayScanners.Add(new RecentDocs());
             this.arrayScanners.Add(new WindowsSounds());
             this.arrayScanners.Add(new StartupFiles());
+        }
 
-            SetCurrentControl(0);
+        public void OnLoaded()
+        {
+            this.SetCurrentControl(0);
+        }
+
+        public bool OnUnloaded()
+        {
+            if (this.userControl is Scan)
+            {
+                if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    (this.userControl as Scan).AbortScanThread();
+                    ScanWizard.badRegKeyArray.Clear();
+                    Scan.EnabledScanners.Clear();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (this.userControl is Results)
+            {
+                if (MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    ScanWizard.badRegKeyArray.Clear();
+                    Scan.EnabledScanners.Clear();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            
+
+            return true;
         }
 
         /// <summary>
@@ -126,10 +166,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
             }
 
-            if (index > 0)
-                Main.IsTabsEnabled = false;
-            else
-                Main.IsTabsEnabled = true;
+            if (this.userControl != null)
+                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
 
             System.Reflection.ConstructorInfo constructorInfo = this.arrayControls[index].GetConstructor(new Type[] { typeof(ScanWizard) });
 

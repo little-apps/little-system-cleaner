@@ -76,6 +76,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
+            Wizard.IsBusy = true;
+
             SecureDesktop secureDesktop = new SecureDesktop();
             secureDesktop.Show();
 
@@ -87,6 +89,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             // Set errors fixed to number of registry hives
             Properties.Settings.Default.lastScanErrorsFixed = Wizard.RegistryHives.Count;
 
+            Wizard.IsBusy = false;
+
             if (MessageBox.Show(Application.Current.MainWindow, "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 // Restart computer
                 PInvoke.ExitWindowsEx(0x02, PInvoke.MajorOperatingSystem | PInvoke.MinorReconfig | PInvoke.FlagPlanned);
@@ -96,6 +100,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
+            if (Wizard.IsBusy)
+            {
+                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
             this.scanBase.MoveFirst();
         }
     }
