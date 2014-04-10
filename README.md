@@ -32,4 +32,6 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * Implement [Little Software Stats](http://www.little-software-stats.com)
  * ~~Replace updater with [AutoUpdater](http://autoupdaterdotnet.codeplex.com) (modified for WPF)~~
  * Correct layout issues
- * Fix main window preview not showing because of null exception
+ * ~~Fix main window preview not showing because of null exception~~
+ * Update icons
+ * Fix button sizes
