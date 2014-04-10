@@ -254,7 +254,7 @@
                     </StackPanel>
                 </ComboBoxItem>
             </ComboBox>
-            <Image Height="47" HorizontalAlignment="Right" Margin="0,3,3,0" Name="imageHelp" VerticalAlignment="Top" Width="48" Source="/Little_System_Cleaner;component/Resources/Help.png" MouseEnter="imageHelp_MouseEnter" MouseLeave="imageHelp_MouseLeave" MouseLeftButtonDown="imageHelp_MouseLeftButtonDown" Grid.Column="1" />
+            <Image Height="47" HorizontalAlignment="Right" Margin="0,10,10,0" Name="imageHelp" VerticalAlignment="Top" Width="48" Source="/Little_System_Cleaner;component/Resources/Help.png" MouseEnter="imageHelp_MouseEnter" MouseLeave="imageHelp_MouseLeave" MouseLeftButtonDown="imageHelp_MouseLeftButtonDown" Grid.Column="1" />
 
         </Grid>
         <TabControl IsSynchronizedWithCurrentItem="True" Style="{StaticResource WindowTabCtrl}" x:Name="tabControl" Grid.Row="1" Margin="0">

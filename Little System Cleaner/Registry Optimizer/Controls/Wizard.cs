@@ -56,7 +56,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public void OnLoaded()
         {
-            this.SetCurrentControl(0);
+            if (!this.HivesLoaded)
+                this.SetCurrentControl(0);
+            else
+                this.SetCurrentControl(1);
         }
 
         public bool OnUnloaded()

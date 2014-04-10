@@ -29,15 +29,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             this.scanBase = sb;
 
-            if (!this.scanBase.HivesLoaded)
-            {
-                Thread t = new Thread(new ThreadStart(InitHives));
-                t.Start();
-            }
-            else
-            {
-                this.scanBase.MoveNext();
-            }
+            Thread t = new Thread(new ThreadStart(InitHives));
+            t.Start();
         }
 
         private void InitHives()
