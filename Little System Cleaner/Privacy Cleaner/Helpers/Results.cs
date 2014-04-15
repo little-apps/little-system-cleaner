@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.Win32;
 using System;
@@ -57,9 +59,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
     }
     #endregion
 
-    public class ResultNode : INotifyPropertyChanged
+    public class ResultNode : INotifyPropertyChanged, ICloneable
     {
-        #region INotifyPropertyChanged Members
+        #region INotifyPropertyChanged & ICloneable Members
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -69,6 +71,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
         #endregion
 
         #region Properties
@@ -358,26 +364,33 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
     }
 
     #region Result Array
-    public class ResultArray : CollectionBase
+    public class ResultArray : ObservableCollection<ResultNode>
     {
+        public ResultArray()
+            : base()
+        {
+
+        }
 
         public ResultNode this[int index]
         {
-            get { return (ResultNode)this.InnerList[index]; }
-            set { this.InnerList[index] = value; }
+            get { return (ResultNode)base[index]; }
+            set { base[index] = value; }
         }
 
-        public int Add(ResultNode resultNode)
+        public void Add(ResultNode resultNode)
         {
             if (resultNode == null)
                 throw new ArgumentNullException("resultNode");
 
-            return (this.InnerList.Add(resultNode));
+            base.Add(resultNode);
+
+            return;
         }
 
         public int IndexOf(ResultNode resultNode)
         {
-            return (this.InnerList.IndexOf(resultNode));
+            return (base.IndexOf(resultNode));
         }
 
         public void Insert(int index, ResultNode resultNode)
@@ -385,7 +398,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (resultNode == null)
                 throw new ArgumentNullException("resultNode");
 
-            this.InnerList.Insert(index, resultNode);
+            base.Insert(index, resultNode);
         }
 
         public void Remove(ResultNode resultNode)
@@ -393,17 +406,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (resultNode == null)
                 throw new ArgumentNullException("resultNode");
 
-            this.InnerList.Remove(resultNode);
+            base.Remove(resultNode);
         }
 
         public bool Contains(ResultNode resultNode)
         {
-            return (this.InnerList.Contains(resultNode));
+            return (base.Contains(resultNode));
         }
 
         public int Problems(string section)
         {
-            foreach (ResultNode n in this.InnerList) {
+            foreach (ResultNode n in this) {
                 if (n.Section == section)
                     return n.Children.Count;
             }
@@ -413,4 +426,40 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
     }
     #endregion
 
+    #region Result Model
+    public class ResultModel : ITreeModel
+    {
+        public ResultNode Root { get; private set; }
+
+        public static ResultModel CreateResultModel()
+        {
+            ResultModel model = new ResultModel();
+
+            foreach (ResultNode n in Wizard.ResultArray)
+            {
+                model.Root.Children.Add(n);
+            }
+
+            return model;
+        }
+
+        public ResultModel()
+        {
+            Root = new ResultNode();
+        }
+
+        public System.Collections.IEnumerable GetChildren(object parent)
+        {
+            if (parent == null)
+                parent = Root;
+
+            return (parent as ResultNode).Children;
+        }
+
+        public bool HasChildren(object parent)
+        {
+            return (parent as ResultNode).Children.Count > 0;
+        }
+    }
+    #endregion
 }

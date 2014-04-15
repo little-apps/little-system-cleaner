@@ -62,7 +62,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             scanBase = sb;
 
             this.textBoxBackups.Text = Properties.Settings.Default.optionsBackupDir;
-            this.textBoxLogFiles.Text = Properties.Settings.Default.optionsLogDir;
 
             this.checkBoxLog.IsChecked = Properties.Settings.Default.registryCleanerOptionsLog;
             this.checkBoxShowLog.IsChecked = Properties.Settings.Default.registryCleanerOptionsShowLog;
@@ -87,9 +86,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (this.textBoxBackups.Text != Properties.Settings.Default.optionsBackupDir)
                 Properties.Settings.Default.optionsBackupDir = this.textBoxBackups.Text;
 
-            if (this.textBoxLogFiles.Text != Properties.Settings.Default.optionsLogDir)
-                Properties.Settings.Default.optionsLogDir = this.textBoxLogFiles.Text;
-
             Properties.Settings.Default.arrayExcludeList = ExcludeArray;
         }
 
@@ -103,21 +99,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
                     this.textBoxBackups.Text = folderBrowserDlg.SelectedPath;
-
-                UpdateSettings();
-            }
-        }
-
-        private void buttonBrowseLogDir_Click(object sender, RoutedEventArgs e)
-        {
-            using (FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog())
-            {
-                folderBrowserDlg.Description = "Select the folder where the log files will be placed";
-                folderBrowserDlg.SelectedPath = this.textBoxLogFiles.Text;
-                folderBrowserDlg.ShowNewFolderButton = true;
-
-                if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-                    this.textBoxLogFiles.Text = folderBrowserDlg.SelectedPath;
 
                 UpdateSettings();
             }

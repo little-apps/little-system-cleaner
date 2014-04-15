@@ -227,8 +227,11 @@
     <Setting Name="privacyCleanerAutoSkipScanner" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="privacyCleanerLogFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="privacyCleanerLog" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="privacyCleanerDisplayLog" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

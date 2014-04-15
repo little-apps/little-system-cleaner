@@ -267,11 +267,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Thread.Sleep(250);
         }
 
-        private void buttonResults_Click(object sender, RoutedEventArgs e)
-        {
-            this.scanBase.MoveNext();
-        }
-
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)

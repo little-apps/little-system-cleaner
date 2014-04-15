@@ -11,7 +11,8 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
-            <RowDefinition Height="279*" />
+            <RowDefinition />
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Border CornerRadius="5" Margin="0,0,0,0" Grid.Row="0">
             <Border.Effect>
@@ -28,8 +29,8 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 2 of 3</Label>
             </Grid>
         </Border>
-        <ProgressBar VerticalAlignment="Center" Height="24" x:Name="progressBar" Grid.Row="2" />
-        <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" />
+        <ProgressBar VerticalAlignment="Center" Height="24" x:Name="progressBar" Grid.Row="2" Margin="0,3" />
+        <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Margin="0,7" Height="16" />
 
         <ListView ItemsSource="{Binding SectionsCollection}" Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">
             <ListView.View>
@@ -50,7 +51,7 @@
             </ListView.View>
         </ListView>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Margin="60,6,32,0" Name="textBlock1" HorizontalAlignment="Center">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
-
+        <TextBlock Grid.Row="1" Margin="60,6,32,0" Name="textBlock1" HorizontalAlignment="Center" Width="487">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
+        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Grid.Row="4" Style="{DynamicResource GlassButton}" Margin="0,5,0,5" Foreground="White" HorizontalAlignment="Left" Width="62" />
     </Grid>
 </UserControl>

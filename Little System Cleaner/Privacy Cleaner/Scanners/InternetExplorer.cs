@@ -63,42 +63,31 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        public override void Scan()
+        public override void Scan(ScannerBase child)
         {
-            //if (Utils.IsProcessRunning("iexplore"))
-            //{
-            //    System.Windows.Forms.MessageBox.Show("Microsoft Internet Explorer must be closed to allow the files to be scanned and cleaned", "Little Privacy Cleaner", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+            if (!this.Children.Contains(child))
+                return;
 
-            //    if (Utils.IsProcessRunning("iexplore"))
-            //    {
-            //        System.Windows.Forms.MessageBox.Show("Skipping the scanning process...", "Little Privacy Cleaner", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
-            //        return;
-            //    }
-            //}
+            if (!child.IsChecked.GetValueOrDefault())
+                return;
 
-            foreach (ScannerBase n in this.Children)
+            switch (child.Name)
             {
-                if (!n.IsChecked.GetValueOrDefault())
-                    continue;
-
-                switch (n.Name)
-                {
-                    case "History":
-                        ScanHistory();
-                        break;
-                    case "Cookies":
-                        ScanCookies();
-                        break;
-                    case "Auto Complete":
-                        ScanAutoComplete();
-                        break;
-                    case "Temporary Internet Files":
-                        ScanTemporaryFiles();
-                        break;
-                    //case "Index.dat Files":
-                    //    ScanIndexFiles();
-                    //    break;
-                }
+                case "History":
+                    ScanHistory();
+                    break;
+                case "Cookies":
+                    ScanCookies();
+                    break;
+                case "Auto Complete":
+                    ScanAutoComplete();
+                    break;
+                case "Temporary Internet Files":
+                    ScanTemporaryFiles();
+                    break;
+                //case "Index.dat Files":
+                //    ScanIndexFiles();
+                //    break;
             }
         }
 

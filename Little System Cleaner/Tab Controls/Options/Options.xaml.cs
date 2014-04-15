@@ -43,6 +43,8 @@ namespace Little_System_Cleaner.Controls
 		{
             this.InitializeComponent();
 
+            this.textBoxLog.Text = Properties.Settings.Default.optionsLogDir;
+
             if (Properties.Settings.Default.optionsUpdateDelay == 3)
                 this.comboBoxUpdateDelay.SelectedIndex = 0;
             else if (Properties.Settings.Default.optionsUpdateDelay == 5)
@@ -68,16 +70,23 @@ namespace Little_System_Cleaner.Controls
 
         public void UpdateSettings()
         {
-            Properties.Settings.Default.optionsUpdate = this.checkBoxAutoUpdate.IsChecked.Value;
+            if (this.textBoxLog != null)
+                Properties.Settings.Default.optionsLogDir = this.textBoxLog.Text;
 
-            if (this.comboBoxUpdateDelay.SelectedIndex == 0)
-                Properties.Settings.Default.optionsUpdateDelay = 3;
-            else if (this.comboBoxUpdateDelay.SelectedIndex == 1)
-                Properties.Settings.Default.optionsUpdateDelay = 5;
-            else if (this.comboBoxUpdateDelay.SelectedIndex == 2)
-                Properties.Settings.Default.optionsUpdateDelay = 7;
-            else if (this.comboBoxUpdateDelay.SelectedIndex == 3)
-                Properties.Settings.Default.optionsUpdateDelay = 14;
+            if (this.checkBoxAutoUpdate != null)
+                Properties.Settings.Default.optionsUpdate = this.checkBoxAutoUpdate.IsChecked.Value;
+
+            if (this.comboBoxUpdateDelay != null)
+            {
+                if (this.comboBoxUpdateDelay.SelectedIndex == 0)
+                    Properties.Settings.Default.optionsUpdateDelay = 3;
+                else if (this.comboBoxUpdateDelay.SelectedIndex == 1)
+                    Properties.Settings.Default.optionsUpdateDelay = 5;
+                else if (this.comboBoxUpdateDelay.SelectedIndex == 2)
+                    Properties.Settings.Default.optionsUpdateDelay = 7;
+                else if (this.comboBoxUpdateDelay.SelectedIndex == 3)
+                    Properties.Settings.Default.optionsUpdateDelay = 14;
+            }
 
             if (this.checkBoxSysRestore != null)
                 Properties.Settings.Default.optionsSysRestore = this.checkBoxSysRestore.IsChecked.GetValueOrDefault();
@@ -98,6 +107,21 @@ namespace Little_System_Cleaner.Controls
         private void buttonWebsite_Click(object sender, RoutedEventArgs e)
         {
             Utils.LaunchURI(@"http://www.little-apps.com/");
+        }
+
+        private void buttonBrowse_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.Windows.Forms.FolderBrowserDialog folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                folderBrowserDlg.Description = "Select the folder where the log files will be placed";
+                folderBrowserDlg.SelectedPath = this.textBoxLog.Text;
+                folderBrowserDlg.ShowNewFolderButton = true;
+
+                if (folderBrowserDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    this.textBoxLog.Text = folderBrowserDlg.SelectedPath;
+
+                UpdateSettings();
+            }
         }
         
 	}

@@ -122,10 +122,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
+        public virtual void Scan(ScannerBase child)
+        {
+            return;
+        }
+
         public virtual void Scan()
         {
             return;
         }
+
         public virtual bool IsRunning()
         {
             return false;

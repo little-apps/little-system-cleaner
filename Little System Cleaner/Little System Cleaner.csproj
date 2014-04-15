@@ -114,6 +114,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Privacy Cleaner\Controls\Details.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Privacy Cleaner\Controls\Results.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Privacy Cleaner\Controls\Analyze.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -168,6 +176,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -226,6 +235,12 @@
     <Compile Include="Misc\SysRestore.cs" />
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Misc\WindowWrapper.cs" />
+    <Compile Include="Privacy Cleaner\Controls\Details.xaml.cs">
+      <DependentUpon>Details.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Privacy Cleaner\Controls\Results.xaml.cs">
+      <DependentUpon>Results.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Privacy Cleaner\Controls\Analyze.xaml.cs">
       <DependentUpon>Analyze.xaml</DependentUpon>
     </Compile>
@@ -233,6 +248,7 @@
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Compile Include="Privacy Cleaner\Controls\Wizard.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\PInvoke.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results.cs" />
     <Compile Include="Privacy Cleaner\Helpers\RunningMsg.xaml.cs">
       <DependentUpon>RunningMsg.xaml</DependentUpon>

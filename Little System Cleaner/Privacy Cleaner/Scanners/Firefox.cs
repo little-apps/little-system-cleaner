@@ -66,8 +66,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        public override void Scan()
-        {
+        public override void Scan(ScannerBase child) {
+            if (!this.Children.Contains(child))
+                return;
+
+            if (!child.IsChecked.GetValueOrDefault())
+                return;
+
             //if (Utils.IsProcessRunning("firefox"))
             //{
             //    System.Windows.Forms.MessageBox.Show("Mozilla Firefox must be closed to allow the files to be scanned and cleaned", "Little Privacy Cleaner", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
@@ -79,31 +84,26 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             //    }
             //}
 
-            foreach (ScannerBase n in this.Children)
+            switch (child.Name)
             {
-                if (n.IsChecked.GetValueOrDefault() == false)
-                    continue;
-
-                switch (n.Name)
-                {
-                    case "Internet History":
-                        ScanInternetHistory();
-                        break;
-                    case "Cookies":
-                        ScanCookies();
-                        break;
-                    case "Internet Cache":
-                        ScanCache();
-                        break;
-                    case "Saved Form History":
-                        ScanFormHistory();
-                        break;
-                    case "Download History":
-                        ScanDownloadHistory();
-                        break;
-                }
+                case "Internet History":
+                    ScanInternetHistory();
+                    break;
+                case "Cookies":
+                    ScanCookies();
+                    break;
+                case "Internet Cache":
+                    ScanCache();
+                    break;
+                case "Saved Form History":
+                    ScanFormHistory();
+                    break;
+                case "Download History":
+                    ScanDownloadHistory();
+                    break;
             }
         }
+        
 
         private string[] _firefoxProfilePaths = null;
         public string[] FirefoxProfilePaths

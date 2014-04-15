@@ -53,23 +53,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Name = header;
         }
 
-        public override void Scan()
+        public void Scan(ScannerBase child)
         {
-            foreach (ScannerBase n in this.Children)
-            {
-                if (!n.IsChecked.GetValueOrDefault())
-                    continue;
+            if (!this.Children.Contains(child))
+                return;
 
-                //switch (n.Name)
-                //{
-                    
-                    
-                //}
-            }
+            if (!child.IsChecked.GetValueOrDefault())
+                return;
         }
-
-        
-
-        
     }
 }

@@ -35,6 +35,7 @@ using System.Xml;
 using System.Security.Cryptography;
 using System.Security;
 using System.Collections.Specialized;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Little_System_Cleaner
 {
@@ -1946,6 +1947,44 @@ namespace Little_System_Cleaner
             FileInfo fileInfo = new FileInfo(filePath);
 
             return IsFileValid(fileInfo);
+        }
+
+        public static void DeleteFile(string filePath)
+        {
+            try
+            {
+                if (Properties.Settings.Default.privacyCleanerDeletePerm)
+                    File.Delete(filePath);
+                else
+                    FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        public static void DeleteDir(string dirPath, bool recurse)
+        {
+            try
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+                if ((dirInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    dirInfo.Attributes = dirInfo.Attributes & ~FileAttributes.ReadOnly;
+
+                if (!recurse && dirInfo.GetFileSystemInfos().Length > 0)
+                    return;
+
+                if (Properties.Settings.Default.privacyCleanerDeletePerm)
+                    Directory.Delete(dirPath, recurse);
+                else
+                    FileSystem.DeleteDirectory(dirPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            catch (Exception)
+            {
+
+            }
+
         }
         #endregion
     }

@@ -40,12 +40,14 @@ namespace Little_System_Cleaner
             get { return strLogFilePath; }
         }
 
+        private readonly bool _isEnabled;
+
         /// <summary>
-        /// Gets whether logging is enabled
+        /// Gets/Sets whether logging is enabled
         /// </summary>
-        public static bool IsEnabled
+        public bool IsEnabled
         {
-            get { return Properties.Settings.Default.registryCleanerOptionsLog; }
+            get { return this._isEnabled; }
         }
 
         public override Encoding Encoding
@@ -53,10 +55,12 @@ namespace Little_System_Cleaner
             get { return Encoding.ASCII; }
         }
 
-        public Logger(string fileName)
+        public Logger(string fileName, bool isEnabled)
             : base(fileName)
         {
-            if (IsEnabled)
+            this._isEnabled = isEnabled;
+
+            if (this.IsEnabled)
             {
                 try
                 {
@@ -92,9 +96,9 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="filePath">The file to write to</param>
         /// <param name="value">The string to write</param>
-        public static void WriteToFile(string filePath, string value)
+        public void WriteToFile(string filePath, string value)
         {
-            if (IsEnabled)
+            if (this.IsEnabled)
             {
                 try
                 {
@@ -119,9 +123,9 @@ namespace Little_System_Cleaner
         /// Moves the temp file to the log directory and opens it with the default viewer
         /// </summary>
         /// <returns>True if the file is displayed</returns>
-        public bool DisplayLogFile()
+        public bool DisplayLogFile(bool displayFile)
         {
-            if (IsEnabled)
+            if (this.IsEnabled)
             {
                 string strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt", Little_System_Cleaner.Properties.Settings.Default.optionsLogDir, DateTime.Now);
 
@@ -134,7 +138,7 @@ namespace Little_System_Cleaner
 
                         File.Copy(Logger.strLogFilePath, strNewFileName);
 
-                        if (Properties.Settings.Default.registryCleanerOptionsShowLog && !Properties.Settings.Default.registryCleanerOptionsAutoRepair)
+                        if (displayFile)
                         {
                             ProcessStartInfo startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName);
                             startInfo.ErrorDialog = true;

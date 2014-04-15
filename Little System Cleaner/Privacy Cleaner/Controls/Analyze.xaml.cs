@@ -46,18 +46,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
         int currentListViewParentIndex = -1;
         int currentListViewIndex = -1;
-        Thread threadMain, threadScan;
+        Thread threadScan;
 
         public ScannerBase CurrentListViewItem
         {
-            get { 
-                
-                return this.SectionsCollection[currentListViewParentIndex].Children[currentListViewIndex] as ScannerBase; }
+            get { return this.SectionsCollection[currentListViewParentIndex].Children[currentListViewIndex] as ScannerBase; }
         }
 
         public ObservableCollection<ScannerBase> SectionsCollection
         {
-            get {
+            get 
+            {
                 if (this.scanBase != null)
                     return this.scanBase.Model.RootChildren;
 
@@ -81,8 +80,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             // Set the progress bar
             this.SetProgressBar();
 
-            this.threadMain = new Thread(new ThreadStart(StartScanning));
-            this.threadMain.Start();
+            Wizard.ScanThread = new Thread(new ThreadStart(StartScanning));
+            Wizard.ScanThread.Start();
         }
 
         private void SetProgressBar()
@@ -108,7 +107,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void StartScanning()
         {
-            bool bRet = false;
+            bool scanAborted = false;
             int currentParent = -1;
 
             // Begin critical region
@@ -119,9 +118,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 foreach (ScannerBase n in this.SectionsCollection)
                 {
                     currentParent++;
+                    currentListViewIndex = -1;
 
                     if (n.IsChecked.GetValueOrDefault() == false)
                         continue;
+
+                    Wizard.CurrentScanner = n;
 
                     if (n.Children.Count > 0) // Should always have children, but just in case
                     {
@@ -129,16 +131,31 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         {
                             InvokeCurrentSection(child.Section, currentParent);
 
-                            this.StartScanner(child);
+                            this.StartScanner(n, child);
                         }
+
+                        if (n.Results.Children.Count > 0)
+                            Wizard.ResultArray.Add(n.Results);
+                    }
+                    else
+                    {
+                        InvokeCurrentSection(n.Section, currentParent);
+
+                        this.StartScanner(n);
+
+                        if (n.Results.Children.Count > 0)
+                            Wizard.ResultArray.Add(n.Results);
                     }
                 }
 
-                bRet = true;
+                scanAborted = true;
             }
             catch (ThreadAbortException)
             {
-                bRet = false;
+                scanAborted = false;
+
+                if (this.threadScan.IsAlive)
+                    this.threadScan.Abort();
             }
             finally
             {
@@ -148,10 +165,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             // End critical region
             Thread.EndCriticalRegion();
 
-            if (bRet)
+            if (scanAborted)
                 this.scanBase.MoveNext();
-            else
-                this.scanBase.MoveFirst();
         }
 
         /// <summary>
@@ -186,35 +201,74 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             this.listView.Items.Refresh();
         }
 
-        private void StartScanner(ScannerBase scanner)
+        private void StartScanner(ScannerBase parent, ScannerBase child)
         {
-            if (!string.IsNullOrEmpty(scanner.ProcessName))
+            if (!string.IsNullOrEmpty(parent.ProcessName))
             {
                 bool? ret;
                 if (this.Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    ret = (bool?)this.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { scanner.Name, scanner.ProcessName });
-                    return;
+                    ret = (bool?)this.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { parent.Name, parent.ProcessName });
                 }
                 else
                 {
-                    ret = RunningMsg.DisplayRunningMsg(scanner.Name, scanner.ProcessName);
+                    ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
                 }
 
                 if (ret.GetValueOrDefault() == false)
                 {
                     // Skip plugin
-                    this.progressBar.Value++;
+                    if (this.Dispatcher.Thread != Thread.CurrentThread)
+                    {
+                        this.Dispatcher.Invoke(new Action(() => this.progressBar.Value++));
+                    }
+                    else
+                    {
+                        this.progressBar.Value++;
+                    }
+                    
                     return;
                 }
             }
 
-            threadScan = new Thread(new ThreadStart(scanner.Scan));
+            threadScan = new Thread(() => parent.Scan(child));
             threadScan.Start();
             threadScan.Join();
+        }
 
-            if (scanner.Results.Children.Count > 0)
-                Wizard.ResultArray.Add(scanner.Results);
+        private void StartScanner(ScannerBase parent)
+        {
+            if (!string.IsNullOrEmpty(parent.ProcessName))
+            {
+                bool? ret;
+                if (this.Dispatcher.Thread != Thread.CurrentThread)
+                {
+                    ret = (bool?)this.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { parent.Name, parent.ProcessName });
+                }
+                else
+                {
+                    ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
+                }
+
+                if (ret.GetValueOrDefault() == false)
+                {
+                    // Skip plugin
+                    if (this.Dispatcher.Thread != Thread.CurrentThread)
+                    {
+                        this.Dispatcher.Invoke(new Action(() => this.progressBar.Value++));
+                    }
+                    else
+                    {
+                        this.progressBar.Value++;
+                    }
+
+                    return;
+                }
+            }
+
+            threadScan = new Thread(parent.Scan);
+            threadScan.Start();
+            threadScan.Join();
         }
 
         void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -230,6 +284,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
                 this.CurrentListViewItem.Errors = string.Format("{0} Errors", Wizard.ResultArray.Problems(this.CurrentListViewItem.Section));
                 this.listView.Items.Refresh();
+            }
+        }
+
+        public void AbortScanThread()
+        {
+            if (Wizard.ScanThread.IsAlive)
+                Wizard.ScanThread.Abort();
+
+            if (this.threadScan.IsAlive)
+                this.threadScan.Abort();
+        }
+
+        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                this.AbortScanThread();
+                this.scanBase.MoveFirst();
             }
         }
     }

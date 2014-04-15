@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -33,7 +34,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         List<Type> arrayControls = new List<Type>();
         int currentControl = 0;
 
-        static ScannerBase CurrentScanner;
+        public static ScannerBase CurrentScanner;
         static int ProblemsFound = 0;
 
         /// <summary>
@@ -54,11 +55,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         public static ResultArray ResultArray = new ResultArray();
 
+        public static Thread ScanThread { get; set; }
+
         public SectionModel Model
         {
             get;
             set;
         }
+
+        private Results StoredResults { get; set; }
 
         public UserControl userControl
         {
@@ -69,6 +74,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             this.arrayControls.Add(typeof(Start));
             this.arrayControls.Add(typeof(Analyze));
+            this.arrayControls.Add(typeof(Results));
         }
 
         public void OnLoaded()
@@ -78,10 +84,58 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         public bool OnUnloaded()
         {
-            if (this.currentControl > 0)
-                return false;
+            if (this.userControl is Analyze)
+            {
+                if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    (this.userControl as Analyze).AbortScanThread();
+                    Wizard.ResultArray.Clear();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (this.userControl is Results)
+            {
+                if (MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Wizard.ResultArray.Clear();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
             return true;
+        }
+
+        public void ShowDetails(ResultNode resultNode)
+        {
+            // Store current control
+            this.StoredResults = this.userControl as Results;
+
+            Details ctrlDetails = new Details(this, resultNode);
+            this.Content = ctrlDetails;
+        }
+
+        public void HideDetails()
+        {
+            if (this.StoredResults == null)
+            {
+                MessageBox.Show(App.Current.MainWindow, "An error occured going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                this.MoveFirst();
+
+                return;
+            }
+
+            this.Content = this.StoredResults;
         }
 
         /// <summary>
@@ -126,6 +180,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         public void MoveFirst()
         {
             currentControl = 0;
+
+            Wizard.ResultArray.Clear();
 
             SetCurrentControl(currentControl);
         }

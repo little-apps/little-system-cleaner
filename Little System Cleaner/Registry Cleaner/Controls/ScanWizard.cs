@@ -81,7 +81,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public static void CreateNewLogFile() 
         {
-            _logger = new Logger(System.IO.Path.GetTempFileName());
+            _logger = new Logger(System.IO.Path.GetTempFileName(), Properties.Settings.Default.registryCleanerOptionsLog);
         }
 
         public UserControl userControl

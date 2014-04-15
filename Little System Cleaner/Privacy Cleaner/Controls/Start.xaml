@@ -45,16 +45,6 @@
             </TabItem>
             <TabItem Header="Options">
                 <StackPanel>
-                    <GroupBox Header="Select a folder to save the log files to">
-                        <Grid Margin="5,5,5,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="483*" />
-                                <ColumnDefinition Width="66" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" />
-                            <Button x:Name="buttonBrowse" Margin="2,0,0,0" Content="Browse..." Grid.Column="1" Style="{DynamicResource GlassButton}" Click="buttonBrowse_Click" />
-                        </Grid>
-                    </GroupBox>
                     <GroupBox Header="Select how files will be cleaned from the disk">
                         <StackPanel Margin="5,5,5,5">
                             <RadioButton x:Name="radioButtonPerm" Content="Permanently remove files from hard disk (recommended)" Click="UpdateSettings" />
@@ -71,6 +61,12 @@
                                 <CheckBox x:Name="checkBoxHidden" Content="Include hidden files" DockPanel.Dock="Left" Click="UpdateSettings" />
                                 <CheckBox x:Name="checkBoxZeroByte" Content="Include zero-byte files" DockPanel.Dock="Right" Click="UpdateSettings" />
                             </DockPanel>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Log">
+                        <StackPanel Margin="5,5,5,5">
+                            <CheckBox x:Name="checkBoxLogScan" Content="Log privacy scan and repairs" Click="UpdateSettings" />
+                            <CheckBox x:Name="checkBoxDisplayLog" Content="Show log after finished scanning" Click="UpdateSettings" Margin="0,5,0,0" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>

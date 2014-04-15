@@ -65,24 +65,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Name = header;
         }
 
-        public override void Scan()
+        public override void Scan(ScannerBase child)
         {
-            foreach (ScannerBase n in this.Children)
+            if (!this.Children.Contains(child))
+                return;
+
+            if (!child.IsChecked.GetValueOrDefault())
+                return;
+
+            switch (child.Name)
             {
-                if (n.IsChecked.GetValueOrDefault() == false)
-                    continue;
 
-                switch (n.Name)
-                {
+                case "Recycle Bin":
+                    ScanRecycleBin();
+                    break;
 
-                    case "Recycle Bin":
-                        ScanRecycleBin();
-                        break;
-
-                    case "Desktop and Start Menu Icons":
-                        ScanDesktopStartMenuIcons();
-                        break;
-                }
+                case "Desktop and Start Menu Icons":
+                    ScanDesktopStartMenuIcons();
+                    break;
             }
         }
 

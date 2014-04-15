@@ -47,7 +47,7 @@
             </Grid>
         </Border>
         <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">The uninstall manager allows you to remove programs that cannot be properly removed</Label>
-            <ListView IsSynchronizedWithCurrentItem="True" Name="listViewProgs" SelectionMode="Single" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler" Grid.Row="3">
+        <ListView IsSynchronizedWithCurrentItem="True" Name="listViewProgs" SelectionMode="Single" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler" Grid.Row="3">
 			<ListView.View>
 				<GridView AllowsColumnReorder="False">
 					<GridViewColumn Header="Program" Width="100">

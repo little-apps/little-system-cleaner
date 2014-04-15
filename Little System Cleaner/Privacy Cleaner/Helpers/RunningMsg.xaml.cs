@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,7 +42,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         private readonly string procName;
         private readonly string scannerName;
 
-        private Timer timer = new Timer(100);
+        private System.Timers.Timer timer = new System.Timers.Timer(100);
 
         public RunningMsg(string name, string proc)
         {
@@ -50,7 +51,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             this.procName = proc;
             this.scannerName = name;
 
-            this.timer.Elapsed += timer_Elapsed;
+            this.timer.Elapsed += this.timer_Elapsed;
             this.timer.Start();
         }
 
@@ -76,6 +77,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         private void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            {
+                this.Dispatcher.Invoke(new EventHandler<ElapsedEventArgs>(timer_Elapsed), sender, e);
+                return;
+            }
+
             // Update list box
             this.listBox.Items.Clear();
             foreach (Process p in Process.GetProcessesByName(this.procName))

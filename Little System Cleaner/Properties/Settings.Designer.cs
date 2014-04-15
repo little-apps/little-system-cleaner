@@ -737,13 +737,25 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string privacyCleanerLogFolder {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool privacyCleanerLog {
             get {
-                return ((string)(this["privacyCleanerLogFolder"]));
+                return ((bool)(this["privacyCleanerLog"]));
             }
             set {
-                this["privacyCleanerLogFolder"] = value;
+                this["privacyCleanerLog"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool privacyCleanerDisplayLog {
+            get {
+                return ((bool)(this["privacyCleanerDisplayLog"]));
+            }
+            set {
+                this["privacyCleanerDisplayLog"] = value;
             }
         }
     }

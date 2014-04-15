@@ -62,13 +62,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             this._tree.Model = SectionModel.CreateSectionModel();
 
-            this.textBoxLog.Text = Properties.Settings.Default.privacyCleanerLogFolder;
             this.radioButtonPerm.IsChecked = Properties.Settings.Default.privacyCleanerDeletePerm;
             this.radioButtonMove.IsChecked = Properties.Settings.Default.privacyCleanerDeleteRecBin;
             this.checkBoxReadOnly.IsChecked = Properties.Settings.Default.privacyCleanerIncReadOnlyFile;
             this.checkBoxHidden.IsChecked = Properties.Settings.Default.privacyCleanerIncHiddenFile;
             this.checkBoxSystem.IsChecked = Properties.Settings.Default.privacyCleanerIncSysFile;
             this.checkBoxZeroByte.IsChecked = Properties.Settings.Default.privacyCleanerInc0ByteFile;
+            this.checkBoxLogScan.IsChecked = Properties.Settings.Default.privacyCleanerLog;
+            this.checkBoxDisplayLog.IsChecked = Properties.Settings.Default.privacyCleanerDisplayLog;
         }
 
         private void UpdateSettings(object sender, RoutedEventArgs e)
@@ -78,28 +79,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void UpdateSettings()
         {
-            Properties.Settings.Default.privacyCleanerLogFolder = this.textBoxLog.Text;
             Properties.Settings.Default.privacyCleanerDeletePerm = this.radioButtonPerm.IsChecked.GetValueOrDefault();
             Properties.Settings.Default.privacyCleanerDeleteRecBin = this.radioButtonMove.IsChecked.GetValueOrDefault();
             Properties.Settings.Default.privacyCleanerIncReadOnlyFile = this.checkBoxReadOnly.IsChecked.GetValueOrDefault();
             Properties.Settings.Default.privacyCleanerIncHiddenFile = this.checkBoxHidden.IsChecked.GetValueOrDefault();
             Properties.Settings.Default.privacyCleanerIncSysFile = this.checkBoxSystem.IsChecked.GetValueOrDefault();
             Properties.Settings.Default.privacyCleanerInc0ByteFile = this.checkBoxZeroByte.IsChecked.GetValueOrDefault();
-        }
-
-        private void buttonBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            using (System.Windows.Forms.FolderBrowserDialog folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                folderBrowserDlg.Description = "Select the folder where the log files will be placed";
-                folderBrowserDlg.SelectedPath = this.textBoxLog.Text;
-                folderBrowserDlg.ShowNewFolderButton = true;
-
-                if (folderBrowserDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    this.textBoxLog.Text = folderBrowserDlg.SelectedPath;
-
-                UpdateSettings();
-            }
+            Properties.Settings.Default.privacyCleanerLog = this.checkBoxLogScan.IsChecked.GetValueOrDefault();
+            Properties.Settings.Default.privacyCleanerDisplayLog = this.checkBoxDisplayLog.IsChecked.GetValueOrDefault();
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)

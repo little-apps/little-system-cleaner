@@ -59,28 +59,28 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        public override void Scan()
+        public override void Scan(ScannerBase child)
         {
-            foreach (ScannerBase n in this.Children)
-            {
-                if (!n.IsChecked.GetValueOrDefault())
-                    continue;
+            if (!this.Children.Contains(child))
+                return;
 
-                switch (n.Name)
-                {
-                    case "Cookies":
-                        ScanCookies();
-                        break;
-                    case "Download History":
-                        ScanDownloadHistory();
-                        break;
-                    case "Internet Cache":
-                        ScanCache();
-                        break;
-                    case "Internet History":
-                        ScanInternetHistory();
-                        break;
-                }
+            if (!child.IsChecked.GetValueOrDefault())
+                return;
+
+            switch (child.Name)
+            {
+                case "Cookies":
+                    ScanCookies();
+                    break;
+                case "Download History":
+                    ScanDownloadHistory();
+                    break;
+                case "Internet Cache":
+                    ScanCache();
+                    break;
+                case "Internet History":
+                    ScanInternetHistory();
+                    break;
             }
         }
 
