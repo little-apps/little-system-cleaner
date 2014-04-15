@@ -50,13 +50,13 @@
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Select a folder to save the log files to" x:Name="groupBox2" VerticalAlignment="Top">
-                        <Grid Margin="5,5,5,5">
+                        <Grid Margin="5,5,5,5" Height="27">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="483*" />
-                                <ColumnDefinition Width="66" />
+                                <ColumnDefinition Width="70" />
                             </Grid.ColumnDefinitions>
                             <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" />
-                            <Button Margin="2,0,0,0" x:Name="buttonBrowseLogDir" Content="Browse..." Grid.Column="1" Click="buttonBrowse_Click" Style="{DynamicResource GlassButton}" />
+                            <Button Margin="2,0,0,0" Padding="8,0,8,0" x:Name="buttonBrowseLogDir" Content="Browse..." Grid.Column="1" Click="buttonBrowse_Click" />
                         </Grid>
                     </GroupBox>
                 </StackPanel>
@@ -67,11 +67,11 @@
                 </TabItem.Header>
                 <Grid>
                     <Image HorizontalAlignment="Left" Margin="11,5,0,0" VerticalAlignment="Top" Source="/Little_System_Cleaner;component/Resources/icon.png" Height="65" Width="64" />
-                    <Label HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Little Registry Cleaner" Height="75" Width="218" Margin="83,0,0,0" FontSize="20" FontWeight="Bold" VerticalContentAlignment="Center" />
+                    <Label HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Little System Cleaner" Height="75" Width="218" Margin="83,0,0,0" FontSize="20" FontWeight="Bold" VerticalContentAlignment="Center" />
                     <Separator Height="2" HorizontalAlignment="Stretch" Margin="11,75,11,0" Name="separator1" VerticalAlignment="Top" Grid.ColumnSpan="2" />
 
                     <Grid Margin="11,81,11,35" Grid.ColumnSpan="2">
-                        <RichTextBox Name="textBlock1" MinWidth="547" IsReadOnly="True" IsDocumentEnabled="True">
+                        <RichTextBox Name="textBlock1" MinWidth="547" IsReadOnly="True" IsDocumentEnabled="True" Margin="0,0,0,10">
                             <FlowDocument>
                                 <Paragraph>
                                     <Run Text="Warning: This computer program is protected by copyright law and international treaties. Unauthorized reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted under the maximum extent of the law." />
@@ -108,8 +108,8 @@
                             <!-- </Frame.Content>
                         </Frame> -->
                     </Grid>
-                    <Button HorizontalAlignment="Right" Margin="0,0,11,8" VerticalAlignment="Bottom" Width="80" Height="23" Content="Visit Website" Name="buttonWebsite" Click="buttonWebsite_Click" Style="{DynamicResource GlassButton}" Grid.Column="1" />
-                    <Button HorizontalAlignment="Left" Margin="11,0,0,8" VerticalAlignment="Bottom" Width="64" Height="23" Content="Support" Name="buttonSupport" Click="buttonSupport_Click" Style="{DynamicResource GlassButton}" Grid.ColumnSpan="2" />
+                    <Button HorizontalAlignment="Right" Margin="0,0,11,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Content="Visit Website" Name="buttonWebsite" Click="buttonWebsite_Click" Grid.Column="1" />
+                    <Button HorizontalAlignment="Left" Margin="11,0,0,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Content="Support" Name="buttonSupport" Click="buttonSupport_Click" Grid.ColumnSpan="2" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,6,0" VerticalAlignment="Top" Grid.Column="1"/>
                 </Grid>
             </TabItem>

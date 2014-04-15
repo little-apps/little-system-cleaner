@@ -29,10 +29,10 @@
             </Grid>
         </Border>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5,8,0,5">
-            <Button x:Name="btnGoBack" Padding="15,0,15,0" HorizontalAlignment="Left" Click="btnGoBack_Click" Style="{DynamicResource GlassButton}">Go Back</Button>
-            <Button x:Name="btnOpen" Margin="5,0,0,0" Padding="15,0,15,0" Click="btnOpen_Click" Style="{DynamicResource GlassButton}">Open...</Button>
-            <Button x:Name="btnLocate" Margin="5,0,0,0" Padding="15,0,15,0" Click="btnLocate_Click" Style="{DynamicResource GlassButton}">Locate</Button>
-            <Button x:Name="btnViewProperties" Margin="5,0,0,0" Padding="15,0,15,0" Click="btnViewProperties_Click" Style="{DynamicResource GlassButton}">View Properties</Button>
+            <Button x:Name="btnGoBack" Padding="8,0,8,0" HorizontalAlignment="Left" Click="btnGoBack_Click">Go Back</Button>
+            <Button x:Name="btnOpen" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnOpen_Click">Open...</Button>
+            <Button x:Name="btnLocate" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnLocate_Click">Locate</Button>
+            <Button x:Name="btnViewProperties" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnViewProperties_Click">View Properties</Button>
         </StackPanel>
 
         <ListView x:Name="listView" Grid.Row="2" Margin="5,0,5,5" ItemsSource="{Binding DetailItemCollection}" IsSynchronizedWithCurrentItem="True">

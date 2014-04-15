@@ -67,7 +67,7 @@
             </DockPanel>
         </DockPanel>
 
-        <Button Name="buttonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="87" HorizontalAlignment="Right" Margin="0,5,5,5" />
-        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="66" HorizontalAlignment="Left" Margin="5,5,0,5">Cancel</Button>
+        <Button Name="buttonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="4" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" />
+        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
     </Grid>
 </UserControl>

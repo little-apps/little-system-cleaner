@@ -35,7 +35,7 @@
             </Grid>
         </Border>
         <ProgressBar VerticalAlignment="Top" Height="24" x:Name="progressBar" Grid.Row="2" />
-        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Grid.Row="4" Style="{DynamicResource GlassButton}" Margin="0,5,0,5" Foreground="White" HorizontalAlignment="Left" Width="62" />
+        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left" />
         <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2" />
 
         <ListView ItemsSource="{Binding SectionsCollection}" Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">

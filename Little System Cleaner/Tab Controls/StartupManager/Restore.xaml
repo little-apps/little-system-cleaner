@@ -39,20 +39,20 @@
 				</GridView>
 			</ListView.View>
 		</ListView>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="30" Grid.Row="3">
-            <Button Width="80" Name="buttonRestore" Click="buttonRestore_Click" Margin="0,0,5,0" Style="{DynamicResource GlassButton}">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Grid.Row="3">
+            <Button Name="buttonRestore" Click="buttonRestore_Click" Margin="0,0,5,0" Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/Restore.png" />
                     <TextBlock VerticalAlignment="Center">Restore</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Width="121" Name="buttonBrowse" Click="buttonBrowse_Click" Margin="0,0,5,0" Style="{DynamicResource GlassButton}">
+            <Button Name="buttonBrowse" Click="buttonBrowse_Click" Margin="0,0,5,0" Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Images/folder.png" />
                     <TextBlock VerticalAlignment="Center">Browse Directory</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Name="buttonRefresh" Width="73" Click="buttonRefresh_Click" Margin="0,0,5,0" Style="{DynamicResource GlassButton}">
+            <Button Name="buttonRefresh" Click="buttonRefresh_Click" Margin="0,0,5,0"  Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/refresh.png" />
                     <TextBlock VerticalAlignment="Center">Refresh</TextBlock>

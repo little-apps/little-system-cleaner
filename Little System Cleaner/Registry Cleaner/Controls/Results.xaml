@@ -35,8 +35,8 @@
             </Grid>
         </Border>
         <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="textBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of problems found in your registry</TextBlock>
-        <Button Content="Fix Problems" Click="buttonFix_Click" Name="buttonFix" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="87" HorizontalAlignment="Right" Margin="0,5,0,5" />
-        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Style="{DynamicResource GlassButton}" Foreground="White" Width="66" HorizontalAlignment="Left" Margin="0,5,0,5">Cancel</Button>
+        <Button Content="Fix Problems" Click="buttonFix_Click" Name="buttonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5" />
+        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="0,5,0,5">Cancel</Button>
         <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1">
             <tree:TreeList.ContextMenu>
                 <ContextMenu Name="contextMenuResults">

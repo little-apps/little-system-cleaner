@@ -24,13 +24,13 @@
 
     </UserControl.Resources>
 
-	<Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="23" />
-            <RowDefinition Height="264*" />
-            <RowDefinition Height="37" />
+            <RowDefinition />
+            <RowDefinition Height="46" />
         </Grid.RowDefinitions>
         <Border CornerRadius="5" Grid.Row="0">
             <Border.Effect>
@@ -46,11 +46,11 @@
                 <Label FontSize="14" Margin="8,0,0,0" Foreground="White" HorizontalAlignment="Left">Uninstall Manager</Label>
             </Grid>
         </Border>
-        <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">The uninstall manager allows you to remove programs that cannot be properly removed</Label>
+        <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="26" Margin="52,2,51,2" Width="476">The uninstall manager allows you to remove programs that cannot be properly removed</Label>
         <ListView IsSynchronizedWithCurrentItem="True" Name="listViewProgs" SelectionMode="Single" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler" Grid.Row="3">
-			<ListView.View>
-				<GridView AllowsColumnReorder="False">
-					<GridViewColumn Header="Program" Width="100">
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Header="Program" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -60,20 +60,20 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-					<GridViewColumn Header="Publisher" Width="100" DisplayMemberBinding="{Binding Publisher}" />
+                    <GridViewColumn Header="Publisher" Width="100" DisplayMemberBinding="{Binding Publisher}" />
                     <GridViewColumn Header="Size" Width="100" DisplayMemberBinding="{Binding Size}" />
-				</GridView>
-			</ListView.View>
-		</ListView>
+                </GridView>
+            </ListView.View>
+        </ListView>
         <controls:SearchTextBox Name="textBoxSearch" SearchMode="Instant" Search="SearchTextBox_Search" Grid.Row="2" />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Bottom" Height="30" Grid.Row="4">
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="84" Name="buttonUninstall" Style="{DynamicResource GlassButton}" Click="buttonUninstall_Click">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Center" Height="30" Grid.Row="4" Width="224">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonUninstall" Click="buttonUninstall_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/uninstall%20manager.png" />
                     <TextBlock VerticalAlignment="Center">Uninstall</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,8,0" Width="109" Name="buttonRemove" Style="{DynamicResource GlassButton}" Click="buttonRemove_Click">
+            <Button Grid.Row="3" Margin="0,0,8,0" Padding="8,0,8,0" Name="buttonRemove" Click="buttonRemove_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/button_cancel.png" />
                     <TextBlock VerticalAlignment="Center">Remove Entry</TextBlock>

@@ -53,38 +53,38 @@
             </tree:TreeList.View>
 		</tree:TreeList>
         <StackPanel Orientation="Horizontal"  Grid.Row="3" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Center" Height="30">
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="55" Name="buttonAdd" Style="{DynamicResource GlassButton}" Click="buttonAdd_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonAdd" Click="buttonAdd_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/add.png" />
                     <TextBlock VerticalAlignment="Center">Add</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="57" Name="buttonEdit" Style="{DynamicResource GlassButton}" Click="buttonEdit_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonEdit" Click="buttonEdit_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/edit.png" />
                     <TextBlock VerticalAlignment="Center">Edit</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="68" Name="buttonDelete" Style="{DynamicResource GlassButton}" Click="buttonDelete_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonDelete" Click="buttonDelete_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/delete.png" />
                     <TextBlock VerticalAlignment="Center">Delete</TextBlock>
                 </StackPanel>
             </Button>
 
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="60" Name="buttonView"  Style="{DynamicResource GlassButton}" Click="buttonView_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonView" Click="buttonView_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/view.png" />
                     <TextBlock VerticalAlignment="Center">View</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="62" Name="buttonRun"  Style="{DynamicResource GlassButton}" Click="buttonRun_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRun" Click="buttonRun_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/run.png" />
                     <TextBlock VerticalAlignment="Center">Run</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Width="75" Name="buttonRefresh" Style="{DynamicResource GlassButton}" Click="buttonRefresh_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRefresh" Click="buttonRefresh_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/refresh.png" />
                     <TextBlock VerticalAlignment="Center">Refresh</TextBlock>

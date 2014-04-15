@@ -10,25 +10,25 @@
         <GroupBox Header="Name &amp; Path" Margin="3,3,3,0" Name="groupBox1">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Name:" />
-                    <TextBox Height="23" Name="textBoxName" Width="306" />
+                    <Label Content="Name:" Width="70" />
+                    <TextBox Height="22" Name="textBoxName" Width="296" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"  Margin="0,3,0,0" >
-                    <Label Content="Path:" />
-                    <TextBox Height="23" Name="textBoxPath" Width="291" IsReadOnly="True" MouseDoubleClick="textBoxPath_MouseDoubleClick" />
+                    <Label Content="Path:" Width="70" />
+                    <TextBox Height="23" Name="textBoxPath" Width="273" IsReadOnly="True" MouseDoubleClick="textBoxPath_MouseDoubleClick" />
                     <Button Height="23" Name="buttonBrowse" Click="buttonBrowse_Click">
                         <Image Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                     </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
-                    <Label Content="Arguments:" />
-                    <TextBox Height="23" Name="textBoxArgs" Width="279" />
+                    <Label Content="Arguments:" Width="70" />
+                    <TextBox Height="23" Name="textBoxArgs" Width="296" />
                 </StackPanel>
             </StackPanel>
         </GroupBox>
-        <StackPanel Orientation="Horizontal" Height="32" Margin="0,0,6,0" Name="stackPanel1" HorizontalAlignment="Right">
-            <Button Height="23" Margin="6,0,0,0" Name="buttonOK" Width="30" Click="buttonOK_Click">OK</Button>
-            <Button Height="23" Margin="6,0,0,0" Name="buttonCancel" Click="buttonCancel_Click">Cancel</Button>
+        <StackPanel Orientation="Horizontal" Height="27" Margin="0,6,6,0" Name="stackPanel1" HorizontalAlignment="Right">
+            <Button Height="27" Margin="6,0,0,0" Padding="8,0,8,0" Name="buttonOK" Click="buttonOK_Click">OK</Button>
+            <Button Height="27" Margin="6,0,0,0" Padding="8,0,8,0" Name="buttonCancel" Click="buttonCancel_Click">Cancel</Button>
         </StackPanel>
     </StackPanel>
 </Window>

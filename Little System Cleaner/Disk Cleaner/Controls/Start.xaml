@@ -59,10 +59,14 @@
                             <RadioButton x:Name="radioButtonRemove" Content="Remove the junk files from the hard drive (recommended)" Margin="5,5,5,5" />
                             <RadioButton x:Name="radioButtonRecycle" Content="Send junk files to the recycle bin" Margin="5,5,5,5" />
                             <RadioButton x:Name="radioButtonMove" Content="Move files to the specified folder:" Margin="5,5,5,5" />
-                            <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                                <TextBox x:Name="textBoxMoveFolder" Width="522" Margin="0,0,5,0" IsReadOnly="True" />
-                                <Button x:Name="buttonSelectMoveFolder" Content="..." Width="24" />
-                            </StackPanel>
+                            <Grid Margin="5,5,5,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="35"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="textBoxMoveFolder" Grid.Column="0" Margin="0,0,5,0" IsReadOnly="True" />
+                                <Button x:Name="buttonSelectMoveFolder" Grid.Column="1" Content="..." />
+                            </Grid>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="System Restore">
@@ -158,8 +162,8 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="5,5,5,5" Grid.Row="1">
-                        <Button x:Name="buttonAddIncFolder" Content="Add" Margin="0,0,5,0" Height="25" Width="35" Click="buttonAddIncFolder_Click" />
-                        <Button x:Name="buttonRemIncFolder" Content="Remove" Height="25" Width="55" Click="buttonRemIncFolder_Click" />
+                        <Button x:Name="buttonAddIncFolder" Content="Add" Margin="0,0,5,0" Height="25" Padding="8,0,8,0" Click="buttonAddIncFolder_Click" />
+                        <Button x:Name="buttonRemIncFolder" Content="Remove" Height="25" Padding="8,0,8,0" Click="buttonRemIncFolder_Click" />
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -177,8 +181,8 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="5,5,5,5" Grid.Row="1">
-                        <Button x:Name="buttonAddExcludeFolder" Content="Add" Margin="0,0,5,0" Height="25" Width="35" Click="buttonAddExcludeFolder_Click" />
-                        <Button x:Name="buttonRemExcludeFolder" Content="Remove" Height="25" Width="55" Click="buttonRemExcludeFolder_Click" />
+                        <Button x:Name="buttonAddExcludeFolder" Content="Add" Margin="0,0,5,0" Padding="8,0,8,0" Height="25" Click="buttonAddExcludeFolder_Click" />
+                        <Button x:Name="buttonRemExcludeFolder" Content="Remove" Padding="8,0,8,0" Height="25" Click="buttonRemExcludeFolder_Click" />
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -196,13 +200,13 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1"  Margin="5,5,5,5">
-                        <Button x:Name="buttonAddExcludeFile" Content="Add" Margin="0,0,5,0" Height="25" Width="35" Click="buttonFilesAdd_Click" />
-                        <Button x:Name="buttonRemExcludeFile" Content="Remove" Height="25" Width="55" Click="buttonRemExcludeFile_Click" />
+                        <Button x:Name="buttonAddExcludeFile" Content="Add" Margin="0,0,5,0" Height="25" Padding="8,0,8,0" Click="buttonFilesAdd_Click" />
+                        <Button x:Name="buttonRemExcludeFile" Content="Remove" Height="25" Padding="8,0,8,0" Click="buttonRemExcludeFile_Click" />
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="buttonScan" Foreground="#FFFFFFFF" Style="{DynamicResource GlassButton}" Margin="0,5,0,5" Grid.Row="2" Click="buttonScan_Click" HorizontalAlignment="Center" Width="130">
+        <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" Click="buttonScan_Click" HorizontalAlignment="Center">
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
                 <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                 <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>

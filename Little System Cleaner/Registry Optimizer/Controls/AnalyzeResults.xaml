@@ -49,13 +49,13 @@
             </DVC:Chart.Series>
         </DVC:Chart>
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" Name="stackPanel1" Orientation="Horizontal" Margin="0,5,0,0">
-            <Button x:Name="buttonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Width="102" IsDefault="True" Style="{DynamicResource GlassButton}">
+            <Button x:Name="buttonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0" IsDefault="True">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Little_System_Cleaner;component/Resources/Repair.png" VerticalAlignment="Center" />
                     <TextBlock VerticalAlignment="Center" FontSize="15">Compact</TextBlock>
                 </StackPanel>
             </Button>
-            <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Margin="0,0,0,0" Width="56" Style="{DynamicResource GlassButton}" FontSize="15" />
+            <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Margin="0,0,0,0" Padding="8,0,8,0" FontSize="15" />
         </StackPanel>
     </Grid>
 </UserControl>

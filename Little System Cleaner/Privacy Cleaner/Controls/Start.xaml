@@ -72,7 +72,7 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <Button x:Name="buttonScan" Foreground="#FFFFFFFF" Style="{DynamicResource GlassButton}" Margin="0,5,0,5" Grid.Row="2" HorizontalAlignment="Center" Width="130" Click="buttonScan_Click">
+        <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center"  Click="buttonScan_Click">
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
                 <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                 <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>

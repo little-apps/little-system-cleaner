@@ -51,7 +51,7 @@
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Grid.Row="3" Style="{DynamicResource GlassButton}" Margin="5,5,0,5" HorizontalAlignment="Left" Width="62" />
-        <Button x:Name="buttonClean" Content="Clean" Grid.Row="3" Style="{DynamicResource GlassButton}" Margin="0,5,5,5" HorizontalAlignment="Right" Width="62" Click="buttonClean_Click" />
+        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Grid.Row="3" Margin="5,5,0,5" HorizontalAlignment="Left" Width="62" />
+        <Button x:Name="buttonClean" Content="Clean" Grid.Row="3" Margin="0,5,5,5" HorizontalAlignment="Right" Width="62" Click="buttonClean_Click" />
     </Grid>
 </UserControl>

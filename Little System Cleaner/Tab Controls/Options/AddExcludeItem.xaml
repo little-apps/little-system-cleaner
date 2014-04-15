@@ -14,9 +14,9 @@
         </StackPanel>
         <Label Content="Registry Path:" HorizontalAlignment="Left" Name="label2" />
         <TextBox Height="23" Name="textBoxSubKey" VerticalAlignment="Top" Margin="5,0" />
-        <StackPanel Height="27" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Top" Orientation="Horizontal" Margin="0,0,5,0">
-            <Button Margin="0,0,5,0" Name="buttonCancel" Click="buttonCancel_Click" IsCancel="True">Cancel</Button>
-            <Button Name="buttonAdd" Click="buttonAdd_Click">Add Entry</Button>
+        <StackPanel Margin="0,5,5,0" Height="27" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Top" Orientation="Horizontal" >
+            <Button Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonCancel" Click="buttonCancel_Click" IsCancel="True">Cancel</Button>
+            <Button Name="buttonAdd" Padding="8,0,8,0" Click="buttonAdd_Click">Add Entry</Button>
         </StackPanel>
     </StackPanel>
 </Window>
