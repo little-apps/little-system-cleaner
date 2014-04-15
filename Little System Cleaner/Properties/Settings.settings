@@ -194,9 +194,6 @@
     <Setting Name="diskCleanerAutoClean" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="diskCleanerDiskDrives" Type="System.Collections.ArrayList" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="diskCleanerIncludedFolders" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

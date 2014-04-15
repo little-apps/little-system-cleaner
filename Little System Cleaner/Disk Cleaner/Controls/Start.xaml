@@ -31,7 +31,7 @@
         </Border>
         <TabControl Margin="0,10,0,0" Grid.Row="1">
             <TabItem Header="Drives">
-                <ListView x:Name="listViewDrives" Margin="5,5,5,5" ItemsSource="{Binding DrivesCollection}" IsSynchronizedWithCurrentItem="True">
+                <ListView x:Name="listViewDrives" Margin="5,5,5,5" IsSynchronizedWithCurrentItem="True">
                     <ListView.View>
                         <GridView AllowsColumnReorder="False">
                             <GridViewColumn Header="Drive" Width="60">

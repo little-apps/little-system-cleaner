@@ -94,15 +94,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Disk Cleaner\Controls\Misc\AddExcludeFileType.xaml">
+    <Page Include="Disk Cleaner\Helpers\AddExcludeFileType.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Disk Cleaner\Controls\Misc\AddExcludeFolder.xaml">
+    <Page Include="Disk Cleaner\Helpers\AddExcludeFolder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Disk Cleaner\Controls\Misc\AddIncludeFolder.xaml">
+    <Page Include="Disk Cleaner\Helpers\AddIncludeFolder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,11 +167,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tab Controls\Options\AddExcludeItem.xaml">
+    <Page Include="Registry Cleaner\Helpers\AddExcludeItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tab Controls\StartupManager\AddEditEntry.xaml">
+    <Page Include="Startup Manager\Helpers\AddEditEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -218,13 +218,13 @@
     <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
       <DependentUpon>Analyze.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Disk Cleaner\Controls\Misc\AddExcludeFileType.xaml.cs">
+    <Compile Include="Disk Cleaner\Helpers\AddExcludeFileType.xaml.cs">
       <DependentUpon>AddExcludeFileType.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Disk Cleaner\Controls\Misc\AddExcludeFolder.xaml.cs">
+    <Compile Include="Disk Cleaner\Helpers\AddExcludeFolder.xaml.cs">
       <DependentUpon>AddExcludeFolder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Disk Cleaner\Controls\Misc\AddIncludeFolder.xaml.cs">
+    <Compile Include="Disk Cleaner\Helpers\AddIncludeFolder.xaml.cs">
       <DependentUpon>AddIncludeFolder.xaml</DependentUpon>
     </Compile>
     <Compile Include="Disk Cleaner\Controls\Results.xaml.cs">
@@ -234,6 +234,10 @@
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Compile Include="Disk Cleaner\Controls\Wizard.cs" />
+    <Compile Include="Disk Cleaner\Helpers\lviDrive.cs" />
+    <Compile Include="Disk Cleaner\Helpers\lviFile.cs" />
+    <Compile Include="Disk Cleaner\Helpers\lviFolder.cs" />
+    <Compile Include="Disk Cleaner\Helpers\ProblemFile.cs" />
     <Compile Include="Misc\OSVersion.cs" />
     <Compile Include="Misc\RegEditGo.cs" />
     <Compile Include="Misc\SysRestore.cs" />
@@ -252,6 +256,7 @@
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Compile Include="Privacy Cleaner\Controls\Wizard.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\DetailItem.cs" />
     <Compile Include="Privacy Cleaner\Helpers\PInvoke.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results.cs" />
     <Compile Include="Privacy Cleaner\Helpers\RunningMsg.xaml.cs">
@@ -270,7 +275,9 @@
       <SubType>Code</SubType>
       <DependentUpon>Results.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
+    <Compile Include="Registry Cleaner\Helpers\ResultModel.cs" />
     <Compile Include="Registry Cleaner\Helpers\SectionModel.cs" />
     <Compile Include="Registry Cleaner\Scanners\ActivexComObjects.cs" />
     <Compile Include="Registry Cleaner\Scanners\ApplicationPaths.cs" />
@@ -308,25 +315,26 @@
     </Compile>
     <Compile Include="Registry Optimizer\Controls\Wizard.cs" />
     <Compile Include="Registry Optimizer\Helpers\HiveManager.cs" />
-    <Compile Include="Tab Controls\Options\AddExcludeItem.xaml.cs">
+    <Compile Include="Registry Cleaner\Helpers\AddExcludeItem.xaml.cs">
       <DependentUpon>AddExcludeItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Startup Manager\Helpers\StartupEntry.cs" />
+    <Compile Include="Startup Manager\Helpers\StartupMgrModel.cs" />
     <Compile Include="Tab Controls\Options\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tab Controls\StartupManager\AddEditEntry.xaml.cs">
+    <Compile Include="Startup Manager\Helpers\AddEditEntry.xaml.cs">
       <DependentUpon>AddEditEntry.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tab Controls\StartupManager\StartupManager.xaml.cs">
+    <Compile Include="Startup Manager\Controls\StartupManager.xaml.cs">
       <DependentUpon>StartupManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tab Controls\UninstallManager.xaml.cs">
+    <Compile Include="Uninstall Manager\Controls\UninstallManager.xaml.cs">
       <DependentUpon>UninstallManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Misc\BadRegKey.cs" />
     <Compile Include="Misc\ExcludeItem.cs" />
     <Compile Include="Misc\Logger.cs" />
-    <Compile Include="Misc\ProgramInfo.cs" />
     <Compile Include="Misc\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registry Cleaner\Scanners\ApplicationInfo.cs" />
@@ -361,6 +369,7 @@
     <Compile Include="Tab Controls\Welcome.xaml.cs">
       <DependentUpon>Welcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Uninstall Manager\Helpers\ProgramInfo.cs" />
     <Compile Include="XML Registry\keyValue.cs" />
     <Compile Include="XML Registry\xmlElement.cs" />
     <Compile Include="XML Registry\xmlReader.cs" />
@@ -372,13 +381,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tab Controls\StartupManager\StartupManager.xaml">
+    <Page Include="Startup Manager\Controls\StartupManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tab Controls\UninstallManager.xaml">
+    <Page Include="Uninstall Manager\Controls\UninstallManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -641,6 +650,7 @@
   <ItemGroup>
     <Resource Include="Resources\hand_point.png" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

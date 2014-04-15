@@ -607,17 +607,6 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.ArrayList diskCleanerDiskDrives {
-            get {
-                return ((global::System.Collections.ArrayList)(this["diskCleanerDiskDrives"]));
-            }
-            set {
-                this["diskCleanerDiskDrives"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public global::System.Collections.Specialized.StringCollection diskCleanerIncludedFolders {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["diskCleanerIncludedFolders"]));

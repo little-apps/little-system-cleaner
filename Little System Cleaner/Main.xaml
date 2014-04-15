@@ -8,7 +8,8 @@
     xmlns:diskCleanCntrls="clr-namespace:Little_System_Cleaner.Disk_Cleaner.Controls" 
     xmlns:privacyCleanCntrls="clr-namespace:Little_System_Cleaner.Privacy_Cleaner.Controls" 
     xmlns:my1="clr-namespace:Little_System_Cleaner.Controls"
-    xmlns:startupMgr="clr-namespace:Little_System_Cleaner.Controls.StartupManager"
+    xmlns:startupMgr="clr-namespace:Little_System_Cleaner.Startup_Manager.Controls"
+    xmlns:uninstallMgr="clr-namespace:Little_System_Cleaner.Uninstall_Manager.Controls"
 	x:Class="Little_System_Cleaner.Main"
 	x:Name="Window"
 	Title="Little System Cleaner" 
@@ -288,7 +289,7 @@
                         <Label HorizontalAlignment="Center" FontWeight="Bold">Uninstall</Label>
                     </StackPanel>
                 </TabItem.Header>
-                <my1:UninstallManager x:Name="ctrlUninstallMgr" />
+                <uninstallMgr:UninstallManager x:Name="ctrlUninstallMgr" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemRegOptimizer">
                 <TabItem.Header>

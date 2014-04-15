@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Uninstall_Manager.Helpers;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -65,25 +66,25 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 if (progInfo.WindowsInstaller)
                                     continue;
 
-                                if (string.IsNullOrEmpty(progInfo.DisplayName) && (!progInfo.Uninstallable))
+                                if (string.IsNullOrEmpty(progInfo._displayName) && (!progInfo.Uninstallable))
                                 {
                                     ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
                                     continue;
                                 }
 
                                 // Check display icon
-                                if (!string.IsNullOrEmpty(progInfo.DisplayIcon))
-                                    if (!Utils.IconExists(progInfo.DisplayIcon))
+                                if (!string.IsNullOrEmpty(progInfo._displayIcon))
+                                    if (!Utils.IconExists(progInfo._displayIcon))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "DisplayIcon");
 
                                 // Check install location 
-                                if (!string.IsNullOrEmpty(progInfo.InstallLocation))
-                                    if ((!Utils.DirExists(progInfo.InstallLocation)) && (!Utils.FileExists(progInfo.InstallLocation)))
+                                if (!string.IsNullOrEmpty(progInfo._installLocation))
+                                    if ((!Utils.DirExists(progInfo._installLocation)) && (!Utils.FileExists(progInfo._installLocation)))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
 
                                 // Check install source 
-                                if (!string.IsNullOrEmpty(progInfo.InstallSource))
-                                    if ((!Utils.DirExists(progInfo.InstallSource)) && (!Utils.FileExists(progInfo.InstallSource)))
+                                if (!string.IsNullOrEmpty(progInfo._installSource))
+                                    if ((!Utils.DirExists(progInfo._installSource)) && (!Utils.FileExists(progInfo._installSource)))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
                                 // Check ARP Cache

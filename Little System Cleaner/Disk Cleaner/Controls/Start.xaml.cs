@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Controls.Misc;
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,7 +41,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
     /// </summary>
     public partial class Start : UserControl
     {
-        ObservableCollection<lviDrive> _drivesCollection = new ObservableCollection<lviDrive>();
         ObservableCollection<lviFolder> _incFoldersCollection = new ObservableCollection<lviFolder>();
         ObservableCollection<lviFolder> _excFoldersCollection = new ObservableCollection<lviFolder>();
         ObservableCollection<lviFile> _excFilesCollection = new ObservableCollection<lviFile>();
@@ -49,7 +48,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         public Wizard scanBase;
         public ObservableCollection<lviDrive> DrivesCollection
         {
-            get { return this._drivesCollection; }
+            get { return Wizard.DiskDrives; }
         }
 
         public ObservableCollection<lviFolder> IncFoldersCollection
@@ -78,7 +77,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             this.scanBase.selectedDrives.Clear();
 
-            foreach (lviDrive lvi in Properties.Settings.Default.diskCleanerDiskDrives)
+            foreach (lviDrive lvi in Wizard.DiskDrives)
             {
                 if (lvi.Checked.GetValueOrDefault())
                     this.scanBase.selectedDrives.Add(lvi.Tag as DriveInfo);
@@ -95,11 +94,42 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this._drivesCollection.Clear();
+            if (!Wizard.loaded)
+            {
+                Wizard.DiskDrives = new ObservableCollection<lviDrive>();
 
-            // Drives
-            foreach (lviDrive lvi in Properties.Settings.Default.diskCleanerDiskDrives)
-                this._drivesCollection.Add(lvi);
+                string winDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
+                foreach (DriveInfo driveInfo in DriveInfo.GetDrives())
+                {
+                    if (!driveInfo.IsReady || driveInfo.DriveType != DriveType.Fixed)
+                        continue;
+
+                    string freeSpace = Utils.ConvertSizeToString(driveInfo.TotalFreeSpace);
+                    string totalSpace = Utils.ConvertSizeToString(driveInfo.TotalSize);
+
+                    bool isChecked = false;
+                    if (winDir.Contains(driveInfo.Name))
+                        isChecked = true;
+
+                    lviDrive listViewItem = new lviDrive(isChecked, driveInfo.Name, driveInfo.DriveFormat, totalSpace, freeSpace, driveInfo);
+
+                    this.DrivesCollection.Add(listViewItem);
+                }
+
+                this.listViewDrives.ItemsSource = this.DrivesCollection;
+
+                if (Properties.Settings.Default.diskCleanerIncludedFolders == null)
+                {
+                    Properties.Settings.Default.diskCleanerIncludedFolders = new System.Collections.Specialized.StringCollection();
+
+                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User));
+                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine));
+                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.Recent));
+                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache));
+                }
+
+                Wizard.loaded = true;
+            }
 
             // Advanced
             this.checkBoxArchive.IsChecked = Properties.Settings.Default.diskCleanerSearchArchives;
@@ -167,9 +197,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void UpdateOptions()
         {
-            // Drives
-            Properties.Settings.Default.diskCleanerDiskDrives = new System.Collections.ArrayList(this._drivesCollection);
-
             // Searching
             if (this.radioButtonFilterSafe.IsChecked == true)
                 Properties.Settings.Default.diskCleanerFilterMode = 0;
@@ -302,83 +329,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     this._incFoldersCollection.Remove(this.listViewIncFolders.SelectedItems[0] as lviFolder);
                 }
             }
-        }
-    }
-
-    public class lviDrive
-    {
-        public bool? Checked
-        {
-            get;
-            set;
-        }
-
-        public string Drive
-        {
-            get;
-            set;
-        }
-
-        public string DriveFormat
-        {
-            get;
-            set;
-        }
-
-        public string DriveCapacity
-        {
-            get;
-            set;
-        }
-
-        public string DriveFreeSpace
-        {
-            get;
-            set;
-        }
-
-        public object Tag
-        {
-            get;
-            set;
-        }
-
-        public lviDrive(bool isChecked, string driveName, string driveFormat, string driveCapacity, string driveFreeSpace, DriveInfo di)
-        {
-            this.Checked = isChecked;
-            this.Drive = driveName;
-            this.DriveFormat = driveFormat;
-            this.DriveCapacity = driveCapacity;
-            this.DriveFreeSpace = driveFreeSpace;
-            this.Tag = di;
-        }
-    }
-
-    public class lviFolder
-    {
-        public string Folder
-        {
-            get;
-            set;
-        }
-
-        public lviFolder()
-        {
-
-        }
-    }
-
-    public class lviFile
-    {
-        public string File
-        {
-            get;
-            set;
-        }
-
-        public lviFile()
-        {
-
         }
     }
 }

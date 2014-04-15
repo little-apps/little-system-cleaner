@@ -32,6 +32,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -211,55 +212,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             Wizard.fileList.Clear();
 
             this.scanBase.MoveFirst();
-        }
-    }
-
-    public class ProblemFile
-    {
-        private FileInfo _fileInfo;
-
-        public bool? Checked
-        {
-            get;
-            set;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.FileInfo.Name;
-            }
-        }
-
-        public string Location
-        {
-            get
-            {
-                return this.FileInfo.DirectoryName;
-            }
-        }
-
-        public string Size
-        {
-            get
-            {
-                return Utils.ConvertSizeToString(this.FileInfo.Length);
-            }
-        }
-
-        public FileInfo FileInfo
-        {
-            get
-            {
-                return this._fileInfo;
-            }
-        }
-
-        public ProblemFile(FileInfo fi)
-        {
-            this.Checked = true;
-            this._fileInfo = fi;
         }
     }
 }

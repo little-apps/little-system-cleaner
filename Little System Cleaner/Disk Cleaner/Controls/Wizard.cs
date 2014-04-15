@@ -16,8 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using Little_System_Cleaner.Misc;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -33,6 +35,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         List<Type> arrayControls = new List<Type>();
         List<DriveInfo> selDrives = new List<DriveInfo>();
         int currentControl = 0;
+        internal static bool loaded = false;
 
         public UserControl userControl
         {
@@ -48,6 +51,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         }
 
         public static ObservableCollection<ProblemFile> fileList
+        {
+            get;
+            set;
+        }
+
+        internal static ObservableCollection<lviDrive> DiskDrives
+        {
+            get;
+            set;
+        }
+
+        internal static ObservableCollection<lviFolder> IncludeFolders
         {
             get;
             set;
@@ -69,6 +84,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool OnUnloaded()
         {
+            if (!loaded)
+            {
+                Wizard.DiskDrives = null;
+                Wizard.IncludeFolders = null;
+                return true;
+            }
+
             if (this.userControl is Analyze)
             {
                 if (MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) {

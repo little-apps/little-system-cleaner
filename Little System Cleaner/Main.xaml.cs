@@ -45,47 +45,7 @@ namespace Little_System_Cleaner
 
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
 
-            //// Disk Cleaner functions
-            PopulateDiskDrives();
-            PopulateIncludeFolders();
 		}
-
-        private void PopulateIncludeFolders()
-        {
-            Properties.Settings.Default.diskCleanerIncludedFolders = new System.Collections.Specialized.StringCollection();
-
-            Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User));
-            Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine));
-            Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.Recent));
-            Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache));
-        }
-
-        private void PopulateDiskDrives()
-        {
-            if (Properties.Settings.Default.diskCleanerDiskDrives == null)
-                Properties.Settings.Default.diskCleanerDiskDrives = new System.Collections.ArrayList();
-            else
-                Properties.Settings.Default.diskCleanerDiskDrives.Clear();
-
-            string winDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
-            foreach (DriveInfo driveInfo in DriveInfo.GetDrives())
-            {
-                if (!driveInfo.IsReady || driveInfo.DriveType != DriveType.Fixed)
-                    continue;
-
-                string freeSpace = Utils.ConvertSizeToString(driveInfo.TotalFreeSpace);
-                string totalSpace = Utils.ConvertSizeToString(driveInfo.TotalSize);
-
-                bool isChecked = false;
-                if (winDir.Contains(driveInfo.Name))
-                    isChecked = true;
-
-                Little_System_Cleaner.Disk_Cleaner.Controls.lviDrive listViewItem = new Little_System_Cleaner.Disk_Cleaner.Controls.lviDrive(isChecked, driveInfo.Name, driveInfo.DriveFormat, totalSpace, freeSpace, driveInfo);
-
-                // Store as listviewitem cause im too lazy 
-                Properties.Settings.Default.diskCleanerDiskDrives.Add(listViewItem);
-            }
-        }
 
         void timerCheck_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
