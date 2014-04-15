@@ -7,6 +7,8 @@ Little System Cleaner will be an all in one system cleaner for Windows computers
  * [Little Registry Optimizer](http://www.little-apps.com/little-registry-optimizer/)
  * [Little Privacy Cleaner](http://www.little-apps.com/little-privacy-cleaner/)
  * [Little Disk Cleaner](http://www.little-apps.com/little-disk-cleaner/)
+ 
+More information about Little System Cleaner can be found in [this blog post](http://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/).
 
 ### Licensing ###
 
