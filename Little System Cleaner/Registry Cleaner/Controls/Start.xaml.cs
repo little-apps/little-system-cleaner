@@ -34,7 +34,6 @@ using System.ComponentModel;
 using System.Drawing;
 using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using Little_System_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.IO;
 using Little_System_Cleaner.Xml;
