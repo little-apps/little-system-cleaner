@@ -30,7 +30,7 @@
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Registry Scan" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Content="Registry Cleaner" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>

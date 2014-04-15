@@ -55,7 +55,7 @@
         <StackPanel Orientation="Horizontal"  Grid.Row="3" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Center" Height="30">
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonAdd" Click="buttonAdd_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/add.png" />
+                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/add.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Add</TextBlock>
                 </StackPanel>
             </Button>

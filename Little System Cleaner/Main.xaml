@@ -243,12 +243,6 @@
                 </ComboBoxItem>
                 <ComboBoxItem>
                     <StackPanel Orientation="Horizontal">
-                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/Restore.png" Width="52" Margin="0" />
-                        <Label Content="Restore" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <StackPanel Orientation="Horizontal">
                         <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/Options.png" Width="52" Margin="0" />
                         <Label Content="Settings" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
@@ -322,15 +316,6 @@
                     </StackPanel>
                 </TabItem.Header>
                 <privacyCleanCntrls:Wizard x:Name="ctrlPrivacyCleaner" />
-            </TabItem>
-            <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemRestore">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources/Restore.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Restore</Label>
-                    </StackPanel>
-                </TabItem.Header>
-                <my1:Restore x:Name="ctrlRestore" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemOptions">
                 <TabItem.Header>

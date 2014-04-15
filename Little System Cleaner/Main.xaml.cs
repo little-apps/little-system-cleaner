@@ -95,7 +95,7 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            this.tabItemWelcome.IsEnabled = this.tabItemOptions.IsEnabled = this.tabItemRestore.IsEnabled = this.tabItemStartupMgr.IsEnabled = this.tabItemUninstallMgr.IsEnabled = IsTabsEnabled;
+            this.tabItemWelcome.IsEnabled = this.tabItemOptions.IsEnabled = this.tabItemStartupMgr.IsEnabled = this.tabItemUninstallMgr.IsEnabled = IsTabsEnabled;
         }
 
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)

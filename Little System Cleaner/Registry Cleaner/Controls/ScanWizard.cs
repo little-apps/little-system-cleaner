@@ -95,7 +95,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public ScanWizard()
         {
-            this.arrayControls.Add(typeof(Sections));
+            this.arrayControls.Add(typeof(Start));
             this.arrayControls.Add(typeof(Scan));
             this.arrayControls.Add(typeof(Results));
 
