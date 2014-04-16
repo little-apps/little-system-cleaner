@@ -38,7 +38,7 @@
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left">Compact Registry</Label>
+                <Label FontSize="14" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left">Registry Optimizer</Label>
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 4</Label>
             </Grid>
         </Border>
