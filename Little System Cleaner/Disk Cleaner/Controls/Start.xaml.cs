@@ -94,7 +94,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!Wizard.loaded)
+            if (!Wizard.DrivesLoaded)
             {
                 Wizard.DiskDrives = new ObservableCollection<lviDrive>();
 
@@ -127,8 +127,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.Recent));
                     Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache));
                 }
-
-                Wizard.loaded = true;
             }
 
             // Advanced

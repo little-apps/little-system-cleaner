@@ -35,7 +35,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         List<Type> arrayControls = new List<Type>();
         List<DriveInfo> selDrives = new List<DriveInfo>();
         int currentControl = 0;
-        internal static bool loaded = false;
 
         public UserControl userControl
         {
@@ -68,6 +67,20 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             set;
         }
 
+        internal static bool DrivesLoaded
+        {
+            get
+            {
+                if (Wizard.DiskDrives == null || Wizard.IncludeFolders == null)
+                    return false;
+
+                if (Wizard.DiskDrives.Count == 0 || Wizard.IncludeFolders.Count == 0)
+                    return false;
+
+                return true;
+            }
+        }
+
         public static DateTime ScanStartTime { get; set; }
 
         public Wizard()
@@ -84,13 +97,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool OnUnloaded()
         {
-            if (!loaded)
-            {
-                Wizard.DiskDrives = null;
-                Wizard.IncludeFolders = null;
-                return true;
-            }
-
             if (this.userControl is Analyze)
             {
                 if (MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) {
