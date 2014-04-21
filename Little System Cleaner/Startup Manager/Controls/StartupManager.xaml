@@ -55,38 +55,38 @@
         <StackPanel Orientation="Horizontal"  Grid.Row="3" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Center" Height="30">
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonAdd" Click="buttonAdd_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/add.png" Width="16" Height="16" />
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/add.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Add</TextBlock>
                 </StackPanel>
             </Button>
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonEdit" Click="buttonEdit_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/edit.png" />
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/edit.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Edit</TextBlock>
                 </StackPanel>
             </Button>
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonDelete" Click="buttonDelete_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/delete.png" />
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/delete.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Delete</TextBlock>
                 </StackPanel>
             </Button>
 
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonView" Click="buttonView_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/view.png" />
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/view.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">View</TextBlock>
                 </StackPanel>
             </Button>
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRun" Click="buttonRun_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/run.png" />
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/run.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Run</TextBlock>
                 </StackPanel>
             </Button>
             <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRefresh" Click="buttonRefresh_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/refresh.png" />
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/refresh.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Refresh</TextBlock>
                 </StackPanel>
             </Button>

@@ -29,10 +29,30 @@
             </Grid>
         </Border>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5,8,0,5">
-            <Button x:Name="btnGoBack" Padding="8,0,8,0" HorizontalAlignment="Left" Click="btnGoBack_Click">Go Back</Button>
-            <Button x:Name="btnOpen" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnOpen_Click">Open...</Button>
-            <Button x:Name="btnLocate" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnLocate_Click">Locate</Button>
-            <Button x:Name="btnViewProperties" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnViewProperties_Click">View Properties</Button>
+            <Button x:Name="btnGoBack" Padding="8,0,8,0" HorizontalAlignment="Left" Click="btnGoBack_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/go-back.png" />
+                    <TextBlock VerticalAlignment="Center">Go Back</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="btnOpen" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnOpen_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/open.png" />
+                    <TextBlock VerticalAlignment="Center">Open...</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="btnLocate" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnLocate_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/locate.png" />
+                    <TextBlock VerticalAlignment="Center">Locate</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="btnViewProperties" Margin="5,0,0,0" Padding="8,0,8,0" Click="btnViewProperties_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/view-properties.png" />
+                    <TextBlock VerticalAlignment="Center">View Properties</TextBlock>
+                </StackPanel>
+            </Button>
         </StackPanel>
 
         <ListView x:Name="listView" Grid.Row="2" Margin="5,0,5,5" ItemsSource="{Binding DetailItemCollection}" IsSynchronizedWithCurrentItem="True">
