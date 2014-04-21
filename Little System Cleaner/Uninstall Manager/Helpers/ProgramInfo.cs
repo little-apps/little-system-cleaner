@@ -92,7 +92,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             get
             {
                 if (this.Uninstallable)
-                    return Utils.CreateBitmapSourceFromBitmap(Properties.Resources.Repair);
+                    return Utils.CreateBitmapSourceFromBitmap(Properties.Resources.uninstall);
                 else
                     return Utils.CreateBitmapSourceFromBitmap(Properties.Resources.cancel);
             }

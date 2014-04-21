@@ -29,9 +29,9 @@
         </Border>
         <TextBlock Grid.Row="1" Width="570" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="20">Click the "Analyze Registry" button below to begin optimizing the registry. Please note that your computer will be unresponsive while the Registry is analyzed and optimized.</TextBlock>
         <Button Padding="8,0,8,0" HorizontalAlignment="Center" Height="40"  Grid.Row="5" Name="buttonAnalyze" Click="buttonAnalyze_Click" FontSize="16">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="/Little_System_Cleaner;component/Resources/Analyze.png" VerticalAlignment="Center" />
-                <TextBlock VerticalAlignment="Center">Analyze Registry</TextBlock>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Source="/Little_System_Cleaner;component/Resources/privacy cleaner/scan.png" Width="24" Height="24" VerticalAlignment="Center" />
+                <TextBlock>Analyze Registry</TextBlock>
             </StackPanel>
         </Button>
     </Grid>

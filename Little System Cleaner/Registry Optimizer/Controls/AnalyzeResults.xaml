@@ -49,13 +49,18 @@
             </DVC:Chart.Series>
         </DVC:Chart>
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" Name="stackPanel1" Orientation="Horizontal" Margin="0,5,0,0">
-            <Button x:Name="buttonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0" IsDefault="True">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Little_System_Cleaner;component/Resources/Repair.png" VerticalAlignment="Center" />
-                    <TextBlock VerticalAlignment="Center" FontSize="15">Compact</TextBlock>
+            <Button x:Name="buttonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Height="38" Padding="8,0,8,0" IsDefault="True" FontSize="15">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Little_System_Cleaner;component/Resources/registry optimizer/compact-registry.png" Width="24" Height="24" />
+                    <TextBlock VerticalAlignment="Center">Compact</TextBlock>
                 </StackPanel>
             </Button>
-            <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Margin="0,0,0,0" Padding="8,0,8,0" FontSize="15" />
+            <Button x:Name="buttonCancel" Click="buttonCancel_Click" Margin="0,0,0,0" Padding="8,0,8,0" FontSize="15">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Little_System_Cleaner;component/Resources/registry optimizer/cancel.png" Width="24" Height="24" />
+                    <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
+                </StackPanel>
+            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

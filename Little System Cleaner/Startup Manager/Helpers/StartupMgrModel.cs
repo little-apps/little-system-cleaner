@@ -87,9 +87,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             StartupEntry nodeRoot = new StartupEntry() { SectionName = regKey.Name };
 
             if (regKey.Name.Contains(Registry.CurrentUser.ToString()))
-                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.User);
+                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.current_user);
             else
-                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.Users);
+                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.all_users);
 
             foreach (string strItem in regKey.GetValueNames())
             {
@@ -116,7 +116,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     if (ico != null)
                         node.bMapImg = Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap);
                     else
-                        node.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.app);
+                        node.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
 
                     nodeRoot.Children.Add(node);
                 }
@@ -139,9 +139,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 StartupEntry nodeRoot = new StartupEntry() { SectionName = strFolder };
 
                 if (Utils.GetSpecialFolderPath(Utils.CSIDL_STARTUP) == strFolder)
-                    nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.User);
+                    nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.current_user);
                 else
-                    nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.Users);
+                    nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.all_users);
 
                 foreach (string strShortcut in Directory.GetFiles(strFolder))
                 {
@@ -159,7 +159,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                         if (ico != null)
                             node.bMapImg = Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap);
                         else
-                            node.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.app);
+                            node.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
 
                         nodeRoot.Children.Add(node);
                     }

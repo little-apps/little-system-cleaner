@@ -83,45 +83,45 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         private void PopulateComboBox()
         {
             // Startup folders
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Startup\All Users"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Startup\Current User"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Startup\All Users"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Startup\Current User"));
 
             // All users startup registry keys (32bit)
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x86)\Policies\Explorer\Run"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x86)\Run Services"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x86)\Run Services Once"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x86)\Run Once"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x86)\Run Once\Setup"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x86)\Run"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Policies\Explorer\Run"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services Once"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once\Setup"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run"));
 
             // All users startup registry keys (32bit)
             if (Utils.Is64BitOS) 
             {
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x64)\Policies\Explorer\Run"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x64)\Run Services"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x64)\Run Services Once"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x64)\Run Once"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x64)\Run Once\Setup"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.Users, @"Registry\All Users (x64)\Run"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Policies\Explorer\Run"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services Once"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once\Setup"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run"));
             }
 
             // Current user startup registry keys (32bit)
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x86)\Policies\Explorer\Run"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x86)\Run Services"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x86)\Run Services Once"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x86)\Run Once"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x86)\Run Once\Setup"));
-            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x86)\Run"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Policies\Explorer\Run"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services Once"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once\Setup"));
+            this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run"));
 
             // Current user startup registry keys (32bit)
             if (Utils.Is64BitOS)
             {
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x64)\Policies\Explorer\Run"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x64)\Run Services"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x64)\Run Services Once"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x64)\Run Once"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x64)\Run Once\Setup"));
-                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.User, @"Registry\Current User (x64)\Run"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Policies\Explorer\Run"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services Once"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once\Setup"));
+                this.comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run"));
             }
         }
 

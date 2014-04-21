@@ -34,8 +34,8 @@
             </Grid>
         </Border>
         <Button Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="3" Click="buttonScan_Click" HorizontalAlignment="Center">
-            <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
-                <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Image VerticalAlignment="Center" Width="24" Height="24" Source="/Little_System_Cleaner;component/Resources/registry cleaner/scan-registry.png" />
                 <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>
 			</StackPanel>
         </Button>
@@ -129,20 +129,20 @@
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Grid.Row="2">
                         <Button Name="buttonRestore" Click="buttonRestore_Click" Margin="0,0,5,0" Padding="8,0,8,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Little_System_Cleaner;component/Resources/Restore.png" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/restore.png" Width="16" Height="16" VerticalAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center">Restore</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button Name="buttonBrowse" Click="buttonBrowse_Click" Margin="0,0,5,0" Padding="8,0,8,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Little_System_Cleaner;component/Images/folder.png" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/browse.png" Width="16" Height="16" VerticalAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center">Browse Directory</TextBlock>
                             </StackPanel>
                         </Button>
                         <Button Name="buttonRefresh" Click="buttonRefresh_Click" Margin="0,0,5,0"  Padding="8,0,8,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Little_System_Cleaner;component/Resources/startup%20manager/refresh.png" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/refresh.png" Width="16" Height="16" VerticalAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center">Refresh</TextBlock>
                             </StackPanel>
                         </Button>

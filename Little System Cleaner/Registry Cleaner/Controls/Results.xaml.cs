@@ -168,7 +168,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 // Set icon to check mark
                 brk.bMapImg = new Image();
-                brk.bMapImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.Repair.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                brk.bMapImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
 
                 this._tree.Items.Refresh();
 

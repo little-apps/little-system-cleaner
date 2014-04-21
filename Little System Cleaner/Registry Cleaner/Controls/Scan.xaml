@@ -35,7 +35,12 @@
             </Grid>
         </Border>
         <ProgressBar VerticalAlignment="Top" Height="24" x:Name="progressBar" Grid.Row="2" />
-        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Content="Cancel" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left" />
+        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" />
+                <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
+            </StackPanel>
+        </Button>
         <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2" />
 
         <ListView ItemsSource="{Binding SectionsCollection}" Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">

@@ -214,13 +214,13 @@
                 </ComboBoxItem>
                 <ComboBoxItem>
                     <StackPanel Orientation="Horizontal">
-                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/startup manager.png" Width="52" Margin="0" />
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/startup manager/icon.png" Width="52" Margin="0" />
                         <Label Content="Startup Manager" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
                 </ComboBoxItem>
                 <ComboBoxItem>
                     <StackPanel Orientation="Horizontal">
-                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/uninstall manager.png" Width="52" Margin="0" />
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/uninstall manager/icon.png" Width="52" Margin="0" />
                         <Label Content="Uninstall Manager" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
                 </ComboBoxItem>
@@ -232,13 +232,13 @@
                 </ComboBoxItem>
                 <ComboBoxItem>
                     <StackPanel Orientation="Horizontal">
-                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/disk cleaner.png" Width="52" Margin="0" />
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/disk cleaner/icon.png" Width="52" Margin="0" />
                         <Label Content="Disk Cleaner" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
                 </ComboBoxItem>
                 <ComboBoxItem>
                     <StackPanel Orientation="Horizontal">
-                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/privacy cleaner.png" Width="52" Margin="0" />
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/privacy cleaner/icon.png" Width="52" Margin="0" />
                         <Label Content="Privacy Cleaner" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
                 </ComboBoxItem>

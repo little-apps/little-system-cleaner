@@ -271,6 +271,11 @@
     <Compile Include="Privacy Cleaner\Scanners\Multimedia.cs" />
     <Compile Include="Privacy Cleaner\Scanners\Plugins.cs" />
     <Compile Include="Privacy Cleaner\Scanners\ScannerBase.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Registry Cleaner\Controls\Results.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>Results.xaml</DependentUpon>
@@ -354,11 +359,6 @@
     </Compile>
     <Compile Include="Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -454,8 +454,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Registry Cleaner\Scanners\Strings.resx">
       <SubType>Designer</SubType>
@@ -518,13 +518,6 @@
     <Resource Include="Resources\startup manager\refresh.png" />
     <Resource Include="Resources\startup manager\run.png" />
     <Resource Include="Resources\startup manager\view.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\startup manager\User.png" />
-    <Resource Include="Resources\startup manager\Users.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\startup manager\app.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\button_cancel.png" />
@@ -609,7 +602,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\disk cleaner.png" />
-    <Resource Include="Resources\privacy cleaner.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ajax-loader-big.gif" />
@@ -650,7 +642,67 @@
   <ItemGroup>
     <Resource Include="Resources\hand_point.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\startup manager\all-users.png" />
+    <Resource Include="Resources\startup manager\current-user.png" />
+    <Resource Include="Resources\startup manager\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\startup manager\addeditentry\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\disk cleaner\cancel.png" />
+    <Resource Include="Resources\disk cleaner\fix-problems.png" />
+    <Resource Include="Resources\disk cleaner\scan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\privacy cleaner\cancel.png" />
+    <Resource Include="Resources\privacy cleaner\clean.png" />
+    <Resource Include="Resources\privacy cleaner\scan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\privacy cleaner\details\go-back.png" />
+    <Resource Include="Resources\privacy cleaner\details\locate.png" />
+    <Resource Include="Resources\privacy cleaner\details\open.png" />
+    <Resource Include="Resources\privacy cleaner\details\view-properties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\registry cleaner\cancel.png" />
+    <Resource Include="Resources\registry cleaner\finished-scanning.png" />
+    <Resource Include="Resources\registry cleaner\fix-problems.png" />
+    <Resource Include="Resources\registry cleaner\scan-registry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\registry cleaner\restore\browse.png" />
+    <Resource Include="Resources\registry cleaner\restore\refresh.png" />
+    <Resource Include="Resources\registry cleaner\restore\restore.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\registry optimizer\analyze.png" />
+    <Resource Include="Resources\registry optimizer\cancel.png" />
+    <Resource Include="Resources\registry optimizer\compact-registry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\uninstall manager\icon.png" />
+    <Resource Include="Resources\uninstall manager\program-bad.png" />
+    <Resource Include="Resources\uninstall manager\program-good.png" />
+    <Resource Include="Resources\uninstall manager\remove-entry.png" />
+    <Resource Include="Resources\uninstall manager\uninstall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\welcome\last-scan.png" />
+    <Resource Include="Resources\welcome\program-stats.png" />
+    <Resource Include="Resources\welcome\system-info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\uninstall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\disk cleaner\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\privacy cleaner\icon.png" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
