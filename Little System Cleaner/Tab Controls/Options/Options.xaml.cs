@@ -99,9 +99,9 @@ namespace Little_System_Cleaner.Controls
             Utils.LaunchURI(e.Uri.ToString());
         }
 
-        private void buttonSupport_Click(object sender, RoutedEventArgs e)
+        private void buttonSupportThisProject_Click(object sender, RoutedEventArgs e)
         {
-            Utils.LaunchURI(@"http://www.little-apps.com/faqs/");
+            Utils.LaunchURI(@"http://www.little-apps.com/?donate");
         }
 
         private void buttonWebsite_Click(object sender, RoutedEventArgs e)

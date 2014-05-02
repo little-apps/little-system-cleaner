@@ -108,8 +108,8 @@
                             <!-- </Frame.Content>
                         </Frame> -->
                     </Grid>
-                    <Button HorizontalAlignment="Right" Margin="0,0,11,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Content="Visit Website" Name="buttonWebsite" Click="buttonWebsite_Click" Grid.Column="1" />
-                    <Button HorizontalAlignment="Left" Margin="11,0,0,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Content="Support" Name="buttonSupport" Click="buttonSupport_Click" Grid.ColumnSpan="2" />
+                    <Button HorizontalAlignment="Right" Margin="0,0,11,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Name="buttonWebsite" Click="buttonWebsite_Click" Grid.Column="1">Visit Website</Button>
+                    <Button HorizontalAlignment="Left" Margin="11,0,0,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Name="buttonSupportThisProject" Click="buttonSupportThisProject_Click" Grid.ColumnSpan="2">Support This Project</Button>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,6,0" VerticalAlignment="Top" Grid.Column="1"/>
                 </Grid>
             </TabItem>
