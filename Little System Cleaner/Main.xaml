@@ -19,7 +19,7 @@
     mc:Ignorable="d"
     Height="562" Width="818" 
     MinHeight="560" MinWidth="687"
-    Closing="OnClose" Loaded="OnLoaded">
+    Closing="OnClose" Loaded="OnLoaded" Icon="Resources/little system cleaner.png">
     <Window.Resources>
         <!-- <LinearGradientBrush x:Key="LightBrush" StartPoint="0,0" EndPoint="0,1">
             <LinearGradientBrush.GradientStops>

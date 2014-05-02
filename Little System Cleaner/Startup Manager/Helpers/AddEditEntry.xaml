@@ -17,7 +17,7 @@
                     <Label Content="Path:" Width="70" />
                     <TextBox Height="23" Name="textBoxPath" Width="273" IsReadOnly="True" MouseDoubleClick="textBoxPath_MouseDoubleClick" />
                     <Button Height="23" Name="buttonBrowse" Click="buttonBrowse_Click">
-                        <Image Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
+                        <Image Source="/Little_System_Cleaner;component/Resources/startup manager/addeditentry/search.png" />
                     </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >

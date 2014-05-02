@@ -66,7 +66,7 @@
                     <TextBlock><Run Text="About"/></TextBlock>
                 </TabItem.Header>
                 <Grid>
-                    <Image HorizontalAlignment="Left" Margin="11,5,0,0" VerticalAlignment="Top" Source="/Little_System_Cleaner;component/Resources/icon.png" Height="65" Width="64" />
+                    <Image HorizontalAlignment="Left" Margin="11,5,0,0" VerticalAlignment="Top" Source="/Little_System_Cleaner;component/Resources/little system cleaner.png" Height="65" Width="65" />
                     <Label HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Little System Cleaner" Height="75" Width="218" Margin="83,0,0,0" FontSize="20" FontWeight="Bold" VerticalContentAlignment="Center" />
                     <Separator Height="2" HorizontalAlignment="Stretch" Margin="11,75,11,0" Name="separator1" VerticalAlignment="Top" Grid.ColumnSpan="2" />
 

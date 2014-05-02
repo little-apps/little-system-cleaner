@@ -423,6 +423,16 @@ namespace Little_System_Cleaner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon little_system_cleaner {
+            get {
+                object obj = ResourceManager.GetObject("little_system_cleaner", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon mycomputer {
             get {
                 object obj = ResourceManager.GetObject("mycomputer", resourceCulture);

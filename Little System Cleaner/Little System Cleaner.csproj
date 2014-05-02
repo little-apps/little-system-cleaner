@@ -703,6 +703,12 @@
   <ItemGroup>
     <Resource Include="Resources\privacy cleaner\icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\little system cleaner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\little system cleaner.ico" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
