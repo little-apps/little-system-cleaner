@@ -55,7 +55,7 @@
                                 <ColumnDefinition Width="483*" />
                                 <ColumnDefinition Width="70" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" />
+                            <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" />
                             <Button Margin="2,0,0,0" Padding="8,0,8,0" x:Name="buttonBrowseLogDir" Content="Browse..." Grid.Column="1" Click="buttonBrowse_Click" />
                         </Grid>
                     </GroupBox>
