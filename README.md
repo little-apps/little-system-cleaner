@@ -18,6 +18,10 @@ Little System Cleaner is licensed under the [GNU General Public License v3](http
 
 Little System Cleaner is currently a work in progress and therefore, it is not working 100%. If you would like to help develop Little System Cleaner, please [contact us](http://www.little-apps.com/contact.html). If you would like to submit a bug report or feature request, please go to [https://github.com/little-apps/little-system-cleaner/issues](https://github.com/little-apps/little-system-cleaner/issues).
 
+### Show Your Support ###
+
+Little Apps relies on people like you to keep our software running. If you would like to show your support for Little System Cleaner, then you can [make a donation](http://www.little-apps.com/?donate) using PayPal, Payza or Bitcoins. Please note that any amount helps (even just $1).
+
 ### Credits ###
 
 Little Apps would like to thank the following for helping Little System Cleaner:
@@ -35,5 +39,5 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * ~~Replace updater with [AutoUpdater](http://autoupdaterdotnet.codeplex.com) (modified for WPF)~~
  * Correct layout issues
  * ~~Fix main window preview not showing because of null exception~~
- * Update icons
+ * ~~Update icons~~
  * Fix button sizes
