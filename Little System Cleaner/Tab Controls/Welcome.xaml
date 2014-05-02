@@ -45,7 +45,7 @@
                 </StackPanel>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Program Stats" Margin="3,2,0,0" Height="97">
+        <GroupBox Header="Software Statistics" Margin="3,2,0,0" Height="97">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="72" />
