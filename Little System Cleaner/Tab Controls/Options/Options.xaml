@@ -71,11 +71,11 @@
                     <Separator Height="2" HorizontalAlignment="Stretch" Margin="11,75,11,0" Name="separator1" VerticalAlignment="Top" Grid.ColumnSpan="2" />
 
                     <Grid Margin="11,81,11,35" Grid.ColumnSpan="2">
-                        <RichTextBox Name="textBlock1" MinWidth="547" IsReadOnly="True" IsDocumentEnabled="True" Margin="0,0,0,10">
+                        <RichTextBox Name="textBlock1" MinWidth="547" MinHeight="195" IsReadOnly="True" IsDocumentEnabled="True" Margin="0,0,0,10" VerticalScrollBarVisibility="Auto">
                             <FlowDocument>
-                                <Paragraph>
-                                    <Run Text="Warning: This computer program is protected by copyright law and international treaties. Unauthorized reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted under the maximum extent of the law." />
-                                </Paragraph>
+                                <Paragraph>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</Paragraph>
+                                <Paragraph>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</Paragraph>
+                                <Paragraph>You should have received a copy of the GNU General Public License along with this program. If not, see &lt;<Hyperlink NavigateUri="http://www.gnu.org/licenses/" RequestNavigate="Hyperlink_RequestNavigate">http://www.gnu.org/licenses/</Hyperlink>&gt;.</Paragraph>
                                 <Paragraph>
                                     <Run Text="Credits" FontWeight="Bold" />
                                     <LineBreak />
