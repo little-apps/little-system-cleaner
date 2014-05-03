@@ -75,6 +75,7 @@ namespace Little_System_Cleaner
             // See if we have the current version
             if (Properties.Settings.Default.updateAuto)
             {
+                AutoUpdaterWPF.AutoUpdater.MainDispatcher = this.Dispatcher;
                 AutoUpdaterWPF.AutoUpdater.Start(Properties.Settings.Default.updateURL);
             }
         }
@@ -151,6 +152,7 @@ namespace Little_System_Cleaner
                     }
                 case "Check for updates":
                     {
+                        AutoUpdaterWPF.AutoUpdater.MainDispatcher = this.Dispatcher;
                         AutoUpdaterWPF.AutoUpdater.Start(true);
                         break;
                     }

@@ -10,6 +10,8 @@ using System.Net.Cache;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using System.Xml;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
@@ -41,6 +43,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         internal static Version InstalledVersion;
 
         internal static Boolean ForceCheck;
+
+        internal static Dispatcher MainDispatcher;
 
         //internal static CultureInfo CurrentCulture;
 
@@ -146,6 +150,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             WebRequest webRequest = WebRequest.Create(AppCastURL);
             webRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+            webRequest.Proxy = Utils.GetProxySettings();
 
             WebResponse webResponse;
 
@@ -153,8 +158,20 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 webResponse = webRequest.GetResponse();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (MainDispatcher != null) // Make sure MainDispatcher is set
+                {
+                    if (ex is WebException)
+                    {
+                        MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "An error ocurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                    }
+                    else
+                    {
+                        MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                    }
+                }
+                
                 return;
             }
 
@@ -229,7 +246,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             else if (ForceCheck == true)
             {
-                System.Windows.Forms.MessageBox.Show(Properties.Resources.updateLatest, Properties.Resources.updateTitle, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                MessageBox.Show(App.Current.MainWindow, Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

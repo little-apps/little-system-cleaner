@@ -4,10 +4,12 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:Little_System_Cleaner.Controls"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 	mc:Ignorable="d"
 	x:Class="Little_System_Cleaner.Controls.Options"
 	x:Name="UserControl"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    
 	MinHeight="384" MinWidth="579">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -38,7 +40,7 @@
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
                                 <CheckBox Name="checkBoxAutoUpdate" HorizontalAlignment="Left" VerticalAlignment="Center" Click="UpdateSettings">Automatically check for updates every</CheckBox>
-                                <ComboBox SelectedIndex="0" Margin="3,0,0,0" Name="comboBoxUpdateDelay" IsReadOnly="True" SelectionChanged="UpdateSettings">
+                                <ComboBox SelectedIndex="{Binding Path=SelectedUpdateDelay}" Margin="3,0,0,0" Name="comboBoxUpdateDelay" IsReadOnly="True" SelectionChanged="UpdateSettings">
                                     <ComboBoxItem>3 Days</ComboBoxItem>
                                     <ComboBoxItem>5 Days</ComboBoxItem>
                                     <ComboBoxItem>7 Days</ComboBoxItem>
@@ -58,6 +60,34 @@
                             <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" />
                             <Button Margin="2,0,0,0" Padding="8,0,8,0" x:Name="buttonBrowseLogDir" Content="Browse..." Grid.Column="1" Click="buttonBrowse_Click" />
                         </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Proxy Settings" VerticalAlignment="Top">
+                        <StackPanel Margin="5,5,5,5">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton x:Name="radioButtonNoProxy" Margin="0,0,10,0" Checked="ChangeProxyUse">No Proxy</RadioButton>
+                                <RadioButton x:Name="radioButtonIEProxy" Margin="0,0,10,0" Checked="ChangeProxyUse">Use Internet Explorer Proxy Settings</RadioButton>
+                                <RadioButton x:Name="radioButtonProxy" Checked="ChangeProxyUse">Manual Proxy Configuration</RadioButton>
+                            </StackPanel>
+                            <StackPanel Visibility="{Binding Path=ShowProxySettings}">
+                                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                                    <Label Width="82">IP/Hostname:</Label>
+                                    <TextBox x:Name="proxyAddress" Width="175" VerticalContentAlignment="Center" LostFocus="UpdateSettings"></TextBox>
+                                    <Label>Port:</Label>
+                                    <xctk:IntegerUpDown x:Name="numericUpDownProxyPort" Value="3128" DefaultValue="3128" Width="54" Minimum="1" Maximum="65535" LostFocus="UpdateSettings" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                                    <CheckBox x:Name="checkBoxProxyAuthenticate" Checked="ShowOrHideProxyAuthenticate">Use authentication</CheckBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                                    <Label Width="82">Username:</Label>
+                                    <TextBox x:Name="proxyUser" Width="175" VerticalContentAlignment="Center" IsEnabled="{Binding Path=ProxyAuthenticate}" LostFocus="UpdateSettings"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                                    <Label Width="82">Password:</Label>
+                                    <PasswordBox x:Name="proxyPassword" Width="175" VerticalContentAlignment="Center" IsEnabled="{Binding Path=ProxyAuthenticate}" LostFocus="UpdateSettings"></PasswordBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>

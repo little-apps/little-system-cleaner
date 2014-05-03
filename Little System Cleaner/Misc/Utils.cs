@@ -36,6 +36,8 @@ using System.Security.Cryptography;
 using System.Security;
 using System.Collections.Specialized;
 using Microsoft.VisualBasic.FileIO;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace Little_System_Cleaner
 {
@@ -254,6 +256,141 @@ namespace Little_System_Cleaner
         {
             get { return Application.ProductName; }
         }
+
+        internal static IWebProxy GetProxySettings()
+        {
+            WebProxy webProxy = new WebProxy();
+
+            if (Properties.Settings.Default.optionsUseProxy == 0)
+                return webProxy;
+            else if (Properties.Settings.Default.optionsUseProxy == 1)
+                return WebRequest.DefaultWebProxy;
+            else {
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.optionsProxyHost) && (Properties.Settings.Default.optionsProxyPort > 0 && Properties.Settings.Default.optionsProxyPort < 65535))
+                {
+                    webProxy.Address = new Uri("http://" + Properties.Settings.Default.optionsProxyHost + ":" + Properties.Settings.Default.optionsProxyPort);
+                    webProxy.BypassProxyOnLocal = false;
+
+                    if (Properties.Settings.Default.optionsProxyAuthenticate)
+                    {
+                        using (SecureString strPass = Utils.DecryptString(Properties.Settings.Default.optionsProxyPassword))
+                        {
+                            webProxy.Credentials = new NetworkCredential(Properties.Settings.Default.optionsProxyUser, strPass);
+                        }
+                    }
+
+                    return webProxy;
+                }
+                else
+                {
+                    return webProxy;
+                }
+            }
+        }
+
+        #region SecureString Functions
+
+        private static byte[] GetMachineHash {
+            get
+            {
+                string machineName = Environment.MachineName;
+
+                string macID = "NOTFOUND";
+                try
+                {
+                    NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+
+                    if (nics != null && nics.Length > 0)
+                    {
+                        foreach (NetworkInterface nic in nics)
+                        {
+                            if (nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                            {
+                                macID = nic.GetPhysicalAddress().ToString();
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                catch 
+                {
+                }
+
+                string hardDriveSerialNo = "";
+                System.Management.ManagementClass mc = new System.Management.ManagementClass("Win32_DiskDrive");
+                foreach (System.Management.ManagementObject mo in mc.GetInstances())
+                {
+                    // Only get the first one
+                    if (hardDriveSerialNo == "")
+                    {
+                        try
+                        {
+                            hardDriveSerialNo = mo["SerialNumber"].ToString();
+                            break;
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+
+                MD5 md5 = new MD5CryptoServiceProvider();
+                return md5.ComputeHash(Encoding.ASCII.GetBytes(machineName + macID + hardDriveSerialNo));
+            }
+        }
+
+        internal static string EncryptString(SecureString input)
+        {
+            byte[] encryptedData = ProtectedData.Protect(
+                Encoding.Unicode.GetBytes(ToInsecureString(input)),
+                Utils.GetMachineHash,
+                DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(encryptedData);
+        }
+
+        internal static SecureString DecryptString(string encryptedData)
+        {
+            try
+            {
+                byte[] decryptedData = ProtectedData.Unprotect(
+                    Convert.FromBase64String(encryptedData),
+                    Utils.GetMachineHash,
+                    DataProtectionScope.CurrentUser);
+                return ToSecureString(Encoding.Unicode.GetString(decryptedData));
+            }
+            catch
+            {
+                return new SecureString();
+            }
+        }
+
+        internal static SecureString ToSecureString(string input)
+        {
+            SecureString secure = new SecureString();
+            foreach (char c in input)
+            {
+                secure.AppendChar(c);
+            }
+            secure.MakeReadOnly();
+            return secure;
+        }
+
+        internal static string ToInsecureString(SecureString input)
+        {
+            string returnValue = string.Empty;
+            IntPtr ptr = Marshal.SecureStringToBSTR(input);
+            try
+            {
+                returnValue = Marshal.PtrToStringBSTR(ptr);
+            }
+            finally
+            {
+                Marshal.ZeroFreeBSTR(ptr);
+            }
+            return returnValue;
+        }
+        #endregion
 
         #region Registry Functions
         /// <summary>

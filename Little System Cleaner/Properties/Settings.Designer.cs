@@ -747,5 +747,77 @@ namespace Little_System_Cleaner.Properties {
                 this["privacyCleanerDisplayLog"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int optionsUseProxy {
+            get {
+                return ((int)(this["optionsUseProxy"]));
+            }
+            set {
+                this["optionsUseProxy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string optionsProxyHost {
+            get {
+                return ((string)(this["optionsProxyHost"]));
+            }
+            set {
+                this["optionsProxyHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3128")]
+        public int optionsProxyPort {
+            get {
+                return ((int)(this["optionsProxyPort"]));
+            }
+            set {
+                this["optionsProxyPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool optionsProxyAuthenticate {
+            get {
+                return ((bool)(this["optionsProxyAuthenticate"]));
+            }
+            set {
+                this["optionsProxyAuthenticate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string optionsProxyUser {
+            get {
+                return ((string)(this["optionsProxyUser"]));
+            }
+            set {
+                this["optionsProxyUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string optionsProxyPassword {
+            get {
+                return ((string)(this["optionsProxyPassword"]));
+            }
+            set {
+                this["optionsProxyPassword"] = value;
+            }
+        }
     }
 }
