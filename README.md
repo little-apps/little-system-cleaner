@@ -41,3 +41,4 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * ~~Fix main window preview not showing because of null exception~~
  * ~~Update icons~~
  * Fix button sizes
+ * Fix bugs related to Little Registry Cleaner ([listed here](http://bugs.little-apps.com/view_all_bug_page.php))
