@@ -41,7 +41,7 @@
                 <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2" />
+        <Label Content="Section: " x:Name="currentSection" VerticalAlignment="Top" Grid.Row="2" Height="24" HorizontalAlignment="Center" VerticalContentAlignment="Center"  />
 
         <ListView ItemsSource="{Binding SectionsCollection}" Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">
             <ListView.View>

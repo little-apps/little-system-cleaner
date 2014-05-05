@@ -245,7 +245,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.currentListViewIndex++;
 
             ScanWizard.currentScannerName = sectionName;
-            this.currentSection.Text = "Section: " + sectionName;
+            this.currentSection.Content = "Section: " + sectionName;
 
             this.CurrentListViewItem.Status = "Scanning";
             this.CurrentListViewItem.LoadGif();
