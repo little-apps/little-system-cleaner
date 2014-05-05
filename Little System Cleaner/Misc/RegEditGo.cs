@@ -397,7 +397,6 @@ namespace Little_System_Cleaner
 
         private class Interop
         {
-
             #region structs
 
             /// <summary>

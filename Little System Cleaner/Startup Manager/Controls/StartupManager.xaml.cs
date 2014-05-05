@@ -236,10 +236,20 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     return;
 
                 if (MessageBox.Show("Are you sure you want to run this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    Process.Start(node.Path, node.Args);
+                {
+                    try
+                    {
+                        Process.Start(node.Path, node.Args);
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "The file (" + ex.FileName + ") could not be found. This could mean the startup entry is erroneous.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                    
             }
 
-            MessageBox.Show("Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(App.Current.MainWindow, "Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
         }   
 	}
 }
