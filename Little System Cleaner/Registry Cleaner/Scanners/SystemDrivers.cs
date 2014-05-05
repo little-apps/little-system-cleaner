@@ -45,7 +45,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    ScanWizard.logger.WriteLine("Scanning for missing drivers");
+                    ScanWizard.Report.WriteLine("Scanning for missing drivers");
 
                     foreach (string strDriverName in regKey.GetValueNames())
                     {

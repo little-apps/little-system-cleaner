@@ -41,7 +41,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 {
                     if (regKey != null)
                     {
-                        ScanWizard.logger.WriteLine("Scanning for missing sound events");
+                        ScanWizard.Report.WriteLine("Scanning for missing sound events");
                         ParseSoundKeys(regKey);
                     }
                 }

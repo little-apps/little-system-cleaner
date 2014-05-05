@@ -80,7 +80,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    ScanWizard.logger.WriteLine("Cleaning invalid references in " + regKey.Name);
+                    ScanWizard.Report.WriteLine("Cleaning invalid references in " + regKey.Name);
 
                     EnumMRUList(regKey);
 

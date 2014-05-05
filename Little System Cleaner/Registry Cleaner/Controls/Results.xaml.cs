@@ -55,7 +55,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
             else
             {
-                ScanWizard.logger.DisplayLogFile((Properties.Settings.Default.registryCleanerOptionsShowLog && !Properties.Settings.Default.registryCleanerOptionsAutoRepair));
+                ScanWizard.Report.DisplayLogFile((Properties.Settings.Default.registryCleanerOptionsShowLog && !Properties.Settings.Default.registryCleanerOptionsAutoRepair));
 
                 // Set last scan errors found
                 Properties.Settings.Default.lastScanErrors = 0;

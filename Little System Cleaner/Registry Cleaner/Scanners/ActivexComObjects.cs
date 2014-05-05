@@ -93,7 +93,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.logger.WriteLine("Scanning " + regKey.Name + " for invalid CLSID's");
+            ScanWizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid CLSID's");
 
             foreach (string strCLSID in regKey.GetSubKeyNames())
             {
@@ -166,7 +166,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.logger.WriteLine("Scanning " + regKey.Name + " for invalid AppID's");
+            ScanWizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid AppID's");
 
             foreach (string strAppId in regKey.GetSubKeyNames())
             {
@@ -195,7 +195,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.logger.WriteLine("Scanning " + regKey.Name + " for invalid Classes");
+            ScanWizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid Classes");
 
             foreach (string strSubKey in regKey.GetSubKeyNames())
             {
@@ -275,7 +275,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             // Check Browser Help Objects
             using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\explorer\\Browser Helper Objects"))
             {
-                ScanWizard.logger.WriteLine("Checking for invalid browser helper objects");
+                ScanWizard.Report.WriteLine("Checking for invalid browser helper objects");
 
                 if (regKey != null)
                 {
@@ -295,7 +295,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             // Check IE Toolbars
             using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Internet Explorer\\Toolbar"))
             {
-                ScanWizard.logger.WriteLine("Checking for invalid explorer toolbars");
+                ScanWizard.Report.WriteLine("Checking for invalid explorer toolbars");
 
                 if (regKey != null)
                 {
@@ -312,7 +312,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 RegistryKey rkExt = null;
 
-                ScanWizard.logger.WriteLine("Checking for invalid explorer extensions");
+                ScanWizard.Report.WriteLine("Checking for invalid explorer extensions");
 
                 if (regKey != null)
                 {
@@ -331,7 +331,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 RegistryKey rkFileExt = null;
 
-                ScanWizard.logger.WriteLine("Checking for invalid explorer file extensions");
+                ScanWizard.Report.WriteLine("Checking for invalid explorer file extensions");
 
                 if (regKey != null)
                 {

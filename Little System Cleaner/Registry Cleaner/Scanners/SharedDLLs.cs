@@ -45,7 +45,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 if (regKey == null)
                     return;
 
-                ScanWizard.logger.WriteLine("Scanning for missing shared DLLs");
+                ScanWizard.Report.WriteLine("Scanning for missing shared DLLs");
 
                 // Validate Each DLL from the value names
                 foreach (string strFilePath in regKey.GetValueNames())

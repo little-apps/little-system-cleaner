@@ -164,20 +164,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             try
             {
-                ScanWizard.logger.WriteLine("Started scan at " + DateTime.Now.ToString());
-                ScanWizard.logger.WriteLine();
+                ScanWizard.Report.WriteLine("Started scan at " + DateTime.Now.ToString());
+                ScanWizard.Report.WriteLine();
 
                 // Begin Scanning
                 foreach (ScannerBase scanner in Scan.EnabledScanners)
                 {
                     invokeCurrentSection(scanner.ScannerName);
 
-                    ScanWizard.logger.WriteLine("Starting scanning: " + scanner.ScannerName);
+                    ScanWizard.Report.WriteLine("Starting scanning: " + scanner.ScannerName);
 
                     this.StartScanner(scanner);
 
-                    ScanWizard.logger.WriteLine("Finished scanning: " + scanner.ScannerName);
-                    ScanWizard.logger.WriteLine();
+                    ScanWizard.Report.WriteLine("Finished scanning: " + scanner.ScannerName);
+                    ScanWizard.Report.WriteLine();
                 }
 
                 // Scan was successful
@@ -187,13 +187,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             {
                 // Scanning was aborted
                 scanAborted = true;
-                
-                ScanWizard.logger.Write("User aborted scan... ");
+
+                ScanWizard.Report.Write("User aborted scan... ");
 
                 if (this.threadScan.IsAlive)
                     this.threadScan.Abort();
 
-                ScanWizard.logger.WriteLine("Exiting.\r\n");
+                ScanWizard.Report.WriteLine("Exiting.\r\n");
             }
             finally
             {
@@ -210,11 +210,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 this.timerUpdate.Stop();
 
                 // Write scan stats to log file
-                ScanWizard.logger.WriteLine(string.Format("Total time elapsed: {0} minutes {0} seconds", ts.Minutes, ts.Seconds));
-                ScanWizard.logger.WriteLine(string.Format("Total problems found: {0}", TotalProblems));
-                ScanWizard.logger.WriteLine(string.Format("Total objects scanned: {0}", TotalItemsScanned));
-                ScanWizard.logger.WriteLine();
-                ScanWizard.logger.WriteLine("Finished scan at " + DateTime.Now.ToString());
+                ScanWizard.Report.WriteLine(string.Format("Total time elapsed: {0} minutes {0} seconds", ts.Minutes, ts.Seconds));
+                ScanWizard.Report.WriteLine(string.Format("Total problems found: {0}", TotalProblems));
+                ScanWizard.Report.WriteLine(string.Format("Total objects scanned: {0}", TotalItemsScanned));
+                ScanWizard.Report.WriteLine();
+                ScanWizard.Report.WriteLine("Finished scan at " + DateTime.Now.ToString());
             }
 
             // End Critical Region
@@ -270,7 +270,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(App.Current.MainWindow, "Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 this.AbortScanThread();
                 this.scanBase.MoveFirst();

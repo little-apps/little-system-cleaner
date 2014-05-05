@@ -53,7 +53,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    ScanWizard.logger.WriteLine("Scanning for invalid fonts");
+                    ScanWizard.Report.WriteLine("Scanning for invalid fonts");
 
                     if (!SHGetSpecialFolderPath(IntPtr.Zero, strPath, CSIDL_FONTS, false))
                         return;

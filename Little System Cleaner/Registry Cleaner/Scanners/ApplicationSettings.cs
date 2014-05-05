@@ -57,7 +57,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (baseRegKey == null)
                 return;
 
-            ScanWizard.logger.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
+            ScanWizard.Report.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
 
             foreach (string strSubKey in baseRegKey.GetSubKeyNames())
             {

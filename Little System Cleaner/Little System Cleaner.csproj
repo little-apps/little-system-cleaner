@@ -342,7 +342,7 @@
     </Compile>
     <Compile Include="Registry Cleaner\Helpers\BadRegistryKey.cs" />
     <Compile Include="Registry Cleaner\Helpers\ExcludeItem.cs" />
-    <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Misc\Report.cs" />
     <Compile Include="Misc\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registry Cleaner\Scanners\ApplicationInfo.cs" />

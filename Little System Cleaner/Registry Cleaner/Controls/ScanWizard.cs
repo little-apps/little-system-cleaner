@@ -73,15 +73,29 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             get { return arrayScanners; }
         }
 
-        static Logger _logger;
-        public static Logger logger
+        static Report _report;
+        public static Report Report
         {
-            get { return _logger; }
+            get { return _report; }
         }
 
-        public static void CreateNewLogFile() 
+        public static bool CreateNewLogFile() 
         {
-            _logger = new Logger(System.IO.Path.GetTempFileName(), Properties.Settings.Default.registryCleanerOptionsLog);
+            string fileName;
+
+            try
+            {
+                fileName = System.IO.Path.GetTempFileName();
+            }
+            catch (System.IO.IOException ex)
+            {
+                MessageBox.Show(App.Current.MainWindow, "The following error occured: " + ex.Message + "\nDue to this, a log of the scan will not be created.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            _report = Report.CreateReport(Properties.Settings.Default.registryCleanerOptionsLog);
+
+            return true;
         }
 
         public UserControl userControl
@@ -353,9 +367,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             _badRegKeyArray.Add(new BadRegistryKey(ScanWizard.currentScannerName, problem, baseKey, subKey, valueName, severity));
 
             if (!string.IsNullOrEmpty(valueName))
-                ScanWizard.logger.WriteLine(string.Format("Bad Registry Value Found! Problem: \"{0}\" Path: \"{1}\" Value Name: \"{2}\"", problem, regPath, valueName));
+                ScanWizard.Report.WriteLine(string.Format("Bad Registry Value Found! Problem: \"{0}\" Path: \"{1}\" Value Name: \"{2}\"", problem, regPath, valueName));
             else
-                ScanWizard.logger.WriteLine(string.Format("Bad Registry Key Found! Problem: \"{0}\" Path: \"{1}\"", problem, regPath));
+                ScanWizard.Report.WriteLine(string.Format("Bad Registry Key Found! Problem: \"{0}\" Path: \"{1}\"", problem, regPath));
 
             return true;
         }

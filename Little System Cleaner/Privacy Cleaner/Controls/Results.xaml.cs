@@ -90,7 +90,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            Logger logger = new Logger(Path.GetTempFileName(), Properties.Settings.Default.privacyCleanerLog);
+            Report report = Report.CreateReport(Properties.Settings.Default.privacyCleanerLog);
 
 #if (!DEBUG)
             // Create system restore point
@@ -105,7 +105,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     if (n.IsChecked.GetValueOrDefault() != true)
                         continue;
 
-                    logger.WriteLine(string.Format("Section: {0}", parent.Section));
+                    report.WriteLine(string.Format("Section: {0}", parent.Section));
 
                     if (n is ResultFiles)
                     {
@@ -116,7 +116,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                                 if (File.Exists(filePath))
                                 {
                                     Utils.DeleteFile(filePath);
-                                    logger.WriteLine(string.Format("Deleted File: {0}", filePath));
+                                    report.WriteLine(string.Format("Deleted File: {0}", filePath));
                                 }
                             }
                             catch (UnauthorizedAccessException)
@@ -137,7 +137,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                                 if (Directory.Exists(folderPath))
                                 {
                                     Utils.DeleteDir(folderPath, recurse);
-                                    logger.WriteLine(string.Format("Deleted Folder: {0}", folderPath));
+                                    report.WriteLine(string.Format("Deleted Folder: {0}", folderPath));
                                 }
                             }
                             catch (UnauthorizedAccessException)
@@ -151,7 +151,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         if (n.CleanDelegate != null)
                         {
                             n.CleanDelegate();
-                            logger.WriteLine(n.Description);
+                            report.WriteLine(n.Description);
                         }
                     }
                     else if (n is ResultRegKeys)
@@ -207,7 +207,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                                 reg.Flush();
                                 reg.Close();
 
-                                logger.WriteLine(string.Format("Removed Registry Key: {0}", regKey.Name));
+                                report.WriteLine(string.Format("Removed Registry Key: {0}", regKey.Name));
                             }
                         }
 
@@ -234,7 +234,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                                 if (regKey.GetValue(valueName) != null)
                                 {
                                     regKey.DeleteValue(valueName);
-                                    logger.WriteLine(string.Format("Removed Registry Key: {0} Value Name: {0}", regKey.Name, valueName));
+                                    report.WriteLine(string.Format("Removed Registry Key: {0} Value Name: {0}", regKey.Name, valueName));
                                 }
                             }
                         }
@@ -251,12 +251,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                             if (string.IsNullOrEmpty(valueName))
                             {
                                 PInvoke.WritePrivateProfileString(section, null, null, filePath);
-                                logger.WriteLine(string.Format("Erased INI File: {0} Section: {1}", filePath, section));
+                                report.WriteLine(string.Format("Erased INI File: {0} Section: {1}", filePath, section));
                             }
                             else
                             {
                                 PInvoke.WritePrivateProfileString(section, valueName, null, filePath);
-                                logger.WriteLine(string.Format("Erased INI File: {0} Section: {1} Value Name: {2}", filePath, section, valueName));
+                                report.WriteLine(string.Format("Erased INI File: {0} Section: {1} Value Name: {2}", filePath, section, valueName));
                             }
                         }
                     }
@@ -278,14 +278,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                                     xmlDoc.RemoveChild(xmlNode);
                             }
                             xmlDoc.Save(filePath);
-                            logger.WriteLine("Removed XML File: {0} Matching XPath: {0}", filePath, xPath);
+                            report.WriteLine("Removed XML File: {0} Matching XPath: {0}", filePath, xPath);
                         }
                     }
                 }
             }
 
-            logger.WriteLine("Successfully Cleaned Disk @ " + DateTime.Now.ToLongTimeString());
-            logger.DisplayLogFile(Properties.Settings.Default.privacyCleanerDisplayLog);
+            report.WriteLine("Successfully Cleaned Disk @ " + DateTime.Now.ToLongTimeString());
+            report.DisplayLogFile(Properties.Settings.Default.privacyCleanerDisplayLog);
 
 #if (!DEBUG)
             // End restore point

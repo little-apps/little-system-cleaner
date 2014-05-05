@@ -97,7 +97,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.logger.WriteLine("Checking for invalid files in " + regKey.Name);
+            ScanWizard.Report.WriteLine("Checking for invalid files in " + regKey.Name);
 
             foreach (string strProgName in regKey.GetValueNames())
             {

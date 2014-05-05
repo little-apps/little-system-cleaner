@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.logger.WriteLine("Checking for missing help files in " + regKey.Name);
+            ScanWizard.Report.WriteLine("Checking for missing help files in " + regKey.Name);
 
             foreach (string strHelpFile in regKey.GetValueNames())
             {
