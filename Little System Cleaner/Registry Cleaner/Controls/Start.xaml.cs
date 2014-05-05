@@ -36,8 +36,8 @@ using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.IO;
-using Little_System_Cleaner.Xml;
 using System.Diagnostics;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {

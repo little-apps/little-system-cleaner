@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {

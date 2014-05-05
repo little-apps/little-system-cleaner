@@ -281,6 +281,8 @@
       <SubType>Code</SubType>
       <DependentUpon>Results.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Registry Cleaner\Helpers\BadRegKeyArray.cs" />
+    <Compile Include="Registry Cleaner\Helpers\ExcludeArray.cs" />
     <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
     <Compile Include="Registry Cleaner\Helpers\ResultModel.cs" />
@@ -338,8 +340,8 @@
     <Compile Include="Uninstall Manager\Controls\UninstallManager.xaml.cs">
       <DependentUpon>UninstallManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Misc\BadRegKey.cs" />
-    <Compile Include="Misc\ExcludeItem.cs" />
+    <Compile Include="Registry Cleaner\Helpers\BadRegistryKey.cs" />
+    <Compile Include="Registry Cleaner\Helpers\ExcludeItem.cs" />
     <Compile Include="Misc\Logger.cs" />
     <Compile Include="Misc\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -371,11 +373,11 @@
       <DependentUpon>Welcome.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uninstall Manager\Helpers\ProgramInfo.cs" />
-    <Compile Include="XML Registry\keyValue.cs" />
-    <Compile Include="XML Registry\xmlElement.cs" />
-    <Compile Include="XML Registry\xmlReader.cs" />
-    <Compile Include="XML Registry\xmlRegistry.cs" />
-    <Compile Include="XML Registry\xmlWriter.cs" />
+    <Compile Include="Registry Cleaner\Helpers\XML Registry\keyValue.cs" />
+    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlElement.cs" />
+    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlReader.cs" />
+    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlRegistry.cs" />
+    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlWriter.cs" />
     <Page Include="Tab Controls\Options\Options.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

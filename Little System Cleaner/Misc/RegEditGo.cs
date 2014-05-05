@@ -107,8 +107,6 @@ namespace Little_System_Cleaner
         }
 
         #region public
-
-
         /// <summary>
         /// Opens RegEdit.exe and navigates to given registry path and value 
         /// </summary>

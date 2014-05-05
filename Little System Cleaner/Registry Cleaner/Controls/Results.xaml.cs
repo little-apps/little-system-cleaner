@@ -27,10 +27,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Collections.ObjectModel;
 using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Xml;
 using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {

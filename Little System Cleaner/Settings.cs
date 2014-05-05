@@ -1,4 +1,5 @@
-﻿namespace Little_System_Cleaner.Properties {
+﻿using Little_System_Cleaner.Registry_Cleaner.Helpers;
+namespace Little_System_Cleaner.Properties {
     
     
     // This class allows you to handle specific events on the settings class:
