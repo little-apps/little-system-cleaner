@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -234,31 +236,81 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 return false;
             }
 
-            try
+            if (WindowsInstaller)
             {
-                if (WindowsInstaller)
-                {
-                    // Remove 'msiexec' from uninstall string
-                    string cmdArgs = cmdLine.Substring(cmdLine.IndexOf(' ') + 1);
+                // Remove 'msiexec' from uninstall string
+                string cmdArgs = cmdLine.Substring(cmdLine.IndexOf(' ') + 1);
 
+                try
+                {
                     Process proc = Process.Start("msiexec.exe", cmdArgs);
                     proc.WaitForExit();
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Execute uninstall string
+                    if (ex is FileNotFoundException)
+                    {
+                        string message = string.Format("The Windows Installer tool (msiexec.exe) could not be found. Please ensure that it's located in either {0} or {1} and also ensure that the PATH variable is properly set to include these directories.", Environment.GetFolderPath(Environment.SpecialFolder.Windows), Environment.SystemDirectory);
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (ex is Win32Exception)
+                    {
+                        int hr = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
+                        if (hr == unchecked((int)0x80004002))
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    return false;
+                }
+            }
+            else
+            {
+                // Execute uninstall string
+                try
+                {
                     Process proc = Process.Start(cmdLine);
                     proc.WaitForExit();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format("Error uninstalling program: {0}", ex.Message), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                catch (Exception ex)
+                {
+                    if (ex is FileNotFoundException)
+                    {
+                        string message = string.Format("The file could not be found from the command: {0}", cmdLine);
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (ex is Win32Exception)
+                    {
+                        int hr = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
+                        if (hr == unchecked((int)0x80004002))
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
 
-                return false;
+                    return false;
+                }
+                    
             }
 
-            MessageBox.Show("Sucessfully uninstalled program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Sucessfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             return true;
         }
