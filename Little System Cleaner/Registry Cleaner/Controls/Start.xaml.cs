@@ -128,7 +128,40 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(Properties.Settings.Default.optionsBackupDir);
+            string windir = Environment.GetEnvironmentVariable("WINDIR");
+
+            try
+            {
+                Process proc = new Process();
+                proc.StartInfo.FileName = windir + @"\explorer.exe";
+                proc.StartInfo.Arguments = Properties.Settings.Default.optionsBackupDir;
+                proc.Start();
+            }
+            catch (Exception ex)
+            {
+                if (ex is FileNotFoundException) 
+                {
+                    MessageBox.Show(App.Current.MainWindow, "Could not find Windows Explorer to browse to a folder (" + Properties.Settings.Default.optionsBackupDir + ")", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if (ex is Win32Exception)
+                {
+                    int hr = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
+                    if (hr == unchecked((int)0x80004002))
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                
+            }
+            
         }
 
         private void buttonRestore_Click(object sender, RoutedEventArgs e)
