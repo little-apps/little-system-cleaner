@@ -274,13 +274,13 @@ namespace Little_System_Cleaner
             tvi.hItem = item;
             tvi.cchTextMax = MAX_TVITEMTEXT;
             // set address to remote buffer immediately following the tvItem
-            tvi.pszText = (IntPtr)(lpRemoteBuffer.ToInt32() + Marshal.SizeOf(typeof(Interop.TVITEM)));
+            Int64 nRemoteBufferPtr = lpRemoteBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            tvi.pszText = (IntPtr)(nRemoteBufferPtr);
 
             // copy local tvItem to remote buffer
             bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref tvi, Marshal.SizeOf(typeof(Interop.TVITEM)), IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
-
 
             Interop.SendMessage(wndTreeView, Interop.TVM_GETITEMW, IntPtr.Zero, lpRemoteBuffer);
 
@@ -289,7 +289,9 @@ namespace Little_System_Cleaner
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
-            return Marshal.PtrToStringUni((IntPtr)(lpLocalBuffer.ToInt32() + Marshal.SizeOf(typeof(Interop.TVITEM))));
+            Int64 nLocalBufferPtr = lpLocalBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+
+            return Marshal.PtrToStringUni((IntPtr)(nLocalBufferPtr));
         }
 
         private IntPtr FindKey(IntPtr itemParent, string key)
@@ -344,7 +346,8 @@ namespace Little_System_Cleaner
             lvItem.iItem = item;
             lvItem.iSubItem = 0;
             // set address to remote buffer immediately following the lvItem 
-            lvItem.pszText = (IntPtr)(lpRemoteBuffer.ToInt32() + Marshal.SizeOf(typeof(Interop.LVITEM)));
+            Int64 nRemoteBufferPtr = lpRemoteBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            lvItem.pszText = (IntPtr)(nRemoteBufferPtr);
             lvItem.cchTextMax = 50;
 
             // copy local lvItem to remote buffer
@@ -361,7 +364,8 @@ namespace Little_System_Cleaner
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
-            return Marshal.PtrToStringAnsi((IntPtr)(lpLocalBuffer.ToInt32() + Marshal.SizeOf(typeof(Interop.LVITEM))));
+            Int64 nLocalBufferPtr = lpLocalBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            return Marshal.PtrToStringAnsi((IntPtr)(nLocalBufferPtr));
         }
 
         private void CheckAccess()
