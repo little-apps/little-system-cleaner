@@ -56,12 +56,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         public readonly string _installLocation;
         public readonly string _installSource;
 
-        public readonly int _noModify;
-        public readonly int _noRepair;
+        public readonly int? _noModify;
+        public readonly int? _noRepair;
 
-        public readonly int _estimatedSize;
+        public readonly int? _estimatedSize;
         public readonly bool _systemComponent;
-        private readonly int _windowsInstaller;
+        private readonly int? _windowsInstaller;
 
         public bool WindowsInstaller
         {
@@ -127,8 +127,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             {
                 if (this.InstallSize > 0)
                     return Utils.ConvertSizeToString((uint)this.InstallSize);
-                else if (this._estimatedSize > 0)
-                    return Utils.ConvertSizeToString(this._estimatedSize * 1024);
+                else if (this._estimatedSize.GetValueOrDefault(0) > 0)
+                    return Utils.ConvertSizeToString(this._estimatedSize.Value * 1024);
                 else
                     return string.Empty;
             }
@@ -139,37 +139,29 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         {
             Key = regKey.Name.Substring(regKey.Name.LastIndexOf('\\') + 1);
 
-            try
-            {
-                _displayName = regKey.GetValue("DisplayName") as string;
-                _quietDisplayName = regKey.GetValue("QuietDisplayName") as string;
-                _uninstallString = regKey.GetValue("UninstallString") as string;
-                _quietUninstallString = regKey.GetValue("QuietUninstallString") as string;
-                _publisher = regKey.GetValue("Publisher") as string;
-                _displayVersion = regKey.GetValue("DisplayVersion") as string;
-                _helpLink = regKey.GetValue("HelpLink") as string;
-                _urlInfoAbout = regKey.GetValue("URLInfoAbout") as string;
-                _helpTelephone = regKey.GetValue("HelpTelephone") as string;
-                _contact = regKey.GetValue("Contact") as string;
-                _readme = regKey.GetValue("Readme") as string;
-                _comments = regKey.GetValue("Comments") as string;
-                _displayIcon = regKey.GetValue("DisplayIcon") as string;
-                _parentKeyName = regKey.GetValue("ParentKeyName") as string;
-                _installLocation = regKey.GetValue("InstallLocation") as string;
-                _installSource = regKey.GetValue("InstallSource") as string;
+            _displayName = Utils.TryGetValue(regKey, "DisplayName", "") as string;
+            _quietDisplayName = Utils.TryGetValue(regKey, "QuietDisplayName", "") as string;
+            _uninstallString = Utils.TryGetValue(regKey, "UninstallString", "") as string;
+            _quietUninstallString = Utils.TryGetValue(regKey, "QuietUninstallString", "") as string;
+            _publisher = Utils.TryGetValue(regKey, "Publisher", "") as string;
+            _displayVersion = Utils.TryGetValue(regKey, "DisplayVersion", "") as string;
+            _helpLink = Utils.TryGetValue(regKey, "HelpLink", "") as string;
+            _urlInfoAbout = Utils.TryGetValue(regKey, "URLInfoAbout", "") as string;
+            _helpTelephone = Utils.TryGetValue(regKey, "HelpTelephone", "") as string;
+            _contact = Utils.TryGetValue(regKey, "Contact", "") as string;
+            _readme = Utils.TryGetValue(regKey, "Readme", "") as string;
+            _comments = Utils.TryGetValue(regKey, "Comments", "") as string;
+            _displayIcon = Utils.TryGetValue(regKey, "DisplayIcon", "") as string;
+            _parentKeyName = Utils.TryGetValue(regKey, "ParentKeyName", "") as string;
+            _installLocation = Utils.TryGetValue(regKey, "InstallLocation", "") as string;
+            _installSource = Utils.TryGetValue(regKey, "InstallSource", "") as string;
 
-                _noModify = (Int32)regKey.GetValue("NoModify", 0);
-                _noRepair = (Int32)regKey.GetValue("NoRepair", 0);
+            _noModify = Utils.TryGetValue(regKey, "NoModify") as int?;
+            _noRepair = Utils.TryGetValue(regKey, "NoRepair") as int?;
 
-                _systemComponent = (((Int32)regKey.GetValue("SystemComponent", 0) == 1) ? (true) : (false));
-                _windowsInstaller = (Int32)regKey.GetValue("WindowsInstaller", 0);
-                _estimatedSize = (Int32)regKey.GetValue("EstimatedSize", 0);
-            }
-            catch (Exception)
-            {
-                _systemComponent = false;
-                _estimatedSize = 0;
-            }
+            _systemComponent = (((Int32)Utils.TryGetValue(regKey, "SystemComponent", 0) == 1) ? (true) : (false));
+            _windowsInstaller = Utils.TryGetValue(regKey, "WindowsInstaller", 0) as int?;
+            _estimatedSize = Utils.TryGetValue(regKey, "EstimatedSize", 0) as int?;
 
             return;
         }

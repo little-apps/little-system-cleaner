@@ -38,20 +38,28 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 {
 	public partial class UninstallManager
 	{
-        GridViewColumnHeader _lastHeaderClicked = null;
+        GridViewColumn _lastColumnClicked;
         ListSortDirection _lastDirection = ListSortDirection.Ascending;
 
 		public UninstallManager()
 		{
 			this.InitializeComponent();
+		}
 
-			// Insert code required on object creation below this point.
+        public void OnLoaded()
+        {
             PopulateListView();
 
             // Manually sort listview
-            Sort((this.listViewProgs.View as GridView).Columns[0].Header as string, _lastDirection);
-            _lastDirection = ((_lastDirection == ListSortDirection.Ascending) ? (ListSortDirection.Descending) : (ListSortDirection.Ascending));
-		}
+            Sort((this.listViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
+            //_lastDirection = ((_lastDirection == ListSortDirection.Ascending) ? (ListSortDirection.Descending) : (ListSortDirection.Ascending));
+        }
+
+        public void OnUnloaded()
+        {
+            if (this.listViewProgs.Items.Count > 0)
+                this.listViewProgs.Items.Clear();
+        }
 
         private void PopulateListView()
         {
@@ -131,6 +139,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
         private void SearchTextBox_Search(object sender, RoutedEventArgs e)
         {
             PopulateListView();
+            Sort(_lastColumnClicked, _lastDirection);
         }
 
         private void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
@@ -142,7 +151,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             {
                 if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
                 {
-                    if (headerClicked != _lastHeaderClicked)
+                    if (headerClicked.Column != _lastColumnClicked)
                     {
                         direction = ListSortDirection.Ascending;
                     }
@@ -158,39 +167,38 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                         }
                     }
 
-                    string header = headerClicked.Column.Header as string;
-                    Sort(header, direction);
-
-                    if (direction == ListSortDirection.Ascending)
-                    {
-                        headerClicked.Column.HeaderTemplate = Resources["HeaderTemplateArrowUp"] as DataTemplate;
-                    }
-                    else
-                    {
-                        headerClicked.Column.HeaderTemplate = Resources["HeaderTemplateArrowDown"] as DataTemplate;
-                    }
-
-                    // Remove arrow from previously sorted header
-                    if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
-                    {
-                        _lastHeaderClicked.Column.HeaderTemplate = null;
-                    }
-
-
-                    _lastHeaderClicked = headerClicked;
-                    _lastDirection = direction;
+                    Sort(headerClicked.Column, direction);
                 }
             }
         }
 
-        private void Sort(string sortBy, ListSortDirection direction)
+        private void Sort(GridViewColumn column, ListSortDirection direction)
         {
             ICollectionView dataView = CollectionViewSource.GetDefaultView(this.listViewProgs.Items);
-
+            string sortBy = column.Header as string;
+            
             dataView.SortDescriptions.Clear();
             SortDescription sd = new SortDescription(sortBy, direction);
             dataView.SortDescriptions.Add(sd);
             dataView.Refresh();
+
+            if (direction == ListSortDirection.Ascending)
+            {
+                column.HeaderTemplate = Resources["HeaderTemplateArrowUp"] as DataTemplate;
+            }
+            else
+            {
+                column.HeaderTemplate = Resources["HeaderTemplateArrowDown"] as DataTemplate;
+            }
+
+            // Remove arrow from previously sorted header
+            if (_lastColumnClicked != null && _lastColumnClicked != column)
+            {
+                _lastColumnClicked.HeaderTemplate = null;
+            }
+
+            _lastColumnClicked = column;
+            _lastDirection = direction;
         }
 
         private void buttonRemove_Click(object sender, RoutedEventArgs e)
@@ -203,6 +211,9 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                     progInfo.RemoveFromRegistry();
 
                 PopulateListView();
+
+                // Manually sort listview
+                Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
             }
         }
 
@@ -216,6 +227,9 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                     progInfo.Uninstall();
 
                 PopulateListView();
+
+                // Manually sort listview
+                Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
             }
         }
 

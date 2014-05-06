@@ -342,6 +342,9 @@ namespace Little_System_Cleaner
 
         internal static string EncryptString(SecureString input)
         {
+            if (input.Length == 0)
+                return string.Empty;
+
             byte[] encryptedData = ProtectedData.Protect(
                 Encoding.Unicode.GetBytes(ToInsecureString(input)),
                 Utils.GetMachineHash,
@@ -351,6 +354,9 @@ namespace Little_System_Cleaner
 
         internal static SecureString DecryptString(string encryptedData)
         {
+            if (string.IsNullOrWhiteSpace(encryptedData))
+                return new SecureString();
+
             try
             {
                 byte[] decryptedData = ProtectedData.Unprotect(
@@ -559,8 +565,9 @@ namespace Little_System_Cleaner
                 else
                     return null; // break here
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine("The following error occurred trying to open " + MainKey.ToUpper() + "/" + SubKey + ": " + ex.Message);
                 return null;
             }
 
@@ -631,6 +638,41 @@ namespace Little_System_Cleaner
             }
 
             return strRet;
+        }
+
+        internal static object TryGetValue(RegistryKey regKey, string valueName, object defaultValue = null)
+        {
+            object value = defaultValue;
+
+            try
+            {
+                value = regKey.GetValue(valueName);
+
+                if (value == null && defaultValue != null)
+                    value = defaultValue;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get registry value for " + valueName + " in " + regKey.ToString());
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Use to safely call function with registry key being open in parameter
+        /// </summary>
+        /// <param name="action">Function call</param>
+        internal static void SafeOpenRegistryKey(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message);
+            }
         }
         #endregion
 
@@ -1321,7 +1363,8 @@ namespace Little_System_Cleaner
             }
             finally
             {
-                DeleteObject(hBitmap);
+                if (hBitmap != null)
+                    DeleteObject(hBitmap);
             }
         }
 

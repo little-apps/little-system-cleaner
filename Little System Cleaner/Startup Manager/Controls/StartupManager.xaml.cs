@@ -40,9 +40,17 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 		public StartupManager()
 		{
 			this.InitializeComponent();
-
-            LoadStartupFiles();
 		}
+
+        public void OnLoaded()
+        {
+            LoadStartupFiles();
+        }
+
+        public void OnUnloaded()
+        {
+            this._tree.Model = null;
+        }
 
         /// <summary>
         /// Loads files that load on startup
