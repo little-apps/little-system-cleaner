@@ -1047,7 +1047,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             return false;
         }
 
-
         #endregion
     }
 }
