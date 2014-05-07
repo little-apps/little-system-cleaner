@@ -52,7 +52,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
             // Manually sort listview
             Sort((this.listViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
-            //_lastDirection = ((_lastDirection == ListSortDirection.Ascending) ? (ListSortDirection.Descending) : (ListSortDirection.Ascending));
         }
 
         public void OnUnloaded()
@@ -152,19 +151,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
                 {
                     if (headerClicked.Column != _lastColumnClicked)
-                    {
                         direction = ListSortDirection.Ascending;
-                    }
                     else
                     {
                         if (_lastDirection == ListSortDirection.Ascending)
-                        {
                             direction = ListSortDirection.Descending;
-                        }
                         else
-                        {
                             direction = ListSortDirection.Ascending;
-                        }
                     }
 
                     Sort(headerClicked.Column, direction);
@@ -183,19 +176,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             dataView.Refresh();
 
             if (direction == ListSortDirection.Ascending)
-            {
                 column.HeaderTemplate = Resources["HeaderTemplateArrowUp"] as DataTemplate;
-            }
             else
-            {
                 column.HeaderTemplate = Resources["HeaderTemplateArrowDown"] as DataTemplate;
-            }
 
             // Remove arrow from previously sorted header
             if (_lastColumnClicked != null && _lastColumnClicked != column)
-            {
                 _lastColumnClicked.HeaderTemplate = null;
-            }
 
             _lastColumnClicked = column;
             _lastDirection = direction;
