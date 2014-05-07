@@ -63,6 +63,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
         private void PopulateListView()
         {
             List<ProgramInfo> listProgInfo = new List<ProgramInfo>();
+            RegistryKey regKey = null;
 
             // Clear listview
             this.listViewProgs.Items.Clear();
@@ -83,37 +84,85 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             }
 
             // Get the program info list
-            using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
+            try
             {
+                regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+
                 if (regKey != null)
                 {
                     foreach (string strSubKeyName in regKey.GetSubKeyNames())
                     {
-                        using (RegistryKey subKey = regKey.OpenSubKey(strSubKeyName))
+                        RegistryKey subKey = null;
+
+                        try
                         {
+                            subKey = regKey.OpenSubKey(strSubKeyName);
+
                             if (subKey != null)
                                 listProgInfo.Add(new ProgramInfo(subKey));
                         }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey.ToString() + "\\" + strSubKeyName + "...");
+                        }
+                        finally
+                        {
+                            if (subKey != null)
+                                subKey.Close();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to open " + @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            }
+            finally
+            {
+                if (regKey != null)
+                    regKey.Close();
             }
 
             // (x64 registry keys)
             if (Utils.Is64BitOS)
             {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"))
+                try
                 {
+                    regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+
                     if (regKey != null)
                     {
                         foreach (string strSubKeyName in regKey.GetSubKeyNames())
                         {
-                            using (RegistryKey subKey = regKey.OpenSubKey(strSubKeyName))
+                            RegistryKey subKey = null;
+
+                            try
                             {
+                                subKey = regKey.OpenSubKey(strSubKeyName);
+
                                 if (subKey != null)
                                     listProgInfo.Add(new ProgramInfo(subKey));
                             }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey.ToString() + "\\" + strSubKeyName + "...");
+                            }
+                            finally
+                            {
+                                if (subKey != null)
+                                    subKey.Close();
+                            }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\n" + @"Unable to open SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+                }
+                finally
+                {
+                    if (regKey != null)
+                        regKey.Close();
                 }
             }
 
