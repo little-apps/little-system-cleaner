@@ -47,9 +47,11 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             LoadStartupFiles();
         }
 
-        public void OnUnloaded()
+        public bool OnUnloaded()
         {
             this._tree.Model = null;
+
+            return true;
         }
 
         /// <summary>
