@@ -20,6 +20,7 @@ using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -147,94 +148,138 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 foreach (FileInfo fileInfo in parentInfo.GetFiles())
                 {
-                    Analyze.CurrentFile = fileInfo.FullName;
-
-                    // Check if file is exclude
-                    if (FileTypeIsExcluded(fileInfo.Name))
-                        continue;
-
-                    // Check for zero-byte files
-                    if (Properties.Settings.Default.diskCleanerSearchZeroByte)
+                    try
                     {
-                        if (fileInfo.Length == 0)
+                        Analyze.CurrentFile = fileInfo.FullName;
+
+                        // Check if file is exclude
+                        if (FileTypeIsExcluded(fileInfo.Name))
+                            continue;
+
+                        // Check for zero-byte files
+                        if (Properties.Settings.Default.diskCleanerSearchZeroByte)
                         {
-                            Wizard.fileList.Add(new ProblemFile(fileInfo));
-                            continue;
+                            if (fileInfo.Length == 0)
+                            {
+                                Wizard.fileList.Add(new ProblemFile(fileInfo));
+                                continue;
+                            }
                         }
+
+                        // Check if file matches types
+                        if (!Utils.CompareWildcards(fileInfo.Name, Properties.Settings.Default.diskCleanerSearchFilters))
+                            continue;
+
+                        // Check if file is in use or write protected
+                        if (Properties.Settings.Default.diskCleanerIgnoreWriteProtected && fileInfo.IsReadOnly)
+                            continue;
+
+                        // Check file attributes
+                        if (!FileCheckAttributes(fileInfo))
+                            continue;
+
+                        // Check file dates
+                        if (Properties.Settings.Default.diskCleanerFindFilesAfter || Properties.Settings.Default.diskCleanerFindFilesBefore)
+                            if (!FileCheckDate(fileInfo))
+                                continue;
+
+                        // Check file size
+                        if (Properties.Settings.Default.diskCleanerCheckFileSize)
+                            if (!FileCheckSize(fileInfo))
+                                continue;
+
+                        Wizard.fileList.Add(new ProblemFile(fileInfo));
                     }
-
-                    // Check if file matches types
-                    if (!Utils.CompareWildcards(fileInfo.Name, Properties.Settings.Default.diskCleanerSearchFilters))
-                        continue;
-
-                    // Check if file is in use or write protected
-                    if (Properties.Settings.Default.diskCleanerIgnoreWriteProtected && fileInfo.IsReadOnly)
-                        continue;
-
-                    // Check file attributes
-                    if (!FileCheckAttributes(fileInfo))
-                        continue;
-
-                    // Check file dates
-                    if (Properties.Settings.Default.diskCleanerFindFilesAfter || Properties.Settings.Default.diskCleanerFindFilesBefore)
-                        if (!FileCheckDate(fileInfo))
-                            continue;
-
-                    // Check file size
-                    if (Properties.Settings.Default.diskCleanerCheckFileSize)
-                        if (!FileCheckSize(fileInfo))
-                            continue;
-
-                    Wizard.fileList.Add(new ProblemFile(fileInfo));
-                }
-
-                foreach (DirectoryInfo childInfo in parentInfo.GetDirectories())
-                {
-                    if (FolderIsIncluded(childInfo.FullName) && !FolderIsExcluded(childInfo.FullName))
+                    catch (Exception ex)
                     {
-                        foreach (FileInfo fileInfo in childInfo.GetFiles())
-                        {
-                            Wizard.fileList.Add(new ProblemFile(fileInfo));
-                        }
-                        continue;
+                        Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping check of file...");
                     }
-
-                    if (!FolderIsExcluded(childInfo.FullName))
-                        ScanFiles(childInfo);
+                    
                 }
             }
             catch (Exception ex)
             {
-                //TODO: Add better exception handling
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to scan files.");
+            }
+
+            try {
+                foreach (DirectoryInfo childInfo in parentInfo.GetDirectories())
+                {
+                    try
+                    {
+                        string dirPath = childInfo.FullName;
+
+                        if (FolderIsIncluded(dirPath) && !FolderIsExcluded(dirPath))
+                        {
+                            foreach (FileInfo fileInfo in childInfo.GetFiles())
+                            {
+                                Wizard.fileList.Add(new ProblemFile(fileInfo));
+                            }
+
+                            continue;
+                        }
+
+                        if (!FolderIsExcluded(dirPath))
+                            ScanFiles(childInfo);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping check of directory...");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to scan directories.");
             }
         }
 
         private bool FileCheckSize(FileInfo fileInfo)
         {
-            long fileSize = fileInfo.Length / 1024;
+            try
+            {
+                long fileSize = fileInfo.Length / 1024;
 
-            if (Properties.Settings.Default.diskCleanerCheckFileSizeLeast > 0)
-                if (fileSize <= Properties.Settings.Default.diskCleanerCheckFileSizeLeast)
-                    return false;
+                if (Properties.Settings.Default.diskCleanerCheckFileSizeLeast > 0)
+                    if (fileSize <= Properties.Settings.Default.diskCleanerCheckFileSizeLeast)
+                        return false;
 
-            if (Properties.Settings.Default.diskCleanerCheckFileSizeMost > 0)
-                if (fileSize >= Properties.Settings.Default.diskCleanerCheckFileSizeMost)
-                    return false;
-
+                if (Properties.Settings.Default.diskCleanerCheckFileSizeMost > 0)
+                    if (fileSize >= Properties.Settings.Default.diskCleanerCheckFileSizeMost)
+                        return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check file size.");
+            }
+            
             return true;
         }
 
+        /// <summary>
+        /// Checks if file is in specified date/time range
+        /// </summary>
+        /// <param name="fileInfo">File information</param>
+        /// <returns>True if file is in date/time range</returns>
         private bool FileCheckDate(FileInfo fileInfo)
         {
             DateTime dateTimeFile = DateTime.MinValue;
             bool bRet = false;
 
-            if (Properties.Settings.Default.diskCleanerFindFilesMode == 0)
-                dateTimeFile = fileInfo.CreationTime;
-            else if (Properties.Settings.Default.diskCleanerFindFilesMode == 1)
-                dateTimeFile = fileInfo.LastWriteTime;
-            else if (Properties.Settings.Default.diskCleanerFindFilesMode == 2)
-                dateTimeFile = fileInfo.LastAccessTime;
+            try
+            {
+                if (Properties.Settings.Default.diskCleanerFindFilesMode == 0)
+                    dateTimeFile = fileInfo.CreationTime;
+                else if (Properties.Settings.Default.diskCleanerFindFilesMode == 1)
+                    dateTimeFile = fileInfo.LastWriteTime;
+                else if (Properties.Settings.Default.diskCleanerFindFilesMode == 2)
+                    dateTimeFile = fileInfo.LastAccessTime;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check file time.");
+                return false;
+            }
 
             if (Properties.Settings.Default.diskCleanerFindFilesAfter)
             {
@@ -258,16 +303,28 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// <returns>True if file matches attributes</returns>
         private bool FileCheckAttributes(FileInfo fileInfo)
         {
-            if ((!Properties.Settings.Default.diskCleanerSearchHidden) && ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden))
+            FileAttributes fileAttribs;
+
+            try
+            {
+                fileAttribs = fileInfo.Attributes;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check file attributes.");
+                return false;
+            }
+
+            if ((!Properties.Settings.Default.diskCleanerSearchHidden) && ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
                 return false;
 
-            if ((!Properties.Settings.Default.diskCleanerSearchArchives) && ((fileInfo.Attributes & FileAttributes.Archive) == FileAttributes.Archive))
+            if ((!Properties.Settings.Default.diskCleanerSearchArchives) && ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
                 return false;
 
-            if ((!Properties.Settings.Default.diskCleanerSearchReadOnly) && ((fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
+            if ((!Properties.Settings.Default.diskCleanerSearchReadOnly) && ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
                 return false;
 
-            if ((!Properties.Settings.Default.diskCleanerSearchSystem) && ((fileInfo.Attributes & FileAttributes.System) == FileAttributes.System))
+            if ((!Properties.Settings.Default.diskCleanerSearchSystem) && ((fileAttribs & FileAttributes.System) == FileAttributes.System))
                 return false;
 
             return true;

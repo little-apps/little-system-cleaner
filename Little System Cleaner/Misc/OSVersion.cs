@@ -79,6 +79,9 @@ namespace Little_System_Cleaner
         public const uint PRODUCT_STANDARD_SERVER_CORE_V = 0x00000028;
         public const uint PRODUCT_ENTERPRISE_SERVER_CORE_V = 0x00000029;
         public const uint PRODUCT_HYPERV = 0x0000002A;
+        public const uint PRODUCT_PROFESSIONAL = 0x00000030;
+        public const uint PRODUCT_PROFESSIONAL_N = 0x00000031;
+        public const uint PRODUCT_STARTER_N = 0x0000002F;
 
         public const ushort PROCESSOR_ARCHITECTURE_INTEL = 0;
         public const ushort PROCESSOR_ARCHITECTURE_IA64 = 6;
@@ -436,6 +439,15 @@ namespace Little_System_Cleaner
                                 case PRODUCT_WEB_SERVER_CORE:
                                     osName += "Web Server Core Installation";
                                     break;
+                                case PRODUCT_PROFESSIONAL:
+                                    osName += "Professional";
+                                    break;
+                                case PRODUCT_PROFESSIONAL_N:
+                                    osName += "Professional N";
+                                    break;
+                                case PRODUCT_STARTER_N:
+                                    osName += "Starter N";
+                                    break;
                             }
                         }
                     }
@@ -444,10 +456,10 @@ namespace Little_System_Cleaner
 
             // If 64 bit OS -> Append (x64)
             if (Environment.Is64BitOperatingSystem)
-                osName += " (x64)";
+                osName = osName.Trim() + " (x64)";
             else 
                 // Otherwise (x86)
-                osName += " (x86)";
+                osName = osName.Trim() + " (x86)";
 
             return osName;
         }
