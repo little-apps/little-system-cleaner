@@ -2008,6 +2008,13 @@ namespace Little_System_Cleaner
         public static string[] GetSections(string filePath)
         {
             uint MAX_BUFFER = 32767;
+
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                Debug.WriteLine("Path to INI file cannot be empty or null. Unable to get sections.");
+                return new string[] { };
+            }
+
             IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
             uint bytesReturned = GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
             if (bytesReturned == 0)
@@ -2027,6 +2034,18 @@ namespace Little_System_Cleaner
             uint MAX_BUFFER = 32767;
 
             StringDictionary ret = new StringDictionary();
+
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                Debug.WriteLine("Path to INI file cannot be empty or null. Unable to get values.");
+                return ret;
+            }
+
+            if (string.IsNullOrWhiteSpace(sectionName))
+            {
+                Debug.WriteLine("Section name cannot be empty or null. Unable to get values.");
+                return ret;
+            }
 
             IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
 
@@ -2102,35 +2121,87 @@ namespace Little_System_Cleaner
             return totalSize;
         }
 
+        /// <summary>
+        /// Checks if file is valid for privacy cleaner
+        /// </summary>
+        /// <param name="fileInfo">FileInfo</param>
+        /// <returns>True if file is valid</returns>
         public static bool IsFileValid(FileInfo fileInfo)
         {
             if (fileInfo == null)
                 return false;
 
-            if ((fileInfo.Attributes & FileAttributes.System) == FileAttributes.System && (!Properties.Settings.Default.privacyCleanerIncSysFile))
+            FileAttributes fileAttribs;
+            long fileLength;
+
+            try
+            {
+                fileAttribs = fileInfo.Attributes;
+                fileLength = fileInfo.Length;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if file is valid.");
+                return false;
+            }
+
+            if ((fileAttribs & FileAttributes.System) == FileAttributes.System && (!Properties.Settings.Default.privacyCleanerIncSysFile))
                 return false;
 
-            if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden && (!Properties.Settings.Default.privacyCleanerIncHiddenFile))
+            if ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden && (!Properties.Settings.Default.privacyCleanerIncHiddenFile))
                 return false;
 
-            if ((fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly && (!Properties.Settings.Default.privacyCleanerIncReadOnlyFile))
+            if ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly && (!Properties.Settings.Default.privacyCleanerIncReadOnlyFile))
                 return false;
 
-            if ((fileInfo.Length == 0) && (!Properties.Settings.Default.privacyCleanerInc0ByteFile))
+            if ((fileLength == 0) && (!Properties.Settings.Default.privacyCleanerInc0ByteFile))
                 return false;
 
             return true;
         }
 
+        /// <summary>
+        /// Checks if file path is valid
+        /// </summary>
+        /// <param name="filePath">Path to file</param>
+        /// <returns>True if file is valid</returns>
         public static bool IsFileValid(string filePath)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
+            bool bRet = false;
 
-            return IsFileValid(fileInfo);
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                Debug.WriteLine("File path cannot be empty or null. Unable to check if file is valid.");
+                return bRet;
+            }
+
+            try
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+                bRet = IsFileValid(fileInfo);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if file is valid.");
+                return bRet;
+            }
+            
+
+            return bRet;
         }
 
+        /// <summary>
+        /// Deletes a file
+        /// </summary>
+        /// <param name="filePath">Path to file</param>
         public static void DeleteFile(string filePath)
         {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                Debug.WriteLine("File path cannot be empty or null. Unable to delete file.");
+                return;
+            }
+
             try
             {
                 if (Properties.Settings.Default.privacyCleanerDeletePerm)
@@ -2138,14 +2209,25 @@ namespace Little_System_Cleaner
                 else
                     FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to delete file: " + filePath);
             }
         }
 
+        /// <summary>
+        /// Deletes a directory
+        /// </summary>
+        /// <param name="dirPath">Path to directory</param>
+        /// <param name="recurse">Recursive delete</param>
         public static void DeleteDir(string dirPath, bool recurse)
         {
+            if (string.IsNullOrWhiteSpace(dirPath))
+            {
+                Debug.WriteLine("Directory path cannot be empty or null. Unable to delete directory.");
+                return;
+            }
+
             try
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(dirPath);

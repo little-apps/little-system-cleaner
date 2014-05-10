@@ -259,6 +259,7 @@
     <Compile Include="Privacy Cleaner\Controls\Wizard.cs" />
     <Compile Include="Privacy Cleaner\Helpers\DetailItem.cs" />
     <Compile Include="Privacy Cleaner\Helpers\PInvoke.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\PluginFunctions.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results.cs" />
     <Compile Include="Privacy Cleaner\Helpers\RunningMsg.xaml.cs">
       <DependentUpon>RunningMsg.xaml</DependentUpon>
