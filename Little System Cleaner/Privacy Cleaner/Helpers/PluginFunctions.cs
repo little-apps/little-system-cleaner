@@ -1,7 +1,9 @@
 ﻿using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -41,6 +43,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return dictFolders;
             }
         }
+
         public List<string> FilePaths
         {
             get
@@ -48,6 +51,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return filePathList;
             }
         }
+
         public List<INIInfo> INIList
         {
             get
@@ -55,6 +59,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return iniInfoList;
             }
         }
+
         public Dictionary<string, string> XmlPaths
         {
             get
@@ -92,8 +97,26 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             Wizard.CurrentFile = regKey.Name;
 
+            string[] regValueNames = null;
+
+            try
+            {
+                regValueNames = regKey.GetValueNames();
+            }
+            catch (System.Security.SecurityException ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey.ToString());
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey.ToString());
+            }
+
+            if (regValueNames == null)
+                return;
+
             // Get value names that match regex
-            foreach (string valueName in regKey.GetValueNames())
+            foreach (string valueName in regValueNames)
             {
                 if (Regex.IsMatch(valueName, searchText))
                     valueNames.Add(valueName);
@@ -115,16 +138,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             Wizard.CurrentFile = filePath;
 
-            if (!filePathList.Contains(filePath) && File.Exists(filePath))
-                FilePaths.Add(filePath);
+            AddToFiles(filePath);
         }
 
         public void DeleteFolder(string folderPath, bool recurse)
         {
             Wizard.CurrentFile = folderPath;
 
-            if (!Folders.ContainsKey(folderPath) && Directory.Exists(folderPath))
-                Folders.Add(folderPath, recurse);
+            AddToFolders(folderPath, recurse);
         }
 
         public void DeleteFileList(string searchPath, string searchText, SearchOption includeSubFolders)
@@ -133,13 +154,29 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!Directory.Exists(searchPath))
                 return;
 
-            foreach (string filePath in Directory.GetFiles(searchPath, searchText, includeSubFolders))
+            string[] fileList = null;
+
+            try
             {
-                string fileName = Path.GetFileName(filePath);
+                fileList = Directory.GetFiles(searchPath, searchText, includeSubFolders);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get list of files.", ex.Message);
+            }
+            catch (PathTooLongException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get list of files.", ex.Message);
+            }
 
-                Wizard.CurrentFile = filePath;
+            if (fileList != null)
+            {
+                foreach (string filePath in fileList)
+                {
+                    Wizard.CurrentFile = filePath;
 
-                FilePaths.Add(filePath);
+                    AddToFiles(filePath);
+                }
             }
         }
 
@@ -149,14 +186,29 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!Directory.Exists(searchPath))
                 return;
 
-            foreach (string folderPath in Directory.GetDirectories(searchPath, searchText, includeSubFolders))
+            string[] dirList = null;
+
+            try
             {
-                string folderName = Path.GetDirectoryName(folderPath);
+                dirList = Directory.GetDirectories(searchPath, searchText, includeSubFolders);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get list of directories.", ex.Message);
+            }
+            catch (PathTooLongException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get list of directories.", ex.Message);
+            }
 
-                Wizard.CurrentFile = folderPath;
+            if (dirList != null)
+            {
+                foreach (string folderPath in dirList)
+                {
+                    Wizard.CurrentFile = folderPath;
 
-                if (!Folders.ContainsKey("folderPath"))
-                    Folders.Add(folderPath, false);
+                    AddToFolders(folderPath, false);
+                }
             }
         }
 
@@ -185,7 +237,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     regexValueNames.Add(searchText);
                 }
             }
-
 
             valueNames = RecurseRegKeyValueNames(regKey, regexValueNames, includeSubKeys);
             subKeys = RecurseRegKeySubKeys(regKey, regexSubKeys, includeSubKeys);
@@ -227,50 +278,77 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             // Skip if search path doesnt exist or the lists are empty
-            if (!Directory.Exists(searchPath) || (regexFiles.Count == 0 && regexFolders.Count == 0))
+            if (!Directory.Exists(searchPath)|| (regexFiles.Count == 0 && regexFolders.Count == 0))
                 return;
+
+            string[] dirList = null;
 
             try
             {
-                foreach (string folderPath in Directory.GetDirectories(searchPath, searchText, includeSubFolders))
+                dirList = Directory.GetDirectories(searchPath, searchText, includeSubFolders);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get list of directories.", ex.Message);
+            }
+            catch (PathTooLongException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get list of directories.", ex.Message);
+            }
+
+            if (dirList == null)
+                return;
+
+            foreach (string folderPath in dirList)
+            {
+                string[] fileList = null;
+
+                Wizard.CurrentFile = folderPath;
+                string folderName = folderPath.Substring(Path.GetDirectoryName(folderPath).Length + 1);
+
+                // Iterate through the files and folders in the current folder
+                foreach (KeyValuePair<string, bool> kvp in regexFolders)
                 {
-                    Wizard.CurrentFile = folderPath;
-                    string folderName = folderPath.Substring(Path.GetDirectoryName(folderPath).Length + 1);
+                    if (Regex.IsMatch(folderName, kvp.Key))
+                        AddToFolders(folderPath, kvp.Value);
+                }
 
-                    // Iterate through the files and folders in the current folder
-                    foreach (KeyValuePair<string, bool> kvp in regexFolders)
-                    {
-                        if (Regex.IsMatch(folderName, kvp.Key))
-                        {
-                            Folders.Add(folderPath, kvp.Value);
-                        }
-                    }
+                try
+                {
+                    fileList = Directory.GetFiles(folderPath);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Debug.WriteLine("The following error occurred: {0}\nSkipping trying to get list of files", ex.Message);
+                }
+                catch (PathTooLongException)
+                {
+                    Debug.WriteLine("Skipping directory ({0}) because the length is too long.", folderPath);
+                }
 
-                    foreach (string filePath in Directory.GetFiles(folderPath))
+                if (fileList == null)
+                    continue;
+
+                foreach (string filePath in fileList)
+                {
+                    if (string.IsNullOrEmpty(filePath))
+                        continue;
+
+                    // Get filename from file path
+                    string fileName = Path.GetFileName(filePath);
+
+                    foreach (string regex in regexFiles)
                     {
-                        if (string.IsNullOrEmpty(filePath))
+                        if (string.IsNullOrEmpty(regex))
                             continue;
 
-                        // Get filename from file path
-                        string fileName = Path.GetFileName(filePath);
-
-                        foreach (string regex in regexFiles)
+                        if (Regex.IsMatch(fileName, regex))
                         {
-                            if (string.IsNullOrEmpty(regex))
-                                continue;
-
-                            if (Regex.IsMatch(fileName, regex))
-                            {
-                                FilePaths.Add(filePath);
-                                break;
-                            }
+                            AddToFiles(filePath);
+                            break;
                         }
                     }
                 }
-            }
-            catch (UnauthorizedAccessException)
-            {
-
             }
         }
 
@@ -331,7 +409,27 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (regKey == null || regexValueNames.Count == 0)
                 return ret;
 
-            foreach (string valueName in regKey.GetValueNames())
+            string[] regValueNames = null;
+
+            try
+            {
+                regValueNames = regKey.GetValueNames();
+            }
+            catch (System.Security.SecurityException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key value names.", ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key value names.", ex.Message);
+            }
+
+            if (regValueNames == null)
+            {
+                return ret;
+            }
+
+            foreach (string valueName in regValueNames)
             {
                 foreach (string regex in regexValueNames)
                 {
@@ -345,13 +443,44 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (recurse)
             {
-                foreach (string subKey in regKey.GetSubKeyNames())
+                string[] subKeys = null;
+
+                try
                 {
-                    RegistryKey subRegKey = regKey.OpenSubKey(subKey);
+                    subKeys = regKey.GetSubKeyNames();
+                }
+                catch (System.Security.SecurityException ex)
+                {
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.", ex.Message);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.", ex.Message);
+                }
 
-                    foreach (KeyValuePair<RegistryKey, string[]> kvp in RecurseRegKeyValueNames(subRegKey, regexValueNames, recurse))
-                        ret.Add(kvp.Key, kvp.Value);
+                if (subKeys == null)
+                {
+                    return ret;
+                }
 
+                foreach (string subKey in subKeys)
+                {
+                    RegistryKey subRegKey = null;
+
+                    try
+                    {
+                        subRegKey = regKey.OpenSubKey(subKey);
+                    }
+                    catch (System.Security.SecurityException ex)
+                    {
+                        Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
+                    }
+
+                    if (subRegKey != null)
+                    {
+                        foreach (KeyValuePair<RegistryKey, string[]> kvp in RecurseRegKeyValueNames(subRegKey, regexValueNames, recurse))
+                            ret.Add(kvp.Key, kvp.Value);
+                    }
                 }
             }
 
@@ -368,13 +497,40 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (regKey == null || regexSubKeys.Count == 0)
                 return ret;
 
-            foreach (string subKeyName in regKey.GetSubKeyNames())
+            string[] subKeys = null;
+
+            try
+            {
+                subKeys = regKey.GetSubKeyNames();
+            }
+            catch (System.Security.SecurityException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+            }
+
+            if (subKeys == null)
+                return ret;
+
+            foreach (string subKeyName in subKeys)
             {
                 foreach (KeyValuePair<string, bool> kvp in regexSubKeys)
                 {
                     if (Regex.IsMatch(subKeyName, kvp.Key))
                     {
-                        RegistryKey subKey = regKey.OpenSubKey(subKeyName, true);
+                        RegistryKey subKey = null;
+
+                        try
+                        {
+                            subKey = regKey.OpenSubKey(subKeyName, true);
+                        }
+                        catch (System.Security.SecurityException ex)
+                        {
+                            Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
+                        }
 
                         if (subKey != null)
                         {
@@ -387,16 +543,153 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (recurse)
             {
-                foreach (string subKey in regKey.GetSubKeyNames())
-                {
-                    RegistryKey subRegKey = regKey.OpenSubKey(subKey, true);
+                string[] recurseSubKeys = null;
 
-                    foreach (KeyValuePair<RegistryKey, bool> kvp in RecurseRegKeySubKeys(subRegKey, regexSubKeys, recurse))
-                        ret.Add(kvp.Key, kvp.Value);
+                try
+                {
+                    recurseSubKeys = regKey.GetSubKeyNames();
+                }
+                catch (System.Security.SecurityException ex)
+                {
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+                }
+
+                if (recurseSubKeys == null)
+                    return ret;
+
+                foreach (string subKey in recurseSubKeys)
+                {
+                    RegistryKey subRegKey = null;
+
+                    try
+                    {
+                        subRegKey = regKey.OpenSubKey(subKey, true);
+                    }
+                    catch (System.Security.SecurityException ex)
+                    {
+                        Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
+                    }
+
+                    if (subRegKey != null)
+                    {
+                        foreach (KeyValuePair<RegistryKey, bool> kvp in RecurseRegKeySubKeys(subRegKey, regexSubKeys, recurse))
+                            ret.Add(kvp.Key, kvp.Value);
+                    }
                 }
             }
 
             return ret;
+        }
+
+        /// <summary>
+        /// Adds a folder to the results
+        /// </summary>
+        /// <param name="folderPath">Folder path</param>
+        /// <param name="recurse">True to recurse when removing folder</param>
+        private void AddToFolders(string folderPath, bool recurse)
+        {
+            if (string.IsNullOrWhiteSpace(folderPath))
+                return;
+
+            if (!Directory.Exists(folderPath))
+                return;
+
+            string cleanFolderPath = null;
+
+            try
+            {
+                cleanFolderPath = Path.GetDirectoryName(cleanFolderPath);
+            }
+            catch (PathTooLongException)
+            {
+                Debug.WriteLine("Unable to get clean folder path because the length is too long");
+                return;
+            }
+
+            // Check if folder is root directory (THIS IS DANGEROUS)
+            try
+            {
+                string rootDir = Directory.GetDirectoryRoot(cleanFolderPath);
+
+                if (rootDir == cleanFolderPath)
+                    return;
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("The following error occurred: {0}\nUnable to determine root folder.", ex.Message);
+                return;
+            } 
+
+            if (!FolderAlreadyAdded(cleanFolderPath))
+                Folders.Add(cleanFolderPath, recurse);
+        }
+
+        private void AddToFiles(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
+
+            if (!File.Exists(filePath))
+                return;
+
+            if (!FolderAlreadyAdded(filePath))
+            {
+                this.FilePaths.Add(filePath);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the folder (from the path) is already added as a recursive directory
+        /// </summary>
+        /// <param name="path">File or folder path</param>
+        /// <param name="startDir">Is it the starting directory?</param>
+        /// <returns>True if it's been added</returns>
+        private bool FolderAlreadyAdded(string path, bool startDir = true)
+        {
+            string actualFolder;
+
+            try
+            {
+                actualFolder = Path.GetDirectoryName(path);
+            }
+            catch (PathTooLongException)
+            {
+                Debug.WriteLine("Unable to get directory from {0} because it is too long", path);
+                return false;
+            }
+
+            if (startDir)
+            {
+                if (Folders.ContainsKey(actualFolder))
+                    return true;
+            }
+            else
+            {
+                // Parent folders need to have recurse set to true
+                if (Folders.Contains(new KeyValuePair<string, bool>(actualFolder, true)))
+                    return true;
+            }
+            
+            // Check parent folders
+            DirectoryInfo diParent = null;
+
+            try
+            {
+                diParent = Directory.GetParent(actualFolder);
+            }
+            catch (Exception)
+            {
+            }
+
+            if (diParent != null)
+                return FolderAlreadyAdded(diParent.ToString(), false);
+            else 
+                // No parent folder or an exception occurred
+                return false;
         }
     }
 }

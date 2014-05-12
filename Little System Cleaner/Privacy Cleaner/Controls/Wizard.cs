@@ -17,6 +17,7 @@
 */
 
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.Win32;
 using System;

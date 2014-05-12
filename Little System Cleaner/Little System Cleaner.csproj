@@ -260,7 +260,16 @@
     <Compile Include="Privacy Cleaner\Helpers\DetailItem.cs" />
     <Compile Include="Privacy Cleaner\Helpers\PInvoke.cs" />
     <Compile Include="Privacy Cleaner\Helpers\PluginFunctions.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultArray.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultDelegate.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultFiles.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultFolders.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultINI.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultModel.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultNode.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultRegKeys.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\ResultXML.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\Results\RootNode.cs" />
     <Compile Include="Privacy Cleaner\Helpers\RunningMsg.xaml.cs">
       <DependentUpon>RunningMsg.xaml</DependentUpon>
     </Compile>

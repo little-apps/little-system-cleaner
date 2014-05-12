@@ -39,8 +39,8 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <tree:RowExpander/>
-                                        <CheckBox IsChecked="{Binding Path=IsChecked}"/>
-                                        <TextBlock Text="{Binding Header}"></TextBlock>
+                                        <CheckBox Margin="0,0,5,0" IsChecked="{Binding Path=IsChecked}"/>
+                                        <TextBlock Margin="0,0,5,0" Text="{Binding Header}"></TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

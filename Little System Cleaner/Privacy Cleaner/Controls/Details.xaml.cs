@@ -1,4 +1,5 @@
 ﻿using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

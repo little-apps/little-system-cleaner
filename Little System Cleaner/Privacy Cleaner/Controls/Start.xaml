@@ -35,9 +35,9 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <tree:RowExpander/>
-                                <CheckBox IsChecked="{Binding IsChecked}" />
-                                <Image Width="16" Height="16" Source="{Binding bMapImg}" />
-                                <TextBlock Text="{Binding Name}" />
+                                <CheckBox Margin="0,0,5,0" IsChecked="{Binding IsChecked}" />
+                                <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding bMapImg}" />
+                                <TextBlock Margin="0,0,5,0" Text="{Binding Name}" />
                             </StackPanel>
                         </DataTemplate>
                     </tree:TreeList.ItemTemplate>

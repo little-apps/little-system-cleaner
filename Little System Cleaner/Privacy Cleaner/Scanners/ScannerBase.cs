@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Media;
 using CommonTools.WpfAnimatedGif;
 using System.Diagnostics;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
