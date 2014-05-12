@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Little Privacy Cleaner
+    Copyright (C) 2008-2013 Little Apps (http://www.little-apps.org/)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- This an example for the plugins -->
+
+<!--
+Variables					Default Variables
+%AppData%					C:\Users\{username}\AppData\Roaming
+%WinDir%					C:\Windows
+%SystemDrive%				C:
+%SystemRoot%				C:\Windows
+%ProgramFiles%				C:\Program Files
+%ProgramFiles(x86)%			C:\Program Files (x86)
+%CommonProgramFiles%		C:\Program Files\Common Files
+%COMMONPROGRAMFILES(x86)%	C:\Program Files (x86)\Common Files
+%TEMP% and %TMP%			C:\Users\{username}\AppData\Local\Temp
+%HOMEPATH%					\Users\{username}
+%PUBLIC%					C:\Users\Public (Vista/7 Only)
+%ALLUSERSPROFILE% 			C:\Documents and Settings\All Users (XP Only)
+%PROGRAMDATA%				C:\ProgramData
+-->
+
+<Scanner>
+	<Information>
+		<!-- Use name and description to specify information about this module -->
+		<Name>Example Name</Name>
+		<Description>This a description of an example</Description>
+		<Icon>ExamplePlugin.ico</Icon>
+	</Information>
+
+	<IsValid>
+		
+		<!-- Use KeyExist to validate if the specified registry key exists -->
+		<KeyExist>HKEY_CURRENT_USER\Software\Example</KeyExist>
+
+		<!-- Use ValueExist to validate value names for the specified registry key -->
+		<!-- NOTE: ValueExist uses regular expressions to match value names -->
+		<ValueExist RegKey="HKEY_CURRENT_USER\Software\Example" ValueName="Name$"/>
+
+		<!-- Use FolderExist to validate if the folder exists -->
+		<FolderExist>C:\Example Directory</FolderExist>
+
+		<!-- Use File Exist to validate if the file exists -->
+		<FileExist>C:\Example Directory\Example File.exe</FileExist>
+	</IsValid>
+	
+	<!-- Specify processes to be closed before cleaning -->
+	<IsRunning>explorer</IsRunning>
+
+	<Action>
+		<!-- Use DeleteKey or DeleteValue to remove registry keys -->
+		<DeleteKey Recursive="Y">HKEY_CURRENT_USER\Software\Example</DeleteKey>
+		<!-- NOTE: DeleteValue uses regular expressions when matching value names -->
+		<DeleteValue RegKey="HKEY_CURRENT_USER\Software\Example" ValueName=".*"/>
+
+		<!-- Use FindRegKey to recurse through the specified registry key and remove specified sub keys or values -->
+		<FindRegKey RegKey="HKEY_CURRENT_USER\Software\Example" IncludeSubKeys="Y">
+			<!-- NOTE: Set Recursive to Y if you want to delete the whole sub key tree -->
+			<IfSubKey SearchText="^file" Recursive="Y" />
+			<IfValueName SearchText="example" />
+		</FindRegKey>
+
+		<!-- Use DeleteFolderList or DeleteFileList to remove folders or files from the hard disk -->
+		<!-- OBSOLETE -->
+		<DeleteFolderList Path="C:\" SearchText="Example Directory" IncludeSubFolders="Y"/>
+		<DeleteFileList Path="C:\Example Directory" SearchText="*.dat" IncludeSubFolders="Y"/>
+
+		<!-- Use DeleteFolder or DeleteFile to remove a single file or folder -->
+		<!-- NOTE: The entire folder contents will be deleted -->
+		<DeleteFile>C:\Example Directory\Example File.exe</DeleteFile>
+		<DeleteFolder Recursive="Y">C:\Example Directory</DeleteFolder>
+
+		<!-- Use Find to recurse through folders and use IfFile to remove the specified files -->
+		<!-- NOTE: SearchText in Find can be used to specify what folders to search through -->
+		<!-- NOTE: Use this if you need to be more specific -->
+		<FindPath Path="C:\" SearchText="*" IncludeSubFolders="Y">
+			<!-- NOTE: IfFile and IfFolder both use regular expressions for SearchText -->
+			<!-- NOTE: If you want the search to match all files then use '.*' (without the quotes) -->
+			<IfFile SearchText=".dat$" />
+			<!-- NOTE: Set recursive to Y to remove any subdirectories and files in path -->
+			<IfFolder SearchText="example" Recursive="Y" />
+		</FindPath>
+
+		<!-- Use RemoveINISection or RemoveINIValue to remove values in a INI file -->
+		<!-- You can use regex in either 'Section' or 'Name' -->
+		<RemoveINISection Path="C:\Example.ini" Section="SectionName" />
+		<RemoveINIValue Path="C:\Example.ini" Section="SectionName" Name="[0-9]" />
+		
+		<!-- Use RemoveXML to remove a node specified in XPath -->
+		<!-- See http://www.w3schools.com/XPath/xpath_syntax.asp for information on how to use XPath -->
+		<RemoveXML Path="C:\Example.xml" XPath="rootNode/childNode" />
+	</Action>
+</Scanner>

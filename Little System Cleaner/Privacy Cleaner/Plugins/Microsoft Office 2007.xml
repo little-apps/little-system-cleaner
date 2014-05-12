@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Little Privacy Cleaner
+    Copyright (C) 2008-2013 Little Apps (http://www.little-apps.org/)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<Scanner>
+<Information>
+<Name>Microsoft Office 2007</Name>
+<Description>Microsoft Office 2007 Recent File List</Description>
+</Information>
+
+<IsValid>
+<KeyExist>HKEY_CURRENT_USER\Software\Microsoft\Office\12.0</KeyExist>
+</IsValid>
+
+<IsRunning>EXCEL</IsRunning>
+<IsRunning>INFOPATH</IsRunning>
+<IsRunning>MSACCESS</IsRunning>
+<IsRunning>POWERPNT</IsRunning>
+<IsRunning>WINWORD</IsRunning>
+
+<Action>
+<DeleteValue RegKey="HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\Access\File MRU" ValueName="^Item"/>
+<DeleteValue RegKey="HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\Excel\File MRU" ValueName="^Item"/>
+<DeleteValue RegKey="HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\InfoPath\File MRU" ValueName="^Item"/>
+<DeleteValue RegKey="HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\PowerPoint\File MRU" ValueName="^Item"/>
+<DeleteValue RegKey="HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\Word\File MRU" ValueName="^Item"/>
+</Action>
+</Scanner>

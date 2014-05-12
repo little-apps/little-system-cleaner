@@ -88,7 +88,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             sectionModel.RootChildren.Add(new Little_System_Cleaner.Privacy_Cleaner.Scanners.Misc());
 
             // If plugins exist -> Recurse through the plugins directory
-            string pluginDir = string.Format(@"{0}\Plugins", System.Windows.Forms.Application.StartupPath);
+            string pluginDir = string.Format(@"{0}\Privacy Cleaner Plugins", System.Windows.Forms.Application.StartupPath);
             if (Directory.Exists(pluginDir))
             {
                 sectionModel.RootChildren.Add(new Plugins(Directory.GetFiles(pluginDir, "*.xml")));

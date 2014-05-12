@@ -723,7 +723,8 @@
     <None Include="Resources\little system cleaner.ico" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>mkdir "$(TargetDir)Privacy Cleaner Plugins\"
+del /Q "$(TargetDir)Privacy Cleaner Plugins\*"
+copy /Y "$(ProjectDir)Privacy Cleaner\Plugins\*.xml" "$(TargetDir)Privacy Cleaner Plugins\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

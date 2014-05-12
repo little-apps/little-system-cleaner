@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Little Privacy Cleaner
+    Copyright (C) 2008-2013 Little Apps (http://www.little-apps.org/)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<Scanner>
+<Information>
+<Name>BSplayer</Name>
+<Description>Clears BSPlayer cache and recently used files</Description>
+</Information>
+
+<IsValid>
+<FolderExist>%AppData%\BSplayer</FolderExist>
+</IsValid>
+
+<IsRunning>bsplayer</IsRunning>
+
+<Action>
+<FindPath Path="%AppData%\BSplayer\cache" SearchText="*" IncludeSubFolders="Y">
+	<IfFile SearchText=".*" />
+</FindPath>
+<RemoveXML Path="%AppData%\BSplayer\BSplayer.xml" XPath="BSPlayer/Settings/LastFile" />
+<RemoveXML Path="%AppData%\BSplayer\BSplayer.xml" XPath="BSPlayer/Settings/OpenFiles/File" />
+</Action>
+</Scanner>
