@@ -62,12 +62,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         public static bool? DisplayRunningMsg(string scannerName, string procName)
         {
+            if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
+            {
+                return (bool?)App.Current.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { scannerName, procName });
+            }
+
             if (!Utils.IsProcessRunning(procName))
                 return true;
 
             if (Properties.Settings.Default.privacyCleanerAutoSkipScanner)
             {
-                MessageBox.Show(string.Format("Automatically skipping the scanning for {0}...", scannerName), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(App.Current.MainWindow, string.Format("Automatically skipping the scanning for {0}...", scannerName), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 return false;
             }
 

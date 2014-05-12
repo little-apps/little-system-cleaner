@@ -118,7 +118,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <summary>
         /// Gets/Sets information for XML
         /// </summary>
-        public Dictionary<string, string> XMLPaths
+        public Dictionary<string, List<string>> XMLPaths
         {
             get;
             set;

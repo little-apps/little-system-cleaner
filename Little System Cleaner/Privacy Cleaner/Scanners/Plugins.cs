@@ -52,5 +52,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             ScanPlugins();
         }
+
+        public override void Scan(ScannerBase child)
+        {
+            if (child is Plugins)
+            {
+                if (!string.IsNullOrEmpty(child.Name) && !string.IsNullOrEmpty(child.PluginPath))
+                    ScanPlugin(child.Name, child.PluginPath);
+            }
+        }
     }
 }

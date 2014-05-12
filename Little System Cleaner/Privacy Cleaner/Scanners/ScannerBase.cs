@@ -578,126 +578,144 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// <param name="pluginFile">Path to .xml file</param>
         public void ScanPlugin(string name, string pluginFile)
         {
+            if (!File.Exists(pluginFile))
+                return;
+
             PluginFunctions pluginFunctions = new PluginFunctions();
 
-            using (XmlTextReader xmlReader = new XmlTextReader(pluginFile))
+            try
             {
-                while (xmlReader.ReadToFollowing("IsRunning"))
+                using (XmlReader xmlReader = XmlTextReader.Create(pluginFile))
                 {
-                    string procName = xmlReader.ReadElementContentAsString();
+                    while (xmlReader.ReadToFollowing("IsRunning"))
+                    {
+                        string procName = xmlReader.ReadElementContentAsString();
 
-                    if (RunningMsg.DisplayRunningMsg(name, procName).GetValueOrDefault() == false)
-                        return;
+                        if (RunningMsg.DisplayRunningMsg(name, procName).GetValueOrDefault() == false)
+                            return;
+                    }
                 }
 
-                if (xmlReader.ReadToFollowing("Action"))
+                using (XmlReader xmlReader = XmlTextReader.Create(pluginFile))
                 {
-                    while (xmlReader.Read())
+                    if (xmlReader.ReadToFollowing("Action"))
                     {
-                        if (xmlReader.NodeType != XmlNodeType.Element)
-                            continue;
-
-                        if (xmlReader.Name == "DeleteKey")
+                        while (xmlReader.Read())
                         {
-                            string regPath = xmlReader.ReadElementContentAsString();
-                            RegistryKey regKey = Utils.RegOpenKey(regPath);
-                            bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                            if (xmlReader.NodeType != XmlNodeType.Element)
+                                continue;
 
-                            pluginFunctions.DeleteKey(regKey, recurse);
-                        }
+                            if (xmlReader.Name == "DeleteKey")
+                            {
+                                string regPath = xmlReader.ReadElementContentAsString();
+                                RegistryKey regKey = Utils.RegOpenKey(regPath);
+                                bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
 
-                        if (xmlReader.Name == "DeleteValue")
-                        {
-                            string regPath = xmlReader.GetAttribute("RegKey");
-                            string valueNameRegEx = xmlReader.GetAttribute("ValueName");
+                                pluginFunctions.DeleteKey(regKey, recurse);
+                            }
 
-                            RegistryKey regKey = Utils.RegOpenKey(regPath);
+                            if (xmlReader.Name == "DeleteValue")
+                            {
+                                string regPath = xmlReader.GetAttribute("RegKey");
+                                string valueNameRegEx = xmlReader.GetAttribute("ValueName");
 
-                            pluginFunctions.DeleteValue(regKey, valueNameRegEx);
-                        }
+                                RegistryKey regKey = Utils.RegOpenKey(regPath);
 
-                        if (xmlReader.Name == "DeleteFile")
-                        {
-                            string filePath = Utils.ExpandVars(xmlReader.ReadElementContentAsString());
+                                pluginFunctions.DeleteValue(regKey, valueNameRegEx);
+                            }
 
-                            pluginFunctions.DeleteFile(filePath);
-                        }
+                            if (xmlReader.Name == "DeleteFile")
+                            {
+                                string filePath = Utils.ExpandVars(xmlReader.ReadElementContentAsString());
 
-                        if (xmlReader.Name == "DeleteFolder")
-                        {
-                            string folderPath = Utils.ExpandVars(xmlReader.ReadElementContentAsString());
-                            bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                                pluginFunctions.DeleteFile(filePath);
+                            }
 
-                            pluginFunctions.DeleteFolder(folderPath, recurse);
-                        }
+                            if (xmlReader.Name == "DeleteFolder")
+                            {
+                                string folderPath = Utils.ExpandVars(xmlReader.ReadElementContentAsString());
+                                bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
 
-                        if (xmlReader.Name == "DeleteFileList")
-                        {
-                            string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
-                            string searchText = xmlReader.GetAttribute("SearchText");
-                            SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
+                                pluginFunctions.DeleteFolder(folderPath, recurse);
+                            }
 
-                            pluginFunctions.DeleteFileList(searchPath, searchText, includeSubFolders);
-                        }
+                            if (xmlReader.Name == "DeleteFileList")
+                            {
+                                string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string searchText = xmlReader.GetAttribute("SearchText");
+                                SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
 
-                        if (xmlReader.Name == "DeleteFolderList")
-                        {
-                            string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
-                            string searchText = xmlReader.GetAttribute("SearchText");
-                            SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
+                                pluginFunctions.DeleteFileList(searchPath, searchText, includeSubFolders);
+                            }
 
-                            pluginFunctions.DeleteFolderList(searchPath, searchText, includeSubFolders);
-                        }
+                            if (xmlReader.Name == "DeleteFolderList")
+                            {
+                                string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string searchText = xmlReader.GetAttribute("SearchText");
+                                SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
 
-                        if (xmlReader.Name == "FindRegKey")
-                        {
-                            string regKey = xmlReader.GetAttribute("RegKey");
-                            bool includeSubKeys = ((xmlReader.GetAttribute("IncludeSubKeys") == "Y") ? (true):(false));
+                                pluginFunctions.DeleteFolderList(searchPath, searchText, includeSubFolders);
+                            }
 
-                            RegistryKey rk = Utils.RegOpenKey(regKey);
-                            XmlReader xmlChildren = xmlReader.ReadSubtree();
+                            if (xmlReader.Name == "FindRegKey")
+                            {
+                                string regKey = xmlReader.GetAttribute("RegKey");
+                                bool includeSubKeys = ((xmlReader.GetAttribute("IncludeSubKeys") == "Y") ? (true) : (false));
 
-                            pluginFunctions.DeleteFoundRegKeys(rk, includeSubKeys, xmlChildren);
-                        }
+                                RegistryKey rk = Utils.RegOpenKey(regKey);
+                                XmlReader xmlChildren = xmlReader.ReadSubtree();
 
-                        if (xmlReader.Name == "FindPath")
-                        {
-                            string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
-                            string searchText = xmlReader.GetAttribute("SearchText");
-                            SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
+                                pluginFunctions.DeleteFoundRegKeys(rk, includeSubKeys, xmlChildren);
+                            }
 
-                            XmlReader xmlChildren = xmlReader.ReadSubtree();
+                            if (xmlReader.Name == "FindPath")
+                            {
+                                string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string searchText = xmlReader.GetAttribute("SearchText");
+                                SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
 
-                            pluginFunctions.DeleteFoundPaths(searchPath, searchText, includeSubFolders, xmlChildren);
-                        }
+                                XmlReader xmlChildren = xmlReader.ReadSubtree();
 
-                        if (xmlReader.Name == "RemoveINIValue")
-                        {
-                            string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
-                            string sectionRegEx = xmlReader.GetAttribute("Section");
-                            string valueRegEx = xmlReader.GetAttribute("Name");
+                                pluginFunctions.DeleteFoundPaths(searchPath, searchText, includeSubFolders, xmlChildren);
+                            }
 
-                            pluginFunctions.DeleteINIValue(filePath, sectionRegEx, valueRegEx);
-                        }
+                            if (xmlReader.Name == "RemoveINIValue")
+                            {
+                                string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string sectionRegEx = xmlReader.GetAttribute("Section");
+                                string valueRegEx = xmlReader.GetAttribute("Name");
 
-                        if (xmlReader.Name == "RemoveINISection")
-                        {
-                            string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
-                            string sectionRegEx = xmlReader.GetAttribute("Section");
+                                pluginFunctions.DeleteINIValue(filePath, sectionRegEx, valueRegEx);
+                            }
 
-                            pluginFunctions.DeleteINISection(filePath, sectionRegEx);
-                        }
+                            if (xmlReader.Name == "RemoveINISection")
+                            {
+                                string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string sectionRegEx = xmlReader.GetAttribute("Section");
 
-                        if (xmlReader.Name == "RemoveXML")
-                        {
-                            string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
-                            string xPath = xmlReader.GetAttribute("XPath");
+                                pluginFunctions.DeleteINISection(filePath, sectionRegEx);
+                            }
 
-                            pluginFunctions.DeleteXml(filePath, xPath);
+                            if (xmlReader.Name == "RemoveXML")
+                            {
+                                string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string xPath = xmlReader.GetAttribute("XPath");
+
+                                pluginFunctions.DeleteXml(filePath, xPath);
+                            }
                         }
                     }
                 }
             }
+            catch (System.Security.SecurityException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to load plugin file ({1})", ex.Message, pluginFile);
+            }
+            catch (UriFormatException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to load plugin file ({1})", ex.Message, pluginFile);
+            }
+
 
             if (pluginFunctions.RegistrySubKeys.Count > 0)
                 Wizard.StoreBadRegKeySubKeys(name, pluginFunctions.RegistrySubKeys);

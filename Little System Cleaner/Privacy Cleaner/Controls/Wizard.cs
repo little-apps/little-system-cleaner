@@ -309,7 +309,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             return true;
         }
 
-        public static bool StoreXML(string desc, Dictionary<string, string> xmlPaths)
+        public static bool StoreXML(string desc, Dictionary<string, List<string>> xmlPaths)
         {
             if (string.IsNullOrEmpty(desc) || xmlPaths == null || xmlPaths.Count == 0)
                 return false;

@@ -19,7 +19,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         private readonly Dictionary<string, bool> dictFolders;
         private readonly List<string> filePathList;
         private readonly List<INIInfo> iniInfoList;
-        private readonly Dictionary<string, string> dictXmlPaths;
+        private readonly Dictionary<string, List<string>> dictXmlPaths;
 
         public Dictionary<RegistryKey, string[]> RegistryValueNames 
         {
@@ -60,7 +60,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
         }
 
-        public Dictionary<string, string> XmlPaths
+        public Dictionary<string, List<string>> XmlPaths
         {
             get
             {
@@ -75,7 +75,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             dictFolders = new Dictionary<string, bool>();
             filePathList = new List<string>();
             iniInfoList = new List<INIInfo>();
-            dictXmlPaths = new Dictionary<string, string>();
+            dictXmlPaths = new Dictionary<string, List<string>>();
         }
 
         public void DeleteKey(RegistryKey regKey, bool recurse)
@@ -397,8 +397,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!File.Exists(filePath))
                 return;
 
-            if (!string.IsNullOrEmpty(filePath) && !string.IsNullOrEmpty(xPath))
-                XmlPaths.Add(filePath, xPath);
+            AddToXmlPaths(filePath, xPath);
         }
 
         Dictionary<RegistryKey, string[]> RecurseRegKeyValueNames(RegistryKey regKey, List<string> regexValueNames, bool recurse)
@@ -595,6 +594,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (string.IsNullOrWhiteSpace(folderPath))
                 return;
 
+            folderPath = folderPath.Trim();
+
             if (!Directory.Exists(folderPath))
                 return;
 
@@ -602,7 +603,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                cleanFolderPath = Path.GetDirectoryName(cleanFolderPath);
+                cleanFolderPath = Path.GetDirectoryName(folderPath);
             }
             catch (PathTooLongException)
             {
@@ -633,12 +634,40 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
 
+            filePath = filePath.Trim();
+
             if (!File.Exists(filePath))
                 return;
 
             if (!FolderAlreadyAdded(filePath))
             {
                 this.FilePaths.Add(filePath);
+            }
+        }
+
+        private void AddToXmlPaths(string filePath, string xPath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(xPath))
+                return;
+
+            filePath = filePath.Trim();
+            xPath = xPath.Trim();
+
+            if (!this.XmlPaths.ContainsKey(filePath))
+            {
+                this.XmlPaths.Add(filePath, new List<string>(new string[] { xPath }));
+            }
+            else
+            {
+                List<string> xPaths = this.XmlPaths[filePath];
+
+                if (xPaths.Contains(xPath))
+                    // Already added
+                    return;
+
+                xPaths.Add(xPath);
+
+                this.XmlPaths[filePath] = xPaths;
             }
         }
 
@@ -662,16 +691,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return false;
             }
 
+            if (string.IsNullOrEmpty(actualFolder))
+                // Unable to get directory name, use parameter
+                actualFolder = path.Trim();
+
             if (startDir)
             {
                 if (Folders.ContainsKey(actualFolder))
-                    return true;
+                    return false;
             }
             else
             {
                 // Parent folders need to have recurse set to true
                 if (Folders.Contains(new KeyValuePair<string, bool>(actualFolder, true)))
-                    return true;
+                    return false;
             }
             
             // Check parent folders
@@ -689,7 +722,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return FolderAlreadyAdded(diParent.ToString(), false);
             else 
                 // No parent folder or an exception occurred
-                return false;
+                return true;
         }
     }
 }

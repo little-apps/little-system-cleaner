@@ -205,15 +205,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (!string.IsNullOrEmpty(parent.ProcessName))
             {
-                bool? ret;
-                if (this.Dispatcher.Thread != Thread.CurrentThread)
-                {
-                    ret = (bool?)this.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { parent.Name, parent.ProcessName });
-                }
-                else
-                {
-                    ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
-                }
+                bool? ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
 
                 if (ret.GetValueOrDefault() == false)
                 {
@@ -240,15 +232,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (!string.IsNullOrEmpty(parent.ProcessName))
             {
-                bool? ret;
-                if (this.Dispatcher.Thread != Thread.CurrentThread)
-                {
-                    ret = (bool?)this.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { parent.Name, parent.ProcessName });
-                }
-                else
-                {
-                    ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
-                }
+                bool? ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
 
                 if (ret.GetValueOrDefault() == false)
                 {
