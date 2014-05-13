@@ -113,6 +113,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Duplicate Finder\Controls\Start.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Privacy Cleaner\Controls\Details.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -238,6 +242,10 @@
     <Compile Include="Disk Cleaner\Helpers\lviFile.cs" />
     <Compile Include="Disk Cleaner\Helpers\lviFolder.cs" />
     <Compile Include="Disk Cleaner\Helpers\ProblemFile.cs" />
+    <Compile Include="Duplicate Finder\Controls\Start.xaml.cs">
+      <DependentUpon>Start.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Duplicate Finder\Controls\Wizard.cs" />
     <Compile Include="Misc\OSVersion.cs" />
     <Compile Include="Misc\RegEditGo.cs" />
     <Compile Include="Misc\SysRestore.cs" />
@@ -720,6 +728,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\little system cleaner.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Duplicate Finder\Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\duplicate finder\icon.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(TargetDir)Privacy Cleaner Plugins\"

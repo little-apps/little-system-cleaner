@@ -7,6 +7,7 @@
     xmlns:regOptimizeCntrls="clr-namespace:Little_System_Cleaner.Registry_Optimizer.Controls" 
     xmlns:diskCleanCntrls="clr-namespace:Little_System_Cleaner.Disk_Cleaner.Controls" 
     xmlns:privacyCleanCntrls="clr-namespace:Little_System_Cleaner.Privacy_Cleaner.Controls" 
+    xmlns:duplicateFinderCntrls="clr-namespace:Little_System_Cleaner.Duplicate_Finder.Controls" 
     xmlns:my1="clr-namespace:Little_System_Cleaner.Controls"
     xmlns:startupMgr="clr-namespace:Little_System_Cleaner.Startup_Manager.Controls"
     xmlns:uninstallMgr="clr-namespace:Little_System_Cleaner.Uninstall_Manager.Controls"
@@ -244,6 +245,12 @@
                 </ComboBoxItem>
                 <ComboBoxItem>
                     <StackPanel Orientation="Horizontal">
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/duplicate finder/icon.png" Width="52" Margin="0" />
+                        <Label Content="Duplicate Finder" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    </StackPanel>
+                </ComboBoxItem>
+                <ComboBoxItem>
+                    <StackPanel Orientation="Horizontal">
                         <Image HorizontalAlignment="Left" VerticalAlignment="Center" Source="Resources/Options.png" Width="52" Margin="0" />
                         <Label Content="Settings" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Height="47" Width="261" FontSize="24" FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
@@ -254,77 +261,31 @@
         </Grid>
         <TabControl IsSynchronizedWithCurrentItem="True" Style="{StaticResource WindowTabCtrl}" x:Name="tabControl" Grid.Row="1" Margin="0">
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemWelcome">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources/info.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Info</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <my1:Welcome x:Name="ctrlWelcome" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemScanWiz">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources/Analyze.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Scan</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <regCleanCntrls:ScanWizard x:Name="ctrlScanWiz" />
             </TabItem>
 
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemStartupMgr">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources\startup manager.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Startup</Label>
-                    </StackPanel>
-                </TabItem.Header>
-
                 <startupMgr:StartupManager x:Name="ctrlStartupMgr" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemUninstallMgr">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources\uninstall manager.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Uninstall</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <uninstallMgr:UninstallManager x:Name="ctrlUninstallMgr" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemRegOptimizer">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources\uninstall manager.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Optimize Registry</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <regOptimizeCntrls:Wizard x:Name="ctrlRegOptimizer" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemDiskCleaner">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources\uninstall manager.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Disk Cleaner</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <diskCleanCntrls:Wizard x:Name="ctrlDiskCleaner" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemPrivacyCleaner">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources\uninstall manager.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Privacy Cleaner</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <privacyCleanCntrls:Wizard x:Name="ctrlPrivacyCleaner" />
             </TabItem>
+            <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemDuplicateFinder">
+                <duplicateFinderCntrls:Wizard x:Name="ctrlDuplicateFinder" />
+            </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemOptions">
-                <TabItem.Header>
-                    <StackPanel Orientation="Vertical">
-                        <Image Height="32" Source="/Resources\Options.png" Width="32" />
-                        <Label HorizontalAlignment="Center" FontWeight="Bold">Settings</Label>
-                    </StackPanel>
-                </TabItem.Header>
                 <my1:Options x:Name="ctrlOptions" />
             </TabItem>
         </TabControl>
