@@ -246,6 +246,7 @@
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Compile Include="Duplicate Finder\Controls\Wizard.cs" />
+    <Compile Include="Duplicate Finder\Helpers\HashAlgorithm.cs" />
     <Compile Include="Duplicate Finder\Helpers\IncludeDrive.cs" />
     <Compile Include="Duplicate Finder\Helpers\ExcludeFolder.cs" />
     <Compile Include="Duplicate Finder\Helpers\IncludeFolder.cs" />

@@ -40,6 +40,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private ObservableCollection<IncludeDrive> _drives = new ObservableCollection<IncludeDrive>();
         private ObservableCollection<IncludeFolder> _incFolders = new ObservableCollection<IncludeFolder>();
+        private ObservableCollection<HashAlgorithm> _hashAlgorithms;
         
         private bool? _allDrives = false;
         private bool? _allExceptDrives = true;
@@ -61,6 +62,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private bool? _incHiddenFiles = false;
         private bool? _skipCompressedFiles = false;
         private bool? _skipWindowsDir = false;
+
+        private HashAlgorithm _hashAlgorithm;
 
         private bool? _musicTagTitle = true;
         private bool? _musicTagYear = false;
@@ -317,6 +320,26 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 this.OnPropertyChanged("ExcludeFolders");
             }
         }
+
+        public HashAlgorithm HashAlgorithm
+        {
+            get { return this._hashAlgorithm; }
+            set
+            {
+                this._hashAlgorithm = value;
+                this.OnPropertyChanged("HashAlgorithm");
+            }
+        }
+
+        public ObservableCollection<HashAlgorithm> HashAlgorithms
+        {
+            get { return this._hashAlgorithms; }
+            set
+            {
+                this._hashAlgorithms = value;
+                this.OnPropertyChanged("HashAlgorithms");
+            }
+        }
         #endregion
 
         #region Music Tags Properties
@@ -406,6 +429,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             this.SkipTempFiles = true;
             this.SkipSysAppDirs = true;
             this.SkipWindowsDir = true;
+
+            this.HashAlgorithms = HashAlgorithm.CreateList();
+            this.HashAlgorithm = this.HashAlgorithms[0];
         }
 
         private void excludeFolderAdd_Click(object sender, RoutedEventArgs e)
