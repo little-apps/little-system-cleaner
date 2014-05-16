@@ -246,6 +246,9 @@
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Compile Include="Duplicate Finder\Controls\Wizard.cs" />
+    <Compile Include="Duplicate Finder\Helpers\IncludeDrive.cs" />
+    <Compile Include="Duplicate Finder\Helpers\ExcludeFolder.cs" />
+    <Compile Include="Duplicate Finder\Helpers\IncludeFolder.cs" />
     <Compile Include="Misc\OSVersion.cs" />
     <Compile Include="Misc\RegEditGo.cs" />
     <Compile Include="Misc\SysRestore.cs" />
@@ -729,9 +732,7 @@
   <ItemGroup>
     <None Include="Resources\little system cleaner.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Duplicate Finder\Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\duplicate finder\icon.png" />
   </ItemGroup>

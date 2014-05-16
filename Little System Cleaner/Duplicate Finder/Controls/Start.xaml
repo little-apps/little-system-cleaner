@@ -31,30 +31,142 @@
         <TabControl Margin="0,10,0,0" Grid.Row="1">
             <TabItem Header="Drives/Folders">
                 <StackPanel Margin="5,5,5,5">
-                    <RadioButton x:Name="allDrives" Margin="0,0,0,5">All Drives</RadioButton>
-                    <RadioButton x:Name="allExceptDrives" Margin="0,0,0,5">All Drives Except The Following Types</RadioButton>
+                    <RadioButton x:Name="allDrives" Margin="0,0,0,5" IsChecked="{Binding Path=AllDrives}">All Drives</RadioButton>
+                    <RadioButton x:Name="allExceptDrives" Margin="0,0,0,5" IsChecked="{Binding Path=AllExceptDrives}">All Drives Except The Following Types</RadioButton>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <CheckBox x:Name="allExceptSystem" Margin="0,0,5,0">System Drive</CheckBox>
-                        <CheckBox x:Name="allExceptRemovable" Margin="0,0,5,0">Removable Drives (CD, USB, etc)</CheckBox>
-                        <CheckBox x:Name="allExceptNetwork" Margin="0,0,5,0">Network Drives</CheckBox>
+                        <CheckBox x:Name="allExceptSystem" Margin="0,0,5,0" IsEnabled="{Binding Path=AllExceptEnabled}" IsChecked="{Binding Path=AllExceptSystem}">System Drive</CheckBox>
+                        <CheckBox x:Name="allExceptRemovable" Margin="0,0,5,0" IsEnabled="{Binding Path=AllExceptEnabled}" IsChecked="{Binding Path=AllExceptRemovable}">Removable Drives (CD, USB, etc)</CheckBox>
+                        <CheckBox x:Name="allExceptNetwork" Margin="0,0,5,0" IsEnabled="{Binding Path=AllExceptEnabled}" IsChecked="{Binding Path=AllExceptNetwork}">Network Drives</CheckBox>
                     </StackPanel>
-                    <RadioButton x:Name="onlySelectedDrives"  Margin="0,0,0,5">Only The Following Selected Drives:</RadioButton>
-                    <ListBox x:Name="selectedDrives" Height="65" ItemsSource="{Binding Drives}" Margin="0,0,0,5">
+                    <RadioButton x:Name="onlySelectedDrives" Margin="0,0,0,5" IsChecked="{Binding Path=OnlySelectedDrives}">Only The Following Selected Drives:</RadioButton>
+                    <ListBox x:Name="selectedDrives" Height="65" IsEnabled="{Binding Path=SelectedDrivesEnabled}" ItemsSource="{Binding Drives}" Margin="0,0,0,5">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="5,5,0,0"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <RadioButton x:Name="onlySelectedFolders" Margin="0,0,0,5">Only The Following Selected Folders:</RadioButton>
-                    <ListBox x:Name="selectedFolders" Height="65" ItemsSource="{Binding Folders}" Margin="0,0,0,5">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="5,5,0,0" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <RadioButton x:Name="onlySelectedFolders" Margin="0,0,0,5" IsChecked="{Binding Path=OnlySelectedFolders}">Only The Following Selected Folders:</RadioButton>
+                    <StackPanel>
+                        <ListBox x:Name="selectedFolders" Height="65" IsEnabled="{Binding Path=SelectedFoldersEnabled}" ItemsSource="{Binding IncFolders}" Margin="0,0,0,5">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="5,5,0,0" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <StackPanel Orientation="Horizontal" Height="25" HorizontalAlignment="Right">
+                            <Button x:Name="addFolder" IsEnabled="{Binding Path=SelectedFoldersEnabled}" Margin="0,0,5,0" Padding="5,0,5,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
+                                    <TextBlock>Add Folder...</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="removeFolder" IsEnabled="{Binding Path=SelectedFoldersEnabled}" Padding="5,0,5,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
+                                    <TextBlock>Remove Folder</TextBlock>
+                                </StackPanel>
+
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+
                 </StackPanel>
+            </TabItem>
+            <TabItem Header="Files">
+                <StackPanel Orientation="Vertical">
+                    <GroupBox Header="Search Method">
+                        <StackPanel Margin="5,5,5,5">
+                            <DockPanel Margin="0,0,0,5">
+                                <RadioButton x:Name="typeAudio" GroupName="SearchMethod" Height="20" HorizontalAlignment="Left" VerticalContentAlignment="Center" IsChecked="{Binding CompareChecksumFilename}">File Checksum And Filename</RadioButton>
+                                <RadioButton x:Name="typeVideo" GroupName="SearchMethod" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding CompareChecksum}">File Checksum Only</RadioButton>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <RadioButton x:Name="typeDocs" GroupName="SearchMethod" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding CompareFilename}">Filename Only</RadioButton>
+                                <RadioButton x:Name="typeImages" GroupName="SearchMethod" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding CompareMusicTags}">Compare Music Tags</RadioButton>
+                            </DockPanel>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Options" Margin="0,0,0,5">
+                        <StackPanel Margin="5,5,5,5">
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="skipTemp" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding SkipTempFiles}">Skip Temporary Files</CheckBox>
+                                <CheckBox x:Name="scanSubDirs" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding ScanSubDirs}">Scan Subdirectories</CheckBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="skipSysProgramFolders" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding SkipSysAppDirs}">Skip System And Program Folders</CheckBox>
+                                <CheckBox x:Name="skipZeroByteFiles" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding SkipZeroByteFiles}">Ignore Zero-byte Files</CheckBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="incHiddenFiles" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding IncHiddenFiles}">Include Hidden Files</CheckBox>
+                                <CheckBox x:Name="skipCompressed" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding SkipCompressedFiles}">Skip Compressed Files (.zip, .cab, .rar, etc)</CheckBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="skipWinFolder" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding SkipWindowsDir}">Skip Windows Folder</CheckBox>
+                            </DockPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Music Tags">
+                <StackPanel Margin="5,5,5,5">
+                    <GroupBox Header="Compare These Tags">
+                        <StackPanel Margin="5,5,5,5">
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="musicTagTitle" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagTitle}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left">Title</CheckBox>
+                                <CheckBox x:Name="musicTagYear" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagYear}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right">Year</CheckBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="musicTagArtist" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagArtist}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left">Artist</CheckBox>
+                                <CheckBox x:Name="musicTagGenre" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagGenre}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right">Genre</CheckBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="musicTagAlbum" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagAlbum}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left">Album</CheckBox>
+                                <CheckBox x:Name="musicTagDuration" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagDuration}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right">Duration</CheckBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox x:Name="musicTagTrack" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagTrackNo}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left">Track Number</CheckBox>
+                                <CheckBox x:Name="musicTagBitRate" IsEnabled="{Binding MusicTagsEnabled}" IsChecked="{Binding MusicTagBitRate}" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right">Bit Rate</CheckBox>
+                            </DockPanel>
+                        </StackPanel>
+
+                    </GroupBox>
+                    <GroupBox Header="Comparison">
+                        <StackPanel>
+                            <CheckBox x:Name="compareMusicTagChecksum" IsEnabled="{Binding MusicTagsEnabled}"  IsChecked="{Binding CompareTagsCRC}" Height="20" VerticalContentAlignment="Center">Compare music tags as well as CRC32 checksum</CheckBox>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Exclude Folders">
+                <Grid Margin="5,5,5,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <ListView Grid.Row="0" ItemsSource="{Binding ExcludeFolders}">
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn Header="Folder" Width="200" DisplayMemberBinding="{Binding FolderPath}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
+                        <Button x:Name="excludeFolderAdd" Padding="5,0,5,0" Margin="0,0,5,0" Click="excludeFolderAdd_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
+                                <TextBlock>Add Folder</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="excludeFolderDel" Padding="5,0,5,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
+                                <TextBlock>Remove Folder</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
         <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center">

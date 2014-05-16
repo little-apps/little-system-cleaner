@@ -88,6 +88,7 @@ namespace Little_System_Cleaner
         public const int CSIDL_COMMON_STARTUP = 0x0018; // Common Users\Startup
         public const int CSIDL_PROGRAMS = 0x0002;   // All Users\Start Menu\Programs
         public const int CSIDL_COMMON_PROGRAMS = 0x0017;   // Start Menu\Programs
+
         #endregion
         #region Interop (IShellLink and IPersistFile)
         [Flags()]
