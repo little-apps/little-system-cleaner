@@ -41,5 +41,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             this._name = drive.ToString();
         }
+
+        public bool Equals(IncludeDrive other)
+        {
+            return (other != null && this.Name == other.Name);
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is IncludeDrive)
+                return Equals(obj as IncludeDrive);
+            else
+                return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Name.GetHashCode();
+        }
     }
 }

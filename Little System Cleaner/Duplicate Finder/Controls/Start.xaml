@@ -48,7 +48,7 @@
                     </ListBox>
                     <RadioButton x:Name="onlySelectedFolders" Margin="0,0,0,5" IsChecked="{Binding Path=OnlySelectedFolders}">Only The Following Selected Folders:</RadioButton>
                     <StackPanel>
-                        <ListBox x:Name="selectedFolders" Height="65" IsEnabled="{Binding Path=SelectedFoldersEnabled}" ItemsSource="{Binding IncFolders}" Margin="0,0,0,5">
+                        <ListBox x:Name="selectedFolders" Height="65" IsEnabled="{Binding Path=SelectedFoldersEnabled}" ItemsSource="{Binding IncFolders}" SelectedItem="{Binding IncludeFolderSelected}" Margin="0,0,0,5">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="5,5,0,0" />
@@ -56,13 +56,13 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                         <StackPanel Orientation="Horizontal" Height="25" HorizontalAlignment="Right">
-                            <Button x:Name="addFolder" IsEnabled="{Binding Path=SelectedFoldersEnabled}" Margin="0,0,5,0" Padding="5,0,5,0">
+                            <Button x:Name="addFolder" IsEnabled="{Binding Path=SelectedFoldersEnabled}" Margin="0,0,5,0" Padding="5,0,5,0" Click="addFolder_Click">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
                                     <TextBlock>Add Folder...</TextBlock>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="removeFolder" IsEnabled="{Binding Path=SelectedFoldersEnabled}" Padding="5,0,5,0">
+                            <Button x:Name="removeFolder" IsEnabled="{Binding Path=SelectedFoldersEnabled}" Padding="5,0,5,0" Click="removeFolder_Click">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
                                     <TextBlock>Remove Folder</TextBlock>
@@ -140,7 +140,7 @@
                     </GroupBox>
                     <GroupBox Header="Comparison">
                         <StackPanel>
-                            <CheckBox x:Name="compareMusicTagChecksum" IsEnabled="{Binding MusicTagsEnabled}"  IsChecked="{Binding CompareTagsCRC}" Height="20" VerticalContentAlignment="Center">Compare music tags as well as CRC32 checksum</CheckBox>
+                            <CheckBox x:Name="compareMusicTagChecksum" IsEnabled="{Binding MusicTagsEnabled}"  IsChecked="{Binding CompareTagsChecksum}" Height="20" VerticalContentAlignment="Center">Compare music tags as well as selected hashing algorithm (Slower)</CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -151,7 +151,7 @@
                         <RowDefinition/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <ListView Grid.Row="0" ItemsSource="{Binding ExcludeFolders}">
+                    <ListView Grid.Row="0" ItemsSource="{Binding ExcludeFolders}" SelectedItem="{Binding ExcludeFolderSelected}">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="Folder" Width="200" DisplayMemberBinding="{Binding FolderPath}"/>
@@ -165,7 +165,7 @@
                                 <TextBlock>Add Folder</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="excludeFolderDel" Padding="5,0,5,0">
+                        <Button x:Name="excludeFolderDel" Padding="5,0,5,0" Click="excludeFolderDel_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Margin="0,0,5,0" Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
                                 <TextBlock>Remove Folder</TextBlock>
@@ -175,7 +175,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center">
+        <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center" Click="buttonScan_Click">
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
                 <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                 <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>

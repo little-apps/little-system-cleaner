@@ -95,7 +95,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
 #if (!DEBUG)
             // Create system restore point
-            if (Properties.Settings.Default.bAutoSysRestore)
+            if (Properties.Settings.Default.optionsSysRestore)
                 SysRestore.StartRestore("Before Little Privacy Cleaner Fix", out seqNum);
 #endif
 

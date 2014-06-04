@@ -41,6 +41,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private ObservableCollection<IncludeDrive> _drives = new ObservableCollection<IncludeDrive>();
         private ObservableCollection<IncludeFolder> _incFolders = new ObservableCollection<IncludeFolder>();
         private ObservableCollection<HashAlgorithm> _hashAlgorithms;
+
+        private IncludeFolder _incFolderSelected;
+        private ExcludeFolder _excFolderSelected;
         
         private bool? _allDrives = false;
         private bool? _allExceptDrives = true;
@@ -74,7 +77,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private bool? _musicTagTrackNo = false;
         private bool? _musicTagBitRate = false;
 
-        private bool? _compareTagsCRC = true;
+        private bool? _compareTagsChecksum = false;
 
         private ObservableCollection<ExcludeFolder> _excFolders = new ObservableCollection<ExcludeFolder>();
 
@@ -87,6 +90,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         public ObservableCollection<IncludeFolder> IncFolders
         {
             get { return this._incFolders; }
+        }
+
+        public IncludeFolder IncludeFolderSelected
+        {
+            get { return this._incFolderSelected; }
+            set
+            {
+                this._incFolderSelected = value;
+                this.OnPropertyChanged("IncludeFolderSelected");
+            }
         }
 
         public bool? AllDrives
@@ -389,10 +402,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             set { this._musicTagBitRate = value; }
         }
 
-        public bool? CompareTagsCRC
+        public bool? CompareTagsChecksum
         {
-            get { return this._compareTagsCRC; }
-            set { this._compareTagsCRC = value; }
+            get { return this._compareTagsChecksum; }
+            set { this._compareTagsChecksum = value; }
         }
         #endregion
 
@@ -400,6 +413,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         public ObservableCollection<ExcludeFolder> ExcludeFolders
         {
             get { return this._excFolders; }
+        }
+
+        public ExcludeFolder ExcludeFolderSelected
+        {
+            get { return this._excFolderSelected; }
+            set
+            {
+                this._excFolderSelected = value;
+                this.OnPropertyChanged("ExcludeFolderSelected");
+            }
         }
         #endregion
 
@@ -456,5 +479,143 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
             }
         }
+
+        private void excludeFolderDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.ExcludeFolderSelected == null)
+            {
+                MessageBox.Show(App.Current.MainWindow, "No folder is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string message;
+
+            if (this.ExcludeFolderSelected.ReadOnly)
+            {
+                message = "This folder has been excluded in order to protect critical files from being deleted. Are you sure you want to include it and potentially damage your system?";
+            }
+            else
+            {
+                message = "Are you sure you want to remove this directory from the excluded folders?";
+            }
+
+            if (MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                message = string.Format("The folder ({0}) has been removed from the excluded folders.", this.ExcludeFolderSelected.FolderPath);
+                this.ExcludeFolders.Remove(this.ExcludeFolderSelected);
+
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void addFolder_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.Windows.Forms.FolderBrowserDialog folderBrowser = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                folderBrowser.Description = "Select a folder to check for duplicate files";
+
+                if (folderBrowser.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) == System.Windows.Forms.DialogResult.OK)
+                {
+                    IncludeFolder incFolder = new IncludeFolder(folderBrowser.SelectedPath);
+
+                    if (this.IncFolders.Contains(incFolder))
+                        MessageBox.Show(App.Current.MainWindow, "The selected folder is already included", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    else if (this.ExcludeFolders.Contains(new ExcludeFolder(folderBrowser.SelectedPath)))
+                        MessageBox.Show(App.Current.MainWindow, "The selected folder cannot be in both the included and excluded folders", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    else
+                    {
+                        this.IncFolders.Add(incFolder);
+                        MessageBox.Show(App.Current.MainWindow, "The selected folder has been included in the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+        }
+
+        private void removeFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.IncludeFolderSelected == null)
+            {
+                MessageBox.Show(App.Current.MainWindow, "No folder is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to remove this directory from the included folders?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                string message = string.Format("The folder ({0}) has been removed from the included folders.", this.IncludeFolderSelected.Name);
+                this.IncFolders.Remove(this.IncludeFolderSelected);
+
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void buttonScan_Click(object sender, RoutedEventArgs e)
+        {
+            bool canContinue = false;
+
+            if (this.OnlySelectedDrives.GetValueOrDefault())
+            {
+                if (this.Drives.Count == 0)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "There seems to have been an error detecting drives to scan", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                foreach (IncludeDrive drive in this.Drives)
+                {
+                    if (drive.IsChecked.GetValueOrDefault())
+                    {
+                        canContinue = true;
+                        break;
+                    }
+                }
+
+                if (!canContinue)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "You must select at least one drive in order to start the scan", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            else if (this.OnlySelectedFolders.GetValueOrDefault())
+            {
+                if (this.IncFolders.Count == 0)
+                    canContinue = false;
+                else
+                {
+                    foreach (IncludeFolder dir in this.IncFolders)
+                    {
+                        if (dir.IsChecked.GetValueOrDefault())
+                        {
+                            canContinue = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!canContinue)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "You must select at least one folder in order to start the scan", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
+            if (this.CompareMusicTags.GetValueOrDefault())
+            {
+                if (!this.MusicTagAlbum.GetValueOrDefault() 
+                    && !this.MusicTagArtist.GetValueOrDefault()
+                    && !this.MusicTagBitRate.GetValueOrDefault()
+                    && !this.MusicTagDuration.GetValueOrDefault()
+                    && !this.MusicTagGenre.GetValueOrDefault()
+                    && !this.MusicTagTitle.GetValueOrDefault()
+                    && !this.MusicTagTrackNo.GetValueOrDefault()
+                    && !this.MusicTagYear.GetValueOrDefault())
+                {
+                    MessageBox.Show(App.Current.MainWindow, "You must select at least one music tag to compare in order to start the scan", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            
+        }
+
+        
     }
 }
