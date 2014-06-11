@@ -93,6 +93,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Duplicate Finder\Controls\Details.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Disk Cleaner\Helpers\AddExcludeFileType.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -110,6 +114,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Disk Cleaner\Controls\Start.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Duplicate Finder\Controls\Results.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Duplicate Finder\Controls\Scan.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -222,6 +234,9 @@
     <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
       <DependentUpon>Analyze.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Duplicate Finder\Controls\Details.xaml.cs">
+      <DependentUpon>Details.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Disk Cleaner\Helpers\AddExcludeFileType.xaml.cs">
       <DependentUpon>AddExcludeFileType.xaml</DependentUpon>
     </Compile>
@@ -242,14 +257,24 @@
     <Compile Include="Disk Cleaner\Helpers\lviFile.cs" />
     <Compile Include="Disk Cleaner\Helpers\lviFolder.cs" />
     <Compile Include="Disk Cleaner\Helpers\ProblemFile.cs" />
+    <Compile Include="Duplicate Finder\Controls\Results.xaml.cs">
+      <DependentUpon>Results.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Duplicate Finder\Controls\Scan.xaml.cs">
+      <DependentUpon>Scan.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Duplicate Finder\Controls\Start.xaml.cs">
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>
     <Compile Include="Duplicate Finder\Controls\Wizard.cs" />
+    <Compile Include="Duplicate Finder\Helpers\FileEntry.cs" />
     <Compile Include="Duplicate Finder\Helpers\HashAlgorithm.cs" />
     <Compile Include="Duplicate Finder\Helpers\IncludeDrive.cs" />
     <Compile Include="Duplicate Finder\Helpers\ExcludeFolder.cs" />
     <Compile Include="Duplicate Finder\Helpers\IncludeFolder.cs" />
+    <Compile Include="Duplicate Finder\Helpers\Result.cs" />
+    <Compile Include="Duplicate Finder\Helpers\ResultModel.cs" />
+    <Compile Include="Duplicate Finder\Helpers\UserOptions.cs" />
     <Compile Include="Misc\OSVersion.cs" />
     <Compile Include="Misc\RegEditGo.cs" />
     <Compile Include="Misc\SysRestore.cs" />

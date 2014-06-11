@@ -22,409 +22,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
     /// <summary>
     /// Interaction logic for Start.xaml
     /// </summary>
-    public partial class Start : UserControl, INotifyPropertyChanged
+    public partial class Start : UserControl
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-        
         private readonly Wizard scanBase;
-
-        private ObservableCollection<IncludeDrive> _drives = new ObservableCollection<IncludeDrive>();
-        private ObservableCollection<IncludeFolder> _incFolders = new ObservableCollection<IncludeFolder>();
-        private ObservableCollection<HashAlgorithm> _hashAlgorithms;
-
-        private IncludeFolder _incFolderSelected;
-        private ExcludeFolder _excFolderSelected;
-        
-        private bool? _allDrives = false;
-        private bool? _allExceptDrives = true;
-        private bool? _allExceptSystem = true;
-        private bool? _allExceptRemovable = true;
-        private bool? _allExceptNetwork = true;
-        private bool? _onlySelectedDrives = false;
-        private bool? _onlySelectedFolders = false;
-
-        private bool? _compareChecksumFilename = true;
-        private bool? _compareChecksum = false;
-        private bool? _compareFilename = false;
-        private bool? _compareMusicTags = false;
-
-        private bool? _skipTempFiles = false;
-        private bool? _scanSubDirs = true;
-        private bool? _skipSysAppDirs = false;
-        private bool? _skipZeroByteFiles = true;
-        private bool? _incHiddenFiles = false;
-        private bool? _skipCompressedFiles = false;
-        private bool? _skipWindowsDir = false;
-
-        private HashAlgorithm _hashAlgorithm;
-
-        private bool? _musicTagTitle = true;
-        private bool? _musicTagYear = false;
-        private bool? _musicTagArtist = true;
-        private bool? _musicTagGenre = false;
-        private bool? _musicTagAlbum = false;
-        private bool? _musicTagDuration = false;
-        private bool? _musicTagTrackNo = false;
-        private bool? _musicTagBitRate = false;
-
-        private bool? _compareTagsChecksum = false;
-
-        private ObservableCollection<ExcludeFolder> _excFolders = new ObservableCollection<ExcludeFolder>();
-
-        #region Drives/Folders Properties
-        public ObservableCollection<IncludeDrive> Drives
-        {
-            get { return this._drives; }
-        }
-
-        public ObservableCollection<IncludeFolder> IncFolders
-        {
-            get { return this._incFolders; }
-        }
-
-        public IncludeFolder IncludeFolderSelected
-        {
-            get { return this._incFolderSelected; }
-            set
-            {
-                this._incFolderSelected = value;
-                this.OnPropertyChanged("IncludeFolderSelected");
-            }
-        }
-
-        public bool? AllDrives
-        {
-            get { return this._allDrives; }
-            set { this._allDrives = value; }
-        }
-
-        public bool? AllExceptDrives
-        {
-            get { return this._allExceptDrives; }
-            set 
-            { 
-                this._allExceptDrives = value;
-                this.OnPropertyChanged("AllExceptEnabled");
-            }
-        }
-
-        public bool? AllExceptSystem
-        {
-            get { return this._allExceptSystem; }
-            set { this._allExceptSystem = value; }
-        }
-        public bool? AllExceptRemovable
-        {
-            get { return this._allExceptRemovable; }
-            set { this._allExceptRemovable = value; }
-        }
-        public bool? AllExceptNetwork
-        {
-            get { return this._allExceptNetwork; }
-            set { this._allExceptNetwork = value; }
-        }
-        public bool? OnlySelectedDrives
-        {
-            get { return this._onlySelectedDrives; }
-            set 
-            {
-                this._onlySelectedDrives = value;
-                this.OnPropertyChanged("SelectedDrivesEnabled");
-            }
-        }
-        public bool? OnlySelectedFolders
-        {
-            get { return this._onlySelectedFolders; }
-            set { 
-                this._onlySelectedFolders = value;
-                this.OnPropertyChanged("SelectedFoldersEnabled");
-            }
-        }
-
-        public bool AllExceptEnabled
-        {
-            get
-            {
-                return (this.AllExceptDrives.GetValueOrDefault());
-            }
-        }
-
-        public bool SelectedDrivesEnabled
-        {
-            get
-            {
-                return (this.OnlySelectedDrives.GetValueOrDefault());
-            }
-        }
-
-        public bool SelectedFoldersEnabled
-        {
-            get
-            {
-                return (this.OnlySelectedFolders.GetValueOrDefault());
-            }
-        }
-        #endregion
-
-        #region Files Properties
-        public bool? CompareChecksumFilename
-        {
-            get { return this._compareChecksumFilename; }
-            set { this._compareChecksumFilename = value; }
-        }
-
-        public bool? CompareChecksum
-        {
-            get { return this._compareChecksum; }
-            set { this._compareChecksum = value; }
-        }
-        public bool? CompareFilename
-        {
-            get { return this._compareFilename; }
-            set { this._compareFilename = value; }
-        }
-        public bool? CompareMusicTags
-        {
-            get { return this._compareMusicTags; }
-            set 
-            { 
-                this._compareMusicTags = value;
-                this.OnPropertyChanged("MusicTagsEnabled");
-            }
-        }
-
-        public bool? SkipTempFiles
-        {
-            get { return this._skipTempFiles; }
-            set 
-            { 
-                this._skipTempFiles = value;
-
-                string[] excFolders = new string[] {
-                        Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine),
-                        Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User)
-                    };
-
-                foreach (string excFolderPath in excFolders)
-                {
-                    ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = this.ExcludeFolders.IndexOf(excFolder);
-
-                    if (value.GetValueOrDefault())
-                    {
-                        if (index == -1)
-                            this.ExcludeFolders.Add(excFolder);
-                        else if (this.ExcludeFolders[index].ReadOnly == false)
-                            this.ExcludeFolders[index].ReadOnly = true;
-                    }
-                    else
-                    {
-                        if (index != -1)
-                            this.ExcludeFolders.RemoveAt(index);
-                    }
-                }
-
-                this.OnPropertyChanged("SkipTempFiles");
-                this.OnPropertyChanged("ExcludeFolders");
-            }
-        }
-
-        public bool? ScanSubDirs
-        {
-            get { return this._scanSubDirs; }
-            set { this._scanSubDirs = value; }
-        }
-        public bool? SkipSysAppDirs
-        {
-            get { return this._skipSysAppDirs; }
-            set 
-            { 
-                this._skipSysAppDirs = value;
-
-                string[] excFolders = new string[] {
-                        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), // Program files directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), 
-                        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), // Program files (x86) directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86),
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), // Programdata directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), // AppData directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-                    };
-
-                foreach (string excFolderPath in excFolders)
-                {
-                    ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = this.ExcludeFolders.IndexOf(excFolder);
-
-                    if (value.GetValueOrDefault())
-                    {
-                        if (index == -1)
-                            this.ExcludeFolders.Add(excFolder);
-                        else if (this.ExcludeFolders[index].ReadOnly == false)
-                            this.ExcludeFolders[index].ReadOnly = true;
-                    }
-                    else
-                    {
-                        if (index != -1)
-                            this.ExcludeFolders.RemoveAt(index);
-                    }
-                }
-
-                this.OnPropertyChanged("SkipSysAppDirs");
-                this.OnPropertyChanged("ExcludeFolders");
-            }
-        }
-        public bool? SkipZeroByteFiles
-        {
-            get { return this._skipZeroByteFiles; }
-            set { this._skipZeroByteFiles = value; }
-        }
-        public bool? IncHiddenFiles
-        {
-            get { return this._incHiddenFiles; }
-            set { this._incHiddenFiles = value; }
-        }
-        public bool? SkipCompressedFiles
-        {
-            get { return this._skipCompressedFiles; }
-            set { this._skipCompressedFiles = value; }
-        }
-        public bool? SkipWindowsDir
-        {
-            get { return this._skipWindowsDir; }
-            set 
-            { 
-                this._skipWindowsDir = value;
-
-                string[] excFolders = new string[] {
-                        Environment.GetFolderPath(Environment.SpecialFolder.Windows)
-                    };
-
-                foreach (string excFolderPath in excFolders)
-                {
-                    ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = this.ExcludeFolders.IndexOf(excFolder);
-
-                    if (value.GetValueOrDefault())
-                    {
-                        if (index == -1)
-                            this.ExcludeFolders.Add(excFolder);
-                        else if (this.ExcludeFolders[index].ReadOnly == false)
-                            this.ExcludeFolders[index].ReadOnly = true;
-                    }
-                    else
-                    {
-                        if (index != -1)
-                            this.ExcludeFolders.RemoveAt(index);
-                    }
-                }
-
-                this.OnPropertyChanged("SkipWindowsDir");
-                this.OnPropertyChanged("ExcludeFolders");
-            }
-        }
-
-        public HashAlgorithm HashAlgorithm
-        {
-            get { return this._hashAlgorithm; }
-            set
-            {
-                this._hashAlgorithm = value;
-                this.OnPropertyChanged("HashAlgorithm");
-            }
-        }
-
-        public ObservableCollection<HashAlgorithm> HashAlgorithms
-        {
-            get { return this._hashAlgorithms; }
-            set
-            {
-                this._hashAlgorithms = value;
-                this.OnPropertyChanged("HashAlgorithms");
-            }
-        }
-        #endregion
-
-        #region Music Tags Properties
-        public bool MusicTagsEnabled
-        {
-            get { return (this.CompareMusicTags.GetValueOrDefault()); }
-        }
-
-        public bool? MusicTagTitle
-        {
-            get { return this._musicTagTitle; }
-            set { this._musicTagTitle = value; }
-        }
-        public bool? MusicTagYear
-        {
-            get { return this._musicTagYear; }
-            set { this._musicTagYear = value; }
-        }
-        public bool? MusicTagArtist
-        {
-            get { return this._musicTagArtist; }
-            set { this._musicTagArtist = value; }
-        }
-        public bool? MusicTagGenre
-        {
-            get { return this._musicTagGenre; }
-            set { this._musicTagGenre = value; }
-        }
-        public bool? MusicTagAlbum
-        {
-            get { return this._musicTagAlbum; }
-            set { this._musicTagAlbum = value; }
-        }
-        public bool? MusicTagDuration
-        {
-            get { return this._musicTagDuration; }
-            set { this._musicTagDuration = value; }
-        }
-        public bool? MusicTagTrackNo
-        {
-            get { return this._musicTagTrackNo; }
-            set { this._musicTagTrackNo = value; }
-        }
-        public bool? MusicTagBitRate
-        {
-            get { return this._musicTagBitRate; }
-            set { this._musicTagBitRate = value; }
-        }
-
-        public bool? CompareTagsChecksum
-        {
-            get { return this._compareTagsChecksum; }
-            set { this._compareTagsChecksum = value; }
-        }
-        #endregion
-
-        #region Exclude Folders Properties
-        public ObservableCollection<ExcludeFolder> ExcludeFolders
-        {
-            get { return this._excFolders; }
-        }
-
-        public ExcludeFolder ExcludeFolderSelected
-        {
-            get { return this._excFolderSelected; }
-            set
-            {
-                this._excFolderSelected = value;
-                this.OnPropertyChanged("ExcludeFolderSelected");
-            }
-        }
-        #endregion
 
         public Start(Wizard sb)
         {
@@ -432,16 +32,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.scanBase = sb;
 
-            if (this._drives.Count > 0)
-                this._drives.Clear();
+            this.DataContext = this.scanBase.Options;
 
-            if (this._incFolders.Count > 0)
-                this._incFolders.Clear();
+            if (this.scanBase.Options.Drives.Count > 0)
+                this.scanBase.Options.Drives.Clear();
+
+            if (this.scanBase.Options.IncFolders.Count > 0)
+                this.scanBase.Options.IncFolders.Clear();
 
             try {
                 foreach (DriveInfo di in DriveInfo.GetDrives())
                 {
-                    this._drives.Add(new IncludeDrive(di));
+                    this.scanBase.Options.Drives.Add(new IncludeDrive(di));
                 }
             }
             catch (UnauthorizedAccessException ex)
@@ -449,12 +51,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Debug.WriteLine("The following error occurred: {0}\nUnable to get list of drives.", ex.Message);
             }
 
-            this.SkipTempFiles = true;
-            this.SkipSysAppDirs = true;
-            this.SkipWindowsDir = true;
+            this.scanBase.Options.SkipTempFiles = true;
+            this.scanBase.Options.SkipSysAppDirs = true;
+            this.scanBase.Options.SkipWindowsDir = true;
 
-            this.HashAlgorithms = HashAlgorithm.CreateList();
-            this.HashAlgorithm = this.HashAlgorithms[0];
+            this.scanBase.Options.OnPropertyChanged("SkipFilesGreaterThan");
+            this.scanBase.Options.OnPropertyChanged("SkipFilesGreaterSize");
+            this.scanBase.Options.OnPropertyChanged("SkipFilesGreaterUnit");
+
+            this.scanBase.Options.HashAlgorithms = HashAlgorithm.CreateList();
+            this.scanBase.Options.HashAlgorithm = this.scanBase.Options.HashAlgorithms[0];
         }
 
         private void excludeFolderAdd_Click(object sender, RoutedEventArgs e)
@@ -467,13 +73,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 {
                     ExcludeFolder excFolder = new ExcludeFolder(folderBrowser.SelectedPath);
 
-                    if (this.ExcludeFolders.Contains(excFolder))
+                    if (this.scanBase.Options.ExcludeFolders.Contains(excFolder))
                         MessageBox.Show(App.Current.MainWindow, "The selected folder is already excluded", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    else if (this.OnlySelectedFolders.GetValueOrDefault() == true && this.IncFolders.Contains(new IncludeFolder(folderBrowser.SelectedPath)))
+                    else if (this.scanBase.Options.OnlySelectedFolders.GetValueOrDefault() == true && this.scanBase.Options.IncFolders.Contains(new IncludeFolder(folderBrowser.SelectedPath)))
                         MessageBox.Show(App.Current.MainWindow, "The selected folder cannot be in both the included and excluded folders", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     else
                     {
-                        this.ExcludeFolders.Add(excFolder);
+                        this.scanBase.Options.ExcludeFolders.Add(excFolder);
                         MessageBox.Show(App.Current.MainWindow, "The selected folder has been excluded from the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
@@ -482,7 +88,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void excludeFolderDel_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ExcludeFolderSelected == null)
+            if (this.scanBase.Options.ExcludeFolderSelected == null)
             {
                 MessageBox.Show(App.Current.MainWindow, "No folder is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -490,7 +96,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             string message;
 
-            if (this.ExcludeFolderSelected.ReadOnly)
+            if (this.scanBase.Options.ExcludeFolderSelected.ReadOnly)
             {
                 message = "This folder has been excluded in order to protect critical files from being deleted. Are you sure you want to include it and potentially damage your system?";
             }
@@ -501,8 +107,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                message = string.Format("The folder ({0}) has been removed from the excluded folders.", this.ExcludeFolderSelected.FolderPath);
-                this.ExcludeFolders.Remove(this.ExcludeFolderSelected);
+                message = string.Format("The folder ({0}) has been removed from the excluded folders.", this.scanBase.Options.ExcludeFolderSelected.FolderPath);
+                this.scanBase.Options.ExcludeFolders.Remove(this.scanBase.Options.ExcludeFolderSelected);
 
                 MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -518,13 +124,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 {
                     IncludeFolder incFolder = new IncludeFolder(folderBrowser.SelectedPath);
 
-                    if (this.IncFolders.Contains(incFolder))
+                    if (this.scanBase.Options.IncFolders.Contains(incFolder))
                         MessageBox.Show(App.Current.MainWindow, "The selected folder is already included", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    else if (this.ExcludeFolders.Contains(new ExcludeFolder(folderBrowser.SelectedPath)))
+                    else if (this.scanBase.Options.ExcludeFolders.Contains(new ExcludeFolder(folderBrowser.SelectedPath)))
                         MessageBox.Show(App.Current.MainWindow, "The selected folder cannot be in both the included and excluded folders", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     else
                     {
-                        this.IncFolders.Add(incFolder);
+                        this.scanBase.Options.IncFolders.Add(incFolder);
                         MessageBox.Show(App.Current.MainWindow, "The selected folder has been included in the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
@@ -533,7 +139,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void removeFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IncludeFolderSelected == null)
+            if (this.scanBase.Options.IncludeFolderSelected == null)
             {
                 MessageBox.Show(App.Current.MainWindow, "No folder is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -541,8 +147,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to remove this directory from the included folders?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                string message = string.Format("The folder ({0}) has been removed from the included folders.", this.IncludeFolderSelected.Name);
-                this.IncFolders.Remove(this.IncludeFolderSelected);
+                string message = string.Format("The folder ({0}) has been removed from the included folders.", this.scanBase.Options.IncludeFolderSelected.Name);
+                this.scanBase.Options.IncFolders.Remove(this.scanBase.Options.IncludeFolderSelected);
 
                 MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -552,15 +158,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             bool canContinue = false;
 
-            if (this.OnlySelectedDrives.GetValueOrDefault())
+            if (this.scanBase.Options.OnlySelectedDrives.GetValueOrDefault())
             {
-                if (this.Drives.Count == 0)
+                if (this.scanBase.Options.Drives.Count == 0)
                 {
                     MessageBox.Show(App.Current.MainWindow, "There seems to have been an error detecting drives to scan", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                foreach (IncludeDrive drive in this.Drives)
+                foreach (IncludeDrive drive in this.scanBase.Options.Drives)
                 {
                     if (drive.IsChecked.GetValueOrDefault())
                     {
@@ -575,13 +181,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return;
                 }
             }
-            else if (this.OnlySelectedFolders.GetValueOrDefault())
+            else if (this.scanBase.Options.OnlySelectedFolders.GetValueOrDefault())
             {
-                if (this.IncFolders.Count == 0)
+                if (this.scanBase.Options.IncFolders.Count == 0)
                     canContinue = false;
                 else
                 {
-                    foreach (IncludeFolder dir in this.IncFolders)
+                    foreach (IncludeFolder dir in this.scanBase.Options.IncFolders)
                     {
                         if (dir.IsChecked.GetValueOrDefault())
                         {
@@ -598,22 +204,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
             }
 
-            if (this.CompareMusicTags.GetValueOrDefault())
+            if (this.scanBase.Options.CompareMusicTags.GetValueOrDefault())
             {
-                if (!this.MusicTagAlbum.GetValueOrDefault() 
-                    && !this.MusicTagArtist.GetValueOrDefault()
-                    && !this.MusicTagBitRate.GetValueOrDefault()
-                    && !this.MusicTagDuration.GetValueOrDefault()
-                    && !this.MusicTagGenre.GetValueOrDefault()
-                    && !this.MusicTagTitle.GetValueOrDefault()
-                    && !this.MusicTagTrackNo.GetValueOrDefault()
-                    && !this.MusicTagYear.GetValueOrDefault())
+                if (!this.scanBase.Options.MusicTagAlbum.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagArtist.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagBitRate.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagDuration.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagGenre.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagTitle.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagTrackNo.GetValueOrDefault()
+                    && !this.scanBase.Options.MusicTagYear.GetValueOrDefault())
                 {
                     MessageBox.Show(App.Current.MainWindow, "You must select at least one music tag to compare in order to start the scan", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }
-            
+
+            this.scanBase.MoveNext();
         }
 
         

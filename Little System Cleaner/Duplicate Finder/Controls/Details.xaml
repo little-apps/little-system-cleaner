@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="Little_System_Cleaner.Duplicate_Finder.Controls.Details"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="384" d:DesignWidth="579"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33" />
+            <RowDefinition Height="259*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <Border CornerRadius="5" Margin="0,0,3,1">
+            <Border.Effect>
+                <DropShadowEffect Color="#FF474747" />
+            </Border.Effect>
+            <Border.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="Gray" Offset="1"/>
+                </RadialGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Label FontSize="14" Content="Duplicate Finder" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Foreground="White" HorizontalAlignment="Right">File Information</Label>
+            </Grid>
+        </Border>
+        <DockPanel Grid.Row="1" Margin="0,10,0,0">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Label Width="107" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Filename: </Label>
+                        <TextBox x:Name="fileName" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FileName}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Label Width="107" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Size:</Label>
+                        <TextBox x:Name="fileSize" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Size}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Label Width="107" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Path:</Label>
+                        <TextBox x:Name="filePath" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FilePath}" />
+                    </StackPanel>
+                </StackPanel>
+                <GroupBox Header="Audio Information">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Artist:</Label>
+                                <TextBox x:Name="tagArtist" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Artist}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Title:</Label>
+                                <TextBox x:Name="tagTitle" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Title}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Year:</Label>
+                                <TextBox x:Name="tagYear" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Year}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Genre:</Label>
+                                <TextBox x:Name="tagGenre" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Genre}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Album:</Label>
+                                <TextBox x:Name="tagAlbum" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Album}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Duration:</Label>
+                                <TextBox x:Name="tagDuration" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Duration}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Track #:</Label>
+                                <TextBox x:Name="tagTrackNo" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding TrackNo}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Bitrate:</Label>
+                                <TextBox x:Name="tagBitRate" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Bitrate}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </DockPanel>
+        <Button Name="buttonGoBack" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="5,5,0,5" Click="buttonGoBack_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/go-back.png" Width="16" Height="16" />
+                <TextBlock>Go Back</TextBlock>
+            </StackPanel>
+        </Button>
+
+    </Grid>
+</UserControl>

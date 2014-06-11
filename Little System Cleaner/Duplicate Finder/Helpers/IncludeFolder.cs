@@ -21,6 +21,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         #endregion
 
+        private readonly DirectoryInfo _dirInfo;
         private string _name;
         private bool? _bIsChecked = true;
 
@@ -45,14 +46,21 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
+        public DirectoryInfo DirInfo
+        {
+            get { return this._dirInfo; }
+        }
+
         public IncludeFolder(DirectoryInfo dirInfo)
         {
             this.Name = dirInfo.ToString();
+            this._dirInfo = dirInfo;
         }
 
         public IncludeFolder(string folderPath)
         {
             this.Name = folderPath;
+            this._dirInfo = new DirectoryInfo(folderPath);
         }
 
         public bool Equals(IncludeFolder other)

@@ -830,8 +830,9 @@ namespace Little_System_Cleaner
         /// Converts the size in bytes to a formatted string
         /// </summary>
         /// <param name="Length">Size in bytes</param>
+        /// <param name="shortFormat">If true, displays units in short form (ie: Bytes becomes B)</param>
         /// <returns>Formatted String</returns>
-        public static string ConvertSizeToString(long Length)
+        public static string ConvertSizeToString(long Length, bool shortFormat = true)
         {
             if (Length < 0)
                 return "";
@@ -842,22 +843,22 @@ namespace Little_System_Cleaner
             if (Length < 1000)             // 1KB
             {
                 nSize = Length;
-                strUnit = " B";
+                strUnit = (shortFormat ? " B" : " Bytes");
             }
             else if (Length < 1000000)     // 1MB
             {
                 nSize = Length / (float)0x400;
-                strUnit = " KB";
+                strUnit = (shortFormat ? " KB" : " Kilobytes");
             }
             else if (Length < 1000000000)   // 1GB
             {
                 nSize = Length / (float)0x100000;
-                strUnit = " MB";
+                strUnit = (shortFormat ? " MB" : " Megabytes");
             }
             else
             {
                 nSize = Length / (float)0x40000000;
-                strUnit = " GB";
+                strUnit = (shortFormat ? " GB" : " Gigabytes");
             }
 
             if (nSize == (int)nSize)

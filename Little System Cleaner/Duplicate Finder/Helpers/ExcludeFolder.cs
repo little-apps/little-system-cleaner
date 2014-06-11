@@ -50,10 +50,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             return (other != null && this.FolderPath == other.FolderPath);
         }
+
+        public bool Equals(string other)
+        {
+            return (!string.IsNullOrEmpty(other) && this.FolderPath == other);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is ExcludeFolder)
                 return Equals(obj as ExcludeFolder);
+            else if (obj is string)
+                return Equals(obj as string);
             else
                 return false;
         }

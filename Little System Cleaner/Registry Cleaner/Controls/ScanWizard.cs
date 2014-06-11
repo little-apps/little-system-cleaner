@@ -183,9 +183,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (this.userControl != null)
                 this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
 
-            System.Reflection.ConstructorInfo constructorInfo = this.arrayControls[index].GetConstructor(new Type[] { typeof(ScanWizard) });
-
-            this.Content = constructorInfo.Invoke(new object[] { this });
+            this.Content = Activator.CreateInstance(this.arrayControls[index], this);
         }
 
         /// <summary>

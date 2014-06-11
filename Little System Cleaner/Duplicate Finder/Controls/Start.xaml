@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             MinWidth="579" MinHeight="384"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             d:DesignHeight="400"
+             MinWidth="579" MinHeight="384">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -39,7 +40,7 @@
                         <CheckBox x:Name="allExceptNetwork" Margin="0,0,5,0" IsEnabled="{Binding Path=AllExceptEnabled}" IsChecked="{Binding Path=AllExceptNetwork}">Network Drives</CheckBox>
                     </StackPanel>
                     <RadioButton x:Name="onlySelectedDrives" Margin="0,0,0,5" IsChecked="{Binding Path=OnlySelectedDrives}">Only The Following Selected Drives:</RadioButton>
-                    <ListBox x:Name="selectedDrives" Height="65" IsEnabled="{Binding Path=SelectedDrivesEnabled}" ItemsSource="{Binding Drives}" Margin="0,0,0,5">
+                    <ListBox x:Name="selectedDrives" Height="80" IsEnabled="{Binding Path=SelectedDrivesEnabled}" ItemsSource="{Binding Drives}" Margin="0,0,0,5">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="5,5,0,0"/>
@@ -48,7 +49,7 @@
                     </ListBox>
                     <RadioButton x:Name="onlySelectedFolders" Margin="0,0,0,5" IsChecked="{Binding Path=OnlySelectedFolders}">Only The Following Selected Folders:</RadioButton>
                     <StackPanel>
-                        <ListBox x:Name="selectedFolders" Height="65" IsEnabled="{Binding Path=SelectedFoldersEnabled}" ItemsSource="{Binding IncFolders}" SelectedItem="{Binding IncludeFolderSelected}" Margin="0,0,0,5">
+                        <ListBox x:Name="selectedFolders" Height="80" IsEnabled="{Binding Path=SelectedFoldersEnabled}" ItemsSource="{Binding IncFolders}" SelectedItem="{Binding IncludeFolderSelected}" Margin="0,0,0,5">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="5,5,0,0" />
@@ -99,11 +100,16 @@
                                 <CheckBox x:Name="skipZeroByteFiles" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding SkipZeroByteFiles}">Ignore Zero-byte Files</CheckBox>
                             </DockPanel>
                             <DockPanel Margin="0,0,0,5">
-                                <CheckBox x:Name="incHiddenFiles" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding IncHiddenFiles}">Include Hidden Files</CheckBox>
+                                <CheckBox x:Name="incHiddenFiles" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding IncHiddenFiles}">Include Hidden Files/Folders</CheckBox>
                                 <CheckBox x:Name="skipCompressed" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding SkipCompressedFiles}">Skip Compressed Files (.zip, .cab, .rar, etc)</CheckBox>
                             </DockPanel>
                             <DockPanel Margin="0,0,0,5">
                                 <CheckBox x:Name="skipWinFolder" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding SkipWindowsDir}">Skip Windows Folder</CheckBox>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <CheckBox x:Name="skipFilesGreaterThan" Height="20" VerticalContentAlignment="Center" IsChecked="{Binding SkipFilesGreaterThan}">Skip Files Greater Than</CheckBox>
+                                    <xctk:IntegerUpDown x:Name="skipFilesGreaterSize" Margin="5,0,0,0" Width="50" Minimum="1" IsEnabled="{Binding SkipFilesGreaterEnabled}" Value="{Binding SkipFilesGreaterSize}" />
+                                    <ComboBox x:Name="skipFilesGreaterUnit" Margin="5,0,0,0" IsEnabled="{Binding SkipFilesGreaterEnabled}" ItemsSource="{Binding SkipFilesGreaterUnits}" SelectedValue="{Binding SkipFilesGreaterUnit}" VerticalContentAlignment="Center" />
+                                </StackPanel>
                             </DockPanel>
                         </StackPanel>
                     </GroupBox>
