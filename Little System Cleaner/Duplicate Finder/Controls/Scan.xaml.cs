@@ -44,6 +44,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private string _statusText;
         private string _currentFile;
 
+        public static List<string> validAudioFiles = new List<string>() { "aac", "aif", "ape", "wma", "aa", "aax", "flac", "mka", "mpc", "mp+", "mpp", "mp4", "m4a", "ogg", "oga", "wav", "wv", "mp3", "m2a", "mp2", "mp1" };
+
         public string StatusText
         {
             get { return this._statusText; }
@@ -182,6 +184,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
                 }
 
+                if (this.scanBase.Options.CompareMusicTags.GetValueOrDefault())
+                {
+                    // Group by audio tags
+                    this.GroupByTags();
+
+                    if (this.scanBase.FilesGroupedByHash.Count == 0)
+                    {
+                        this.Dispatcher.Invoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); }));
+
+                        this.scanBase.MoveFirst();
+                        return;
+                    }
+                }
+
                 this.scanBase.MoveNext();
             }
             catch (ThreadAbortException)
@@ -232,7 +248,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (this.IsSizeGreaterThan(fi.Length))
                             continue;
 
-                        FileEntry fileEntry = new FileEntry(fi);
+                        FileEntry fileEntry = new FileEntry(fi, this.scanBase.Options.CompareMusicTags.GetValueOrDefault());
                         this.FileList.Add(fileEntry);
                     }
                     catch (UnauthorizedAccessException)
@@ -414,6 +430,40 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
                         
                 }
+            }
+        }
+
+        private void GroupByTags()
+        {
+            this.StatusText = "Getting checksums from audio files";
+            this.CurrentFile = "Please wait...";
+
+            List<FileEntry> fileEntriesTags = new List<FileEntry>();
+
+            foreach (FileEntry fileEntry in this.FileList)
+            {
+                if (fileEntry.IsDeleteable && fileEntry.HasAudioTags)
+                {
+                    fileEntry.GetTagsChecksum(this.scanBase.Options);
+                    fileEntriesTags.Add(fileEntry);
+                }
+            }
+
+            this.StatusText = "Grouping files by audio tags";
+            this.CurrentFile = "Please wait...";
+
+            var query = from p in fileEntriesTags
+                        where p.HasAudioTags == true
+                        group p by p.TagsChecksum into g
+                        where g.Count() > 1
+                        select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
+
+            foreach (var group in query)
+            {
+                string checksum = group.Checksum;
+                List<FileEntry> files = group.Files;
+
+                this.scanBase.FilesGroupedByHash.Add(checksum, files);
             }
         }
     }

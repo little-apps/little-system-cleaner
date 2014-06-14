@@ -29,7 +29,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 1 of 3</Label>
             </Grid>
         </Border>
-        <TabControl Margin="0,10,0,0" Grid.Row="1">
+        <TabControl x:Name="tabControl" Margin="0,10,0,0" Grid.Row="1">
             <TabItem Header="Drives/Folders">
                 <StackPanel Margin="5,5,5,5">
                     <RadioButton x:Name="allDrives" Margin="0,0,0,5" IsChecked="{Binding Path=AllDrives}">All Drives</RadioButton>
@@ -143,11 +143,6 @@
                             </DockPanel>
                         </StackPanel>
 
-                    </GroupBox>
-                    <GroupBox Header="Comparison">
-                        <StackPanel>
-                            <CheckBox x:Name="compareMusicTagChecksum" IsEnabled="{Binding MusicTagsEnabled}"  IsChecked="{Binding CompareTagsChecksum}" Height="20" VerticalContentAlignment="Center">Compare music tags as well as selected hashing algorithm (Slower)</CheckBox>
-                        </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>

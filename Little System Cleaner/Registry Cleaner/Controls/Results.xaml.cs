@@ -96,8 +96,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void SetCheckedItems(Nullable<bool> isChecked)
         {
-            List<BadRegistryKey> badRegKeyArr = new List<BadRegistryKey>();
-
             foreach (BadRegistryKey badRegKeyRoot in (this._tree.Model as ResultModel).Root.Children)
             {
                 foreach (BadRegistryKey child in badRegKeyRoot.Children)

@@ -159,17 +159,17 @@ namespace CommonTools.TagLib.Aiff
 			: base(abstraction)
 		{
 			Mode = AccessMode.Read;
-			try
-			{
+            try
+            {
 				uint aiff_size;
 				long tag_start, tag_end;
 				Read(true, propertiesStyle, out aiff_size,
 				     out tag_start, out tag_end);
-			}
-			finally
-			{
+            }
+            finally
+            {
 				Mode = AccessMode.Closed;
-			}
+            }
 
 			TagTypesOnDisk = TagTypes;
 
@@ -401,7 +401,7 @@ namespace CommonTools.TagLib.Aiff
 		{
 			Seek(0);
 			if (ReadBlock(4) != FileIdentifier)
-				throw new CorruptFileException(
+                throw new CorruptFileException(
 					"File does not begin with AIFF identifier");
 
 			aiff_size = ReadBlock(4).ToUInt(true);

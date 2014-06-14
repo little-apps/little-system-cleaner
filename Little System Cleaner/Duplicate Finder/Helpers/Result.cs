@@ -167,7 +167,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         private readonly FileEntry _fileEntry;
-        private bool? _bIsChecked = true;
+        private bool? _bIsChecked = false;
 
         #region IsChecked Methods
         void SetIsChecked(bool? value, bool updateChildren, bool updateParent)

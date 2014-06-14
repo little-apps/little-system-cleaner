@@ -7,12 +7,19 @@
              d:DesignHeight="384" d:DesignWidth="579"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="188*"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="188*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="33" />
-            <RowDefinition Height="259*" />
+            <RowDefinition Height="74" />
+            <RowDefinition Height="237"/>
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <Border CornerRadius="5" Margin="0,0,3,1">
+        <Border CornerRadius="5" Margin="0,0,3,1" Grid.ColumnSpan="4">
             <Border.Effect>
                 <DropShadowEffect Color="#FF474747" />
             </Border.Effect>
@@ -27,71 +34,55 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right">File Information</Label>
             </Grid>
         </Border>
-        <DockPanel Grid.Row="1" Margin="0,10,0,0">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Label Width="107" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Filename: </Label>
-                        <TextBox x:Name="fileName" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FileName}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Label Width="107" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Size:</Label>
-                        <TextBox x:Name="fileSize" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Size}" />
-                    </StackPanel>
+        <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="0">
+            <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Filename:</Label>
+            <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Path:</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="1">
+            <TextBox x:Name="fileName" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FileName, Mode=OneWay}" />
+            <TextBox x:Name="filePath" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FilePath, Mode=OneWay}" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="2">
+            <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Size:</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="3">
+            <TextBox x:Name="fileSize" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Size, Mode=OneWay}" />
+        </StackPanel>
+        <GroupBox Header="Audio Information" IsEnabled="{Binding HasAudioTags, Mode=OneWay}" Grid.Row="2" Grid.ColumnSpan="4" Margin="0,0,0,85">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="184*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="184*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,5,0,0">
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Artist:</Label>
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Year:</Label>
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Album:</Label>
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Track #:</Label>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Label Width="107" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Path:</Label>
-                        <TextBox x:Name="filePath" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FilePath}" />
-                    </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,5,0,0">
+                    <TextBox x:Name="tagArtist" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Artist, Mode=OneWay}" />
+                    <TextBox x:Name="tagYear" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Year, Mode=OneWay}" />
+                    <TextBox x:Name="tagAlbum" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Album, Mode=OneWay}" />
+                    <TextBox x:Name="tagTrackNo" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding TrackNo, Mode=OneWay}" />
                 </StackPanel>
-                <GroupBox Header="Audio Information">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Artist:</Label>
-                                <TextBox x:Name="tagArtist" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Artist}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Title:</Label>
-                                <TextBox x:Name="tagTitle" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Title}" />
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Year:</Label>
-                                <TextBox x:Name="tagYear" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Year}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Genre:</Label>
-                                <TextBox x:Name="tagGenre" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Genre}" />
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Album:</Label>
-                                <TextBox x:Name="tagAlbum" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Album}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Duration:</Label>
-                                <TextBox x:Name="tagDuration" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Duration}" />
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Track #:</Label>
-                                <TextBox x:Name="tagTrackNo" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding TrackNo}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Label Width="103" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Bitrate:</Label>
-                                <TextBox x:Name="tagBitRate" Width="175" Margin="5,0,0,0" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Bitrate}" />
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                </GroupBox>
-            </StackPanel>
-        </DockPanel>
-        <Button Name="buttonGoBack" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="5,5,0,5" Click="buttonGoBack_Click">
+                <StackPanel Grid.Column="2" Margin="0,5,0,0">
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Title:</Label>
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Genre:</Label>
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Duration:</Label>
+                    <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Bitrate:</Label>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="0,5,0,0">
+                    <TextBox x:Name="tagTitle" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Title, Mode=OneWay}" />
+                    <TextBox x:Name="tagGenre" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Genre, Mode=OneWay}" />
+                    <TextBox x:Name="tagDuration" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Duration, Mode=OneWay}" />
+                    <TextBox x:Name="tagBitRate" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Bitrate, Mode=OneWay}" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <Button Name="buttonGoBack" Grid.Row="3" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="5,5,0,5" Click="buttonGoBack_Click" Width="82">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/go-back.png" Width="16" Height="16" />
                 <TextBlock>Go Back</TextBlock>

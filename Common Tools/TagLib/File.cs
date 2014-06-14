@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 
 namespace CommonTools.TagLib {
 	
@@ -1415,17 +1416,18 @@ namespace CommonTools.TagLib {
 						mimetype));
 			
 			Type file_type = FileTypes.AvailableTypes[mimetype];
-			
-			try {
-				File file = (File) Activator.CreateInstance(
-					file_type,
-					new object [] {abstraction, propertiesStyle});
-				
-				file.MimeType = mimetype;
-				return file;
-			} catch (System.Reflection.TargetInvocationException e) {
-				throw e.InnerException;
-			}
+
+            try
+            {
+                File file = (File)Activator.CreateInstance(
+                    file_type,
+                    new object[] { abstraction, propertiesStyle });
+
+                file.MimeType = mimetype;
+                return file;
+            } catch (System.Reflection.TargetInvocationException e) {
+                throw e.InnerException;
+            }
 		}
 		
 		/// <summary>

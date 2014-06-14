@@ -39,95 +39,100 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         }
         #endregion
 
-        //#region Audio information
-        //public string Artist
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Artist;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string Title
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Title;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string Year
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Year;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string Genre
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Genre;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string Album
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Album;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string Duration
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Duration;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string TrackNo
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.TrackNo;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //public string Bitrate
-        //{
-        //    get
-        //    {
-        //        if (this._fileEntry.HasAudioTags)
-        //            return this._fileEntry.Bitrate;
-        //        else
-        //            return "N/A";
-        //    }
-        //}
-        //#endregion
+        #region Audio information
+        public bool HasAudioTags
+        {
+            get { return (this._fileEntry.HasAudioTags); }
+        }
+
+        public string Artist
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && !string.IsNullOrEmpty(this._fileEntry.Artist))
+                    return this._fileEntry.Artist;
+                else
+                    return "N/A";
+            }
+        }
+        public string Title
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && !string.IsNullOrEmpty(this._fileEntry.Title))
+                    return this._fileEntry.Title;
+                else
+                    return "N/A";
+            }
+        }
+        public string Year
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && this._fileEntry.Year > 0)
+                    return Convert.ToString(this._fileEntry.Year);
+                else
+                    return "N/A";
+            }
+        }
+        public string Genre
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && !string.IsNullOrEmpty(this._fileEntry.Genre))
+                    return this._fileEntry.Genre;
+                else
+                    return "N/A";
+            }
+        }
+        public string Album
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && !string.IsNullOrEmpty(this._fileEntry.Album))
+                    return this._fileEntry.Album;
+                else
+                    return "N/A";
+            }
+        }
+        public string Duration
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && this._fileEntry.Duration.TotalSeconds > 0)
+                    return this._fileEntry.Duration.ToString();
+                else
+                    return "N/A";
+            }
+        }
+        public string TrackNo
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && this._fileEntry.TrackNo > 0)
+                    return Convert.ToString(this._fileEntry.TrackNo);
+                else
+                    return "N/A";
+            }
+        }
+        public string Bitrate
+        {
+            get
+            {
+                if ((this._fileEntry.HasAudioTags) && this._fileEntry.Bitrate > 0)
+                    return string.Format("{0} kbps", this._fileEntry.Bitrate);
+                else
+                    return "N/A";
+            }
+        }
+        #endregion
 
         public Details(Wizard scanBase, FileEntry fileEntry)
         {
-            InitializeComponent();
-
             this._scanBase = scanBase;
             this._fileEntry = fileEntry;
+
+            InitializeComponent();
         }
 
         private void buttonGoBack_Click(object sender, RoutedEventArgs e)

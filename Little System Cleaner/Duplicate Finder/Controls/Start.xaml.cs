@@ -94,24 +94,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return;
             }
 
-            string message;
-
             if (this.scanBase.Options.ExcludeFolderSelected.ReadOnly)
             {
-                message = "This folder has been excluded in order to protect critical files from being deleted. Are you sure you want to include it and potentially damage your system?";
+                MessageBox.Show(App.Current.MainWindow, "This folder has been excluded in order to protect critical files from being deleted. Please uncheck the respective checkbox under Options in the Files tab to remove it.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                this.tabControl.SelectedIndex = 1;
             }
             else
             {
-                message = "Are you sure you want to remove this directory from the excluded folders?";
+                if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to remove this directory from the excluded folders?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    string message = string.Format("The folder ({0}) has been removed from the excluded folders.", this.scanBase.Options.ExcludeFolderSelected.FolderPath);
+                    this.scanBase.Options.ExcludeFolders.Remove(this.scanBase.Options.ExcludeFolderSelected);
+
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
 
-            if (MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                message = string.Format("The folder ({0}) has been removed from the excluded folders.", this.scanBase.Options.ExcludeFolderSelected.FolderPath);
-                this.scanBase.Options.ExcludeFolders.Remove(this.scanBase.Options.ExcludeFolderSelected);
-
-                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            
         }
 
         private void addFolder_Click(object sender, RoutedEventArgs e)

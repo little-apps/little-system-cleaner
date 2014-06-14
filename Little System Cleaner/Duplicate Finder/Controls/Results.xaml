@@ -47,9 +47,11 @@
         <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1" MouseDoubleClick="_tree_MouseDoubleClick">
             <tree:TreeList.ContextMenu>
                 <ContextMenu x:Name="contextMenuResults">
-                    <MenuItem Header="Select All" Click="MenuItem_Click" />
-                    <MenuItem Header="Select None" Click="MenuItem_Click" />
-                    <MenuItem Header="Invert Selection" Click="MenuItem_Click" />
+                    <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click" />
+                    <MenuItem x:Name="selectNone" Header="Select None" Click="selectNone_Click" />
+                    <MenuItem x:Name="selectInvert" Header="Invert Selection" Click="selectInvert_Click" />
+                    <Separator/>
+                    <MenuItem x:Name="viewFileInfo" Header="View File Information" Click="viewFileInfo_Click" />
                 </ContextMenu>
             </tree:TreeList.ContextMenu>
             <tree:TreeList.View>
@@ -62,7 +64,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <tree:RowExpander/>
                                         <CheckBox IsChecked="{Binding Path=IsChecked}"/>
-                                        <TextBlock Text="{Binding FileName}"></TextBlock>
+                                        <TextBlock Margin="4,0,0,0" Text="{Binding FileName}"></TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -74,7 +76,7 @@
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" />
-        <TextBlock Grid.Row="3" Height="30" Name="progressBarText" VerticalAlignment="Top" MinWidth="567" TextAlignment="Center" Margin="0,5,0,5" />
+        <ProgressBar Grid.Row="3" Height="30" Name="progressBar" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" />
+        <Label Grid.Row="3" Height="30" Name="progressBarText" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
     </Grid>
 </UserControl>

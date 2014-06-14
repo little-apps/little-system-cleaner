@@ -1,7 +1,9 @@
 ﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,9 +20,32 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
     /// <summary>
     /// Interaction logic for Results.xaml
     /// </summary>
-    public partial class Results : UserControl
+    public partial class Results : UserControl, INotifyPropertyChanged
     {
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string prop)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
+
         private Wizard scanBase;
+        private string _progressBarText;
+
+        public string ProgressBarText
+        {
+            get { return this._progressBarText; }
+            set
+            {
+                this._progressBarText = value;
+                this.OnPropertyChanged("ProgressBarText");
+            }
+        }
 
         public ResultModel DuplicateFiles
         {
@@ -39,10 +64,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Utils.AutoResizeColumns(this._tree);
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)
         {
@@ -66,7 +87,74 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return;
             }
 
+            if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to remove the selected files?\nYou may not be able to get them back once they're deleted.", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                long seqNum = 0;
+                int sysRestoreCode = 0;
+                bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
+                this.progressBar.Value = 0;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
+
+                if (sysRestoreAvailable)
+                {
+                    this.ProgressBarText = "Creating System Restore Point";
+
+                    sysRestoreCode = SysRestore.StartRestore("Before Duplicate Finder Clean", out seqNum);
+
+                    if (sysRestoreCode != 0)
+                    {
+                        string errorMessage = new Win32Exception(sysRestoreCode).Message;
+
+                        MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to create a system restore point: " + errorMessage, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    this.progressBar.Value++;
+                }
+                
+                foreach (FileEntry fileEntry in files)
+                {
+                    string filePath = fileEntry.FilePath;
+
+                    double percent = ((this.progressBar.Value / this.progressBar.Maximum) * 100);
+                    this.ProgressBarText = string.Format("{0}/{1} ({2:0.##}%)", this.progressBar.Value, this.progressBar.Maximum, percent);
+
+                    try
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to remove file ({0}).\nThe following error occurred: {1}", filePath, ex.Message);
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    this.progressBar.Value++;
+                }
+
+                if (sysRestoreAvailable)
+                {
+                    this.ProgressBarText = "Finalizing system restore point";
+
+                    if (seqNum != 0 && sysRestoreCode != 0)
+                    {
+                        sysRestoreCode = SysRestore.EndRestore(seqNum);
+
+                        if (sysRestoreCode != 0)
+                        {
+                            string errorMessage = new Win32Exception(sysRestoreCode).Message;
+
+                            MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to finalize a system restore point: " + errorMessage, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+
+                    this.progressBar.Value++;
+                }
+
+                MessageBox.Show(App.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                this.scanBase.MoveFirst();
+            }
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
@@ -79,27 +167,64 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void _tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (this._tree.SelectedNode == null)
-            {
-                MessageBox.Show(App.Current.MainWindow, "Nothing is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            else
-            {
-                this.ShowDetails();
-            }
+            this.ShowDetails();
         }
 
         private void ShowDetails()
         {
             if (this._tree.SelectedNode == null)
+            {
+                MessageBox.Show(App.Current.MainWindow, "Nothing is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
+            }
 
             Result resultNode = this._tree.SelectedNode.Tag as Result;
 
             if (resultNode.Children.Count > 0 || resultNode.FileEntry == null)
+            {
+                MessageBox.Show(System.Windows.Application.Current.MainWindow, "Selected row cannot be opened", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
 
             this.scanBase.ShowFileInfo(resultNode.FileEntry);
         }
+
+        #region Context Menu Events
+        private void selectAll_Click(object sender, RoutedEventArgs e)
+        {
+            this.SetCheckedItems(true);
+        }
+
+        private void selectNone_Click(object sender, RoutedEventArgs e)
+        {
+            this.SetCheckedItems(false);
+        }
+
+        private void selectInvert_Click(object sender, RoutedEventArgs e)
+        {
+            this.SetCheckedItems(null);
+        }
+
+        private void viewFileInfo_Click(object sender, RoutedEventArgs e)
+        {
+            this.ShowDetails();
+        }
+
+        private void SetCheckedItems(Nullable<bool> isChecked)
+        {
+            foreach (Result root in (this._tree.Model as ResultModel).Root.Children)
+            {
+                foreach (Result child in root.Children)
+                {
+                    if (!isChecked.HasValue)
+                        child.IsChecked = !child.IsChecked;
+                    else
+                        child.IsChecked = isChecked.Value;
+                }
+            }
+
+            return;
+        }
+        #endregion
     }
 }

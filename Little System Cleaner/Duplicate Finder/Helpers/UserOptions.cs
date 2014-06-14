@@ -64,8 +64,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private bool? _musicTagTrackNo = false;
         private bool? _musicTagBitRate = false;
 
-        private bool? _compareTagsChecksum = false;
-
         private ObservableCollection<ExcludeFolder> _excFolders = new ObservableCollection<ExcludeFolder>();
 
         #region Drives/Folders Properties
@@ -432,12 +430,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             get { return this._musicTagBitRate; }
             set { this._musicTagBitRate = value; }
-        }
-
-        public bool? CompareTagsChecksum
-        {
-            get { return this._compareTagsChecksum; }
-            set { this._compareTagsChecksum = value; }
         }
         #endregion
 

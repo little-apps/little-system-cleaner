@@ -26,7 +26,7 @@ namespace Little_System_Cleaner
 {
     public class SysRestore
     {
-        [DllImport("srclient.dll")]
+        [DllImport("srclient.dll", SetLastError=true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SRSetRestorePointW(ref RestorePointInfo pRestorePtSpec, out STATEMGRSTATUS pSMgrStatus);
 
