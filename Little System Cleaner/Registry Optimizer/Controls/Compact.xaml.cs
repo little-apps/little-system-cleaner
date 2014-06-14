@@ -32,6 +32,7 @@ using CommonTools;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using System.ComponentModel;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -59,8 +60,16 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Thread.BeginCriticalRegion();
 
-            SysRestore.StartRestore("Before Registry Optimization", out lSeqNum);
-
+            try
+            {
+                SysRestore.StartRestore("Before Registry Optimization", out lSeqNum);
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
             foreach (Hive h in Wizard.RegistryHives)
             {
                 SetStatusText(string.Format("Compacting: {0}", h.RegistryHive));
@@ -74,7 +83,19 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 IncrementProgressBar();
             }
 
-            SysRestore.EndRestore(lSeqNum);
+            if (lSeqNum != 0)
+            {
+                try
+                {
+                    SysRestore.EndRestore(lSeqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            
             Thread.EndCriticalRegion();
 
             // Set IsCompacted

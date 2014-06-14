@@ -90,7 +90,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to remove the selected files?\nYou may not be able to get them back once they're deleted.", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 long seqNum = 0;
-                int sysRestoreCode = 0;
                 bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
                 this.progressBar.Value = 0;
@@ -101,13 +100,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 {
                     this.ProgressBarText = "Creating System Restore Point";
 
-                    sysRestoreCode = SysRestore.StartRestore("Before Duplicate Finder Clean", out seqNum);
-
-                    if (sysRestoreCode != 0)
+                    try
                     {
-                        string errorMessage = new Win32Exception(sysRestoreCode).Message;
-
-                        MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to create a system restore point: " + errorMessage, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        SysRestore.StartRestore("Before Duplicate Finder Clean", out seqNum);
+                    }
+                    catch (Win32Exception ex)
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
                     this.progressBar.Value++;
@@ -137,15 +136,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 {
                     this.ProgressBarText = "Finalizing system restore point";
 
-                    if (seqNum != 0 && sysRestoreCode != 0)
+                    if (seqNum != 0)
                     {
-                        sysRestoreCode = SysRestore.EndRestore(seqNum);
-
-                        if (sysRestoreCode != 0)
+                        try
                         {
-                            string errorMessage = new Win32Exception(sysRestoreCode).Message;
-
-                            MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to finalize a system restore point: " + errorMessage, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            SysRestore.EndRestore(seqNum);
+                        }
+                        catch (Win32Exception ex)
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
 

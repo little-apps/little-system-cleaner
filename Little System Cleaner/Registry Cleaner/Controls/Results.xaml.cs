@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
+using System.ComponentModel;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
@@ -144,8 +145,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             // Create Restore Point
             this.progressBarText.Text = "Creating system restore point";
-            SysRestore.StartRestore("Before Little Registry Cleaner Registry Fix", out lSeqNum);
 
+            try
+            {
+                SysRestore.StartRestore("Before Little Registry Cleaner Registry Fix", out lSeqNum);
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
             // Generate filename to backup registry
             this.progressBarText.Text = "Creating backup file";
             string strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx", Properties.Settings.Default.optionsBackupDir, DateTime.Now);
@@ -185,7 +195,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             w.close();
 
             // Finish creating restore point
-            SysRestore.EndRestore(lSeqNum);
+            if (lSeqNum != 0)
+            {
+                try
+                {
+                    SysRestore.EndRestore(lSeqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
 
             // If power user option selected -> automatically exit program
             if (Properties.Settings.Default.registryCleanerOptionsAutoExit)

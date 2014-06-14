@@ -33,6 +33,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using System.ComponentModel;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -153,7 +154,16 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     return;
 
             long lSeqNum = 0;
-            SysRestore.StartRestore("Before Little Disk Cleaner Cleaning", out lSeqNum);
+
+            try
+            {
+                SysRestore.StartRestore("Before Little Disk Cleaner Cleaning", out lSeqNum);
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             foreach (ProblemFile lvi in this.ProblemsCollection)
             {
@@ -198,7 +208,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (lSeqNum != 0)
             {
-                SysRestore.EndRestore(lSeqNum);
+                try
+                {
+                    SysRestore.EndRestore(lSeqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
 
             MessageBox.Show(Window.GetWindow(this), "Successfully cleaned files from disk", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);

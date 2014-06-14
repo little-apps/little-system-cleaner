@@ -179,8 +179,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            SysRestore.StartRestore("Before Little Registry Cleaner Restore", out lSeqNum);
-
+            try
+            {
+                SysRestore.StartRestore("Before Little Registry Cleaner Restore", out lSeqNum);
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
             if (xmlReg.loadAsXml(xmlReader, (this.listViewFiles.SelectedItem as RestoreFile).FileInfo.FullName))
             {
                 MessageBox.Show(Application.Current.MainWindow, "Successfully restored registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -197,7 +205,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             else
                 MessageBox.Show(Application.Current.MainWindow, "Error restoring the registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
-            SysRestore.EndRestore(lSeqNum);
+            if (lSeqNum != 0)
+            {
+                try
+                {
+                    SysRestore.EndRestore(lSeqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)

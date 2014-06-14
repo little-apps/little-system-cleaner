@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace Little_System_Cleaner
 {
@@ -129,9 +130,9 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="strDescription">The description of the restore</param>
         /// <param name="lSeqNum">Returns the sequence number</param>
-        /// <returns>The status of call</returns>
+        /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
         /// <seealso cref="Use EndRestore() or CancelRestore() to end the system restore"/>
-        public static int StartRestore(string strDescription, out long lSeqNum)
+        public static void StartRestore(string strDescription, out long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();
             STATEMGRSTATUS rpStatus = new STATEMGRSTATUS();
@@ -139,7 +140,7 @@ namespace Little_System_Cleaner
             if (!SysRestoreAvailable())
             {
                 lSeqNum = 0;
-                return 0;
+                return;
             }
 
             try
@@ -155,27 +156,30 @@ namespace Little_System_Cleaner
             }
             catch (DllNotFoundException)
             {
+                rpStatus.nStatus = 2;
+            }
+
+            if (rpStatus.nStatus != 0)
+            {
                 lSeqNum = 0;
-                return 0;
+                throw new Win32Exception(rpStatus.nStatus);
             }
 
             lSeqNum = rpStatus.llSequenceNumber;
-
-            return rpStatus.nStatus;
         }
 
         /// <summary>
         /// Ends system restore call
         /// </summary>
         /// <param name="lSeqNum">The restore sequence number</param>
-        /// <returns>The status of call</returns>
-        public static int EndRestore(long lSeqNum)
+        /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
+        public static void EndRestore(long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();
             STATEMGRSTATUS rpStatus = new STATEMGRSTATUS();
 
             if (!SysRestoreAvailable())
-                return 0;
+                return;
 
             try
             {
@@ -186,24 +190,25 @@ namespace Little_System_Cleaner
             }
             catch (DllNotFoundException)
             {
-                return 0;
+                rpStatus.nStatus = 2;
             }
 
-            return rpStatus.nStatus;
+            if (rpStatus.nStatus != 0)
+                throw new Win32Exception(rpStatus.nStatus);
         }
 
         /// <summary>
         /// Cancels restore call
         /// </summary>
         /// <param name="lSeqNum">The restore sequence number</param>
-        /// <returns>The status of call</returns>
-        public static int CancelRestore(long lSeqNum)
+        /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
+        public static void CancelRestore(long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();
             STATEMGRSTATUS rpStatus = new STATEMGRSTATUS();
 
             if (!SysRestoreAvailable())
-                return 0;
+                return;
 
             try
             {
@@ -215,10 +220,11 @@ namespace Little_System_Cleaner
             }
             catch (DllNotFoundException)
             {
-                return 0;
+                rpStatus.nStatus = 2;
             }
-
-            return rpStatus.nStatus;
+            
+            if (rpStatus.nStatus != 0)
+                throw new Win32Exception(rpStatus.nStatus);
         }
     }
 }
