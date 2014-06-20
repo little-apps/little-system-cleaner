@@ -23,41 +23,10 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace Little_System_Cleaner
+namespace Little_System_Cleaner.Misc
 {
     public class Permissions
     {
-        [DllImport("advapi32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AdjustTokenPrivileges(IntPtr TokenHandle,
-           [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
-           ref TokPriv1Luid NewState,
-           UInt32 Zero,
-           IntPtr Null1,
-           IntPtr Null2);
-
-        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
-        internal static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr phtok);
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        internal static extern bool LookupPrivilegeValue(string host, string name, ref long pluid);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern bool CloseHandle(IntPtr handle);
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct TokPriv1Luid
-        {
-            public int Count;
-            public long Luid;
-            public int Attr;
-        }
-
-        internal const int SE_PRIVILEGE_ENABLED = 0x00000002;
-        internal const int SE_PRIVILEGE_REMOVED = 0x00000004;
-        internal const int TOKEN_QUERY = 0x00000008;
-        internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
-
         public static void SetPrivileges(bool Enabled)
         {
             SetPrivilege("SeShutdownPrivilege", Enabled);
@@ -70,24 +39,24 @@ namespace Little_System_Cleaner
         {
             try
             {
-                TokPriv1Luid tp = new TokPriv1Luid();
+                PInvoke.TokPriv1Luid tp = new PInvoke.TokPriv1Luid();
                 IntPtr hproc = Process.GetCurrentProcess().Handle;
                 IntPtr htok = IntPtr.Zero;
 
-                if (!OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref htok))
+                if (!PInvoke.OpenProcessToken(hproc, PInvoke.TOKEN_ADJUST_PRIVILEGES | PInvoke.TOKEN_QUERY, ref htok))
                     return false;
 
                 tp.Count = 1;
                 tp.Luid = 0;
-                tp.Attr = ((enabled) ? (SE_PRIVILEGE_ENABLED) : (SE_PRIVILEGE_REMOVED));
+                tp.Attr = ((enabled) ? (PInvoke.SE_PRIVILEGE_ENABLED) : (PInvoke.SE_PRIVILEGE_REMOVED));
 
-                if (!LookupPrivilegeValue(null, privilege, ref tp.Luid))
+                if (!PInvoke.LookupPrivilegeValue(null, privilege, ref tp.Luid))
                     return false;
 
-                bool bRet = (AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero));
+                bool bRet = (PInvoke.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero));
 
                 // Cleanup
-                CloseHandle(htok);
+                PInvoke.CloseHandle(htok);
 
                 return bRet;
             }

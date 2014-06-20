@@ -31,6 +31,7 @@ using System.Windows.Documents;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Security;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Controls
 {

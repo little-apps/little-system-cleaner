@@ -33,6 +33,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System.ComponentModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {

@@ -27,13 +27,14 @@ using Microsoft.Win32;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class InternetExplorer : ScannerBase
     {
-        List<Utils.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<Utils.INTERNET_CACHE_ENTRY_INFO>();
-        List<Utils.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<Utils.INTERNET_CACHE_ENTRY_INFO>();
+        List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
+        List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
 
         public InternetExplorer() 
         {
@@ -99,8 +100,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearHistory()
         {
-            Utils.UrlHistoryClass url = new Utils.UrlHistoryClass();
-            Utils.IUrlHistoryStg2 obj = (Utils.IUrlHistoryStg2)url;
+            PInvoke.UrlHistoryClass url = new PInvoke.UrlHistoryClass();
+            PInvoke.IUrlHistoryStg2 obj = (PInvoke.IUrlHistoryStg2)url;
 
             obj.ClearHistory();
         }
@@ -109,7 +110,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             long folderSize = 0;
 
-            foreach (Utils.INTERNET_CACHE_ENTRY_INFO cacheEntry in Utils.FindUrlCacheEntries("cookie:"))
+            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries("cookie:"))
             {
                 cacheEntriesCookies.Add(cacheEntry);
 
@@ -122,18 +123,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearIECookies()
         {
-            foreach (Utils.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies)
+            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies)
             {
                 System.Windows.Forms.MessageBox.Show(cacheEntry.lpszLocalFileName);
 
-                if (!Utils.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                if (!PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
                 {
                     // ERROR_ACCESS_DENIED
                     if (Marshal.GetLastWin32Error() == 5)
                     {
                         // Unlock file and try again
-                        if (Utils.UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                            Utils.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
+                        if (PInvoke.UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
+                            PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
                     }
                 }
             }
@@ -164,7 +165,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             long folderSize = 0;
 
-            foreach (Utils.INTERNET_CACHE_ENTRY_INFO cacheEntry in Utils.FindUrlCacheEntries(null))
+            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries(null))
             {
                 cacheEntriesCache.Add(cacheEntry);
 
@@ -179,20 +180,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             const uint COOKIE_CACHE_ENTRY = 0x00100000;
 
-            foreach (Utils.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCache)
+            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCache)
             {
 
                 // Delete entry if its not a cookie
                 if ((cacheEntry.CacheEntryType & COOKIE_CACHE_ENTRY) == 0)
                 {
-                    if (!Utils.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                    if (!PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
                     {
                         // ERROR_ACCESS_DENIED
                         if (Marshal.GetLastWin32Error() == 5)
                         {
                             // Unlock file and try again
-                            if (Utils.UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                                Utils.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
+                            if (PInvoke.UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
+                                PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
                         }
                     }
 

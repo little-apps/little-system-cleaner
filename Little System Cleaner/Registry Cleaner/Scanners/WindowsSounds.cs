@@ -23,6 +23,8 @@ using System.Text;
 using System.IO;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {

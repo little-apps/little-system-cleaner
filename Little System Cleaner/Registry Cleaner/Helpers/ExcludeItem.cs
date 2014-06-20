@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Collections.ObjectModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
@@ -59,6 +60,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 if (File.Exists(value))
                     _pathFile = value;
             }
+        }
+
+        public bool IsPath
+        {
+            get { return (!string.IsNullOrEmpty(this._pathFile) || !string.IsNullOrEmpty(this._pathFolder)); }
         }
 
         public string Item

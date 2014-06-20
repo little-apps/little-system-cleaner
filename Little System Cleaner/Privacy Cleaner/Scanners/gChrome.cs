@@ -98,9 +98,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             if (File.Exists(cookiesFile))
             {
-                if (Utils.IsFileValid(cookiesFile))
+                if (MiscFunctions.IsFileValid(cookiesFile))
                 {
-                    Wizard.StoreBadFileList("Clear Cookies", new string[] { cookiesFile }, Utils.GetFileSize(cookiesFile));
+                    Wizard.StoreBadFileList("Clear Cookies", new string[] { cookiesFile }, MiscFunctions.GetFileSize(cookiesFile));
                 }
             }
         }
@@ -136,10 +136,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             {
                 Wizard.CurrentFile = filePath;
 
-                if (Utils.IsFileValid(filePath))
+                if (MiscFunctions.IsFileValid(filePath))
                 {    
                     fileList.Add(filePath);
-                    nTotalSize += Utils.GetFileSize(filePath);
+                    nTotalSize += MiscFunctions.GetFileSize(filePath);
                 }
             }
 
@@ -156,10 +156,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Wizard.CurrentFile = filePath;
             if (File.Exists(filePath))
             {
-                if (Utils.IsFileValid(filePath))
+                if (MiscFunctions.IsFileValid(filePath))
                 {
                     fileList.Add(filePath);
-                    nTotalSize += Utils.GetFileSize(filePath);
+                    nTotalSize += MiscFunctions.GetFileSize(filePath);
                 }
             }
 
@@ -167,10 +167,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Wizard.CurrentFile = filePath;
             if (File.Exists(filePath))
             {
-                if (Utils.IsFileValid(filePath))
+                if (MiscFunctions.IsFileValid(filePath))
                 {
                     fileList.Add(filePath);
-                    nTotalSize += Utils.GetFileSize(filePath);
+                    nTotalSize += MiscFunctions.GetFileSize(filePath);
                 }
             }
 
@@ -178,10 +178,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Wizard.CurrentFile = filePath;
             if (File.Exists(filePath))
             {
-                if (Utils.IsFileValid(filePath))
+                if (MiscFunctions.IsFileValid(filePath))
                 {
                     fileList.Add(filePath);
-                    nTotalSize += Utils.GetFileSize(filePath);
+                    nTotalSize += MiscFunctions.GetFileSize(filePath);
                 }
             }
 
@@ -189,10 +189,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Wizard.CurrentFile = filePath;
             if (File.Exists(filePath))
             {
-                if (Utils.IsFileValid(filePath))
+                if (MiscFunctions.IsFileValid(filePath))
                 {
                     fileList.Add(filePath);
-                    nTotalSize += Utils.GetFileSize(filePath);
+                    nTotalSize += MiscFunctions.GetFileSize(filePath);
                 }
             }
 
@@ -202,10 +202,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                 if (File.Exists(fileHistory))
                 {
-                    if (Utils.IsFileValid(fileHistory))
+                    if (MiscFunctions.IsFileValid(fileHistory))
                     {
                         fileList.Add(fileHistory);
-                        nTotalSize += Utils.GetFileSize(fileHistory);
+                        nTotalSize += MiscFunctions.GetFileSize(fileHistory);
                     }
                 }
             }

@@ -30,7 +30,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
                     if (Directory.Exists(folderPath))
                     {
-                        Utils.DeleteDir(folderPath, recurse);
+                        MiscFunctions.DeleteDir(folderPath, recurse);
                         report.WriteLine(string.Format("Deleted Folder: {0}", folderPath));
                     }
                 }

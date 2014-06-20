@@ -24,6 +24,8 @@ using System.IO;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using System.Diagnostics;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -142,7 +144,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string iconPath = regKeyDefaultIcon.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(iconPath))
-                            if (!Utils.IconExists(iconPath))
+                            if (!ScanFunctions.IconExists(iconPath))
                                 if (!ScanWizard.IsOnIgnoreList(iconPath))
                                     ScanWizard.StoreInvalidKey(Strings.InvalidFile, string.Format("{0}\\DefaultIcon", rkCLSID.ToString()));
                     }
@@ -331,7 +333,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             string iconPath = regKeyDefaultIcon.GetValue("") as string;
 
                             if (!string.IsNullOrEmpty(iconPath))
-                                if (!Utils.IconExists(iconPath))
+                                if (!ScanFunctions.IconExists(iconPath))
                                     if (!ScanWizard.IsOnIgnoreList(iconPath))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKeyDefaultIcon.Name);
                         }
@@ -640,7 +642,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 string strHotIcon = regKey.GetValue("HotIcon") as string;
                 if (!string.IsNullOrEmpty(strHotIcon))
-                    if (!Utils.IconExists(strHotIcon))
+                    if (!ScanFunctions.IconExists(strHotIcon))
                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "HotIcon");
             }
             catch (Exception ex)
@@ -652,7 +654,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 string strIcon = regKey.GetValue("Icon") as string;
                 if (!string.IsNullOrEmpty(strIcon))
-                    if (!Utils.IconExists(strIcon))
+                    if (!ScanFunctions.IconExists(strIcon))
                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Icon");
             }
             catch (Exception ex)
@@ -748,7 +750,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer = regKeyInprocSrvr.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer))
-                            if (Utils.FileExists(strInprocServer))
+                            if (Utils.FileExists(strInprocServer) || ScanWizard.IsOnIgnoreList(strInprocServer))
                                 return true;
                     }
                 }
@@ -771,7 +773,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer32))
-                            if (Utils.FileExists(strInprocServer32))
+                            if (Utils.FileExists(strInprocServer32) || ScanWizard.IsOnIgnoreList(strInprocServer32))
                                 return true;
                     }
                 }

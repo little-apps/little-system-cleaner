@@ -28,31 +28,12 @@ using Microsoft.Win32;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Misc : ScannerBase
     {
-        [DllImport("shell32.dll", SetLastError=true)]
-        static extern int SHQueryRecycleBin(string pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
-        [DllImport("shell32.dll", SetLastError=true)]
-        static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SHQUERYRBINFO
-        {
-            public int cbSize;
-            public long i64Size;
-            public long i64NumItems;
-        }
-
-        // No dialog box confirming the deletion of the objects will be displayed.
-        const int SHERB_NOCONFIRMATION = 0x00000001;
-        // No dialog box indicating the progress will be displayed.
-        const int SHERB_NOPROGRESSUI = 0x00000002;
-        // No sound will be played when the operation is complete.
-        const int SHERB_NOSOUND = 0x00000004;
-
         public Misc() 
         {
             Name = "Miscellaneous";
@@ -89,16 +70,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanRecycleBin()
         {
-            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO();
-            sqrbi.cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO));
-            int hr = (int)SHQueryRecycleBin(string.Empty, ref sqrbi);
+            PInvoke.SHQUERYRBINFO sqrbi = new PInvoke.SHQUERYRBINFO();
+            sqrbi.cbSize = Marshal.SizeOf(typeof(PInvoke.SHQUERYRBINFO));
+            int hr = (int)PInvoke.SHQueryRecycleBin(string.Empty, ref sqrbi);
             if (sqrbi.i64NumItems > 0)
                 Wizard.StoreCleanDelegate(new CleanDelegate(CleanRecycleBin), "Empty Recycle Bin", sqrbi.i64Size);
         }
 
         private void CleanRecycleBin()
         {
-            int hresult = SHEmptyRecycleBin(IntPtr.Zero, string.Empty, SHERB_NOCONFIRMATION | SHERB_NOSOUND);
+            int hresult = PInvoke.SHEmptyRecycleBin(IntPtr.Zero, string.Empty, PInvoke.SHERB_NOCONFIRMATION | PInvoke.SHERB_NOSOUND);
         }
 
         private void ScanDesktopStartMenuIcons()
@@ -155,7 +136,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         continue;
 
                     if (!File.Exists(filePath) && !Directory.Exists(filePath))
-                        if (Utils.IsFileValid(shortcutPath))
+                        if (MiscFunctions.IsFileValid(shortcutPath))
                             fileList.Add(shortcutPath);
                 }
 

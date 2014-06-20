@@ -276,6 +276,7 @@
     <Compile Include="Duplicate Finder\Helpers\ResultModel.cs" />
     <Compile Include="Duplicate Finder\Helpers\UserOptions.cs" />
     <Compile Include="Misc\OSVersion.cs" />
+    <Compile Include="Misc\PInvoke.cs" />
     <Compile Include="Misc\RegEditGo.cs" />
     <Compile Include="Misc\SysRestore.cs" />
     <Compile Include="Misc\Permissions.cs" />
@@ -294,7 +295,7 @@
     </Compile>
     <Compile Include="Privacy Cleaner\Controls\Wizard.cs" />
     <Compile Include="Privacy Cleaner\Helpers\DetailItem.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\PInvoke.cs" />
+    <Compile Include="Privacy Cleaner\Helpers\MiscFunctions.cs" />
     <Compile Include="Privacy Cleaner\Helpers\PluginFunctions.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results\ResultArray.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results\ResultDelegate.cs" />
@@ -332,6 +333,7 @@
     <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
     <Compile Include="Registry Cleaner\Helpers\ResultModel.cs" />
+    <Compile Include="Registry Cleaner\Helpers\ScanFunctions.cs" />
     <Compile Include="Registry Cleaner\Helpers\SectionModel.cs" />
     <Compile Include="Registry Cleaner\Scanners\ActivexComObjects.cs" />
     <Compile Include="Registry Cleaner\Scanners\ApplicationPaths.cs" />
@@ -368,10 +370,12 @@
       <DependentUpon>SecureDesktop.xaml</DependentUpon>
     </Compile>
     <Compile Include="Registry Optimizer\Controls\Wizard.cs" />
+    <Compile Include="Registry Optimizer\Helpers\Hive.cs" />
     <Compile Include="Registry Optimizer\Helpers\HiveManager.cs" />
     <Compile Include="Registry Cleaner\Helpers\AddExcludeItem.xaml.cs">
       <DependentUpon>AddExcludeItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Registry Optimizer\Helpers\PInvoke.cs" />
     <Compile Include="Startup Manager\Helpers\StartupEntry.cs" />
     <Compile Include="Startup Manager\Helpers\StartupMgrModel.cs" />
     <Compile Include="Tab Controls\Options\Options.xaml.cs">

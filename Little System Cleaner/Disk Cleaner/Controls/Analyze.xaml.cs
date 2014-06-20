@@ -17,6 +17,7 @@
 */
 
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -167,7 +168,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                         }
 
                         // Check if file matches types
-                        if (!Utils.CompareWildcards(fileInfo.Name, Properties.Settings.Default.diskCleanerSearchFilters))
+                        if (!this.CompareWildcards(fileInfo.Name, Properties.Settings.Default.diskCleanerSearchFilters))
                             continue;
 
                         // Check if file is in use or write protected
@@ -334,7 +335,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             foreach (string includeDir in Properties.Settings.Default.diskCleanerIncludedFolders)
             {
-                if (string.Compare(includeDir, dirPath) == 0 || Utils.CompareWildcard(dirPath, includeDir))
+                if (string.Compare(includeDir, dirPath) == 0 || this.CompareWildcard(dirPath, includeDir))
                     return true;
             }
 
@@ -345,7 +346,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             foreach (string excludeDir in Properties.Settings.Default.diskCleanerExcludedDirs)
             {
-                if (Utils.CompareWildcard(dirPath, excludeDir))
+                if (this.CompareWildcard(dirPath, excludeDir))
                     return true;
             }
 
@@ -356,7 +357,99 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             foreach (string excludeFileType in Properties.Settings.Default.diskCleanerExcludedFileTypes)
             {
-                if (Utils.CompareWildcard(fileName, excludeFileType))
+                if (this.CompareWildcard(fileName, excludeFileType))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Compare multiple wildcards to string
+        /// </summary>
+        /// <param name="WildString">String to compare</param>
+        /// <param name="Mask">Wildcard masks seperated by a semicolon (;)</param>
+        /// <returns>True if match found</returns>
+        private bool CompareWildcards(string WildString, string Mask, bool IgnoreCase = true)
+        {
+            int i = 0;
+
+            if (String.IsNullOrEmpty(Mask))
+                return false;
+            if (Mask == "*")
+                return true;
+
+            while (i != Mask.Length)
+            {
+                if (CompareWildcard(WildString, Mask.Substring(i), IgnoreCase))
+                    return true;
+
+                while (i != Mask.Length && Mask[i] != ';')
+                    i += 1;
+
+                if (i != Mask.Length && Mask[i] == ';')
+                {
+                    i += 1;
+
+                    while (i != Mask.Length && Mask[i] == ' ')
+                        i += 1;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Compares wildcard to string
+        /// </summary>
+        /// <param name="WildString">String to compare</param>
+        /// <param name="Mask">Wildcard mask (ex: *.jpg)</param>
+        /// <returns>True if match found</returns>
+        private bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
+        {
+            int i = 0, k = 0;
+
+            while (k != WildString.Length)
+            {
+                switch (Mask[i])
+                {
+                    case '*':
+
+                        if ((i + 1) == Mask.Length)
+                            return true;
+
+                        while (k != WildString.Length)
+                        {
+                            if (CompareWildcard(WildString.Substring(k + 1), Mask.Substring(i + 1), IgnoreCase))
+                                return true;
+
+                            k += 1;
+                        }
+
+                        return false;
+
+                    case '?':
+
+                        break;
+
+                    default:
+
+                        if (IgnoreCase == false && WildString[k] != Mask[i])
+                            return false;
+
+                        if (IgnoreCase && Char.ToLower(WildString[k]) != Char.ToLower(Mask[i]))
+                            return false;
+
+                        break;
+                }
+
+                i += 1;
+                k += 1;
+            }
+
+            if (k == WildString.Length)
+            {
+                if (i == Mask.Length || Mask[i] == ';' || Mask[i] == '*')
                     return true;
             }
 

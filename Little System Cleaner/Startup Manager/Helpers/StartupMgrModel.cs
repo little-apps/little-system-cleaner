@@ -1,4 +1,5 @@
 ﻿using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Misc;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
@@ -62,8 +64,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
 
             // Adds startup folders
-            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(Utils.CSIDL_STARTUP));
-            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(Utils.CSIDL_COMMON_STARTUP));
+            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP));
+            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP));
 
             return treeModel;
         }
@@ -152,7 +154,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             string[] strShortcuts = null;
             StartupEntry nodeRoot = new StartupEntry() { SectionName = strFolder };
 
-            if (Utils.GetSpecialFolderPath(Utils.CSIDL_STARTUP) == strFolder)
+            if (Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder)
                 nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.current_user);
             else
                 nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.all_users);
@@ -213,5 +215,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             return (parent as StartupEntry).Children.Count > 0;
         }
+
+        
     }
 }

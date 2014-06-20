@@ -38,6 +38,7 @@ using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.IO;
 using System.Diagnostics;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {

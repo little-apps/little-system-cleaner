@@ -35,6 +35,7 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using CommonTools.WpfAnimatedGif;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {

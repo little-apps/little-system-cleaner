@@ -25,6 +25,8 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -74,17 +76,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                                 // Check display icon
                                 if (!string.IsNullOrEmpty(progInfo._displayIcon))
-                                    if (!Utils.IconExists(progInfo._displayIcon))
+                                    if (!ScanFunctions.IconExists(progInfo._displayIcon))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "DisplayIcon");
 
                                 // Check install location 
                                 if (!string.IsNullOrEmpty(progInfo._installLocation))
-                                    if ((!Utils.DirExists(progInfo._installLocation)) && (!Utils.FileExists(progInfo._installLocation)))
+                                    if ((!ScanFunctions.DirExists(progInfo._installLocation)) && (!Utils.FileExists(progInfo._installLocation)))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
 
                                 // Check install source 
                                 if (!string.IsNullOrEmpty(progInfo._installSource))
-                                    if ((!Utils.DirExists(progInfo._installSource)) && (!Utils.FileExists(progInfo._installSource)))
+                                    if ((!ScanFunctions.DirExists(progInfo._installSource)) && (!Utils.FileExists(progInfo._installSource)))
                                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
                                 // Check ARP Cache

@@ -49,7 +49,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             this.scanBase = sb;
 
-            double oldRegistrySize = Utils.GetOldRegistrySize(), newRegistrySize = Utils.GetNewRegistrySize();
+            double oldRegistrySize = HiveManager.GetOldRegistrySize(), newRegistrySize = HiveManager.GetNewRegistrySize();
 
             decimal oldRegistrySizeMB = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
             decimal diffRegistrySizeMB = decimal.Round((Convert.ToDecimal(oldRegistrySize - newRegistrySize)) / 1024 / 1024, 2);
@@ -73,7 +73,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void buttonCompact_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?", Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
             Wizard.IsBusy = true;
@@ -91,7 +91,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Wizard.IsBusy = false;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Application.Current.MainWindow, "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?", Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 // Restart computer
                 PInvoke.ExitWindowsEx(0x02, PInvoke.MajorOperatingSystem | PInvoke.MinorReconfig | PInvoke.FlagPlanned);
 
@@ -102,7 +102,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         {
             if (Wizard.IsBusy)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted", Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 

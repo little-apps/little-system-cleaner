@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -67,7 +68,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return (bool?)App.Current.Dispatcher.Invoke(new Func<string, string, bool?>(RunningMsg.DisplayRunningMsg), new object[] { scannerName, procName });
             }
 
-            if (!Utils.IsProcessRunning(procName))
+            if (!MiscFunctions.IsProcessRunning(procName))
                 return true;
 
             if (Properties.Settings.Default.privacyCleanerAutoSkipScanner)
@@ -97,7 +98,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             // Check if process is running
-            if (!Utils.IsProcessRunning(procName))
+            if (!MiscFunctions.IsProcessRunning(procName))
             {
                 this.DialogResult = true;
                 this.Close();

@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using System.Security.AccessControl;
 using System.IO;
 using System.ComponentModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Xml
 {

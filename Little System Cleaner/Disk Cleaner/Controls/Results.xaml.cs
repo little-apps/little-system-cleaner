@@ -34,6 +34,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System.ComponentModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -189,7 +190,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     else if (Properties.Settings.Default.diskCleanerRemoveMode == 1)
                     {
                         // Recycle file
-                        Utils.SendFileToRecycleBin(fileInfo.FullName);
+                        this.SendFileToRecycleBin(fileInfo.FullName);
                     }
                     else
                     {
@@ -230,6 +231,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             Wizard.fileList.Clear();
 
             this.scanBase.MoveFirst();
+        }
+
+        private void SendFileToRecycleBin(string filePath)
+        {
+            PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT();
+            shf.wFunc = PInvoke.FO_DELETE;
+            shf.fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION;
+            shf.pFrom = filePath;
+            PInvoke.SHFileOperation(ref shf);
         }
     }
 }

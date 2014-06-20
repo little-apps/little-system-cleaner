@@ -357,14 +357,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!File.Exists(filePath))
                 return;
 
-            foreach (string sectionName in Utils.GetSections(filePath))
+            foreach (string sectionName in MiscFunctions.GetSections(filePath))
             {
                 if (string.IsNullOrEmpty(sectionName))
                     continue;
 
                 if (Regex.IsMatch(sectionName, searchSectionText))
                 {
-                    foreach (KeyValuePair<string, string> kvp in Utils.GetValues(filePath, sectionName))
+                    foreach (KeyValuePair<string, string> kvp in MiscFunctions.GetValues(filePath, sectionName))
                     {
                         if (Regex.IsMatch(kvp.Key, searchValueNameText))
                         {
@@ -380,7 +380,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!File.Exists(filePath))
                 return;
 
-            foreach (string sectionName in Utils.GetSections(filePath))
+            foreach (string sectionName in MiscFunctions.GetSections(filePath))
             {
                 if (string.IsNullOrEmpty(sectionName))
                     continue;

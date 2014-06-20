@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Little_System_Cleaner.Misc;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -139,29 +140,29 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         {
             Key = regKey.Name.Substring(regKey.Name.LastIndexOf('\\') + 1);
 
-            _displayName = Utils.TryGetValue(regKey, "DisplayName", "") as string;
-            _quietDisplayName = Utils.TryGetValue(regKey, "QuietDisplayName", "") as string;
-            _uninstallString = Utils.TryGetValue(regKey, "UninstallString", "") as string;
-            _quietUninstallString = Utils.TryGetValue(regKey, "QuietUninstallString", "") as string;
-            _publisher = Utils.TryGetValue(regKey, "Publisher", "") as string;
-            _displayVersion = Utils.TryGetValue(regKey, "DisplayVersion", "") as string;
-            _helpLink = Utils.TryGetValue(regKey, "HelpLink", "") as string;
-            _urlInfoAbout = Utils.TryGetValue(regKey, "URLInfoAbout", "") as string;
-            _helpTelephone = Utils.TryGetValue(regKey, "HelpTelephone", "") as string;
-            _contact = Utils.TryGetValue(regKey, "Contact", "") as string;
-            _readme = Utils.TryGetValue(regKey, "Readme", "") as string;
-            _comments = Utils.TryGetValue(regKey, "Comments", "") as string;
-            _displayIcon = Utils.TryGetValue(regKey, "DisplayIcon", "") as string;
-            _parentKeyName = Utils.TryGetValue(regKey, "ParentKeyName", "") as string;
-            _installLocation = Utils.TryGetValue(regKey, "InstallLocation", "") as string;
-            _installSource = Utils.TryGetValue(regKey, "InstallSource", "") as string;
+            _displayName = this.TryGetValue(regKey, "DisplayName", "") as string;
+            _quietDisplayName = this.TryGetValue(regKey, "QuietDisplayName", "") as string;
+            _uninstallString = this.TryGetValue(regKey, "UninstallString", "") as string;
+            _quietUninstallString = this.TryGetValue(regKey, "QuietUninstallString", "") as string;
+            _publisher = this.TryGetValue(regKey, "Publisher", "") as string;
+            _displayVersion = this.TryGetValue(regKey, "DisplayVersion", "") as string;
+            _helpLink = this.TryGetValue(regKey, "HelpLink", "") as string;
+            _urlInfoAbout = this.TryGetValue(regKey, "URLInfoAbout", "") as string;
+            _helpTelephone = this.TryGetValue(regKey, "HelpTelephone", "") as string;
+            _contact = this.TryGetValue(regKey, "Contact", "") as string;
+            _readme = this.TryGetValue(regKey, "Readme", "") as string;
+            _comments = this.TryGetValue(regKey, "Comments", "") as string;
+            _displayIcon = this.TryGetValue(regKey, "DisplayIcon", "") as string;
+            _parentKeyName = this.TryGetValue(regKey, "ParentKeyName", "") as string;
+            _installLocation = this.TryGetValue(regKey, "InstallLocation", "") as string;
+            _installSource = this.TryGetValue(regKey, "InstallSource", "") as string;
 
-            _noModify = Utils.TryGetValue(regKey, "NoModify") as int?;
-            _noRepair = Utils.TryGetValue(regKey, "NoRepair") as int?;
+            _noModify = this.TryGetValue(regKey, "NoModify") as int?;
+            _noRepair = this.TryGetValue(regKey, "NoRepair") as int?;
 
-            _systemComponent = (((Int32)Utils.TryGetValue(regKey, "SystemComponent", 0) == 1) ? (true) : (false));
-            _windowsInstaller = Utils.TryGetValue(regKey, "WindowsInstaller", 0) as int?;
-            _estimatedSize = Utils.TryGetValue(regKey, "EstimatedSize", 0) as int?;
+            _systemComponent = (((Int32)this.TryGetValue(regKey, "SystemComponent", 0) == 1) ? (true) : (false));
+            _windowsInstaller = this.TryGetValue(regKey, "WindowsInstaller", 0) as int?;
+            _estimatedSize = this.TryGetValue(regKey, "EstimatedSize", 0) as int?;
 
             return;
         }
@@ -190,7 +191,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
                 this.InstallSize = slowInfoCache.InstallSize;
                 this.Frequency = slowInfoCache.Frequency;
-                this.LastUsed = Utils.FileTime2DateTime(slowInfoCache.LastUsed);
+                this.LastUsed = this.FileTime2DateTime(slowInfoCache.LastUsed);
                 if (slowInfoCache.HasName == 1)
                     this.FileName = slowInfoCache.Name;
 
@@ -326,6 +327,47 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             MessageBox.Show("Sucessfully removed registry key", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             return true;
+        }
+
+        /// <summary>
+        /// Converts FILETIME structure to DateTime structure
+        /// </summary>
+        /// <param name="ft">FILETIME structure</param>
+        /// <returns>DateTime structure</returns>
+        private DateTime FileTime2DateTime(System.Runtime.InteropServices.ComTypes.FILETIME ft)
+        {
+            DateTime dt = DateTime.MaxValue;
+            long hFT2 = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
+
+            try
+            {
+                dt = DateTime.FromFileTimeUtc(hFT2);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                dt = DateTime.MaxValue;
+            }
+
+            return dt;
+        }
+
+        private object TryGetValue(RegistryKey regKey, string valueName, object defaultValue = null)
+        {
+            object value = defaultValue;
+
+            try
+            {
+                value = regKey.GetValue(valueName);
+
+                if (value == null && defaultValue != null)
+                    value = defaultValue;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get registry value for " + valueName + " in " + regKey.ToString());
+            }
+
+            return value;
         }
 
         public override string ToString()

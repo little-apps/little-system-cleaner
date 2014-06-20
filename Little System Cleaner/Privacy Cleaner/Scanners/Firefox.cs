@@ -28,6 +28,7 @@ using System.IO;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -152,10 +153,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 Wizard.CurrentFile = historyFile;
 
                 if (File.Exists(historyFile))
-                    if (Utils.IsFileValid(historyFile)) 
+                    if (MiscFunctions.IsFileValid(historyFile)) 
                     {
                         fileList.Add(historyFile);
-                        nTotalSize += Utils.GetFileSize(historyFile);
+                        nTotalSize += MiscFunctions.GetFileSize(historyFile);
                     }
             }
 
@@ -208,10 +209,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 Wizard.CurrentFile = cookiesFile;
 
                 if (File.Exists(cookiesFile))
-                    if (Utils.IsFileValid(cookiesFile))
+                    if (MiscFunctions.IsFileValid(cookiesFile))
                     {
                         fileList.Add(cookiesFile);
-                        nTotalSize += Utils.GetFileSize(cookiesFile);
+                        nTotalSize += MiscFunctions.GetFileSize(cookiesFile);
                     }
             }
 
@@ -265,7 +266,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             Wizard.CurrentFile = fileCache;
 
                             fileList.Add(fileCache);
-                            nTotalSize += Utils.GetFileSize(fileCache);
+                            nTotalSize += MiscFunctions.GetFileSize(fileCache);
                         }
                     }
                 }
@@ -287,10 +288,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 Wizard.CurrentFile = formHistoryFile;
 
                 if (File.Exists(formHistoryFile))
-                    if (Utils.IsFileValid(formHistoryFile))
+                    if (MiscFunctions.IsFileValid(formHistoryFile))
                     {
                         fileList.Add(formHistoryFile);
-                        nTotalSize += Utils.GetFileSize(formHistoryFile);
+                        nTotalSize += MiscFunctions.GetFileSize(formHistoryFile);
                     }
             }
 
@@ -338,10 +339,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 Wizard.CurrentFile = downloadsFile;
 
                 if (File.Exists(downloadsFile))
-                    if (Utils.IsFileValid(downloadsFile))
+                    if (MiscFunctions.IsFileValid(downloadsFile))
                     {
                         fileList.Add(downloadsFile);
-                        nTotalSize += Utils.GetFileSize(downloadsFile);
+                        nTotalSize += MiscFunctions.GetFileSize(downloadsFile);
                     }
             }
 

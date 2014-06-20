@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 {
                     if (File.Exists(filePath))
                     {
-                        Utils.DeleteFile(filePath);
+                        MiscFunctions.DeleteFile(filePath);
                         report.WriteLine(string.Format("Deleted File: {0}", filePath));
                     }
                 }

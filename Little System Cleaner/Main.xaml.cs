@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Xceed.Wpf.Toolkit;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner
 {

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
 using System.ComponentModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {

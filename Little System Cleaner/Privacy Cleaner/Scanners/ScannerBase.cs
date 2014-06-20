@@ -37,6 +37,7 @@ using System.Windows.Media;
 using CommonTools.WpfAnimatedGif;
 using System.Diagnostics;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -332,7 +333,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 bRet = false;
                             else
                             {
-                                filePath = Utils.ExpandVars(filePath);
+                                filePath = MiscFunctions.ExpandVars(filePath);
                                 bRet = File.Exists(filePath);
                             }
                             
@@ -348,7 +349,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 bRet = false;
                             else
                             {
-                                folderPath = Utils.ExpandVars(folderPath);
+                                folderPath = MiscFunctions.ExpandVars(folderPath);
                                 bRet = Directory.Exists(folderPath);
                             }
 
@@ -626,14 +627,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "DeleteFile")
                             {
-                                string filePath = Utils.ExpandVars(xmlReader.ReadElementContentAsString());
+                                string filePath = MiscFunctions.ExpandVars(xmlReader.ReadElementContentAsString());
 
                                 pluginFunctions.DeleteFile(filePath);
                             }
 
                             if (xmlReader.Name == "DeleteFolder")
                             {
-                                string folderPath = Utils.ExpandVars(xmlReader.ReadElementContentAsString());
+                                string folderPath = MiscFunctions.ExpandVars(xmlReader.ReadElementContentAsString());
                                 bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
 
                                 pluginFunctions.DeleteFolder(folderPath, recurse);
@@ -641,7 +642,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "DeleteFileList")
                             {
-                                string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string searchPath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string searchText = xmlReader.GetAttribute("SearchText");
                                 SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
 
@@ -650,7 +651,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "DeleteFolderList")
                             {
-                                string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string searchPath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string searchText = xmlReader.GetAttribute("SearchText");
                                 SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
 
@@ -670,7 +671,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "FindPath")
                             {
-                                string searchPath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string searchPath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string searchText = xmlReader.GetAttribute("SearchText");
                                 SearchOption includeSubFolders = ((xmlReader.GetAttribute("IncludeSubFolders") == "Y") ? (SearchOption.AllDirectories) : (SearchOption.TopDirectoryOnly));
 
@@ -681,7 +682,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "RemoveINIValue")
                             {
-                                string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string filePath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string sectionRegEx = xmlReader.GetAttribute("Section");
                                 string valueRegEx = xmlReader.GetAttribute("Name");
 
@@ -690,7 +691,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "RemoveINISection")
                             {
-                                string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string filePath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string sectionRegEx = xmlReader.GetAttribute("Section");
 
                                 pluginFunctions.DeleteINISection(filePath, sectionRegEx);
@@ -698,7 +699,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (xmlReader.Name == "RemoveXML")
                             {
-                                string filePath = Utils.ExpandVars(xmlReader.GetAttribute("Path"));
+                                string filePath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string xPath = xmlReader.GetAttribute("XPath");
 
                                 pluginFunctions.DeleteXml(filePath, xPath);

@@ -33,6 +33,9 @@ using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using System.Threading;
 using System.Security.Permissions;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
+using Microsoft.Win32;
+using System.Security;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
@@ -304,11 +307,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             // If value name is specified, see if it exists
             if (!string.IsNullOrEmpty(valueName))
-                if (!Utils.ValueNameExists(baseKey, subKey, valueName))
+                if (!ScanFunctions.ValueNameExists(baseKey, subKey, valueName))
                     return false;
 
             // Make sure we have the correct permissions for the registry key
-            if (!Utils.CanDeleteKey(Utils.RegOpenKey(baseKey, subKey)))
+            if (!CanDeleteKey(Utils.RegOpenKey(baseKey, subKey)))
                 return false;
 
             int severity = 1;
@@ -380,12 +383,83 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             if (!string.IsNullOrEmpty(Path))
             {
+                string expandedPath = string.Empty;
+                bool isPath = (!Path.ToUpper().StartsWith("HKEY"));
+
                 foreach (ExcludeItem i in Properties.Settings.Default.arrayExcludeList)
+                {
+                    if (isPath && i.IsPath)
+                    {
+                        if (string.IsNullOrEmpty(expandedPath))
+                        {
+                            // Trim and change to lower case
+                            expandedPath = Path.Trim().ToLower();
+
+                            // Remove quotes
+                            expandedPath = Utils.UnqouteSpaces(expandedPath);
+
+                            // Remove environment variables
+                            expandedPath = Environment.ExpandEnvironmentVariables(expandedPath);
+                        }
+
+                        if (!string.IsNullOrEmpty(expandedPath))
+                        {
+                            if (string.Compare(i.ToString(), expandedPath) == 0)
+                                return true;
+                        }
+                    }
+
                     if (string.Compare(i.ToString(), Path) == 0)
                         return true;
+                }
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Checks if we have permission to delete a registry key
+        /// </summary>
+        /// <param name="key">Registry key</param>
+        /// <returns>True if we can delete it</returns>
+        private static bool CanDeleteKey(RegistryKey key)
+        {
+            try
+            {
+                if (key.SubKeyCount > 0)
+                {
+                    bool ret = false;
+
+                    foreach (string subKey in key.GetSubKeyNames())
+                    {
+                        ret = CanDeleteKey(key.OpenSubKey(subKey));
+
+                        if (!ret)
+                            break;
+                    }
+
+                    return ret;
+                }
+                else
+                {
+                    System.Security.AccessControl.RegistrySecurity regSecurity = key.GetAccessControl();
+
+                    foreach (System.Security.AccessControl.AuthorizationRule rule in regSecurity.GetAccessRules(true, false, typeof(System.Security.Principal.NTAccount)))
+                    {
+                        if ((System.Security.AccessControl.RegistryRights.Delete & ((System.Security.AccessControl.RegistryAccessRule)(rule)).RegistryRights) != System.Security.AccessControl.RegistryRights.Delete)
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+            }
+            catch (SecurityException)
+            {
+                return false;
+            }
         }
     }
 }

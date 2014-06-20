@@ -31,6 +31,7 @@ using System.Threading;
 using Microsoft.Win32;
 using System.Xml;
 using System.Diagnostics;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner
 {

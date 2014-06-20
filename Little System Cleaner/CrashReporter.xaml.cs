@@ -32,6 +32,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using System.Net;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner
 {

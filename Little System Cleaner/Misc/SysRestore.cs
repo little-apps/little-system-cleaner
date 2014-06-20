@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner
 {

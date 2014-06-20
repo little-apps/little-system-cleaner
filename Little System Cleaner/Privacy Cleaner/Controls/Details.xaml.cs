@@ -1,4 +1,5 @@
-﻿using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
                 foreach (string filePath in resultNode.FilePaths)
                 {
-                    string fileSize = Utils.ConvertSizeToString(Utils.GetFileSize(filePath));
+                    string fileSize = Little_System_Cleaner.Misc.Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath));
                     string lastAccessDate = Directory.GetLastAccessTime(filePath).ToString();
 
                     this.DetailItemCollection.Add(new DetailItem() { Name = filePath, Size = fileSize, AccessDate = lastAccessDate });
@@ -57,14 +58,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     string folderPath = kvp.Key;
                     //SearchOption recurse = ((kvp.Value)?(SearchOption.AllDirectories):(SearchOption.TopDirectoryOnly));
 
-                    string folderSize = Utils.ConvertSizeToString(Utils.GetFolderSize(folderPath, false));
+                    string folderSize = Little_System_Cleaner.Misc.Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false));
                     string lastAccessDate = Directory.GetLastAccessTime(folderPath).ToString();
 
                     this.DetailItemCollection.Add(new DetailItem() { Name = folderPath, Size = folderSize, AccessDate = lastAccessDate });
                 }
             }
 
-            Utils.AutoResizeColumns(this.listView);
+            Little_System_Cleaner.Misc.Utils.AutoResizeColumns(this.listView);
         }
 
         private void btnGoBack_Click(object sender, RoutedEventArgs e)

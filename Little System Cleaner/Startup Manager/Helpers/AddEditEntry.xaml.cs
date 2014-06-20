@@ -29,6 +29,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
 using Microsoft.Win32;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
@@ -126,10 +127,10 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         }
 
         private void SetComboBox(string sectionName)
-        {            
-            if (sectionName == Utils.GetSpecialFolderPath(Utils.CSIDL_COMMON_STARTUP))
+        {
+            if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP))
                 this.comboBox1.SelectedIndex = 0;
-            else if (sectionName == Utils.GetSpecialFolderPath(Utils.CSIDL_STARTUP))
+            else if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP))
                 this.comboBox1.SelectedIndex = 1;
 
             if (Utils.Is64BitOS)
@@ -270,15 +271,15 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             if (this.comboBox1.SelectedIndex <= 1)
             {
                 if (this.comboBox1.SelectedIndex == 0)
-                    filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(Utils.CSIDL_COMMON_STARTUP), this.textBoxName.Text + ".lnk");
+                    filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP), this.textBoxName.Text + ".lnk");
                 else
-                    filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(Utils.CSIDL_STARTUP), this.textBoxName.Text + ".lnk");
+                    filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), this.textBoxName.Text + ".lnk");
 
                 string fileDir = Path.GetDirectoryName(filePath);
                 if (!Directory.Exists(fileDir))
                     Directory.CreateDirectory(fileDir);
 
-                Utils.CreateShortcut(filePath, this.textBoxPath.Text, this.textBoxArgs.Text);
+                this.CreateShortcut(filePath, this.textBoxPath.Text, this.textBoxArgs.Text);
             }
             else
             {
@@ -468,5 +469,22 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
         }
 
+        /// <summary>
+        /// Creates .lnk shortcut to filename
+        /// </summary>
+        /// <param name="filename">.lnk shortcut</param>
+        /// <param name="path">path for filename</param>
+        /// <param name="arguments">arguments for shortcut (can be null)</param>
+        /// <returns>True if shortcut was created</returns>
+        private bool CreateShortcut(string filename, string path, string arguments)
+        {
+            PInvoke.ShellLink link = new PInvoke.ShellLink();
+            ((PInvoke.IShellLinkW)link).SetPath(path);
+            if (!string.IsNullOrEmpty(arguments))
+                ((PInvoke.IShellLinkW)link).SetArguments(arguments);
+            ((PInvoke.IPersistFile)link).Save(filename, false);
+
+            return (File.Exists(filename));
+        }
     }
 }

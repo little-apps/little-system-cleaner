@@ -1,4 +1,5 @@
 ﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -32,6 +32,7 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Diagnostics;
 using Little_System_Cleaner.Startup_Manager.Helpers;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {

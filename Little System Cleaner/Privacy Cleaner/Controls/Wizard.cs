@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
@@ -215,7 +216,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             // Calculate total file size
             foreach (string filePath in filePaths)
-                fileSize += Utils.GetFileSize(filePath);
+                fileSize += MiscFunctions.GetFileSize(filePath);
 
             CurrentScanner.Results.Children.Add(new ResultFiles(desc, filePaths, fileSize));
 

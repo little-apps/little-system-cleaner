@@ -33,6 +33,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.ComponentModel;
 using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Controls
 {

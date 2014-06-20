@@ -35,216 +35,14 @@ using System.Xml;
 using System.Security.Cryptography;
 using System.Security;
 using System.Collections.Specialized;
-using Microsoft.VisualBasic.FileIO;
 using System.Net;
 using System.Net.NetworkInformation;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
-namespace Little_System_Cleaner
+namespace Little_System_Cleaner.Misc
 {
     static class Utils
     {
-        #region Signatures imported from http://pinvoke.net
-
-        [DllImport("kernel32.dll")]
-        public static extern int SearchPath(string strPath, string strFileName, string strExtension, uint nBufferLength, StringBuilder strBuffer, string strFilePart);
-        [DllImport("kernel32.dll")]
-        public static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPStr)] string lpRootPathName);
-        [DllImport("kernel32.dll")]
-        public static extern uint QueryDosDevice([In, Optional] string lpDeviceName, [Out] StringBuilder lpTargetPath, [In] int ucchMax);
-
-        
-        [DllImport("shell32.dll")]
-        public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder lpszPath, int nFolder, bool fCreate);
-        [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
-        public static extern long FindExecutableA(string lpFile, string lpDirectory, StringBuilder lpResult);
-        [DllImport("shell32.dll", EntryPoint = "ExtractIconEx")]
-        public static extern int ExtractIconExA(string lpszFile, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons);
-
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr PathGetArgs(string path);
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern void PathRemoveArgs([In, Out] StringBuilder path);
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int PathParseIconLocation([In, Out] StringBuilder path);
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern void PathUnquoteSpaces([In, Out] StringBuilder path);
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PathFileExists(string path);
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PathStripToRoot([In, Out] StringBuilder path);
-        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PathRemoveFileSpec([In, Out] StringBuilder path);
-
-        [DllImport("user32.dll")]
-        public static extern int DestroyIcon(IntPtr hIcon);
-        [DllImport("user32.dll")]
-        public static extern int GetSystemMetrics(int smIndex);
-
-        [DllImport("gdi32.dll")]
-        private static extern bool DeleteObject(IntPtr hObject);
-
-        // Used for SHGetSpecialFolderPath
-        public const int CSIDL_STARTUP = 0x0007; // All Users\Startup
-        public const int CSIDL_COMMON_STARTUP = 0x0018; // Common Users\Startup
-        public const int CSIDL_PROGRAMS = 0x0002;   // All Users\Start Menu\Programs
-        public const int CSIDL_COMMON_PROGRAMS = 0x0017;   // Start Menu\Programs
-
-        #endregion
-        #region Interop (IShellLink and IPersistFile)
-        [Flags()]
-        enum SLGP_FLAGS
-        {
-            /// <summary>Retrieves the standard short (8.3 format) file name</summary>
-            SLGP_SHORTPATH = 0x1,
-            /// <summary>Retrieves the Universal Naming Convention (UNC) path name of the file</summary>
-            SLGP_UNCPRIORITY = 0x2,
-            /// <summary>Retrieves the raw path name. A raw path is something that might not exist and may include environment variables that need to be expanded</summary>
-            SLGP_RAWPATH = 0x4
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        struct WIN32_FIND_DATAW
-        {
-            public uint dwFileAttributes;
-            public long ftCreationTime;
-            public long ftLastAccessTime;
-            public long ftLastWriteTime;
-            public uint nFileSizeHigh;
-            public uint nFileSizeLow;
-            public uint dwReserved0;
-            public uint dwReserved1;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string cFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-            public string cAlternateFileName;
-        }
-
-        [Flags()]
-
-        enum SLR_FLAGS
-        {
-            /// <summary>
-            /// Do not display a dialog box if the link cannot be resolved. When SLR_NO_UI is set,
-            /// the high-order word of fFlags can be set to a time-out value that specifies the
-            /// maximum amount of time to be spent resolving the link. The function returns if the
-            /// link cannot be resolved within the time-out duration. If the high-order word is set
-            /// to zero, the time-out duration will be set to the default value of 3,000 milliseconds
-            /// (3 seconds). To specify a value, set the high word of fFlags to the desired time-out
-            /// duration, in milliseconds.
-            /// </summary>
-            SLR_NO_UI = 0x1,
-            /// <summary>Obsolete and no longer used</summary>
-            SLR_ANY_MATCH = 0x2,
-            /// <summary>If the link object has changed, update its path and list of identifiers.
-            /// If SLR_UPDATE is set, you do not need to call IPersistFile::IsDirty to determine
-            /// whether or not the link object has changed.</summary>
-            SLR_UPDATE = 0x4,
-            /// <summary>Do not update the link information</summary>
-            SLR_NOUPDATE = 0x8,
-            /// <summary>Do not execute the search heuristics</summary>
-            SLR_NOSEARCH = 0x10,
-            /// <summary>Do not use distributed link tracking</summary>
-            SLR_NOTRACK = 0x20,
-            /// <summary>Disable distributed link tracking. By default, distributed link tracking tracks
-            /// removable media across multiple devices based on the volume name. It also uses the
-            /// Universal Naming Convention (UNC) path to track remote file systems whose drive letter
-            /// has changed. Setting SLR_NOLINKINFO disables both types of tracking.</summary>
-            SLR_NOLINKINFO = 0x40,
-            /// <summary>Call the Microsoft Windows Installer</summary>
-            SLR_INVOKE_MSI = 0x80
-        }
-
-
-        /// <summary>The IShellLink interface allows Shell links to be created, modified, and resolved</summary>
-        [ComImport(), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("000214F9-0000-0000-C000-000000000046")]
-        interface IShellLinkW
-        {
-            /// <summary>Retrieves the path and file name of a Shell link object</summary>
-            void GetPath([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMaxPath, out WIN32_FIND_DATAW pfd, SLGP_FLAGS fFlags);
-            /// <summary>Retrieves the list of item identifiers for a Shell link object</summary>
-            void GetIDList(out IntPtr ppidl);
-            /// <summary>Sets the pointer to an item identifier list (PIDL) for a Shell link object.</summary>
-            void SetIDList(IntPtr pidl);
-            /// <summary>Retrieves the description string for a Shell link object</summary>
-            void GetDescription([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName, int cchMaxName);
-            /// <summary>Sets the description for a Shell link object. The description can be any application-defined string</summary>
-            void SetDescription([MarshalAs(UnmanagedType.LPWStr)] string pszName);
-            /// <summary>Retrieves the name of the working directory for a Shell link object</summary>
-            void GetWorkingDirectory([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir, int cchMaxPath);
-            /// <summary>Sets the name of the working directory for a Shell link object</summary>
-            void SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string pszDir);
-            /// <summary>Retrieves the command-line arguments associated with a Shell link object</summary>
-            void GetArguments([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszArgs, int cchMaxPath);
-            /// <summary>Sets the command-line arguments for a Shell link object</summary>
-            void SetArguments([MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
-            /// <summary>Retrieves the hot key for a Shell link object</summary>
-            void GetHotkey(out short pwHotkey);
-            /// <summary>Sets a hot key for a Shell link object</summary>
-            void SetHotkey(short wHotkey);
-            /// <summary>Retrieves the show command for a Shell link object</summary>
-            void GetShowCmd(out int piShowCmd);
-            /// <summary>Sets the show command for a Shell link object. The show command sets the initial show state of the window.</summary>
-            void SetShowCmd(int iShowCmd);
-            /// <summary>Retrieves the location (path and index) of the icon for a Shell link object</summary>
-            void GetIconLocation([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszIconPath,
-                int cchIconPath, out int piIcon);
-            /// <summary>Sets the location (path and index) of the icon for a Shell link object</summary>
-            void SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string pszIconPath, int iIcon);
-            /// <summary>Sets the relative path to the Shell link object</summary>
-            void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string pszPathRel, int dwReserved);
-            /// <summary>Attempts to find the target of a Shell link, even if it has been moved or renamed</summary>
-            void Resolve(IntPtr hwnd, SLR_FLAGS fFlags);
-            /// <summary>Sets the path and file name of a Shell link object</summary>
-            void SetPath([MarshalAs(UnmanagedType.LPWStr)] string pszFile);
-
-        }
-
-        [ComImport, Guid("0000010c-0000-0000-c000-000000000046"),
-        InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        public interface IPersist
-        {
-            [PreserveSig]
-            void GetClassID(out Guid pClassID);
-        }
-
-
-        [ComImport, Guid("0000010b-0000-0000-C000-000000000046"),
-        InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        public interface IPersistFile : IPersist
-        {
-            new void GetClassID(out Guid pClassID);
-            [PreserveSig]
-            int IsDirty();
-
-            [PreserveSig]
-            void Load([In, MarshalAs(UnmanagedType.LPWStr)]
-            string pszFileName, uint dwMode);
-
-            [PreserveSig]
-            void Save([In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
-                [In, MarshalAs(UnmanagedType.Bool)] bool fRemember);
-
-            [PreserveSig]
-            void SaveCompleted([In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName);
-
-            [PreserveSig]
-            void GetCurFile([In, MarshalAs(UnmanagedType.LPWStr)] string ppszFileName);
-        }
-
-        const uint STGM_READ = 0;
-        const int MAX_PATH = 260;
-
-        // CLSID_ShellLink from ShlGuid.h 
-        [
-            ComImport(),
-            Guid("00021401-0000-0000-C000-000000000046")
-        ]
-        public class ShellLink
-        {
-        }
-
-        #endregion
-
         /// <summary>
         /// Returns true if the OS is 64 bit
         /// </summary>
@@ -401,43 +199,6 @@ namespace Little_System_Cleaner
 
         #region Registry Functions
         /// <summary>
-        /// Parses a registry key path and outputs the base and subkey to strings
-        /// </summary>
-        /// <param name="inPath">Registry key path</param>
-        /// <param name="baseKey">Base Key (Hive name)</param>
-        /// <param name="subKey">Sub Key Path</param>
-        /// <returns>True if the path was parsed successfully</returns>
-        public static bool ParseRegKeyPath(string inPath, out string baseKey, out string subKey)
-        {
-            baseKey = subKey = "";
-
-            if (string.IsNullOrEmpty(inPath))
-                return false;
-
-            string strMainKeyname = inPath;
-
-            try
-            {
-                int nSlash = strMainKeyname.IndexOf("\\");
-                if (nSlash > -1)
-                {
-                    baseKey = strMainKeyname.Substring(0, nSlash);
-                    subKey = strMainKeyname.Substring(nSlash + 1);
-                }
-                else if (strMainKeyname.ToUpper().StartsWith("HKEY"))
-                    baseKey = strMainKeyname;
-                else
-                    return false;
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Parses the registry key path and sees if exists
         /// </summary>
         /// <param name="InPath">The registry path (including hive)</param>
@@ -461,52 +222,6 @@ namespace Little_System_Cleaner
             {
                 bKeyExists = true;
                 reg.Close();
-            }
-
-            return bKeyExists;
-        }
-
-        /// <summary>
-        /// Checks if registry key + value name exist
-        /// </summary>
-        /// <param name="inPath">Registry Key</param>
-        /// <param name="valueName">Value name</param>
-        /// <returns>True if it exists</returns>
-        public static bool ValueNameExists(string inPath, string valueName)
-        {
-            string baseKey, subKey;
-
-            if (!ParseRegKeyPath(inPath, out baseKey, out subKey))
-                return false;
-
-            return ValueNameExists(baseKey, subKey, valueName);
-        }
-
-
-        /// <summary>
-        /// Checks if registry key + value name exist
-        /// </summary>
-        /// <param name="mainKey">Registry Hive</param>
-        /// <param name="subKey">Registry Sub Key</param>
-        /// <param name="valueName">Value Name</param>
-        /// <returns>True if value name exists in registry key</returns>
-        public static bool ValueNameExists(string mainKey, string subKey, string valueName)
-        {
-            bool bKeyExists = false;
-            RegistryKey reg = RegOpenKey(mainKey, subKey);
-
-            try
-            {
-                if (reg != null)
-                {
-                    if (reg.GetValue(valueName) != null)
-                        bKeyExists = true;
-                    reg.Close();
-                }
-            }
-            catch
-            {
-                return false;
             }
 
             return bKeyExists;
@@ -576,106 +291,182 @@ namespace Little_System_Cleaner
         }
 
         /// <summary>
-        /// Gets the value kind and converts it accordingly
+        /// Parses a registry key path and outputs the base and subkey to strings
         /// </summary>
-        /// <returns>Registry value formatted to a string</returns>
-        public static string RegConvertXValueToString(RegistryKey regKey, string valueName)
+        /// <param name="inPath">Registry key path</param>
+        /// <param name="baseKey">Base Key (Hive name)</param>
+        /// <param name="subKey">Sub Key Path</param>
+        /// <returns>True if the path was parsed successfully</returns>
+        public static bool ParseRegKeyPath(string inPath, out string baseKey, out string subKey)
         {
-            string strRet = "";
+            baseKey = subKey = "";
 
-            if (regKey == null)
-                return strRet;
+            if (string.IsNullOrEmpty(inPath))
+                return false;
+
+            string strMainKeyname = inPath;
 
             try
             {
-
-                switch (regKey.GetValueKind(valueName))
+                int nSlash = strMainKeyname.IndexOf("\\");
+                if (nSlash > -1)
                 {
-                    case RegistryValueKind.MultiString:
-                        {
-                            string strValue = "";
-                            string[] strValues = (string[])regKey.GetValue(valueName);
-
-                            for (int i = 0; i < strValues.Length; i++)
-                            {
-                                if (i != 0)
-                                    strValue = string.Concat(strValue, ",");
-
-                                strValue = string.Format("{0} {1}", strValue, strValues[i]);
-                            }
-
-                            strRet = string.Copy(strValue);
-
-                            break;
-                        }
-                    case RegistryValueKind.Binary:
-                        {
-                            string strValue = "";
-
-                            foreach (byte b in (byte[])regKey.GetValue(valueName))
-                                strValue = string.Format("{0} {1:X2}", strValue, b);
-
-                            strRet = string.Copy(strValue);
-
-                            break;
-                        }
-                    case RegistryValueKind.DWord:
-                    case RegistryValueKind.QWord:
-                        {
-                            strRet = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
-                            break;
-                        }
-                    default:
-                        {
-                            strRet = string.Format("{0}", regKey.GetValue(valueName));
-                            break;
-                        }
-
+                    baseKey = strMainKeyname.Substring(0, nSlash);
+                    subKey = strMainKeyname.Substring(nSlash + 1);
                 }
+                else if (strMainKeyname.ToUpper().StartsWith("HKEY"))
+                    baseKey = strMainKeyname;
+                else
+                    return false;
             }
             catch
             {
-                return "";
+                return false;
             }
 
-            return strRet;
+            return true;
         }
+        #endregion
 
-        internal static object TryGetValue(RegistryKey regKey, string valueName, object defaultValue = null)
+        internal enum VDTReturn
         {
-            object value = defaultValue;
-
-            try
-            {
-                value = regKey.GetValue(valueName);
-
-                if (value == null && defaultValue != null)
-                    value = defaultValue;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get registry value for " + valueName + " in " + regKey.ToString());
-            }
-
-            return value;
+            ValidDrive = 0,
+            InvalidDrive = 1,
+            SkipCheck = 3
         }
 
         /// <summary>
-        /// Use to safely call function with registry key being open in parameter
+        /// Sees if path has valid drive type
         /// </summary>
-        /// <param name="action">Function call</param>
-        internal static void SafeOpenRegistryKey(Action action)
+        /// <param name="path">Path containing drive</param>
+        /// <returns>ValidDriveTypeReturn enum</returns>
+        internal static VDTReturn ValidDriveType(string path)
         {
-            try
+            StringBuilder sb = new StringBuilder(path);
+            if (PInvoke.PathStripToRoot(sb))
             {
-                action();
+                DriveType dt = PInvoke.GetDriveType(sb.ToString());
+
+                if (Properties.Settings.Default.registryCleanerOptionsRemMedia)
+                {
+                    // Just return true if its on a removable media
+                    if (dt == DriveType.Removable ||
+                        dt == DriveType.Network ||
+                        dt == DriveType.CDRom)
+                        return VDTReturn.SkipCheck;
+                }
+
+                // Return false for unkown and no root dir
+                if (dt == DriveType.NoRootDirectory ||
+                    dt == DriveType.Unknown)
+                    return VDTReturn.InvalidDrive;
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("The following error occurred: " + ex.Message);
-            }
+
+            return VDTReturn.ValidDrive;
         }
-        #endregion
+
+
+        /// <summary>
+        /// Extracts the large or small icon
+        /// </summary>
+        /// <param name="Path">Path to icon</param>
+        /// <returns>Large or small icon or null</returns>
+        internal static Icon ExtractIcon(string Path)
+        {
+            IntPtr largeIcon = IntPtr.Zero;
+            IntPtr smallIcon = IntPtr.Zero;
+
+            string strPath = Utils.UnqouteSpaces(Path);
+
+            PInvoke.ExtractIconExA(strPath, 0, ref largeIcon, ref smallIcon, 1);
+
+            //Transform the bits into the icon image
+            Icon returnIcon = null;
+            if (smallIcon != IntPtr.Zero)
+                returnIcon = (Icon)Icon.FromHandle(smallIcon).Clone();
+            else if (largeIcon != IntPtr.Zero)
+                returnIcon = (Icon)Icon.FromHandle(largeIcon).Clone();
+
+            //clean up
+            PInvoke.DestroyIcon(smallIcon);
+            PInvoke.DestroyIcon(largeIcon);
+
+            return returnIcon;
+        }
+
+        /// <summary>
+        /// Resolves path to .lnk shortcut
+        /// </summary>
+        /// <param name="shortcut">The path to the shortcut</param>
+        /// <param name="filepath">Returns the file path</param>
+        /// <param name="arguments">Returns the shortcuts arguments</param>
+        /// <returns>Returns false if the filepath doesnt exist</returns>
+        internal static bool ResolveShortcut(string shortcut, out string filepath, out string arguments)
+        {
+            PInvoke.ShellLink link = new PInvoke.ShellLink();
+            ((PInvoke.IPersistFile)link).Load(shortcut, PInvoke.STGM_READ);
+            // TODO: if I can get hold of the hwnd call resolve first. This handles moved and renamed files.  
+            // ((IShellLinkW)link).Resolve(hwnd, 0) 
+            StringBuilder path = new StringBuilder(PInvoke.MAX_PATH);
+            PInvoke.WIN32_FIND_DATAW data = new PInvoke.WIN32_FIND_DATAW();
+            ((PInvoke.IShellLinkW)link).GetPath(path, path.Capacity, out data, 0);
+
+            StringBuilder args = new StringBuilder(PInvoke.MAX_PATH);
+            ((PInvoke.IShellLinkW)link).GetArguments(args, args.Capacity);
+
+            filepath = path.ToString();
+            arguments = args.ToString();
+
+            if (!FileExists(filepath))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Sees if the file exists
+        /// </summary>
+        /// <remarks>Always use this to check for files in the scanners! Also, be sure to check if file is ignored before adding it as problematic</remarks>
+        /// <param name="filePath">The filename (including path)</param>
+        /// <returns>
+        /// True if it exists or if the path should be skipped. Otherwise, false if the file path is empty or doesnt exist
+        /// </returns>
+        internal static bool FileExists(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return false;
+
+            string strFileName = string.Copy(filePath.Trim().ToLower());
+
+            // Remove quotes
+            strFileName = Utils.UnqouteSpaces(strFileName);
+
+            // Remove environment variables
+            strFileName = Environment.ExpandEnvironmentVariables(strFileName);
+
+            // Check for illegal characters
+            if (Utils.FindAnyIllegalChars(strFileName))
+                return false;
+
+            // Check Drive Type
+            Utils.VDTReturn ret = Utils.ValidDriveType(strFileName);
+            if (ret == Utils.VDTReturn.InvalidDrive)
+                return false;
+            else if (ret == Utils.VDTReturn.SkipCheck)
+                return true;
+
+            // Now see if file exists
+            if (File.Exists(strFileName))
+                return true;
+
+            if (PInvoke.PathFileExists(strFileName))
+                return true;
+
+            if (Utils.SearchPath(strFileName))
+                return true;
+
+            return false;
+        }
 
         /// <summary>
         /// Uses PathGetArgs and PathRemoveArgs API to extract file arguments
@@ -685,7 +476,7 @@ namespace Little_System_Cleaner
         /// <param name="fileArgs">arguments</param>
         /// <exception cref="ArgumentNullException">Thrown when cmdLine is null or empty</exception>
         /// <returns>False if the path doesnt exist</returns>
-        public static bool ExtractArguments(string cmdLine, out string filePath, out string fileArgs)
+        internal static bool ExtractArguments(string cmdLine, out string filePath, out string fileArgs)
         {
             StringBuilder strCmdLine = new StringBuilder(cmdLine.ToLower().Trim());
 
@@ -694,14 +485,14 @@ namespace Little_System_Cleaner
             if (string.IsNullOrEmpty(strCmdLine.ToString()))
                 throw new ArgumentNullException("cmdLine");
 
-            fileArgs = Marshal.PtrToStringAuto(PathGetArgs(strCmdLine.ToString()));
+            fileArgs = Marshal.PtrToStringAuto(PInvoke.PathGetArgs(strCmdLine.ToString()));
 
-            PathRemoveArgs(strCmdLine);
+            PInvoke.PathRemoveArgs(strCmdLine);
 
             filePath = string.Copy(strCmdLine.ToString());
 
             if (!string.IsNullOrEmpty(filePath))
-                if (Utils.FileExists(filePath))
+                if (FileExists(filePath))
                     return true;
 
             return false;
@@ -715,7 +506,7 @@ namespace Little_System_Cleaner
         /// <param name="fileArgs">arguments</param>
         /// <exception cref="ArgumentNullException">Thrown when cmdLine is null or empty</exception>
         /// <returns>Returns true if file was located</returns>
-        public static bool ExtractArguments2(string cmdLine, out string filePath, out string fileArgs)
+        internal static bool ExtractArguments2(string cmdLine, out string filePath, out string fileArgs)
         {
             string strCmdLine = string.Copy(cmdLine.ToLower().Trim());
             bool bRet = false;
@@ -726,7 +517,7 @@ namespace Little_System_Cleaner
                 throw new ArgumentNullException(cmdLine);
 
             // Remove Quotes
-            strCmdLine = UnqouteSpaces(strCmdLine);
+            strCmdLine = Utils.UnqouteSpaces(strCmdLine);
 
             // Expand variables
             strCmdLine = Environment.ExpandEnvironmentVariables(strCmdLine);
@@ -739,7 +530,7 @@ namespace Little_System_Cleaner
                 strFileFullPath = strFileFullPath.Append(ch);
                 nPos++;
 
-                if (FindAnyIllegalChars(strFileFullPath.ToString()))
+                if (Utils.FindAnyIllegalChars(strFileFullPath.ToString()))
                     break;
 
                 // See if part exists
@@ -758,72 +549,19 @@ namespace Little_System_Cleaner
         }
 
         /// <summary>
-        /// Resolves path to .lnk shortcut
+        /// Use to safely call function with registry key being open in parameter
         /// </summary>
-        /// <param name="shortcut">The path to the shortcut</param>
-        /// <param name="filepath">Returns the file path</param>
-        /// <param name="arguments">Returns the shortcuts arguments</param>
-        /// <returns>Returns false if the filepath doesnt exist</returns>
-        public static bool ResolveShortcut(string shortcut, out string filepath, out string arguments)
+        /// <param name="action">Function call</param>
+        internal static void SafeOpenRegistryKey(Action action)
         {
-            ShellLink link = new ShellLink();
-            ((IPersistFile)link).Load(shortcut, STGM_READ);
-            // TODO: if I can get hold of the hwnd call resolve first. This handles moved and renamed files.  
-            // ((IShellLinkW)link).Resolve(hwnd, 0) 
-            StringBuilder path = new StringBuilder(MAX_PATH);
-            WIN32_FIND_DATAW data = new WIN32_FIND_DATAW();
-            ((IShellLinkW)link).GetPath(path, path.Capacity, out data, 0);
-
-            StringBuilder args = new StringBuilder(MAX_PATH);
-            ((IShellLinkW)link).GetArguments(args, args.Capacity);
-
-            filepath = path.ToString();
-            arguments = args.ToString();
-
-            if (!Utils.FileExists(filepath))
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Creates .lnk shortcut to filename
-        /// </summary>
-        /// <param name="filename">.lnk shortcut</param>
-        /// <param name="path">path for filename</param>
-        /// <param name="arguments">arguments for shortcut (can be null)</param>
-        /// <returns>True if shortcut was created</returns>
-        public static bool CreateShortcut(string filename, string path, string arguments)
-        {
-            ShellLink link = new ShellLink();
-            ((IShellLinkW)link).SetPath(path);
-            if (!string.IsNullOrEmpty(arguments))
-                ((IShellLinkW)link).SetArguments(arguments);
-            ((IPersistFile)link).Save(filename, false);
-
-            return (File.Exists(filename));
-        }
-
-        /// <summary>
-        /// Converts FILETIME structure to DateTime structure
-        /// </summary>
-        /// <param name="ft">FILETIME structure</param>
-        /// <returns>DateTime structure</returns>
-        public static DateTime FileTime2DateTime(System.Runtime.InteropServices.ComTypes.FILETIME ft)
-        {
-            DateTime dt = DateTime.MaxValue;
-            long hFT2 = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
-
             try
             {
-                dt = DateTime.FromFileTimeUtc(hFT2);
+                action();
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception ex)
             {
-                dt = DateTime.MaxValue;
+                Debug.WriteLine("The following error occurred: " + ex.Message);
             }
-
-            return dt;
         }
 
         /// <summary>
@@ -913,7 +651,7 @@ namespace Little_System_Cleaner
         {
             StringBuilder path = new StringBuilder(260);
 
-            if (Utils.SHGetSpecialFolderPath(IntPtr.Zero, path, CSIDL, false))
+            if (PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, CSIDL, false))
                 return string.Copy(path.ToString());
 
             return "";
@@ -944,7 +682,7 @@ namespace Little_System_Cleaner
         {
             StringBuilder strBuffer = new StringBuilder(260);
 
-            int ret = SearchPath(((!string.IsNullOrEmpty(Path)) ? (Path) : (null)), fileName, null, 260, strBuffer, null);
+            int ret = PInvoke.SearchPath(((!string.IsNullOrEmpty(Path)) ? (Path) : (null)), fileName, null, 260, strBuffer, null);
 
             if (ret != 0)
             {
@@ -962,220 +700,22 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="Path">Path w/ quotes</param>
         /// <returns>Path w/o quotes</returns>
-        private static string UnqouteSpaces(string Path)
+        public static string UnqouteSpaces(string Path)
         {
             StringBuilder sb = new StringBuilder(Path);
 
-            PathUnquoteSpaces(sb);
+            PInvoke.PathUnquoteSpaces(sb);
 
             return string.Copy(sb.ToString());
         }
 
-        /// <summary>
-        /// Gets the icon path and sees if it exists
-        /// </summary>
-        /// <param name="IconPath">The icon path</param>
-        /// <returns>True if it exists</returns>
-        public static bool IconExists(string IconPath)
-        {
-            string strFileName = string.Copy(IconPath.Trim().ToLower());
-
-            // Remove quotes
-            strFileName = UnqouteSpaces(strFileName);
-
-            // Remove starting @
-            if (strFileName.StartsWith("@"))
-                strFileName = strFileName.Substring(1);
-
-            // Return true if %1
-            if (strFileName == "%1")
-                return true;
-
-            // Get icon path
-            int nSlash = strFileName.IndexOf(',');
-            if (nSlash > -1)
-            {
-                strFileName = strFileName.Substring(0, nSlash);
-
-                return Utils.FileExists(strFileName);
-            }
-            else
-            {
-                StringBuilder sb = new StringBuilder(strFileName);
-                if (PathParseIconLocation(sb) >= 0)
-                    if (!string.IsNullOrEmpty(sb.ToString()))
-                        return Utils.FileExists(sb.ToString());
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Extracts the large or small icon
-        /// </summary>
-        /// <param name="Path">Path to icon</param>
-        /// <returns>Large or small icon or null</returns>
-        public static Icon ExtractIcon(string Path)
-        {
-            IntPtr largeIcon = IntPtr.Zero;
-            IntPtr smallIcon = IntPtr.Zero;
-
-            string strPath = UnqouteSpaces(Path);
-
-            ExtractIconExA(strPath, 0, ref largeIcon, ref smallIcon, 1);
-
-            //Transform the bits into the icon image
-            Icon returnIcon = null;
-            if (smallIcon != IntPtr.Zero)
-                returnIcon = (Icon)Icon.FromHandle(smallIcon).Clone();
-            else if (largeIcon != IntPtr.Zero)
-                returnIcon = (Icon)Icon.FromHandle(largeIcon).Clone();
-
-            //clean up
-            DestroyIcon(smallIcon);
-            DestroyIcon(largeIcon);
-
-            return returnIcon;
-        }
-
-        enum VDTReturn
-        {
-            ValidDrive = 0,
-            InvalidDrive = 1,
-            SkipCheck = 3
-        }
-
-        /// <summary>
-        /// Sees if path has valid type
-        /// </summary>
-        /// <param name="path">Path containing drive</param>
-        /// <returns>ValidDriveTypeReturn enum</returns>
-        private static VDTReturn ValidDriveType(string path)
-        {
-            StringBuilder sb = new StringBuilder(path);
-            if (PathStripToRoot(sb))
-            {
-                DriveType dt = GetDriveType(sb.ToString());
-
-                if (Properties.Settings.Default.registryCleanerOptionsRemMedia)
-                {
-                    // Just return true if its on a removable media
-                    if (dt == DriveType.Removable ||
-                        dt == DriveType.Network ||
-                        dt == DriveType.CDRom)
-                        return VDTReturn.SkipCheck;
-                }
-
-                // Return false for unkown and no root dir
-                if (dt == DriveType.NoRootDirectory ||
-                    dt == DriveType.Unknown)
-                    return VDTReturn.InvalidDrive;
-            }
-
-            return VDTReturn.ValidDrive;
-        }
-
-        /// <summary>
-        /// Sees if the file exists
-        /// </summary>
-        /// <remarks>Always use this to check for files in the scanners!</remarks>
-        /// <param name="filePath">The filename (including path)</param>
-        /// <returns>
-        /// True if it exists or if the path should be skipped. Otherwise, false if the file path is empty or doesnt exist
-        /// </returns>
-        public static bool FileExists(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-                return false;
-
-            string strFileName = string.Copy(filePath.Trim().ToLower());
-
-            // Remove quotes
-            strFileName = UnqouteSpaces(strFileName);
-
-            // Remove environment variables
-            strFileName = Environment.ExpandEnvironmentVariables(strFileName);
-
-            // Check for illegal characters
-            if (FindAnyIllegalChars(strFileName))
-                return false;
-
-            // Check Drive Type
-            VDTReturn ret = ValidDriveType(strFileName);
-            if (ret == VDTReturn.InvalidDrive)
-                return false;
-            else if (ret == VDTReturn.SkipCheck)
-                return true;
-
-            // See if it is on exclude list
-            if (ScanWizard.IsOnIgnoreList(strFileName))
-                return true;
-
-            // Now see if file exists
-            if (File.Exists(strFileName))
-                return true;
-
-            if (PathFileExists(strFileName))
-                return true;
-
-            if (SearchPath(strFileName))
-                return true;
-
-            return false;
-        }
-
-        /// <summary>
-        /// Sees if the directory exists
-        /// </summary>
-        /// <remarks>Always use this to check for directories in the scanners!</remarks>
-        /// <param name="dirPath">The directory</param>
-        /// <returns>True if it exists or if the path should be skipped. Otherwise, false if the file path is empty or doesnt exist</returns>
-        public static bool DirExists(string dirPath)
-        {
-            if (string.IsNullOrEmpty(dirPath))
-                return false;
-
-            string strDirectory = string.Copy(dirPath.Trim().ToLower());
-
-            // Remove quotes
-            strDirectory = UnqouteSpaces(strDirectory);
-
-            // Expand enviroment variables
-            strDirectory = Environment.ExpandEnvironmentVariables(strDirectory);
-
-            // Check drive type
-            VDTReturn ret = ValidDriveType(strDirectory);
-            if (ret == VDTReturn.InvalidDrive)
-                return false;
-            else if (ret == VDTReturn.SkipCheck)
-                return true;
-
-            // Check for illegal chars
-            if (FindAnyIllegalChars(strDirectory))
-                return false;
-
-            // See if it is on the exclude list
-            if (ScanWizard.IsOnIgnoreList(strDirectory))
-                return true;
-
-            // Remove filename.ext and trailing backslash from path
-            StringBuilder sb = new StringBuilder(strDirectory);
-            if (PathRemoveFileSpec(sb))
-                if (Directory.Exists(sb.ToString()))
-                    return true;
-
-            if (Directory.Exists(strDirectory))
-                return true;
-
-            return false;
-        }
-
+        
         /// <summary>
         /// Parses the path and checks for any illegal characters
         /// </summary>
         /// <param name="path">The path</param>
         /// <returns>Returns true if it contains illegal characters</returns>
-        private static bool FindAnyIllegalChars(string path)
+        internal static bool FindAnyIllegalChars(string path)
         {
             // Get directory portion of the path.
             string dirName = path;
@@ -1211,7 +751,7 @@ namespace Little_System_Cleaner
         {
             StringBuilder strResultBuffer = new StringBuilder(1024);
 
-            long nResult = FindExecutableA(strFilename, string.Empty, strResultBuffer);
+            long nResult = PInvoke.FindExecutableA(strFilename, string.Empty, strResultBuffer);
 
             if (nResult >= 32)
             {
@@ -1366,890 +906,9 @@ namespace Little_System_Cleaner
             finally
             {
                 if (hBitmap != null)
-                    DeleteObject(hBitmap);
+                    PInvoke.DeleteObject(hBitmap);
             }
         }
 
-        /// <summary>
-        /// Checks if we have permission to delete a registry key
-        /// </summary>
-        /// <param name="key">Registry key</param>
-        /// <returns>True if we can delete it</returns>
-        public static bool CanDeleteKey(RegistryKey key)
-        {
-            try
-            {
-                if (key.SubKeyCount > 0)
-                {
-                    bool ret = false;
-
-                    foreach (string subKey in key.GetSubKeyNames())
-                    {
-                        ret = CanDeleteKey(key.OpenSubKey(subKey));
-
-                        if (!ret)
-                            break;
-                    }
-
-                    return ret;
-                }
-                else
-                {
-                    System.Security.AccessControl.RegistrySecurity regSecurity = key.GetAccessControl();
-
-                    foreach (System.Security.AccessControl.AuthorizationRule rule in regSecurity.GetAccessRules(true, false, typeof(System.Security.Principal.NTAccount)))
-                    {
-                        if ((System.Security.AccessControl.RegistryRights.Delete & ((System.Security.AccessControl.RegistryAccessRule)(rule)).RegistryRights) != System.Security.AccessControl.RegistryRights.Delete)
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-
-            }
-            catch (SecurityException)
-            {
-                return false;
-            }
-        }
-
-        #region Disk Cleaner Functions
-        /// <summary>
-        /// Compare multiple wildcards to string
-        /// </summary>
-        /// <param name="WildString">String to compare</param>
-        /// <param name="Mask">Wildcard masks seperated by a semicolon (;)</param>
-        /// <returns>True if match found</returns>
-        public static bool CompareWildcards(string WildString, string Mask, bool IgnoreCase = true)
-        {
-            int i = 0;
-
-            if (String.IsNullOrEmpty(Mask))
-                return false;
-            if (Mask == "*")
-                return true;
-
-            while (i != Mask.Length)
-            {
-                if (CompareWildcard(WildString, Mask.Substring(i), IgnoreCase))
-                    return true;
-
-                while (i != Mask.Length && Mask[i] != ';')
-                    i += 1;
-
-                if (i != Mask.Length && Mask[i] == ';')
-                {
-                    i += 1;
-
-                    while (i != Mask.Length && Mask[i] == ' ')
-                        i += 1;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Compares wildcard to string
-        /// </summary>
-        /// <param name="WildString">String to compare</param>
-        /// <param name="Mask">Wildcard mask (ex: *.jpg)</param>
-        /// <returns>True if match found</returns>
-        public static bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
-        {
-            int i = 0, k = 0;
-
-            while (k != WildString.Length)
-            {
-                switch (Mask[i])
-                {
-                    case '*':
-
-                        if ((i + 1) == Mask.Length)
-                            return true;
-
-                        while (k != WildString.Length)
-                        {
-                            if (CompareWildcard(WildString.Substring(k + 1), Mask.Substring(i + 1), IgnoreCase))
-                                return true;
-
-                            k += 1;
-                        }
-
-                        return false;
-
-                    case '?':
-
-                        break;
-
-                    default:
-
-                        if (IgnoreCase == false && WildString[k] != Mask[i])
-                            return false;
-
-                        if (IgnoreCase && Char.ToLower(WildString[k]) != Char.ToLower(Mask[i]))
-                            return false;
-
-                        break;
-                }
-
-                i += 1;
-                k += 1;
-            }
-
-            if (k == WildString.Length)
-            {
-                if (i == Mask.Length || Mask[i] == ';' || Mask[i] == '*')
-                    return true;
-            }
-
-            return false;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 1)]
-        public struct SHFILEOPSTRUCT
-        {
-            public IntPtr hwnd;
-            [MarshalAs(UnmanagedType.U4)]
-            public int wFunc;
-            public string pFrom;
-            public string pTo;
-            public short fFlags;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool fAnyOperationsAborted;
-            public IntPtr hNameMappings;
-            public string lpszProgressTitle;
-        }
-
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        static extern int SHFileOperation(ref SHFILEOPSTRUCT FileOp);
-        const int FO_DELETE = 3;
-        const int FOF_ALLOWUNDO = 0x40;
-        const int FOF_NOCONFIRMATION = 0x10;    //Don't prompt the user.; 
-
-        public static void SendFileToRecycleBin(string filePath)
-        {
-            SHFILEOPSTRUCT shf = new SHFILEOPSTRUCT();
-            shf.wFunc = FO_DELETE;
-            shf.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION;
-            shf.pFrom = filePath;
-            SHFileOperation(ref shf);
-        }
-        #endregion
-
-        #region Registry Optimizer Functions
-        /// <summary>
-        /// Gets a temporary path for a registry hive
-        /// </summary>
-        public static string GetTempHivePath()
-        {
-            try
-            {
-                string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-
-                // File cant exists, keep retrying until we get a file that doesnt exist
-                if (File.Exists(tempPath))
-                    return GetTempHivePath();
-
-                return tempPath;
-            }
-            catch (IOException)
-            {
-                return GetTempHivePath();
-            }
-        }
-
-        /// <summary>
-        /// Converts \\Device\\HarddiskVolumeX\... to X:\...
-        /// </summary>
-        /// <param name="DevicePath">Device name with path</param>
-        /// <returns>Drive path</returns>
-        public static string ConvertDeviceToMSDOSName(string DevicePath)
-        {
-            string strDevicePath = string.Copy(DevicePath.ToLower());
-            string strRetVal = "";
-
-            // Convert \Device\HarddiskVolumeX\... to X:\...
-            foreach (KeyValuePair<string, string> kvp in QueryDosDevice())
-            {
-                string strDrivePath = kvp.Key.ToLower();
-                string strDeviceName = kvp.Value.ToLower();
-
-                if (strDevicePath.StartsWith(strDeviceName))
-                {
-                    strRetVal = strDevicePath.Replace(strDeviceName, strDrivePath);
-                    break;
-                }
-            }
-
-            return strRetVal;
-        }
-
-        private static Dictionary<string, string> QueryDosDevice()
-        {
-            Dictionary<string, string> ret = new Dictionary<string, string>();
-
-            foreach (DriveInfo di in DriveInfo.GetDrives())
-            {
-                if (di.IsReady)
-                {
-                    string strDrivePath = di.Name.Substring(0, 2);
-                    StringBuilder strDeviceName = new StringBuilder(260);
-
-                    // Convert C: to \Device\HarddiskVolume1
-                    if (QueryDosDevice(strDrivePath, strDeviceName, 260) > 0)
-                        ret.Add(strDrivePath, strDeviceName.ToString());
-                }
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Gets the old size of the registry hives
-        /// </summary>
-        /// <returns>Registry size (in bytes)</returns>
-        public static long GetOldRegistrySize()
-        {
-            if (Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives == null)
-                return 0;
-
-            if (Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Count == 0)
-                return 0;
-
-            long size = 0;
-
-            foreach (Little_System_Cleaner.Registry_Optimizer.Helpers.Hive h in Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives)
-            {
-                size += h.OldHiveSize;
-            }
-
-            return size;
-        }
-
-        /// <summary>
-        /// Gets the new size of the registry hives
-        /// </summary>
-        /// <returns>Registry size (in bytes)</returns>
-        public static long GetNewRegistrySize()
-        {
-            if (Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives == null)
-                return 0;
-
-            if (Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Count == 0)
-                return 0;
-
-            long size = 0;
-
-            foreach (Little_System_Cleaner.Registry_Optimizer.Helpers.Hive h in Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives)
-            {
-                size += h.NewHiveSize;
-            }
-
-            return size;
-        }
-        #endregion
-
-        #region Privacy Cleaner Functions
-        #region PInvoke
-        [StructLayout(LayoutKind.Sequential)]
-        public struct INTERNET_CACHE_ENTRY_INFO
-        {
-            public UInt32 dwStructSize;
-            public string lpszSourceUrlName;
-            public string lpszLocalFileName;
-            public UInt32 CacheEntryType;
-            public UInt32 dwUseCount;
-            public UInt32 dwHitRate;
-            public UInt32 dwSizeLow;
-            public UInt32 dwSizeHigh;
-            public FILETIME LastModifiedTime;
-            public FILETIME ExpireTime;
-            public FILETIME LastAccessTime;
-            public FILETIME LastSyncTime;
-            public IntPtr lpHeaderInfo;
-            public UInt32 dwHeaderInfoSize;
-            public string lpszFileExtension;
-            public ExemptDeltaOrReserverd dwExemptDeltaOrReserved;
-
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        public struct ExemptDeltaOrReserverd
-        {
-            [FieldOffset(0)]
-            public UInt32 dwReserved;
-            [FieldOffset(0)]
-            public UInt32 dwExemptDelta;
-        }
-
-        /// <summary>
-        /// Used by QueryUrl method
-        /// </summary>
-        public enum STATURL_QUERYFLAGS : uint
-        {
-            /// <summary>
-            /// The specified URL is in the content cache.
-            /// </summary>
-            STATURL_QUERYFLAG_ISCACHED = 0x00010000,
-            /// <summary>
-            /// Space for the URL is not allocated when querying for STATURL.
-            /// </summary>
-            STATURL_QUERYFLAG_NOURL = 0x00020000,
-            /// <summary>
-            /// Space for the Web page's title is not allocated when querying for STATURL.
-            /// </summary>
-            STATURL_QUERYFLAG_NOTITLE = 0x00040000,
-            /// <summary>
-            /// //The item is a top-level item.
-            /// </summary>
-            STATURL_QUERYFLAG_TOPLEVEL = 0x00080000,
-
-        }
-
-        /// <summary>
-        /// Flag on the dwFlags parameter of the STATURL structure, used by the SetFilter method.
-        /// </summary>
-        public enum STATURLFLAGS : uint
-        {
-            /// <summary>
-            /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is in the cache.
-            /// </summary>
-            STATURLFLAG_ISCACHED = 0x00000001,
-            /// <summary>
-            /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is a top-level item.
-            /// </summary>
-            STATURLFLAG_ISTOPLEVEL = 0x00000002,
-        }
-
-        /// <summary>
-        /// Used bu the AddHistoryEntry method.
-        /// </summary>
-        public enum ADDURL_FLAG : uint
-        {
-            /// <summary>
-            /// Write to both the visited links and the dated containers. 
-            /// </summary>
-            ADDURL_ADDTOHISTORYANDCACHE = 0,
-            /// <summary>
-            /// Write to only the visited links container.
-            /// </summary>
-            ADDURL_ADDTOCACHE = 1
-        }
-
-        /// <summary>
-        /// The structure that contains statistics about a URL. 
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct STATURL
-        {
-            /// <summary>
-            /// Struct size
-            /// </summary>
-            public int cbSize;
-            /// <summary>
-            /// URL
-            /// </summary>                                                                   
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pwcsUrl;
-            /// <summary>
-            /// Page title
-            /// </summary>
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pwcsTitle;
-            /// <summary>
-            /// Last visited date (UTC)
-            /// </summary>
-            public FILETIME ftLastVisited;
-            /// <summary>
-            /// Last updated date (UTC)
-            /// </summary>
-            public FILETIME ftLastUpdated;
-            /// <summary>
-            /// The expiry date of the Web page's content (UTC)
-            /// </summary>
-            public FILETIME ftExpires;
-            /// <summary>
-            /// Flags. STATURLFLAGS Enumaration.
-            /// </summary>
-            public STATURLFLAGS dwFlags;
-
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public string URL
-            {
-                get { return pwcsUrl; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public string Title
-            {
-                get { return pwcsTitle; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime LastVisited
-            {
-                get { return DateTime.MinValue; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime LastUpdated
-            {
-                get { return DateTime.MinValue; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime Expires
-            {
-                get { return DateTime.MinValue; }
-            }
-
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct UUID
-        {
-            public int Data1;
-            public short Data2;
-            public short Data3;
-            public byte[] Data4;
-        }
-
-        [ComImport]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
-        public interface IUrlHistoryStg2
-        {
-            void AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
-            void DeleteUrl(string pocsUrl, int dwFlags);
-            void QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
-            void BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut);
-            object EnumUrls { [return: MarshalAs(UnmanagedType.IUnknown)] get; }
-
-            void AddUrlAndNotify(string pocsUrl, string pocsTitle, int dwFlags, int fWriteHistory, object poctNotify, object punkISFolder);
-            void ClearHistory();
-        }
-
-        //UrlHistory class
-        [ComImport]
-        [Guid("3C374A40-BAE4-11CF-BF7D-00AA006946EE")]
-        public class UrlHistoryClass
-        {
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        static extern uint GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer, uint nSize, string lpFileName);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpReturnedString, uint nSize, string lpFileName);
-
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "DeleteUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool DeleteUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName);
-
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "UnlockUrlCacheEntryFileA", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName, uint dwReserved);
-
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindFirstUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        public static extern IntPtr FindFirstUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlSearchPattern, IntPtr lpFirstCacheEntryInfo, ref int lpdwFirstCacheEntryInfoBufferSize);
-
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindNextUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool FindNextUrlCacheEntry(IntPtr hFind, IntPtr lpNextCacheEntryInfo, ref int lpdwNextCacheEntryInfoBufferSize);
-
-        [DllImport("wininet.dll", SetLastError = true)]
-        public static extern long FindCloseUrlCache(IntPtr hEnumHandle);
-
-        #endregion
-
-        public static List<INTERNET_CACHE_ENTRY_INFO> FindUrlCacheEntries(string urlPattern)
-        {
-            List<INTERNET_CACHE_ENTRY_INFO> cacheEntryList = new List<INTERNET_CACHE_ENTRY_INFO>();
-
-            int structSize = 0;
-
-            IntPtr bufferPtr = IntPtr.Zero;
-            IntPtr cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
-
-            switch (Marshal.GetLastWin32Error())
-            {
-                // ERROR_SUCCESS
-                case 0:
-                    if (cacheEnumHandle.ToInt32() > 0)
-                    {
-                        // Store entry
-                        INTERNET_CACHE_ENTRY_INFO cacheEntry = (INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(INTERNET_CACHE_ENTRY_INFO));
-                        cacheEntryList.Add(cacheEntry);
-                    }
-                    break;
-
-                // ERROR_INSUFFICIENT_BUFFER
-                case 122:
-                    // Repeat call to API with size returned by first call
-                    bufferPtr = Marshal.AllocHGlobal(structSize);
-                    cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
-
-                    if (cacheEnumHandle.ToInt32() > 0)
-                    {
-                        // Store entry
-                        INTERNET_CACHE_ENTRY_INFO cacheEntry = (INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(INTERNET_CACHE_ENTRY_INFO));
-                        cacheEntryList.Add(cacheEntry);
-                        break;
-                    }
-                    else
-                    {
-                        // Failed to get handle, return...
-                        Marshal.FreeHGlobal(bufferPtr);
-                        FindCloseUrlCache(cacheEnumHandle);
-                        return cacheEntryList;
-                    }
-                default:
-                    Marshal.FreeHGlobal(bufferPtr);
-                    FindCloseUrlCache(cacheEnumHandle);
-                    return cacheEntryList;
-            }
-
-            do
-            {
-                bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
-                if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
-                {
-                    // Store entry
-                    INTERNET_CACHE_ENTRY_INFO cacheEntry = (INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(INTERNET_CACHE_ENTRY_INFO));
-                    cacheEntryList.Add(cacheEntry);
-                }
-                else
-                {
-                    switch (Marshal.GetLastWin32Error())
-                    {
-                        // ERROR_INSUFFICIENT_BUFFER
-                        case 122:
-                            // Repeat call to API with size returned by first call
-                            bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
-
-                            if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
-                            {
-                                // Store entry
-                                INTERNET_CACHE_ENTRY_INFO cacheEntry = (INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(INTERNET_CACHE_ENTRY_INFO));
-                                cacheEntryList.Add(cacheEntry);
-                                break;
-                            }
-                            else
-                            {
-                                Marshal.FreeHGlobal(bufferPtr);
-                                FindCloseUrlCache(cacheEnumHandle);
-                                return cacheEntryList;
-                            }
-                        // ERROR_NO_MORE_ITEMS
-                        case 259:
-                            Marshal.FreeHGlobal(bufferPtr);
-                            FindCloseUrlCache(cacheEnumHandle);
-                            return cacheEntryList;
-                        default:
-                            Marshal.FreeHGlobal(bufferPtr);
-                            FindCloseUrlCache(cacheEnumHandle);
-                            return cacheEntryList;
-                    }
-                }
-            } while (true);
-
-            // Wont reach here
-        }
-
-        /// <summary>
-        /// Checks to see if a process is a running
-        /// </summary>
-        /// <param name="procName">The name of the process (ex: firefox for Firefox)</param>
-        /// <returns>True if the process is running</returns>
-        public static bool IsProcessRunning(string procName)
-        {
-            foreach (Process proc in Process.GetProcessesByName(procName))
-            {
-                if (!proc.HasExited)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public static string ExpandVars(string p)
-        {
-            string str = (string)p.Clone();
-
-            if (string.IsNullOrEmpty(str))
-                throw new ArgumentNullException(str);
-
-            // Expand system variables
-            str = Environment.ExpandEnvironmentVariables(str);
-
-            // Expand program variables
-            // (Needed for unspecified variables)
-            str = str.Replace("%Cookies%", Environment.GetFolderPath(Environment.SpecialFolder.Cookies));
-            str = str.Replace("%Favorites%", Environment.GetFolderPath(Environment.SpecialFolder.Favorites));
-            str = str.Replace("%History%", Environment.GetFolderPath(Environment.SpecialFolder.History));
-            str = str.Replace("%InternetCache%", Environment.GetFolderPath(Environment.SpecialFolder.InternetCache));
-            str = str.Replace("%MyComputer%", Environment.GetFolderPath(Environment.SpecialFolder.MyComputer));
-            str = str.Replace("%MyDocuments%", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            str = str.Replace("%MyMusic%", Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-            str = str.Replace("%MyPictures%", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures));
-            str = str.Replace("%Recent%", Environment.GetFolderPath(Environment.SpecialFolder.Recent));
-            str = str.Replace("%SendTo%", Environment.GetFolderPath(Environment.SpecialFolder.SendTo));
-            str = str.Replace("%StartMenu%", Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
-            str = str.Replace("%Startup%", Environment.GetFolderPath(Environment.SpecialFolder.Startup));
-            str = str.Replace("%Templates%", Environment.GetFolderPath(Environment.SpecialFolder.Templates));
-
-            return str;
-        }
-
-        public static string[] GetSections(string filePath)
-        {
-            uint MAX_BUFFER = 32767;
-
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                Debug.WriteLine("Path to INI file cannot be empty or null. Unable to get sections.");
-                return new string[] { };
-            }
-
-            IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
-            uint bytesReturned = GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
-            if (bytesReturned == 0)
-            {
-                Marshal.FreeCoTaskMem(pReturnedString);
-                return new string[] { };
-            }
-
-            string local = Marshal.PtrToStringAnsi(pReturnedString, (int)bytesReturned).ToString();
-            Marshal.FreeCoTaskMem(pReturnedString);
-
-            return local.Substring(0, local.Length - 1).Split('\0');
-        }
-
-        public static StringDictionary GetValues(string filePath, string sectionName)
-        {
-            uint MAX_BUFFER = 32767;
-
-            StringDictionary ret = new StringDictionary();
-
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                Debug.WriteLine("Path to INI file cannot be empty or null. Unable to get values.");
-                return ret;
-            }
-
-            if (string.IsNullOrWhiteSpace(sectionName))
-            {
-                Debug.WriteLine("Section name cannot be empty or null. Unable to get values.");
-                return ret;
-            }
-
-            IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
-
-            uint bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, MAX_BUFFER, filePath);
-
-            if ((bytesReturned == MAX_BUFFER - 2) || (bytesReturned == 0))
-            {
-                Marshal.FreeCoTaskMem(pReturnedString);
-                return ret;
-            }
-
-            //bytesReturned -1 to remove trailing \0
-
-            // NOTE: Calling Marshal.PtrToStringAuto(pReturnedString) will
-            //       result in only the first pair being returned
-            string returnedString = Marshal.PtrToStringAuto(pReturnedString, (int)bytesReturned - 1);
-
-            Marshal.FreeCoTaskMem(pReturnedString);
-
-            foreach (string value in returnedString.Split('\0'))
-            {
-                string[] valueKey = value.Split('=');
-
-                ret.Add(valueKey[0], valueKey[1]);
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Gets the file size
-        /// </summary>
-        /// <param name="filePath">Path to the filename</param>
-        /// <returns>File Size (in bytes)</returns>
-        public static long GetFileSize(string filePath)
-        {
-            try
-            {
-                FileInfo fi = new FileInfo(filePath);
-
-                return fi.Length;
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the folder size
-        /// </summary>
-        /// <param name="folderPath">Path to the folder</param>
-        /// <param name="includeSubDirs">Include sub directories</param>
-        /// <returns>Folder Size (in bytes)</returns>
-        public static long GetFolderSize(string folderPath, bool includeSubDirs)
-        {
-            long totalSize = 0;
-
-            try
-            {
-                foreach (string filePath in Directory.GetFiles(folderPath, "*", (includeSubDirs) ? (System.IO.SearchOption.AllDirectories) : (System.IO.SearchOption.TopDirectoryOnly)))
-                {
-                    long fileSize = GetFileSize(filePath);
-                    if (fileSize != 0)
-                        totalSize += fileSize;
-                }
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
-
-            return totalSize;
-        }
-
-        /// <summary>
-        /// Checks if file is valid for privacy cleaner
-        /// </summary>
-        /// <param name="fileInfo">FileInfo</param>
-        /// <returns>True if file is valid</returns>
-        public static bool IsFileValid(FileInfo fileInfo)
-        {
-            if (fileInfo == null)
-                return false;
-
-            FileAttributes fileAttribs;
-            long fileLength;
-
-            try
-            {
-                fileAttribs = fileInfo.Attributes;
-                fileLength = fileInfo.Length;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if file is valid.");
-                return false;
-            }
-
-            if ((fileAttribs & FileAttributes.System) == FileAttributes.System && (!Properties.Settings.Default.privacyCleanerIncSysFile))
-                return false;
-
-            if ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden && (!Properties.Settings.Default.privacyCleanerIncHiddenFile))
-                return false;
-
-            if ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly && (!Properties.Settings.Default.privacyCleanerIncReadOnlyFile))
-                return false;
-
-            if ((fileLength == 0) && (!Properties.Settings.Default.privacyCleanerInc0ByteFile))
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Checks if file path is valid
-        /// </summary>
-        /// <param name="filePath">Path to file</param>
-        /// <returns>True if file is valid</returns>
-        public static bool IsFileValid(string filePath)
-        {
-            bool bRet = false;
-
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                Debug.WriteLine("File path cannot be empty or null. Unable to check if file is valid.");
-                return bRet;
-            }
-
-            try
-            {
-                FileInfo fileInfo = new FileInfo(filePath);
-                bRet = IsFileValid(fileInfo);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if file is valid.");
-                return bRet;
-            }
-            
-
-            return bRet;
-        }
-
-        /// <summary>
-        /// Deletes a file
-        /// </summary>
-        /// <param name="filePath">Path to file</param>
-        public static void DeleteFile(string filePath)
-        {
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                Debug.WriteLine("File path cannot be empty or null. Unable to delete file.");
-                return;
-            }
-
-            try
-            {
-                if (Properties.Settings.Default.privacyCleanerDeletePerm)
-                    File.Delete(filePath);
-                else
-                    FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to delete file: " + filePath);
-            }
-        }
-
-        /// <summary>
-        /// Deletes a directory
-        /// </summary>
-        /// <param name="dirPath">Path to directory</param>
-        /// <param name="recurse">Recursive delete</param>
-        public static void DeleteDir(string dirPath, bool recurse)
-        {
-            if (string.IsNullOrWhiteSpace(dirPath))
-            {
-                Debug.WriteLine("Directory path cannot be empty or null. Unable to delete directory.");
-                return;
-            }
-
-            try
-            {
-                DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-                if ((dirInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    dirInfo.Attributes = dirInfo.Attributes & ~FileAttributes.ReadOnly;
-
-                if (!recurse && dirInfo.GetFileSystemInfos().Length > 0)
-                    return;
-
-                if (Properties.Settings.Default.privacyCleanerDeletePerm)
-                    Directory.Delete(dirPath, recurse);
-                else
-                    FileSystem.DeleteDirectory(dirPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-            }
-            catch (Exception)
-            {
-
-            }
-
-        }
-        #endregion
     }
 }

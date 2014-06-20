@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.ComponentModel;
 using Microsoft.Win32;
 using System.Windows.Media.Imaging;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers 
 {
@@ -235,7 +236,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 // Convert value to string
                 if (regKey != null)
-                    this._strData = Utils.RegConvertXValueToString(regKey, valueName);
+                    this._strData = RegConvertXValueToString(regKey, valueName);
             }
         }
 
@@ -263,6 +264,72 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 childBadRegKey._parent = this;
                 childBadRegKey.Init();
             }
+        }
+
+        /// <summary>
+        /// Gets the value kind and converts it accordingly
+        /// </summary>
+        /// <returns>Registry value formatted to a string</returns>
+        private static string RegConvertXValueToString(RegistryKey regKey, string valueName)
+        {
+            string strRet = "";
+
+            if (regKey == null)
+                return strRet;
+
+            try
+            {
+
+                switch (regKey.GetValueKind(valueName))
+                {
+                    case RegistryValueKind.MultiString:
+                        {
+                            string strValue = "";
+                            string[] strValues = (string[])regKey.GetValue(valueName);
+
+                            for (int i = 0; i < strValues.Length; i++)
+                            {
+                                if (i != 0)
+                                    strValue = string.Concat(strValue, ",");
+
+                                strValue = string.Format("{0} {1}", strValue, strValues[i]);
+                            }
+
+                            strRet = string.Copy(strValue);
+
+                            break;
+                        }
+                    case RegistryValueKind.Binary:
+                        {
+                            string strValue = "";
+
+                            foreach (byte b in (byte[])regKey.GetValue(valueName))
+                                strValue = string.Format("{0} {1:X2}", strValue, b);
+
+                            strRet = string.Copy(strValue);
+
+                            break;
+                        }
+                    case RegistryValueKind.DWord:
+                    case RegistryValueKind.QWord:
+                        {
+                            strRet = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
+                            break;
+                        }
+                    default:
+                        {
+                            strRet = string.Format("{0}", regKey.GetValue(valueName));
+                            break;
+                        }
+
+                }
+            }
+            catch
+            {
+                return "";
+            }
+
+            return strRet;
         }
 
         public override string ToString()

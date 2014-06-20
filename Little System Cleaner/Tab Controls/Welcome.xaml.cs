@@ -31,6 +31,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Controls
 {

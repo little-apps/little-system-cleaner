@@ -15,6 +15,7 @@ using System.Threading;
 using Little_System_Cleaner.Duplicate_Finder.Helpers;
 using System.IO;
 using System.ComponentModel;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {

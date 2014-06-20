@@ -33,6 +33,8 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -73,7 +75,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             Wizard.IsBusy = false;
 
             // Check registry size before continuing
-            if (Utils.GetNewRegistrySize() <= 0 || IsCompacted)
+            if (HiveManager.GetNewRegistrySize() <= 0 || IsCompacted)
             {
                 MessageBox.Show(Application.Current.MainWindow, "It appears that the registry has already been compacted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
