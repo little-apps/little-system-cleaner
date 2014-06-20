@@ -39,14 +39,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 strFileName = strFileName.Substring(0, nSlash);
 
-                return (Utils.FileExists(strFileName) && !ScanWizard.IsOnIgnoreList(strFileName));
+                return (Utils.FileExists(strFileName) || ScanWizard.IsOnIgnoreList(strFileName));
             }
             else
             {
                 StringBuilder sb = new StringBuilder(strFileName);
                 if (PInvoke.PathParseIconLocation(sb) >= 0)
                     if (!string.IsNullOrEmpty(sb.ToString()))
-                        return (Utils.FileExists(sb.ToString()) && !ScanWizard.IsOnIgnoreList(strFileName));
+                        return (Utils.FileExists(sb.ToString()) || ScanWizard.IsOnIgnoreList(strFileName));
             }
 
             return false;
@@ -81,10 +81,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             // Check for illegal chars
             if (Utils.FindAnyIllegalChars(strDirectory))
                 return false;
-
-            // See if it is on the exclude list
-            if (ScanWizard.IsOnIgnoreList(strDirectory))
-                return true;
 
             // Remove filename.ext and trailing backslash from path
             StringBuilder sb = new StringBuilder(strDirectory);

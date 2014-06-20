@@ -82,18 +82,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 // Check install location 
                                 if (!string.IsNullOrEmpty(progInfo._installLocation))
                                     if ((!ScanFunctions.DirExists(progInfo._installLocation)) && (!Utils.FileExists(progInfo._installLocation)))
-                                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
+                                        if (!ScanWizard.IsOnIgnoreList(progInfo._installLocation))
+                                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
 
                                 // Check install source 
                                 if (!string.IsNullOrEmpty(progInfo._installSource))
                                     if ((!ScanFunctions.DirExists(progInfo._installSource)) && (!Utils.FileExists(progInfo._installSource)))
-                                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
+                                        if (!ScanWizard.IsOnIgnoreList(progInfo._installSource))
+                                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
                                 // Check ARP Cache
                                 if (progInfo.SlowCache)
                                 {
                                     if (!string.IsNullOrEmpty(progInfo.FileName))
-                                        if (!Utils.FileExists(progInfo.FileName))
+                                        if (!Utils.FileExists(progInfo.FileName) && !ScanWizard.IsOnIgnoreList(progInfo.FileName))
                                             ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, progInfo.SlowInfoCacheRegKey);
                                 }
                             }

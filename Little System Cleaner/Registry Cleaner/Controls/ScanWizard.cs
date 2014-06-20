@@ -381,7 +381,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <returns>true if it is on the ignore list, otherwise false</returns>
         public static bool IsOnIgnoreList(string Path)
         {
-            if (!string.IsNullOrEmpty(Path))
+            if (!string.IsNullOrEmpty(Path) && Properties.Settings.Default.arrayExcludeList.Count > 0)
             {
                 string expandedPath = string.Empty;
                 bool isPath = (!Path.ToUpper().StartsWith("HKEY"));

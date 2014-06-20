@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             foreach (string strFolder in regKey.GetValueNames())
             {
-                if (!ScanFunctions.DirExists(strFolder))
+                if (!ScanFunctions.DirExists(strFolder) && !ScanWizard.IsOnIgnoreList(strFolder))
                     ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
             }
         }
@@ -95,14 +95,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     if (!string.IsNullOrEmpty(strAppDir))
                     {
-                        if (Utils.SearchPath(strAppPath, strAppDir))
+                        if (ScanWizard.IsOnIgnoreList(strAppDir))
+                            continue;
+                        else if (Utils.SearchPath(strAppPath, strAppDir))
                             continue;
                         else if (Utils.SearchPath(strSubKey, strAppDir))
                             continue;
                     }
                     else
                     {
-                        if (Utils.FileExists(strAppPath))
+                        if (Utils.FileExists(strAppPath) || ScanWizard.IsOnIgnoreList(strAppPath))
                             continue;
                     }
 

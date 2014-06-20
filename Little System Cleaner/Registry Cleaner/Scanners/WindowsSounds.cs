@@ -74,7 +74,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strSoundPath = rk2.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strSoundPath))
-                            if (!Utils.FileExists(strSoundPath))
+                            if (!Utils.FileExists(strSoundPath) && !ScanWizard.IsOnIgnoreList(strSoundPath))
                                 ScanWizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
                     }
 

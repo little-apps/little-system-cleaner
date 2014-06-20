@@ -59,7 +59,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         if (valueName.StartsWith("@") || valueName == "LangID")
                             continue;
 
-                        if (!Utils.FileExists(valueName))
+                        if (!Utils.FileExists(valueName) && !ScanWizard.IsOnIgnoreList(valueName))
                             ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
                     }
                 }
@@ -107,7 +107,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             foreach (string strValueName in regKey.GetValueNames())
             {
-                string filePath, fileArgs;
+                string filePath = "", fileArgs = "";
 
                 // Ignore MRUListEx and others
                 if (!Regex.IsMatch(strValueName, "[0-9]"))
@@ -125,8 +125,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (!Utils.FileExists(shortcutPath) || !Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs))
                 {
-                    ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
-                    continue;
+                    if (!ScanWizard.IsOnIgnoreList(shortcutPath) && !ScanWizard.IsOnIgnoreList(filePath))
+                    {
+                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
+                        continue;
+                    }
                 }
             }
         }

@@ -72,10 +72,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         if (Utils.FileExists(strValue))
                             continue;
 
+                        if (ScanWizard.IsOnIgnoreList(strValue))
+                            continue;
+
                         // Check for font in fonts folder
                         string strFontPath = String.Format("{0}\\{1}", strPath.ToString(), strValue);
 
-                        if (!File.Exists(strFontPath))
+                        if (!File.Exists(strFontPath) && !ScanWizard.IsOnIgnoreList(strFontPath))
                             ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strFontName);
                     }
 

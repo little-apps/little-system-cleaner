@@ -80,13 +80,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (string.IsNullOrEmpty(helpFile) || string.IsNullOrEmpty(helpPath))
                 return true;
 
-            if (Utils.FileExists(helpPath))
+            if (Utils.FileExists(helpPath) || ScanWizard.IsOnIgnoreList(helpPath))
                 return true;
 
-            if (Utils.FileExists(helpFile))
+            if (Utils.FileExists(helpFile) || ScanWizard.IsOnIgnoreList(helpFile))
                 return true;
 
-            if (Utils.FileExists(Path.Combine(helpPath, helpFile)))
+            string combinedPath = Path.Combine(helpPath, helpFile);
+
+            if (Utils.FileExists(combinedPath) || ScanWizard.IsOnIgnoreList(combinedPath))
                 return true;
 
             return false;

@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strValue = regKey.GetValue(strDriverName) as string;
 
                         if (!string.IsNullOrEmpty(strValue))
-                            if (!Utils.FileExists(strValue))
+                            if (!Utils.FileExists(strValue) && !ScanWizard.IsOnIgnoreList(strValue))
                                 ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strDriverName);
                     }
                 }

@@ -170,7 +170,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer = regKeyInprocSrvr.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer))
-                            if (!Utils.FileExists(strInprocServer))
+                            if (!Utils.FileExists(strInprocServer) && !ScanWizard.IsOnIgnoreList(strInprocServer))
                                 ScanWizard.StoreInvalidKey(Strings.InvalidInprocServer, regKeyInprocSrvr.ToString());
 
                         regKeyInprocSrvr.Close();
@@ -194,7 +194,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer32))
-                            if (!Utils.FileExists(strInprocServer32))
+                            if (!Utils.FileExists(strInprocServer32) && !ScanWizard.IsOnIgnoreList(strInprocServer32))
                                 ScanWizard.StoreInvalidKey(Strings.InvalidInprocServer32, regKeyInprocSrvr32.ToString());
 
                         regKeyInprocSrvr32.Close();
@@ -679,7 +679,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // See if files exist
                 string strExec = regKey.GetValue("Exec") as string;
                 if (!string.IsNullOrEmpty(strExec))
-                    if (!Utils.FileExists(strExec))
+                    if (!Utils.FileExists(strExec) && !ScanWizard.IsOnIgnoreList(strExec))
                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Exec");
             }
             catch (Exception ex)
@@ -691,7 +691,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 string strScript = regKey.GetValue("Script") as string;
                 if (!string.IsNullOrEmpty(strScript))
-                    if (!Utils.FileExists(strScript))
+                    if (!Utils.FileExists(strScript) && !ScanWizard.IsOnIgnoreList(strScript))
                         ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Script");
             }
             catch (Exception ex)

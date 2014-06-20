@@ -53,7 +53,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 foreach (string strFilePath in regKey.GetValueNames())
                 {
                     if (!string.IsNullOrEmpty(strFilePath))
-                        if (!Utils.FileExists(strFilePath))
+                        if (!Utils.FileExists(strFilePath) && !ScanWizard.IsOnIgnoreList(strFilePath))
                             ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
                 }
 
