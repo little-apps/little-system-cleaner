@@ -43,3 +43,4 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * ~~Update icons~~
  * Fix button sizes
  * Fix bugs related to Little Registry Cleaner ([listed here](http://bugs.little-apps.com/view_all_bug_page.php))
+ * Allow non-existent files/folders to be added to registry cleaner ignore list
