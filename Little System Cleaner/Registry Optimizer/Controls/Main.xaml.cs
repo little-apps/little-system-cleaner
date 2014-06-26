@@ -46,7 +46,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         /// <summary>
         /// True if the registry has been compacted and is waiting for a reboot
         /// </summary>
-        public static bool IsCompacted { get; set; }
+        internal static bool IsCompacted { get; set; }
 
         Wizard scanBase;
 

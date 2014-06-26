@@ -36,28 +36,28 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         List<Type> arrayControls = new List<Type>();
         int currentControl = 0;
 
-        public static ScannerBase CurrentScanner;
-        static int ProblemsFound = 0;
+        internal static ScannerBase CurrentScanner;
+        private static int ProblemsFound = 0;
 
         /// <summary>
         /// Gets/Sets the current file or registry key being scanned
         /// <remarks>Please set this with every scan function</remarks>
         /// </summary>
-        public static string CurrentFile
+        internal static string CurrentFile
         {
             get;
             set;
         }
 
-        public static string CurrentSectionName
+        internal static string CurrentSectionName
         {
             get;
             set;
         }
 
-        public static ResultArray ResultArray = new ResultArray();
+        internal static ResultArray ResultArray = new ResultArray();
 
-        public static Thread ScanThread { get; set; }
+        internal static Thread ScanThread { get; set; }
 
         public SectionModel Model
         {
@@ -192,7 +192,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <param name="cleanDelegate">Delegate</param>
         /// <param name="desc">Description</param>
         /// <param name="size">Size of file or files in bytes (optional)</param>
-        public static bool StoreCleanDelegate(CleanDelegate cleanDelegate, string desc, long size)
+        internal static bool StoreCleanDelegate(CleanDelegate cleanDelegate, string desc, long size)
         {
             if (cleanDelegate == null || string.IsNullOrEmpty(desc))
                 return false;
@@ -206,7 +206,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// Gets the size of the files and stores the files in the result array
         /// </summary>
         /// <param name="filePath">File Path</param>
-        public static bool StoreBadFileList(string desc, string[] filePaths)
+        internal static bool StoreBadFileList(string desc, string[] filePaths)
         {
             long fileSize = 0;
 
@@ -227,7 +227,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// Stores the folder paths in the result array
         /// </summary>
         /// <param name="filePath">File Path</param>
-        public static bool StoreBadFolderList(string desc, Dictionary<string, bool> folderPaths)
+        internal static bool StoreBadFolderList(string desc, Dictionary<string, bool> folderPaths)
         {
             // Check for null parameters
             if (folderPaths == null || folderPaths.Count == 0 || string.IsNullOrEmpty(desc))
@@ -244,7 +244,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <param name="filePath">File Path</param>
         /// <param name="fileSize">File Size</param>
         [Obsolete]
-        public static bool StoreBadFileList(string desc, string[] filePaths, long fileSize)
+        internal static bool StoreBadFileList(string desc, string[] filePaths, long fileSize)
         {
             // Check for null parameters
             if (filePaths == null || filePaths.Length == 0 || string.IsNullOrEmpty(desc))
@@ -266,7 +266,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <param name="desc">Description</param>
         /// <param name="regKeys">Dictionary containing a registry key (must be writeable) and a list of value names</param>
         /// <returns>True or false if the description and/or dictionary is empty</returns>
-        public static bool StoreBadRegKeyValueNames(string desc, Dictionary<RegistryKey, string[]> regKeys)
+        internal static bool StoreBadRegKeyValueNames(string desc, Dictionary<RegistryKey, string[]> regKeys)
         {
             if (string.IsNullOrEmpty(desc) || regKeys == null || regKeys.Count == 0)
                 return false;
@@ -288,7 +288,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <param name="desc">Description</param>
         /// <param name="regKeys">Dictionary containing a registry subkey (must be writeable) and a whether to remove to the whole subkey</param>
         /// <returns>True or false if the description and/or dictionary is empty</returns>
-        public static bool StoreBadRegKeySubKeys(string desc, Dictionary<RegistryKey, bool> regKeys)
+        internal static bool StoreBadRegKeySubKeys(string desc, Dictionary<RegistryKey, bool> regKeys)
         {
             if (string.IsNullOrEmpty(desc) || regKeys == null || regKeys.Count == 0)
                 return false;
@@ -298,7 +298,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             return true;
         }
 
-        public static bool StoreINIKeys(string desc, INIInfo[] iniInfo)
+        internal static bool StoreINIKeys(string desc, INIInfo[] iniInfo)
         {
             if (string.IsNullOrEmpty(desc) || iniInfo == null)
                 return false;
@@ -308,7 +308,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             return true;
         }
 
-        public static bool StoreXML(string desc, Dictionary<string, List<string>> xmlPaths)
+        internal static bool StoreXML(string desc, Dictionary<string, List<string>> xmlPaths)
         {
             if (string.IsNullOrEmpty(desc) || xmlPaths == null || xmlPaths.Count == 0)
                 return false;

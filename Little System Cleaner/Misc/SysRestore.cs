@@ -30,13 +30,13 @@ namespace Little_System_Cleaner
     {
         [DllImport("srclient.dll", SetLastError=true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SRSetRestorePointW(ref RestorePointInfo pRestorePtSpec, out STATEMGRSTATUS pSMgrStatus);
+        internal static extern bool SRSetRestorePointW(ref RestorePointInfo pRestorePtSpec, out STATEMGRSTATUS pSMgrStatus);
 
         /// <summary>
         /// Contains information used by the SRSetRestorePoint function
         /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct RestorePointInfo
+        internal struct RestorePointInfo
         {
             public int dwEventType; // The type of event
             public int dwRestorePtType; // The type of restore point
@@ -49,14 +49,14 @@ namespace Little_System_Cleaner
         /// Contains status information used by the SRSetRestorePoint function
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct STATEMGRSTATUS
+        internal struct STATEMGRSTATUS
         {
             public int nStatus; // The status code
             public Int64 llSequenceNumber; // The sequence number of the restore point
         }
 
         // Type of restorations
-        public enum RestoreType
+        internal enum RestoreType
         {
             ApplicationInstall = 0, // Installing a new application
             ApplicationUninstall = 1, // An application has been uninstalled
@@ -70,11 +70,11 @@ namespace Little_System_Cleaner
         }
 
         // Constants
-        public const Int16 BeginSystemChange = 100; // Start of operation 
-        public const Int16 EndSystemChange = 101; // End of operation
+        internal const Int16 BeginSystemChange = 100; // Start of operation 
+        internal const Int16 EndSystemChange = 101; // End of operation
         // Windows XP only - used to prevent the restore points intertwined
-        public const Int16 BeginNestedSystemChange = 102;
-        public const Int16 EndNestedSystemChange = 103;
+        internal const Int16 BeginNestedSystemChange = 102;
+        internal const Int16 EndNestedSystemChange = 103;
 
         internal const Int16 DesktopSetting = 2; /* not implemented */
         internal const Int16 AccessibilitySetting = 3; /* not implemented */
@@ -89,7 +89,7 @@ namespace Little_System_Cleaner
         /// Verifies that the OS can do system restores
         /// </summary>
         /// <returns>True if OS is able to perform system restores</returns>
-        public static bool SysRestoreAvailable()
+        internal static bool SysRestoreAvailable()
         {
             int majorVersion = Environment.OSVersion.Version.Major;
             int minorVersion = Environment.OSVersion.Version.Minor;
@@ -133,7 +133,7 @@ namespace Little_System_Cleaner
         /// <param name="lSeqNum">Returns the sequence number</param>
         /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
         /// <seealso cref="Use EndRestore() or CancelRestore() to end the system restore"/>
-        public static void StartRestore(string strDescription, out long lSeqNum)
+        internal static void StartRestore(string strDescription, out long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();
             STATEMGRSTATUS rpStatus = new STATEMGRSTATUS();
@@ -174,7 +174,7 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="lSeqNum">The restore sequence number</param>
         /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
-        public static void EndRestore(long lSeqNum)
+        internal static void EndRestore(long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();
             STATEMGRSTATUS rpStatus = new STATEMGRSTATUS();
@@ -203,7 +203,7 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="lSeqNum">The restore sequence number</param>
         /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
-        public static void CancelRestore(long lSeqNum)
+        internal static void CancelRestore(long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();
             STATEMGRSTATUS rpStatus = new STATEMGRSTATUS();

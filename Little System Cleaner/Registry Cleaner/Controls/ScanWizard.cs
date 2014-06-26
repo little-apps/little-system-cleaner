@@ -60,13 +60,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        public static string currentScannerName
+        internal static string currentScannerName
         {
             get;
             set;
         }
 
-        public static BadRegKeyArray badRegKeyArray
+        internal static BadRegKeyArray badRegKeyArray
         {
             get { return _badRegKeyArray; }
         }
@@ -76,13 +76,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             get { return arrayScanners; }
         }
 
-        static Report _report;
-        public static Report Report
+        private static Report _report;
+        internal static Report Report
         {
             get { return _report; }
         }
 
-        public static bool CreateNewLogFile() 
+        internal static bool CreateNewLogFile() 
         {
             string fileName;
 
@@ -106,9 +106,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             get { return (UserControl)this.Content; }
         }
 
-        public static DateTime ScanStartTime { get; set; }
+        internal static DateTime ScanStartTime { get; set; }
 
-        public static Thread ScanThread { get; set; }
+        internal static Thread ScanThread { get; set; }
 
         public ScanWizard()
         {
@@ -230,7 +230,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             SetCurrentControl(currentControl);
         }
 
-        public static void CancelScan()
+        internal static void CancelScan()
         {
             if ((ScanThread != null) && ScanThread.IsAlive)
                 ScanThread.Abort();
@@ -268,7 +268,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <param name="Problem">Reason its invalid</param>
         /// <param name="Path">The path to registry key (including registry hive)</param>
         /// <returns>True if it was added</returns>
-        public static bool StoreInvalidKey(string Problem, string Path)
+        internal static bool StoreInvalidKey(string Problem, string Path)
         {
             return StoreInvalidKey(Problem, Path, "");
         }
@@ -281,7 +281,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <param name="regPath">The path to registry key (including registry hive)</param>
         /// <param name="valueName">Value name (leave blank if theres none)</param>
         /// <returns>True if it was added. Otherwise, false.</returns>
-        public static bool StoreInvalidKey(string problem, string regPath, string valueName)
+        internal static bool StoreInvalidKey(string problem, string regPath, string valueName)
         {
             string baseKey, subKey;
 
@@ -379,7 +379,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// Checks for the path in ignore list
         /// </summary>
         /// <returns>true if it is on the ignore list, otherwise false</returns>
-        public static bool IsOnIgnoreList(string Path)
+        internal static bool IsOnIgnoreList(string Path)
         {
             if (!string.IsNullOrEmpty(Path) && Properties.Settings.Default.arrayExcludeList.Count > 0)
             {

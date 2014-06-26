@@ -28,12 +28,12 @@ using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
-    public static class HiveManager 
+    internal static class HiveManager 
     {
         /// <summary>
         /// Gets a temporary path for a registry hive
         /// </summary>
-        public static string GetTempHivePath()
+        internal static string GetTempHivePath()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// </summary>
         /// <param name="DevicePath">Device name with path</param>
         /// <returns>Drive path</returns>
-        public static string ConvertDeviceToMSDOSName(string DevicePath)
+        internal static string ConvertDeviceToMSDOSName(string DevicePath)
         {
             string strDevicePath = string.Copy(DevicePath.ToLower());
             string strRetVal = "";
@@ -101,7 +101,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// Gets the old size of the registry hives
         /// </summary>
         /// <returns>Registry size (in bytes)</returns>
-        public static long GetOldRegistrySize()
+        internal static long GetOldRegistrySize()
         {
             if (Wizard.RegistryHives == null)
                 return 0;
@@ -123,7 +123,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// Gets the new size of the registry hives
         /// </summary>
         /// <returns>Registry size (in bytes)</returns>
-        public static long GetNewRegistrySize()
+        internal static long GetNewRegistrySize()
         {
             if (Wizard.RegistryHives == null)
                 return 0;

@@ -50,12 +50,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         ObservableCollection<lviScanner> _SectionCollection = new ObservableCollection<lviScanner>();
 
         private static string currentItemScanned;
-        public static int TotalItemsScanned = -1;
+        internal static int TotalItemsScanned = -1;
 
         /// <summary>
         /// Gets the enabled scanners
         /// </summary>
-        public static List<ScannerBase> EnabledScanners
+        internal static List<ScannerBase> EnabledScanners
         {
             get { return enabledScanners; }
         }
@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <summary>
         /// Gets the total problems
         /// </summary>
-        public static int TotalProblems
+        internal static int TotalProblems
         {
             get { return ScanWizard.badRegKeyArray.Count; }
         }
@@ -71,7 +71,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <summary>
         /// Sets the currently scanned item and increments the total
         /// </summary>
-        public static string CurrentItem
+        internal static string CurrentItem
         {
             get { return currentItemScanned; }
             set

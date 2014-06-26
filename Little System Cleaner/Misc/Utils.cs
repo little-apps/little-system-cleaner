@@ -41,17 +41,17 @@ using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Misc
 {
-    static class Utils
+    internal static class Utils
     {
         /// <summary>
         /// Returns true if the OS is 64 bit
         /// </summary>
-        public static bool Is64BitOS
+        internal static bool Is64BitOS
         {
             get { return Environment.Is64BitOperatingSystem; }
         }
 
-        public static string ProductName
+        internal static string ProductName
         {
             get { return Application.ProductName; }
         }
@@ -203,7 +203,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="InPath">The registry path (including hive)</param>
         /// <returns>True if it exists</returns>
-        public static bool RegKeyExists(string inPath)
+        internal static bool RegKeyExists(string inPath)
         {
             string strBaseKey, strSubKey;
 
@@ -213,7 +213,7 @@ namespace Little_System_Cleaner.Misc
             return RegKeyExists(strBaseKey, strSubKey);
         }
 
-        public static bool RegKeyExists(string mainKey, string subKey)
+        internal static bool RegKeyExists(string mainKey, string subKey)
         {
             bool bKeyExists = false;
             RegistryKey reg = RegOpenKey(mainKey, subKey);
@@ -232,7 +232,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="regPath">Registry path (including hive)</param>
         /// <returns>Registry Key class</returns>
-        public static RegistryKey RegOpenKey(string regPath)
+        internal static RegistryKey RegOpenKey(string regPath)
         {
             string mainKey = "", subKey = "";
 
@@ -247,7 +247,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="MainKey">The hive (begins with HKEY)</param>
         /// <param name="SubKey">The sub key (cannot be null or whitespace)</param>
         /// <returns>RegistryKey or null if error occurred</returns>
-        public static RegistryKey RegOpenKey(string MainKey, string SubKey)
+        internal static RegistryKey RegOpenKey(string MainKey, string SubKey)
         {
             RegistryKey reg = null;
 
@@ -297,7 +297,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="baseKey">Base Key (Hive name)</param>
         /// <param name="subKey">Sub Key Path</param>
         /// <returns>True if the path was parsed successfully</returns>
-        public static bool ParseRegKeyPath(string inPath, out string baseKey, out string subKey)
+        internal static bool ParseRegKeyPath(string inPath, out string baseKey, out string subKey)
         {
             baseKey = subKey = "";
 
@@ -570,7 +570,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="Length">Size in bytes</param>
         /// <param name="shortFormat">If true, displays units in short form (ie: Bytes becomes B)</param>
         /// <returns>Formatted String</returns>
-        public static string ConvertSizeToString(long Length, bool shortFormat = true)
+        internal static string ConvertSizeToString(long Length, bool shortFormat = true)
         {
             if (Length < 0)
                 return "";
@@ -617,7 +617,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="directory">DirectoryInfo class</param>
         /// <param name="includeSubdirectories">Includes sub directories if true</param>
         /// <returns>Size of directory in bytes</returns>
-        public static long CalculateDirectorySize(DirectoryInfo directory, bool includeSubdirectories)
+        internal static long CalculateDirectorySize(DirectoryInfo directory, bool includeSubdirectories)
         {
             long totalSize = 0;
 
@@ -647,7 +647,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="CSIDL">CSIDL</param>
         /// <returns>Special folder path</returns>
-        public static string GetSpecialFolderPath(int CSIDL)
+        internal static string GetSpecialFolderPath(int CSIDL)
         {
             StringBuilder path = new StringBuilder(260);
 
@@ -657,14 +657,14 @@ namespace Little_System_Cleaner.Misc
             return "";
         }
 
-        public static bool SearchPath(string fileName)
+        internal static bool SearchPath(string fileName)
         {
             string retPath = "";
 
             return SearchPath(fileName, null, out retPath);
         }
 
-        public static bool SearchPath(string fileName, string Path)
+        internal static bool SearchPath(string fileName, string Path)
         {
             string retPath = "";
 
@@ -678,7 +678,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="Path">The path to be searched for the file (searches %path% variable if null)</param>
         /// <param name="retPath">The path containing the file</param>
         /// <returns>True if it was found</returns>
-        public static bool SearchPath(string fileName, string Path, out string retPath)
+        internal static bool SearchPath(string fileName, string Path, out string retPath)
         {
             StringBuilder strBuffer = new StringBuilder(260);
 
@@ -700,7 +700,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="Path">Path w/ quotes</param>
         /// <returns>Path w/o quotes</returns>
-        public static string UnqouteSpaces(string Path)
+        internal static string UnqouteSpaces(string Path)
         {
             StringBuilder sb = new StringBuilder(Path);
 
@@ -747,7 +747,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="strFilename">The document to search for</param>
         /// <returns>The file that opens the document</returns>
-        public static string FindExecutable(string strFilename)
+        internal static string FindExecutable(string strFilename)
         {
             StringBuilder strResultBuffer = new StringBuilder(1024);
 
@@ -766,7 +766,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="SubKey">Path containing registry hive (EX: HKEY_CURRENT_USER/...) </param>
         /// <returns>Shortened registry path  (EX: HKCU/...) </returns>
-        public static string PrefixRegPath(string SubKey)
+        internal static string PrefixRegPath(string SubKey)
         {
             string strSubKey = string.Copy(SubKey);
 
@@ -798,7 +798,7 @@ namespace Little_System_Cleaner.Misc
         /// Checks for default program then launches URI
         /// </summary>
         /// <param name="WebAddress">The address to launch</param>
-        public static void LaunchURI(string WebAddress)
+        internal static void LaunchURI(string WebAddress)
         {
             Help.ShowHelp(Form.ActiveForm, string.Copy(WebAddress));
         }
@@ -809,7 +809,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="s">String containing the GUID to be converted</param>
         /// <param name="guid">If conversion is sucessful, this parameter is the GUID value of the string. Otherwise, it is empty.</param>
         /// <returns>True if the conversion succeeded</returns>
-        public static bool TryParseGuid(string s, out Guid guid)
+        internal static bool TryParseGuid(string s, out Guid guid)
         {
             guid = Guid.Empty;
 
@@ -834,7 +834,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Auto resize columns
         /// </summary>
-        public static void AutoResizeColumns(System.Windows.Controls.ListView listView)
+        internal static void AutoResizeColumns(System.Windows.Controls.ListView listView)
         {
             System.Windows.Controls.GridView gv = listView.View as System.Windows.Controls.GridView;
 
@@ -858,7 +858,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="number">Number to add suffix to</param>
         /// <returns>Number with suffix</returns>
-        public static string GetNumberSuffix(int number)
+        internal static string GetNumberSuffix(int number)
         {
             if (number <= 0)
                 return number.ToString();
@@ -884,7 +884,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="bitmap">Source</param>
         /// <returns>Image</returns>
-        public static System.Windows.Controls.Image CreateBitmapSourceFromBitmap(System.Drawing.Bitmap bitmap)
+        internal static System.Windows.Controls.Image CreateBitmapSourceFromBitmap(System.Drawing.Bitmap bitmap)
         {
             if (bitmap == null)
                 throw new ArgumentNullException("bitmap");
@@ -916,7 +916,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="WildString">String to compare</param>
         /// <param name="Mask">Wildcard mask (ex: *.jpg)</param>
         /// <returns>True if match found</returns>
-        public static bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
+        internal static bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
         {
             int i = 0, k = 0;
 

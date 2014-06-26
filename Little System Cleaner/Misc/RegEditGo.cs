@@ -112,7 +112,7 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="keyPath">path of registry key</param>
         /// <param name="valueName">name of registry value (can be null)</param>
-        public static void GoTo(string keyPath, string valueName)
+        internal static void GoTo(string keyPath, string valueName)
         {
             using (RegEditGo locator = new RegEditGo())
             {

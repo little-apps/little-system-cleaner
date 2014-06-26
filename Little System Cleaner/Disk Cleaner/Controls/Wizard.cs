@@ -49,7 +49,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-        public static ObservableCollection<ProblemFile> fileList
+        internal static ObservableCollection<ProblemFile> fileList
         {
             get;
             set;
@@ -81,7 +81,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-        public static DateTime ScanStartTime { get; set; }
+        internal static DateTime ScanStartTime { get; set; }
 
         public Wizard()
         {

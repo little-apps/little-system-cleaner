@@ -38,11 +38,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             get { return (UserControl)this.Content; }
         }
 
-        public static DateTime ScanStartTime { get; set; }
+        internal static DateTime ScanStartTime { get; set; }
 
-        public static ObservableCollection<Hive> RegistryHives { get; set; }
+        internal static ObservableCollection<Hive> RegistryHives { get; set; }
 
-        public static bool IsBusy { get; set; }
+        internal static bool IsBusy { get; set; }
 
         public bool HivesLoaded = false;
 

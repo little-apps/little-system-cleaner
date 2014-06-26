@@ -27,7 +27,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     /// <summary>
     /// Main class that lets you auto update applications by setting some static fields and executing its Start method.
     /// </summary>
-    public static class AutoUpdater
+    internal static class AutoUpdater
     {
         internal static String DialogTitle;
 
@@ -53,38 +53,38 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// URL of the xml file that contains information about latest version of the application.
         /// </summary>
         /// 
-        public static String AppCastURL;
+        internal static String AppCastURL;
 
         /// <summary>
         /// Opens the download url in default browser if true. Very usefull if you have portable application.
         /// </summary>
-        public static bool OpenDownloadPage;
+        internal static bool OpenDownloadPage;
 
         /// <summary>
         /// Sets the current culture of the auto update notification window. Set this value if your application supports functionalty to change the languge of the application.
         /// </summary>
-        public static CultureInfo CurrentCulture;
+        internal static CultureInfo CurrentCulture;
 
         /// <summary>
         /// If this is true users see dialog where they can set remind later interval otherwise it will take the interval from RemindLaterAt and RemindLaterTimeSpan fields.
         /// </summary>
-        public static Boolean LetUserSelectRemindLater = true;
+        internal static Boolean LetUserSelectRemindLater = true;
 
         /// <summary>
         /// Remind Later interval after user should be reminded of update.
         /// </summary>
-        public static int RemindLaterAt = 2;
+        internal static int RemindLaterAt = 2;
 
         /// <summary>
         /// Set if RemindLaterAt interval should be in Minutes, Hours or Days.
         /// </summary>
-        public static RemindLaterFormat RemindLaterTimeSpan = RemindLaterFormat.Days;
+        internal static RemindLaterFormat RemindLaterTimeSpan = RemindLaterFormat.Days;
 
         /// <summary>
         /// Start checking for new version of application and display dialog to the user if update is available.
         /// </summary>
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
-        public static void Start(bool forceUpdate = false)
+        internal static void Start(bool forceUpdate = false)
         {
             Start(AppCastURL, forceUpdate);
         }
@@ -94,7 +94,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// </summary>
         /// <param name="appCast">URL of the xml file that contains information about latest version of the application.</param>
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
-        public static void Start(String appCast, bool forceUpdate = false)
+        internal static void Start(String appCast, bool forceUpdate = false)
         {
             AppCastURL = appCast;
             ForceCheck = forceUpdate;

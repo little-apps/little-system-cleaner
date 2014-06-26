@@ -45,7 +45,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private string _statusText;
         private string _currentFile;
 
-        public static List<string> validAudioFiles = new List<string>() { "aac", "aif", "ape", "wma", "aa", "aax", "flac", "mka", "mpc", "mp+", "mpp", "mp4", "m4a", "ogg", "oga", "wav", "wv", "mp3", "m2a", "mp2", "mp1" };
+        internal static List<string> validAudioFiles = new List<string>() { "aac", "aif", "ape", "wma", "aa", "aax", "flac", "mka", "mpc", "mp+", "mpp", "mp4", "m4a", "ogg", "oga", "wav", "wv", "mp3", "m2a", "mp2", "mp1" };
 
         public string StatusText
         {

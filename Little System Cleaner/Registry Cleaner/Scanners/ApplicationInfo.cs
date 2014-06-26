@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Verifies installed programs in add/remove list
         /// </summary>
-        public static void Scan()
+        internal static void Scan()
         {
             try
             {

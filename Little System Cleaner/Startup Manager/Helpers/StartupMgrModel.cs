@@ -21,7 +21,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             Root = new StartupEntry();
         }
 
-        public static StartupMgrModel CreateStarupMgrModel()
+        internal static StartupMgrModel CreateStarupMgrModel()
         {
             StartupMgrModel treeModel = new StartupMgrModel();
 

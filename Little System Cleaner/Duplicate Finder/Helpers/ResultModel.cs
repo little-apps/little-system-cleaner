@@ -11,7 +11,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
     {
         public Result Root { get; private set; }
 
-        public static ResultModel CreateResultModel(Wizard scanBase)
+        internal static ResultModel CreateResultModel(Wizard scanBase)
         {
             Result root = new Result();
             ResultModel model = new ResultModel();

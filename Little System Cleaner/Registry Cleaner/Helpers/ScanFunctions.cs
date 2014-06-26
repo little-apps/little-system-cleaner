@@ -18,7 +18,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// </summary>
         /// <param name="IconPath">The icon path</param>
         /// <returns>True if it exists</returns>
-        public static bool IconExists(string IconPath)
+        internal static bool IconExists(string IconPath)
         {
             string strFileName = string.Copy(IconPath.Trim().ToLower());
 
@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <remarks>Always use this to check for directories in the scanners!</remarks>
         /// <param name="dirPath">The directory</param>
         /// <returns>True if it exists or if the path should be skipped. Otherwise, false if the file path is empty or doesnt exist</returns>
-        public static bool DirExists(string dirPath)
+        internal static bool DirExists(string dirPath)
         {
             if (string.IsNullOrEmpty(dirPath))
                 return false;
@@ -100,7 +100,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <param name="inPath">Registry Key</param>
         /// <param name="valueName">Value name</param>
         /// <returns>True if it exists</returns>
-        public static bool ValueNameExists(string inPath, string valueName)
+        internal static bool ValueNameExists(string inPath, string valueName)
         {
             string baseKey, subKey;
 

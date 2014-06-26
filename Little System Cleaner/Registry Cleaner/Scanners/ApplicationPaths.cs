@@ -38,7 +38,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Verifies programs in App Paths
         /// </summary>
-        public static void Scan()
+        internal static void Scan()
         {
             try
             {

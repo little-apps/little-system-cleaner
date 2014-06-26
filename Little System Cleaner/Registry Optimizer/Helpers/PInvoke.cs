@@ -9,25 +9,25 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
     internal static class PInvoke
     {
         [DllImport("advapi32.dll", EntryPoint = "RegOpenKey", SetLastError = true)]
-        public static extern int RegOpenKeyA(uint hKey, string lpSubKey, ref int phkResult);
+        internal static extern int RegOpenKeyA(uint hKey, string lpSubKey, ref int phkResult);
         [DllImport("advapi32.dll", EntryPoint = "RegReplaceKey", SetLastError = true)]
-        public static extern int RegReplaceKeyA(int hKey, string lpSubKey, string lpNewFile, string lpOldFile);
+        internal static extern int RegReplaceKeyA(int hKey, string lpSubKey, string lpNewFile, string lpOldFile);
         [DllImport("advapi32.dll", EntryPoint = "RegSaveKey", SetLastError = true)]
-        public static extern int RegSaveKeyA(int hKey, string lpFile, int lpSecurityAttributes);
+        internal static extern int RegSaveKeyA(int hKey, string lpFile, int lpSecurityAttributes);
         [DllImport("advapi32.dll")]
-        public static extern int RegCloseKey(int hKey);
+        internal static extern int RegCloseKey(int hKey);
         [DllImport("advapi32.dll")]
-        public static extern int RegFlushKey(int hKey);
+        internal static extern int RegFlushKey(int hKey);
         [DllImport("advapi32.dll")]
-        public static extern int RegSaveKeyEx(IntPtr hKey, string lpFile, IntPtr lpSecurityAttributes, int Flags);
+        internal static extern int RegSaveKeyEx(IntPtr hKey, string lpFile, IntPtr lpSecurityAttributes, int Flags);
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+        internal static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
         [DllImport("shell32.dll")]
-        public static extern bool IsUserAnAdmin();
+        internal static extern bool IsUserAnAdmin();
 
         [DllImport("kernel32.dll")]
-        public static extern uint QueryDosDevice([In, Optional] string lpDeviceName, [Out] StringBuilder lpTargetPath, [In] int ucchMax);
+        internal static extern uint QueryDosDevice([In, Optional] string lpDeviceName, [Out] StringBuilder lpTargetPath, [In] int ucchMax);
 
         // Shutdown reason codes
         public const uint MajorOperatingSystem = 0x00020000;

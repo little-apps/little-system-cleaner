@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             Properties.Settings.Default.privacyCleanerAutoSkipScanner = this.checkBoxDontShow.IsChecked.GetValueOrDefault();
         }
 
-        public static bool? DisplayRunningMsg(string scannerName, string procName)
+        internal static bool? DisplayRunningMsg(string scannerName, string procName)
         {
             if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
             {

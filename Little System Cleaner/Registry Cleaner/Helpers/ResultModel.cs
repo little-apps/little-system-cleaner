@@ -11,7 +11,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
     {
         public BadRegistryKey Root { get; private set; }
 
-        public static ResultModel CreateResultModel()
+        internal static ResultModel CreateResultModel()
         {
             ResultModel model = new ResultModel();
 

@@ -52,7 +52,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             set;
         }
 
-        public static string CurrentFile
+        internal static string CurrentFile
         {
             get;
             set;

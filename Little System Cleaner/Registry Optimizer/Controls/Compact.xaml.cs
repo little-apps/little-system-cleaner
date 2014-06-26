@@ -43,9 +43,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     public partial class Compact : Window
     {
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool ShutdownBlockReasonCreate(IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)] string reason);
+        internal static extern bool ShutdownBlockReasonCreate(IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)] string reason);
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool ShutdownBlockReasonDestroy(IntPtr hWnd);
+        internal static extern bool ShutdownBlockReasonDestroy(IntPtr hWnd);
 
         Thread threadScan, threadCurrent;
 

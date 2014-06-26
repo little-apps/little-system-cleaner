@@ -37,14 +37,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         }
 
         [DllImport("shell32.dll")]
-        public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder strPath, int nFolder, bool fCreate);
+        internal static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder strPath, int nFolder, bool fCreate);
 
         const int CSIDL_FONTS = 0x0014;    // windows\fonts 
 
         /// <summary>
         /// Finds invalid font references
         /// </summary>
-        public static void Scan()
+        internal static void Scan()
         {
             StringBuilder strPath = new StringBuilder(260);
 

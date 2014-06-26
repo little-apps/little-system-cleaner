@@ -51,7 +51,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// Checks if IE is installed
         /// </summary>
         /// <returns>True if its installed</returns>
-        public static bool IsInstalled()
+        internal static bool IsInstalled()
         {
             // Automatically return true
             return true;

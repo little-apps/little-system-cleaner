@@ -51,7 +51,7 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="isEnabled">Whether logging is enabled or not</param>
         /// <returns></returns>
-        public static Report CreateReport(bool isEnabled)
+        internal static Report CreateReport(bool isEnabled)
         {
             MemoryStream stream = new MemoryStream();
             Report report = new Report(stream, isEnabled);

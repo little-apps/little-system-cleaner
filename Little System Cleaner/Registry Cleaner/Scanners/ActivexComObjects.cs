@@ -39,7 +39,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Scans ActiveX/COM Objects
         /// </summary>
-        public static void Scan()
+        internal static void Scan()
         {
             // Scan all CLSID sub keys
             Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.ClassesRoot.OpenSubKey("CLSID")));

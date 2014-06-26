@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Little_System_Cleaner.Misc
 {
-    public static class PInvoke
+    internal static class PInvoke
     {
         #region Functions
         [DllImport("advapi32.dll", SetLastError = true)]
@@ -26,41 +26,41 @@ namespace Little_System_Cleaner.Misc
         internal static extern bool LookupPrivilegeValue(string host, string name, ref long pluid);
 
         [DllImport("kernel32.dll")]
-        public static extern int SearchPath(string strPath, string strFileName, string strExtension, uint nBufferLength, StringBuilder strBuffer, string strFilePart);
+        internal static extern int SearchPath(string strPath, string strFileName, string strExtension, uint nBufferLength, StringBuilder strBuffer, string strFilePart);
         [DllImport("kernel32.dll")]
-        public static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPStr)] string lpRootPathName);
+        internal static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPStr)] string lpRootPathName);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool CloseHandle(IntPtr handle);
 
         [DllImport("shell32.dll")]
-        public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder lpszPath, int nFolder, bool fCreate);
+        internal static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder lpszPath, int nFolder, bool fCreate);
         [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
-        public static extern long FindExecutableA(string lpFile, string lpDirectory, StringBuilder lpResult);
+        internal static extern long FindExecutableA(string lpFile, string lpDirectory, StringBuilder lpResult);
         [DllImport("shell32.dll", EntryPoint = "ExtractIconEx")]
-        public static extern int ExtractIconExA(string lpszFile, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons);
+        internal static extern int ExtractIconExA(string lpszFile, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons);
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         internal static extern int SHFileOperation(ref SHFILEOPSTRUCT FileOp);
 
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr PathGetArgs(string path);
+        internal static extern IntPtr PathGetArgs(string path);
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern void PathRemoveArgs([In, Out] StringBuilder path);
+        internal static extern void PathRemoveArgs([In, Out] StringBuilder path);
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int PathParseIconLocation([In, Out] StringBuilder path);
+        internal static extern int PathParseIconLocation([In, Out] StringBuilder path);
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern void PathUnquoteSpaces([In, Out] StringBuilder path);
+        internal static extern void PathUnquoteSpaces([In, Out] StringBuilder path);
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PathFileExists(string path);
+        internal static extern bool PathFileExists(string path);
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PathStripToRoot([In, Out] StringBuilder path);
+        internal static extern bool PathStripToRoot([In, Out] StringBuilder path);
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool PathRemoveFileSpec([In, Out] StringBuilder path);
+        internal static extern bool PathRemoveFileSpec([In, Out] StringBuilder path);
 
         [DllImport("user32.dll")]
-        public static extern int DestroyIcon(IntPtr hIcon);
+        internal static extern int DestroyIcon(IntPtr hIcon);
         [DllImport("user32.dll")]
-        public static extern int GetSystemMetrics(int smIndex);
+        internal static extern int GetSystemMetrics(int smIndex);
 
         [DllImport("gdi32.dll")]
         internal static extern bool DeleteObject(IntPtr hObject);
@@ -108,7 +108,7 @@ namespace Little_System_Cleaner.Misc
         #endregion
 
         #region Enumerations
-        [Flags()]
+        [Flags]
         internal enum SLGP_FLAGS
         {
             /// <summary>Retrieves the standard short (8.3 format) file name</summary>
@@ -119,7 +119,7 @@ namespace Little_System_Cleaner.Misc
             SLGP_RAWPATH = 0x4
         }
 
-        [Flags()]
+        [Flags]
         internal enum SLR_FLAGS
         {
             /// <summary>
@@ -162,10 +162,10 @@ namespace Little_System_Cleaner.Misc
         internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
 
         // SHGetSpecialFolderPath
-        public const int CSIDL_STARTUP = 0x0007; // All Users\Startup
-        public const int CSIDL_COMMON_STARTUP = 0x0018; // Common Users\Startup
-        public const int CSIDL_PROGRAMS = 0x0002;   // All Users\Start Menu\Programs
-        public const int CSIDL_COMMON_PROGRAMS = 0x0017;   // Start Menu\Programs
+        internal const int CSIDL_STARTUP = 0x0007; // All Users\Startup
+        internal const int CSIDL_COMMON_STARTUP = 0x0018; // Common Users\Startup
+        internal const int CSIDL_PROGRAMS = 0x0002;   // All Users\Start Menu\Programs
+        internal const int CSIDL_COMMON_PROGRAMS = 0x0017;   // Start Menu\Programs
 
         internal const int MAX_PATH = 260;
         internal const uint STGM_READ = 0;
@@ -259,8 +259,8 @@ namespace Little_System_Cleaner.Misc
         #endregion
 
         #region Privacy Cleaner
-        public static int SW_SHOW = 5;
-        public static uint SEE_MASK_INVOKEIDLIST = 12;
+        internal static int SW_SHOW = 5;
+        internal static uint SEE_MASK_INVOKEIDLIST = 12;
 
         // No dialog box confirming the deletion of the objects will be displayed.
         internal const int SHERB_NOCONFIRMATION = 0x00000001;
@@ -270,7 +270,7 @@ namespace Little_System_Cleaner.Misc
         internal const int SHERB_NOSOUND = 0x00000004;
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct INTERNET_CACHE_ENTRY_INFO
+        internal struct INTERNET_CACHE_ENTRY_INFO
         {
             public UInt32 dwStructSize;
             public string lpszSourceUrlName;
@@ -292,7 +292,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         [StructLayout(LayoutKind.Explicit)]
-        public struct ExemptDeltaOrReserverd
+        internal struct ExemptDeltaOrReserverd
         {
             [FieldOffset(0)]
             public UInt32 dwReserved;
@@ -303,7 +303,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Used by QueryUrl method
         /// </summary>
-        public enum STATURL_QUERYFLAGS : uint
+        internal enum STATURL_QUERYFLAGS : uint
         {
             /// <summary>
             /// The specified URL is in the content cache.
@@ -327,7 +327,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Flag on the dwFlags parameter of the STATURL structure, used by the SetFilter method.
         /// </summary>
-        public enum STATURLFLAGS : uint
+        internal enum STATURLFLAGS : uint
         {
             /// <summary>
             /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is in the cache.
@@ -342,7 +342,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Used bu the AddHistoryEntry method.
         /// </summary>
-        public enum ADDURL_FLAG : uint
+        internal enum ADDURL_FLAG : uint
         {
             /// <summary>
             /// Write to both the visited links and the dated containers. 
@@ -358,7 +358,7 @@ namespace Little_System_Cleaner.Misc
         /// The structure that contains statistics about a URL. 
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct STATURL
+        internal struct STATURL
         {
             /// <summary>
             /// Struct size
@@ -430,7 +430,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct UUID
+        internal struct UUID
         {
             public int Data1;
             public short Data2;
@@ -439,7 +439,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct SHELLEXECUTEINFO
+        internal struct SHELLEXECUTEINFO
         {
             public int cbSize;
             public uint fMask;
@@ -464,7 +464,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct SHQUERYRBINFO
+        internal struct SHQUERYRBINFO
         {
             public int cbSize;
             public long i64Size;
@@ -474,7 +474,7 @@ namespace Little_System_Cleaner.Misc
         [ComImport]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
-        public interface IUrlHistoryStg2
+        internal interface IUrlHistoryStg2
         {
             void AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
             void DeleteUrl(string pocsUrl, int dwFlags);
@@ -489,7 +489,7 @@ namespace Little_System_Cleaner.Misc
         //UrlHistory class
         [ComImport]
         [Guid("3C374A40-BAE4-11CF-BF7D-00AA006946EE")]
-        public class UrlHistoryClass
+        internal class UrlHistoryClass
         {
         }
 
@@ -514,19 +514,19 @@ namespace Little_System_Cleaner.Misc
         internal static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
 
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "DeleteUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool DeleteUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName);
+        internal static extern bool DeleteUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName);
 
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "UnlockUrlCacheEntryFileA", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName, uint dwReserved);
+        internal static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName, uint dwReserved);
 
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindFirstUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        public static extern IntPtr FindFirstUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlSearchPattern, IntPtr lpFirstCacheEntryInfo, ref int lpdwFirstCacheEntryInfoBufferSize);
+        internal static extern IntPtr FindFirstUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlSearchPattern, IntPtr lpFirstCacheEntryInfo, ref int lpdwFirstCacheEntryInfoBufferSize);
 
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindNextUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        public static extern bool FindNextUrlCacheEntry(IntPtr hFind, IntPtr lpNextCacheEntryInfo, ref int lpdwNextCacheEntryInfoBufferSize);
+        internal static extern bool FindNextUrlCacheEntry(IntPtr hFind, IntPtr lpNextCacheEntryInfo, ref int lpdwNextCacheEntryInfoBufferSize);
 
         [DllImport("wininet.dll", SetLastError = true)]
-        public static extern long FindCloseUrlCache(IntPtr hEnumHandle);
+        internal static extern long FindCloseUrlCache(IntPtr hEnumHandle);
         #endregion
     }
 }

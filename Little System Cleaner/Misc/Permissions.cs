@@ -27,7 +27,7 @@ namespace Little_System_Cleaner.Misc
 {
     public class Permissions
     {
-        public static void SetPrivileges(bool Enabled)
+        internal static void SetPrivileges(bool Enabled)
         {
             SetPrivilege("SeShutdownPrivilege", Enabled);
             SetPrivilege("SeBackupPrivilege", Enabled);
@@ -35,7 +35,7 @@ namespace Little_System_Cleaner.Misc
             SetPrivilege("SeDebugPrivilege", Enabled);
         }
 
-        public static bool SetPrivilege(string privilege, bool enabled)
+        internal static bool SetPrivilege(string privilege, bool enabled)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Little_System_Cleaner.Misc
         /// Checks if the user is an admin
         /// </summary>
         /// <returns>True if it is in admin group</returns>
-        public static bool IsUserAdministrator
+        internal static bool IsUserAdministrator
         {
             get
             {

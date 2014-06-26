@@ -83,15 +83,24 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Xml
 
         int _nSaveCounter = 0;
 
-        [DllImport("advapi32.dll", EntryPoint = "RegOpenKey")] public static extern int RegOpenKeyA(int hKey, string lpSubKey, ref int phkResult);
-        [DllImport("advapi32.dll")] public static extern int RegCloseKey(int hKey);
-        [DllImport("advapi32.dll", EntryPoint = "RegQueryInfoKey")] public static extern int RegQueryInfoKeyA(int hKey, string lpClass, ref int lpcbClass, int lpReserved, ref int lpcSubKeys, ref int lpcbMaxSubKeyLen, ref int lpcbMaxClassLen, ref int lpcValues, ref int lpcbMaxValueNameLen, ref int lpcbMaxValueLen, ref int lpcbSecurityDescriptor, ref System.Runtime.InteropServices.ComTypes.FILETIME lpftLastWriteTime);
-        [DllImport("advapi32.dll", EntryPoint = "RegEnumValue")] public extern static int RegEnumValueA(int hkey, int index, byte[] lpValueName, ref int lpcbValueName, IntPtr reserved, ref int lpType, IntPtr lpData, ref int lpcbData);
-        [DllImport("advapi32.dll", EntryPoint = "RegEnumKeyEx")] public static extern int RegEnumKeyExA(int hKey, int dwIndex, ref byte lpName, ref int lpcbName, int lpReserved, string lpClass, ref int lpcbClass, ref System.Runtime.InteropServices.ComTypes.FILETIME lpftLastWriteTime);
-        [DllImport("advapi32.dll", EntryPoint = "RegSetValueEx")] public static extern int RegSetValueExA(int hKey, string lpSubKey, int reserved, int dwType, ref byte lpData, int cbData);
-        [DllImport("advapi32.dll", EntryPoint = "RegDeleteValue")] public static extern int RegDeleteValueA(int hKey, string lpValueName);
-        [DllImport("advapi32.dll", EntryPoint = "RegDeleteKey")] public static extern int RegDeleteKeyA(int hKey, string lpSubKey);
-        [DllImport("advapi32.dll", EntryPoint = "RegDeleteTree")] public static extern int RegDeleteTreeA(int hKey, string lpSubKey);
+        [DllImport("advapi32.dll", EntryPoint = "RegOpenKey")]
+        internal static extern int RegOpenKeyA(int hKey, string lpSubKey, ref int phkResult);
+        [DllImport("advapi32.dll")]
+        internal static extern int RegCloseKey(int hKey);
+        [DllImport("advapi32.dll", EntryPoint = "RegQueryInfoKey")]
+        internal static extern int RegQueryInfoKeyA(int hKey, string lpClass, ref int lpcbClass, int lpReserved, ref int lpcSubKeys, ref int lpcbMaxSubKeyLen, ref int lpcbMaxClassLen, ref int lpcValues, ref int lpcbMaxValueNameLen, ref int lpcbMaxValueLen, ref int lpcbSecurityDescriptor, ref System.Runtime.InteropServices.ComTypes.FILETIME lpftLastWriteTime);
+        [DllImport("advapi32.dll", EntryPoint = "RegEnumValue")]
+        internal extern static int RegEnumValueA(int hkey, int index, byte[] lpValueName, ref int lpcbValueName, IntPtr reserved, ref int lpType, IntPtr lpData, ref int lpcbData);
+        [DllImport("advapi32.dll", EntryPoint = "RegEnumKeyEx")]
+        internal static extern int RegEnumKeyExA(int hKey, int dwIndex, ref byte lpName, ref int lpcbName, int lpReserved, string lpClass, ref int lpcbClass, ref System.Runtime.InteropServices.ComTypes.FILETIME lpftLastWriteTime);
+        [DllImport("advapi32.dll", EntryPoint = "RegSetValueEx")]
+        internal static extern int RegSetValueExA(int hKey, string lpSubKey, int reserved, int dwType, ref byte lpData, int cbData);
+        [DllImport("advapi32.dll", EntryPoint = "RegDeleteValue")]
+        internal static extern int RegDeleteValueA(int hKey, string lpValueName);
+        [DllImport("advapi32.dll", EntryPoint = "RegDeleteKey")]
+        internal static extern int RegDeleteKeyA(int hKey, string lpSubKey);
+        [DllImport("advapi32.dll", EntryPoint = "RegDeleteTree")]
+        internal static extern int RegDeleteTreeA(int hKey, string lpSubKey);
 
         public xmlRegistry()
         {
@@ -102,7 +111,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Xml
         /// </summary>
         /// <param name="registryKey">registry key you want the handle for</param>
         /// <returns>Desired handle</returns>
-        public static int getRegistryHandle(RegistryKey registryKey)
+        internal static int getRegistryHandle(RegistryKey registryKey)
         {
             //Type type = registryKey.GetType();
             //FieldInfo fieldInfo = type.GetField("hkey", BindingFlags.Instance | BindingFlags.NonPublic);

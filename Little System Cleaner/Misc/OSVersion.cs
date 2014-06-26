@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 
 namespace Little_System_Cleaner
 {
-    public static class OSVersion
+    internal static class OSVersion
     {
         #region PInvoke Signatures
         public const byte VER_NT_WORKSTATION = 1;
@@ -142,7 +142,7 @@ namespace Little_System_Cleaner
         #endregion
 
 
-        public static string GetOSVersion()
+        internal static string GetOSVersion()
         {
             OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
             osVersionInfo.dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX));

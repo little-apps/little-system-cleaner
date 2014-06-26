@@ -36,7 +36,7 @@ namespace Little_System_Cleaner
 {
     public partial class Main
 	{
-        public static bool IsTabsEnabled { get; set;}
+        internal static bool IsTabsEnabled { get; set; }
 
         System.Timers.Timer timerCheck = new System.Timers.Timer(500);
 

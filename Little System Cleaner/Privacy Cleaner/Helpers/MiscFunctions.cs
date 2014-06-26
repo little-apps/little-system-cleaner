@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
-    public static class MiscFunctions
+    internal static class MiscFunctions
     {
         internal static List<PInvoke.INTERNET_CACHE_ENTRY_INFO> FindUrlCacheEntries(string urlPattern)
         {
@@ -112,7 +112,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="procName">The name of the process (ex: firefox for Firefox)</param>
         /// <returns>True if the process is running</returns>
-        public static bool IsProcessRunning(string procName)
+        internal static bool IsProcessRunning(string procName)
         {
             foreach (Process proc in Process.GetProcessesByName(procName))
             {
@@ -123,7 +123,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             return false;
         }
 
-        public static string ExpandVars(string p)
+        internal static string ExpandVars(string p)
         {
             string str = (string)p.Clone();
 
@@ -152,7 +152,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             return str;
         }
 
-        public static string[] GetSections(string filePath)
+        internal static string[] GetSections(string filePath)
         {
             uint MAX_BUFFER = 32767;
 
@@ -176,7 +176,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             return local.Substring(0, local.Length - 1).Split('\0');
         }
 
-        public static StringDictionary GetValues(string filePath, string sectionName)
+        internal static StringDictionary GetValues(string filePath, string sectionName)
         {
             uint MAX_BUFFER = 32767;
 
@@ -227,7 +227,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="filePath">Path to the filename</param>
         /// <returns>File Size (in bytes)</returns>
-        public static long GetFileSize(string filePath)
+        internal static long GetFileSize(string filePath)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// <param name="folderPath">Path to the folder</param>
         /// <param name="includeSubDirs">Include sub directories</param>
         /// <returns>Folder Size (in bytes)</returns>
-        public static long GetFolderSize(string folderPath, bool includeSubDirs)
+        internal static long GetFolderSize(string folderPath, bool includeSubDirs)
         {
             long totalSize = 0;
 
@@ -273,7 +273,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="fileInfo">FileInfo</param>
         /// <returns>True if file is valid</returns>
-        public static bool IsFileValid(FileInfo fileInfo)
+        internal static bool IsFileValid(FileInfo fileInfo)
         {
             if (fileInfo == null)
                 return false;
@@ -312,7 +312,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="filePath">Path to file</param>
         /// <returns>True if file is valid</returns>
-        public static bool IsFileValid(string filePath)
+        internal static bool IsFileValid(string filePath)
         {
             bool bRet = false;
 
@@ -341,7 +341,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// Deletes a file
         /// </summary>
         /// <param name="filePath">Path to file</param>
-        public static void DeleteFile(string filePath)
+        internal static void DeleteFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -367,7 +367,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="dirPath">Path to directory</param>
         /// <param name="recurse">Recursive delete</param>
-        public static void DeleteDir(string dirPath, bool recurse)
+        internal static void DeleteDir(string dirPath, bool recurse)
         {
             if (string.IsNullOrWhiteSpace(dirPath))
             {

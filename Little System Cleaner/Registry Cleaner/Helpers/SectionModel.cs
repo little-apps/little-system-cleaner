@@ -125,7 +125,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
     {
         public Section Root { get; private set; }
 
-        public static SectionModel CreateSectionModel()
+        internal static SectionModel CreateSectionModel()
         {
             Section myComp = new Section() { Icon = Properties.Resources.mycomputer, SectionName = "My Computer" };
             SectionModel model = new SectionModel();

@@ -46,7 +46,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// Checks if Google Chrome is installed
         /// </summary>
         /// <returns>True if its installed</returns>
-        public static bool IsInstalled()
+        internal static bool IsInstalled()
         {
             string chromeExe = string.Format(@"{0}\Google\Chrome\Application\chrome.exe", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
             return File.Exists(chromeExe);

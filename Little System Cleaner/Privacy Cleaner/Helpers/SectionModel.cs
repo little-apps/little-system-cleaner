@@ -35,7 +35,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
     {
         public ObservableCollection<ScannerBase> RootChildren { get; private set; }
 
-        public static SectionModel CreateSectionModel()
+        internal static SectionModel CreateSectionModel()
         {
             SectionModel sectionModel = new SectionModel();
 

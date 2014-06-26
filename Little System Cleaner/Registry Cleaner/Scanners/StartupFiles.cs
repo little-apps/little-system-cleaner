@@ -37,7 +37,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             get { return Strings.StartupFiles; }
         }
 
-        public static void Scan()
+        internal static void Scan()
         {
             try
             {

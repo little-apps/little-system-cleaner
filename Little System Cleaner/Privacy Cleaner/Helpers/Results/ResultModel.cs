@@ -11,7 +11,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
     {
         public ResultNode Root { get; private set; }
 
-        public static ResultModel CreateResultModel()
+        internal static ResultModel CreateResultModel()
         {
             ResultModel model = new ResultModel();
 

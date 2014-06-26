@@ -52,7 +52,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// Checks if Mozilla Firefox is installed
         /// </summary>
         /// <returns>True if its installed</returns>
-        public static bool IsInstalled()
+        internal static bool IsInstalled()
         {
             // Get install dir
             string firefoxExe = string.Format(@"{0}\Mozilla Firefox\firefox.exe", ((Utils.Is64BitOS)?(Environment.GetEnvironmentVariable("ProgramFiles(x86)")):(Environment.GetEnvironmentVariable("ProgramFiles"))));
