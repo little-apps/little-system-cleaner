@@ -920,6 +920,22 @@ namespace Little_System_Cleaner.Misc
         {
             int i = 0, k = 0;
 
+            // Cannot continue with Mask empty
+            if (string.IsNullOrEmpty(Mask))
+                return false;
+
+            // If WildString is null -> make it an empty string
+            if (WildString == null)
+                WildString = string.Empty;
+
+            // If Mask is * and WildString isn't empty -> return true
+            if (string.Compare(Mask, "*") == 0 && !string.IsNullOrEmpty(WildString))
+                return true;
+
+            // If Mask is ? and WildString length is 1 -> return true
+            if (string.Compare(Mask, "?") == 0 && WildString.Length == 1)
+                return true;
+
             // If WildString and Mask match -> no need to go any further
             if (string.Compare(WildString, Mask, IgnoreCase) == 0)
                 return true;
