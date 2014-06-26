@@ -404,12 +404,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                         if (!string.IsNullOrEmpty(expandedPath))
                         {
-                            if (string.Compare(i.ToString(), expandedPath) == 0)
+                            if (Utils.CompareWildcard(expandedPath, i.ToString()))
                                 return true;
                         }
                     }
 
-                    if (string.Compare(i.ToString(), Path) == 0)
+                    if (Utils.CompareWildcard(Path, i.ToString()))
                         return true;
                 }
             }

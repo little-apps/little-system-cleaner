@@ -335,7 +335,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             foreach (string includeDir in Properties.Settings.Default.diskCleanerIncludedFolders)
             {
-                if (string.Compare(includeDir, dirPath) == 0 || this.CompareWildcard(dirPath, includeDir))
+                if (string.Compare(includeDir, dirPath) == 0 || Utils.CompareWildcard(dirPath, includeDir))
                     return true;
             }
 
@@ -346,7 +346,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             foreach (string excludeDir in Properties.Settings.Default.diskCleanerExcludedDirs)
             {
-                if (this.CompareWildcard(dirPath, excludeDir))
+                if (Utils.CompareWildcard(dirPath, excludeDir))
                     return true;
             }
 
@@ -357,7 +357,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             foreach (string excludeFileType in Properties.Settings.Default.diskCleanerExcludedFileTypes)
             {
-                if (this.CompareWildcard(fileName, excludeFileType))
+                if (Utils.CompareWildcard(fileName, excludeFileType))
                     return true;
             }
 
@@ -381,7 +381,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             while (i != Mask.Length)
             {
-                if (CompareWildcard(WildString, Mask.Substring(i), IgnoreCase))
+                if (Utils.CompareWildcard(WildString, Mask.Substring(i), IgnoreCase))
                     return true;
 
                 while (i != Mask.Length && Mask[i] != ';')
@@ -394,63 +394,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     while (i != Mask.Length && Mask[i] == ' ')
                         i += 1;
                 }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Compares wildcard to string
-        /// </summary>
-        /// <param name="WildString">String to compare</param>
-        /// <param name="Mask">Wildcard mask (ex: *.jpg)</param>
-        /// <returns>True if match found</returns>
-        private bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
-        {
-            int i = 0, k = 0;
-
-            while (k != WildString.Length)
-            {
-                switch (Mask[i])
-                {
-                    case '*':
-
-                        if ((i + 1) == Mask.Length)
-                            return true;
-
-                        while (k != WildString.Length)
-                        {
-                            if (CompareWildcard(WildString.Substring(k + 1), Mask.Substring(i + 1), IgnoreCase))
-                                return true;
-
-                            k += 1;
-                        }
-
-                        return false;
-
-                    case '?':
-
-                        break;
-
-                    default:
-
-                        if (IgnoreCase == false && WildString[k] != Mask[i])
-                            return false;
-
-                        if (IgnoreCase && Char.ToLower(WildString[k]) != Char.ToLower(Mask[i]))
-                            return false;
-
-                        break;
-                }
-
-                i += 1;
-                k += 1;
-            }
-
-            if (k == WildString.Length)
-            {
-                if (i == Mask.Length || Mask[i] == ';' || Mask[i] == '*')
-                    return true;
             }
 
             return false;

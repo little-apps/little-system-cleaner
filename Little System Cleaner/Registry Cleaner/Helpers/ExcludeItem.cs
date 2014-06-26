@@ -23,42 +23,47 @@ using System.IO;
 using System.Text;
 using System.Collections.ObjectModel;
 using Little_System_Cleaner.Misc;
+using System.ComponentModel;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
-    [Serializable()]
-    public class ExcludeItem : ICloneable
+    [Serializable]
+    public class ExcludeItem : ICloneable, IEquatable<ExcludeItem>, INotifyPropertyChanged
     {
         private string _pathRegistry = "";
+        private string _pathFolder = "";
+        private string _pathFile = "";
+
         public string RegistryPath
         {
             get { return _pathRegistry; }
             set
             {
-                if (Utils.RegKeyExists(value))
-                    _pathRegistry = value;
+                this._pathRegistry = value;
+
+                this.OnPropertyChanged("Item");
             }
         }
 
-        private string _pathFolder = "";
         public string FolderPath
         {
             get { return _pathFolder; }
             set
             {
-                if (Directory.Exists(value))
-                    _pathFolder = value;
+                this._pathFolder = value;
+
+                this.OnPropertyChanged("Item");
             }
         }
 
-        private string _pathFile = "";
         public string FilePath
         {
             get { return _pathFile; }
             set
             {
-                if (File.Exists(value))
-                    _pathFile = value;
+                this._pathFile = value;
+
+                this.OnPropertyChanged("Item");
             }
         }
 
@@ -96,9 +101,49 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
         }
 
+        #region ICloneable Members
         public Object Clone()
         {
             return this.MemberwiseClone();
         }
+        #endregion
+
+        #region IEquatable Members
+        public bool Equals(ExcludeItem other)
+        {
+            return (other != null && this.ToString() == other.ToString());
+        }
+
+        public bool Equals(string other)
+        {
+            return (!string.IsNullOrEmpty(other) && this.FolderPath == other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExcludeItem)
+                return Equals(obj as ExcludeItem);
+            else if (obj is string)
+                return Equals(obj as string);
+            else
+                return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        #endregion
+
+        #region INotifyPropertyChanged Members
+        [field: NonSerialized]
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+        #endregion
     }
 }

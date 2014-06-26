@@ -91,7 +91,7 @@
             </TabItem>
             <TabItem Header="Ignore List">
                 <Grid>
-                    <Label Content="Right click to add or remove entries" Height="28" HorizontalContentAlignment="Center"  VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+                    <Label Content="Right click to add, edit or remove entries" Height="28" HorizontalContentAlignment="Center"  VerticalAlignment="Top" d:LayoutOverrides="Height"/>
                     <ListView x:Name="listView1" Margin="0,29,0,8" d:LayoutOverrides="GridBox" ItemsSource="{Binding ExcludeArray}">
                         <ListView.ContextMenu>
                             <ContextMenu>
@@ -99,12 +99,14 @@
                                 <MenuItem x:Name="menuItemAddFolder" Header="Add Folder" Click="menuItemAddFolder_Click" />
                                 <MenuItem x:Name="menuItemAddRegKey" Header="Add Registry Path" Click="menuItemAddRegKey_Click" />
                                 <Separator />
+                                <MenuItem x:Name="menuItemEdit" Header="Edit Entry" Click="menuItemEdit_Click" />
+                                <Separator />
                                 <MenuItem x:Name="menuItemRemove" Header="Remove Item" Click="menuItemRemove_Click" />
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView >
-                                <GridViewColumn Header="Files and folders to ignore" DisplayMemberBinding="{Binding Item}" />
+                                <GridViewColumn Header="Registry keys, files, and folders to ignore" Width="250" DisplayMemberBinding="{Binding Item}" />
                             </GridView>
                         </ListView.View>
                     </ListView>

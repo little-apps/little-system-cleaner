@@ -182,7 +182,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Registry Cleaner\Helpers\AddExcludeItem.xaml">
+    <Page Include="Registry Cleaner\Helpers\AddEditExcludeItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -329,7 +329,6 @@
       <DependentUpon>Results.xaml</DependentUpon>
     </Compile>
     <Compile Include="Registry Cleaner\Helpers\BadRegKeyArray.cs" />
-    <Compile Include="Registry Cleaner\Helpers\ExcludeArray.cs" />
     <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
     <Compile Include="Registry Cleaner\Helpers\ResultModel.cs" />
@@ -372,8 +371,8 @@
     <Compile Include="Registry Optimizer\Controls\Wizard.cs" />
     <Compile Include="Registry Optimizer\Helpers\Hive.cs" />
     <Compile Include="Registry Optimizer\Helpers\HiveManager.cs" />
-    <Compile Include="Registry Cleaner\Helpers\AddExcludeItem.xaml.cs">
-      <DependentUpon>AddExcludeItem.xaml</DependentUpon>
+    <Compile Include="Registry Cleaner\Helpers\AddEditExcludeItem.xaml.cs">
+      <DependentUpon>AddEditExcludeItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Registry Optimizer\Helpers\PInvoke.cs" />
     <Compile Include="Startup Manager\Helpers\StartupEntry.cs" />

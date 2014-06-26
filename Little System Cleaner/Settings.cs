@@ -1,4 +1,5 @@
 ﻿using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Collections.ObjectModel;
 namespace Little_System_Cleaner.Properties {
     
     
@@ -26,17 +27,17 @@ namespace Little_System_Cleaner.Properties {
             // Add code to handle the SettingsSaving event here.
         }
 
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.Configuration.SettingsSerializeAs(System.Configuration.SettingsSerializeAs.Binary)]
-        public ExcludeArray arrayExcludeList
+        public ObservableCollection<ExcludeItem> arrayExcludeList
         {
             get
             {
-                if (((ExcludeArray)(this["arrayExcludeList"])) == null)
-                    ((this["arrayExcludeList"])) = new ExcludeArray();
+                if (((ObservableCollection<ExcludeItem>)(this["arrayExcludeList"])) == null)
+                    ((this["arrayExcludeList"])) = new ObservableCollection<ExcludeItem>();
 
-                return ((ExcludeArray)(this["arrayExcludeList"]));
+                return ((ObservableCollection<ExcludeItem>)(this["arrayExcludeList"]));
             }
             set
             {

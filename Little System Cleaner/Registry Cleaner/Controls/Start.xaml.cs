@@ -45,20 +45,43 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
     /// <summary>
     /// Interaction logic for Sections.xaml
     /// </summary>
-    public partial class Start : System.Windows.Controls.UserControl
+    public partial class Start : UserControl, INotifyPropertyChanged
     {
-        public ScanWizard scanBase;
-        ObservableCollection<RestoreFile> _restoreFiles = new ObservableCollection<RestoreFile>();
+        #region INotifyPropertyChanged Members
 
-        readonly ExcludeArray _excludeArray;
-        public ExcludeArray ExcludeArray
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+        #endregion
+
+        public ScanWizard scanBase;
+        private ObservableCollection<RestoreFile> _restoreFiles;
+        private ObservableCollection<ExcludeItem> _excludeArray;
+
+        public ObservableCollection<ExcludeItem> ExcludeArray
         {
             get { return _excludeArray; }
+            set
+            {
+                this._excludeArray = value;
+
+                this.OnPropertyChanged("ExcludeArray");
+            }
         }
 
         public ObservableCollection<RestoreFile> RestoreFiles
         {
             get { return _restoreFiles; }
+            set
+            {
+                this._restoreFiles = value;
+
+                this.OnPropertyChanged("RestoreFiles");
+            }
         }
 
         public Start(ScanWizard sb)
@@ -79,7 +102,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.checkBoxAutoRepair.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoRepair;
             this.checkBoxAutoExit.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoExit;
 
-            this._excludeArray = Properties.Settings.Default.arrayExcludeList;
+            this.ExcludeArray = Properties.Settings.Default.arrayExcludeList;
+            this.RestoreFiles = new ObservableCollection<RestoreFile>();
 
             PopulateListView();
         }
@@ -242,84 +266,103 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void menuItemAddFile_Click(object sender, RoutedEventArgs e)
         {
-            using (System.Windows.Forms.OpenFileDialog openFileDlg = new System.Windows.Forms.OpenFileDialog())
+            AddEditExcludeItem addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.File);
+
+            if (addExcludeItem.ShowDialog().GetValueOrDefault())
             {
-                openFileDlg.Multiselect = true;
-                if (openFileDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                ExcludeItem excludeItem = addExcludeItem.ExcludeItem;
+                if (!ExcludeArray.Contains(excludeItem))
                 {
-                    foreach (string filePath in openFileDlg.FileNames)
-                    {
-                        ExcludeItem excludeItem = new ExcludeItem() { FilePath = filePath };
-                        if (!ExcludeArray.Contains(excludeItem))
-                        {
-                            ExcludeArray.Add(excludeItem);
-                            this.listView1.Items.Refresh();
-                        }
-                        else
-                            MessageBox.Show(System.Windows.Application.Current.MainWindow, string.Format("File ({0}) already exists", filePath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    this.ExcludeArray.Add(excludeItem);
 
+                    MessageBox.Show(App.Current.MainWindow, "Successfully added file to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    UpdateSettings();
+                    Utils.AutoResizeColumns(this.listView1);
                 }
+                else
+                    MessageBox.Show(System.Windows.Application.Current.MainWindow, string.Format("File ({0}) already exists", addExcludeItem.FilePath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            UpdateSettings();
         }
 
         private void menuItemAddFolder_Click(object sender, RoutedEventArgs e)
         {
-            using (System.Windows.Forms.FolderBrowserDialog folderDlg = new System.Windows.Forms.FolderBrowserDialog())
+            AddEditExcludeItem addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.Folder);
+
+            if (addExcludeItem.ShowDialog().GetValueOrDefault())
             {
-                folderDlg.Description = "Select the folder to exclude";
-                folderDlg.ShowNewFolderButton = true;
+                ExcludeItem excludeItem = addExcludeItem.ExcludeItem;
+                if (!ExcludeArray.Contains(excludeItem)) {
+                    this.ExcludeArray.Add(excludeItem);
 
-                if (folderDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    ExcludeItem excludeItem = new ExcludeItem() { FolderPath = folderDlg.SelectedPath };
+                    MessageBox.Show(App.Current.MainWindow, "Successfully added folder to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    if (!ExcludeArray.Contains(excludeItem))
-                    {
-                        ExcludeArray.Add(excludeItem);
-                        this.listView1.Items.Refresh();
-                    }
-                    else
-                        MessageBox.Show(System.Windows.Application.Current.MainWindow, string.Format("Folder ({0}) already exists", folderDlg.SelectedPath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-
+                    UpdateSettings();
+                    Utils.AutoResizeColumns(this.listView1);
                 }
+                else
+                    MessageBox.Show(System.Windows.Application.Current.MainWindow, string.Format("Folder ({0}) already exists", addExcludeItem.FolderPath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            UpdateSettings();
         }
 
         private void menuItemAddRegKey_Click(object sender, RoutedEventArgs e)
         {
-            AddExcludeItem addExcludeItem = new AddExcludeItem();
-            if (addExcludeItem.ShowDialog() == true)
+            AddEditExcludeItem addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.Registry);
+            if (addExcludeItem.ShowDialog().GetValueOrDefault())
             {
-                ExcludeItem excludeItem = new ExcludeItem() { RegistryPath = addExcludeItem.RegistryPath };
-                if (!ExcludeArray.Contains(excludeItem))
+                ExcludeItem excludeItem = addExcludeItem.ExcludeItem;
+                if (!ExcludeArray.Contains(excludeItem)) 
                 {
-                    ExcludeArray.Add(excludeItem);
-                    this.listView1.Items.Refresh();
+                    this.ExcludeArray.Add(excludeItem);
+
+                    MessageBox.Show(App.Current.MainWindow, "Successfully added registry key to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    UpdateSettings();
+                    Utils.AutoResizeColumns(this.listView1);
                 }
                 else
                     MessageBox.Show(System.Windows.Application.Current.MainWindow, string.Format("Registry key ({0}) already exists", addExcludeItem.RegistryPath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            UpdateSettings();
         }
 
+        private void menuItemEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.listView1.SelectedItems.Count > 0)
+            {
+                ExcludeItem excItem = this.listView1.SelectedItem as ExcludeItem;
+                int pos = this.ExcludeArray.IndexOf(excItem);
+
+                if (pos == -1)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "The selected entry could not be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                AddEditExcludeItem editExcludeItem = new AddEditExcludeItem(excItem);
+                if (editExcludeItem.ShowDialog().GetValueOrDefault())
+                {
+                    this.ExcludeArray[pos] = editExcludeItem.ExcludeItem;
+
+                    MessageBox.Show(App.Current.MainWindow, "Successfully updated exclude entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    UpdateSettings();
+                    Utils.AutoResizeColumns(this.listView1);
+                }
+            }
+        }
 
         private void menuItemRemove_Click(object sender, RoutedEventArgs e)
         {
             if (this.listView1.SelectedItems.Count > 0)
             {
                 if (MessageBox.Show(System.Windows.Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    ExcludeArray.Remove(this.listView1.SelectedItem as ExcludeItem);
+                {
+                    this.ExcludeArray.Remove(this.listView1.SelectedItem as ExcludeItem);
 
-                this.listView1.Items.Refresh();
+                    UpdateSettings();
+                    Utils.AutoResizeColumns(this.listView1);
+                }
             }
-
-            UpdateSettings();
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)
@@ -337,6 +380,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this._tree.ExpandAll();
             this._tree.AutoResizeColumns();
         }
+
+        
 
     }
 }
