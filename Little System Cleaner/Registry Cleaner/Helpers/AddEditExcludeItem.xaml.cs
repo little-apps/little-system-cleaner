@@ -31,6 +31,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
@@ -305,12 +306,24 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     MessageBox.Show(Application.Current.MainWindow, "No file path entered", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+
+                if (!Regex.IsMatch(this.FilePath, @"^[a-z?]:\\", RegexOptions.IgnoreCase))
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "File path must start with drive letter (Example: C:\\).\nDrive letter may also be substitued with ? to match any drive letter.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
             else if (this.FolderVisible == Visibility.Visible)
             {
                 if (string.IsNullOrEmpty(this.FolderPath))
                 {
                     MessageBox.Show(Application.Current.MainWindow, "No folder path entered", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (!Regex.IsMatch(this.FolderPath, @"^[a-z?]:\\", RegexOptions.IgnoreCase))
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "Folder path must start with drive letter (Example: C:\\).\nDrive letter may also be substitued with ? to match any drive letter.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }
