@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 	{
         static List<ScannerBase> enabledScanners = new List<ScannerBase>();
         Wizard scanBase;
-        System.Timers.Timer timerUpdate = new System.Timers.Timer(750);
+        System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
         DateTime dateTimeStart = DateTime.MinValue;
         Thread threadScan;
         int currentListViewIndex = -1;
