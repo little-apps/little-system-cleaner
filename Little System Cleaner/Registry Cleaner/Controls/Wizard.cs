@@ -185,7 +185,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action(() => SetCurrentControl(index)));
+                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
                 return;
             }
 
