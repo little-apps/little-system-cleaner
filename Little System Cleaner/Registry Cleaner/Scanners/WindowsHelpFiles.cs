@@ -56,14 +56,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.Report.WriteLine("Checking for missing help files in " + regKey.Name);
+            Wizard.Report.WriteLine("Checking for missing help files in " + regKey.Name);
 
             foreach (string strHelpFile in regKey.GetValueNames())
             {
                 string strHelpPath = regKey.GetValue(strHelpFile) as string;
 
                 if (!HelpFileExists(strHelpFile, strHelpPath))
-                    ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strHelpFile);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strHelpFile);
             }
 
             return;
@@ -80,15 +80,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (string.IsNullOrEmpty(helpFile) || string.IsNullOrEmpty(helpPath))
                 return true;
 
-            if (Utils.FileExists(helpPath) || ScanWizard.IsOnIgnoreList(helpPath))
+            if (Utils.FileExists(helpPath) || Wizard.IsOnIgnoreList(helpPath))
                 return true;
 
-            if (Utils.FileExists(helpFile) || ScanWizard.IsOnIgnoreList(helpFile))
+            if (Utils.FileExists(helpFile) || Wizard.IsOnIgnoreList(helpFile))
                 return true;
 
             string combinedPath = Path.Combine(helpPath, helpFile);
 
-            if (Utils.FileExists(combinedPath) || ScanWizard.IsOnIgnoreList(combinedPath))
+            if (Utils.FileExists(combinedPath) || Wizard.IsOnIgnoreList(combinedPath))
                 return true;
 
             return false;

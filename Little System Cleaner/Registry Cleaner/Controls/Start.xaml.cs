@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
         #endregion
 
-        public ScanWizard scanBase;
+        public Wizard scanBase;
         private ObservableCollection<RestoreFile> _restoreFiles;
         private ObservableCollection<ExcludeItem> _excludeArray;
 
@@ -84,7 +84,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        public Start(ScanWizard sb)
+        public Start(Wizard sb)
         {
             InitializeComponent();
 

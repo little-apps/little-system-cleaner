@@ -99,7 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.Report.WriteLine("Checking for invalid files in " + regKey.Name);
+            Wizard.Report.WriteLine("Checking for invalid files in " + regKey.Name);
 
             foreach (string strProgName in regKey.GetValueNames())
             {
@@ -109,23 +109,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 if (!string.IsNullOrEmpty(strRunPath))
                 {
                     // Check run path by itself
-                    if (Utils.FileExists(strRunPath) || ScanWizard.IsOnIgnoreList(strRunPath))
+                    if (Utils.FileExists(strRunPath) || Wizard.IsOnIgnoreList(strRunPath))
                         continue;
 
                     // See if file exists (also checks if string is null)
                     if (Utils.ExtractArguments(strRunPath, out strFilePath, out strArgs))
                         continue;
 
-                    if (ScanWizard.IsOnIgnoreList(strFilePath))
+                    if (Wizard.IsOnIgnoreList(strFilePath))
                         continue;
 
                     if (Utils.ExtractArguments2(strRunPath, out strFilePath, out strArgs))
                         continue;
 
-                    if (ScanWizard.IsOnIgnoreList(strFilePath))
+                    if (Wizard.IsOnIgnoreList(strFilePath))
                         continue;
 
-                    ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strProgName);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strProgName);
                 }
             }
 

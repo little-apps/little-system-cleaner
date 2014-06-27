@@ -59,8 +59,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         if (valueName.StartsWith("@") || valueName == "LangID")
                             continue;
 
-                        if (!Utils.FileExists(valueName) && !ScanWizard.IsOnIgnoreList(valueName))
-                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
+                        if (!Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName))
+                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
                     }
                 }
             }
@@ -82,7 +82,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    ScanWizard.Report.WriteLine("Cleaning invalid references in " + regKey.Name);
+                    Wizard.Report.WriteLine("Cleaning invalid references in " + regKey.Name);
 
                     EnumMRUList(regKey);
 
@@ -119,15 +119,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // See if file exists in Recent Docs folder
                 if (!string.IsNullOrEmpty(fileName))
                 {
-                    ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, regKey.ToString(), strValueName);
+                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey.ToString(), strValueName);
                     continue;
                 }
 
                 if (!Utils.FileExists(shortcutPath) || !Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs))
                 {
-                    if (!ScanWizard.IsOnIgnoreList(shortcutPath) && !ScanWizard.IsOnIgnoreList(filePath))
+                    if (!Wizard.IsOnIgnoreList(shortcutPath) && !Wizard.IsOnIgnoreList(filePath))
                     {
-                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
                         continue;
                     }
                 }

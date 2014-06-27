@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (baseRegKey == null)
                 return;
 
-            ScanWizard.Report.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
+            Wizard.Report.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
 
             foreach (string strSubKey in baseRegKey.GetSubKeyNames())
             {
@@ -71,7 +71,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 //    continue;
 
                 if (IsEmptyRegistryKey(baseRegKey.OpenSubKey(strSubKey, true)))
-                    ScanWizard.StoreInvalidKey(Strings.NoRegKey, baseRegKey.Name + "\\" + strSubKey);
+                    Wizard.StoreInvalidKey(Strings.NoRegKey, baseRegKey.Name + "\\" + strSubKey);
             }
 
             baseRegKey.Close();

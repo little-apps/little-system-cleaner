@@ -55,7 +55,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    ScanWizard.Report.WriteLine("Scanning for invalid fonts");
+                    Wizard.Report.WriteLine("Scanning for invalid fonts");
 
                     if (!SHGetSpecialFolderPath(IntPtr.Zero, strPath, CSIDL_FONTS, false))
                         return;
@@ -72,14 +72,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         if (Utils.FileExists(strValue))
                             continue;
 
-                        if (ScanWizard.IsOnIgnoreList(strValue))
+                        if (Wizard.IsOnIgnoreList(strValue))
                             continue;
 
                         // Check for font in fonts folder
                         string strFontPath = String.Format("{0}\\{1}", strPath.ToString(), strValue);
 
-                        if (!File.Exists(strFontPath) && !ScanWizard.IsOnIgnoreList(strFontPath))
-                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strFontName);
+                        if (!File.Exists(strFontPath) && !Wizard.IsOnIgnoreList(strFontPath))
+                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strFontName);
                     }
 
                 }

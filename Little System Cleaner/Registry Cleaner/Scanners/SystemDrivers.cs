@@ -47,15 +47,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    ScanWizard.Report.WriteLine("Scanning for missing drivers");
+                    Wizard.Report.WriteLine("Scanning for missing drivers");
 
                     foreach (string strDriverName in regKey.GetValueNames())
                     {
                         string strValue = regKey.GetValue(strDriverName) as string;
 
                         if (!string.IsNullOrEmpty(strValue))
-                            if (!Utils.FileExists(strValue) && !ScanWizard.IsOnIgnoreList(strValue))
-                                ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strDriverName);
+                            if (!Utils.FileExists(strValue) && !Wizard.IsOnIgnoreList(strValue))
+                                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strDriverName);
                     }
                 }
             }

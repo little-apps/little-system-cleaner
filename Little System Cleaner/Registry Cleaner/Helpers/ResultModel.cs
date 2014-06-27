@@ -19,7 +19,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 BadRegistryKey rootBadRegKey = new BadRegistryKey(scanner.bMapImg, scanner.ScannerName);
 
-                foreach (BadRegistryKey childBadRegKey in ScanWizard.badRegKeyArray)
+                foreach (BadRegistryKey childBadRegKey in Wizard.badRegKeyArray)
                 {
                     if (scanner.ScannerName == childBadRegKey.SectionName)
                         rootBadRegKey.Children.Add(childBadRegKey);

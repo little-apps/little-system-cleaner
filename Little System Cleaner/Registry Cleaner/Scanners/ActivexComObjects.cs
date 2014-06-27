@@ -93,7 +93,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid CLSID's");
+            Wizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid CLSID's");
 
             try
             {
@@ -128,7 +128,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     string strAppID = regKey.GetValue("AppID") as string;
                     if (!string.IsNullOrEmpty(strAppID))
                         if (!appidExists(strAppID))
-                            ScanWizard.StoreInvalidKey(Strings.MissingAppID, rkCLSID.ToString(), "AppID");
+                            Wizard.StoreInvalidKey(Strings.MissingAppID, rkCLSID.ToString(), "AppID");
                 }
                 catch (Exception ex)
                 {
@@ -145,8 +145,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                         if (!string.IsNullOrEmpty(iconPath))
                             if (!ScanFunctions.IconExists(iconPath))
-                                if (!ScanWizard.IsOnIgnoreList(iconPath))
-                                    ScanWizard.StoreInvalidKey(Strings.InvalidFile, string.Format("{0}\\DefaultIcon", rkCLSID.ToString()));
+                                if (!Wizard.IsOnIgnoreList(iconPath))
+                                    Wizard.StoreInvalidKey(Strings.InvalidFile, string.Format("{0}\\DefaultIcon", rkCLSID.ToString()));
                     }
                 }
                 catch (Exception ex)
@@ -170,8 +170,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer = regKeyInprocSrvr.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer))
-                            if (!Utils.FileExists(strInprocServer) && !ScanWizard.IsOnIgnoreList(strInprocServer))
-                                ScanWizard.StoreInvalidKey(Strings.InvalidInprocServer, regKeyInprocSrvr.ToString());
+                            if (!Utils.FileExists(strInprocServer) && !Wizard.IsOnIgnoreList(strInprocServer))
+                                Wizard.StoreInvalidKey(Strings.InvalidInprocServer, regKeyInprocSrvr.ToString());
 
                         regKeyInprocSrvr.Close();
                     }
@@ -194,8 +194,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer32))
-                            if (!Utils.FileExists(strInprocServer32) && !ScanWizard.IsOnIgnoreList(strInprocServer32))
-                                ScanWizard.StoreInvalidKey(Strings.InvalidInprocServer32, regKeyInprocSrvr32.ToString());
+                            if (!Utils.FileExists(strInprocServer32) && !Wizard.IsOnIgnoreList(strInprocServer32))
+                                Wizard.StoreInvalidKey(Strings.InvalidInprocServer32, regKeyInprocSrvr32.ToString());
 
                         regKeyInprocSrvr32.Close();
                     }
@@ -225,7 +225,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid AppID's");
+            Wizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid AppID's");
 
             foreach (string strAppId in regKey.GetSubKeyNames())
             {
@@ -242,7 +242,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                         if (!string.IsNullOrEmpty(strCLSID))
                             if (!appidExists(strCLSID))
-                                ScanWizard.StoreInvalidKey(Strings.MissingAppID, rkAppId.ToString());
+                                Wizard.StoreInvalidKey(Strings.MissingAppID, rkAppId.ToString());
                     }
                 }
                 catch (Exception ex)
@@ -268,7 +268,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            ScanWizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid Classes");
+            Wizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid Classes");
 
             string[] strClasses;
 
@@ -304,7 +304,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                             if (!string.IsNullOrEmpty(strProgID))
                                 if (!progIDExists(strProgID))
-                                    ScanWizard.StoreInvalidKey(Strings.MissingProgID, rkFileExt.ToString());
+                                    Wizard.StoreInvalidKey(Strings.MissingProgID, rkFileExt.ToString());
                         }
                     }
                     catch (Exception ex)
@@ -334,8 +334,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                             if (!string.IsNullOrEmpty(iconPath))
                                 if (!ScanFunctions.IconExists(iconPath))
-                                    if (!ScanWizard.IsOnIgnoreList(iconPath))
-                                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKeyDefaultIcon.Name);
+                                    if (!Wizard.IsOnIgnoreList(iconPath))
+                                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKeyDefaultIcon.Name);
                         }
                     }
                     catch (Exception ex)
@@ -361,7 +361,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                             if (!string.IsNullOrEmpty(guid))
                                 if (!clsidExists(guid))
-                                    ScanWizard.StoreInvalidKey(Strings.MissingCLSID, string.Format("{0}\\{1}", regKey.Name, strSubKey));
+                                    Wizard.StoreInvalidKey(Strings.MissingCLSID, string.Format("{0}\\{1}", regKey.Name, strSubKey));
                         }
                     }
                     catch (Exception ex)
@@ -383,7 +383,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (rk != null)
                     {
                         if (rk.ValueCount <= 0 && rk.SubKeyCount <= 0)
-                            ScanWizard.StoreInvalidKey(Strings.InvalidProgIDFileExt, rk.Name);
+                            Wizard.StoreInvalidKey(Strings.InvalidProgIDFileExt, rk.Name);
                     }
                 }
                 catch (Exception ex)
@@ -414,7 +414,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\explorer\\Browser Helper Objects");
 
-                ScanWizard.Report.WriteLine("Checking for invalid browser helper objects");
+                Wizard.Report.WriteLine("Checking for invalid browser helper objects");
 
                 if (regKey != null)
                 {
@@ -427,7 +427,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             if (rkBHO != null)
                             {
                                 if (!clsidExists(strGuid))
-                                    ScanWizard.StoreInvalidKey(Strings.MissingCLSID, rkBHO.ToString());
+                                    Wizard.StoreInvalidKey(Strings.MissingCLSID, rkBHO.ToString());
 
                                 rkBHO.Close();
                             }
@@ -455,14 +455,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Internet Explorer\\Toolbar");
 
-                ScanWizard.Report.WriteLine("Checking for invalid explorer toolbars");
+                Wizard.Report.WriteLine("Checking for invalid explorer toolbars");
 
                 if (regKey != null)
                 {
                     foreach (string strGuid in regKey.GetValueNames())
                     {
                         if (!IEToolbarIsValid(strGuid))
-                            ScanWizard.StoreInvalidKey(Strings.InvalidToolbar, regKey.ToString(), strGuid);
+                            Wizard.StoreInvalidKey(Strings.InvalidToolbar, regKey.ToString(), strGuid);
                     }
                 }
             }
@@ -483,7 +483,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 RegistryKey rkExt = null;
 
-                ScanWizard.Report.WriteLine("Checking for invalid explorer extensions");
+                Wizard.Report.WriteLine("Checking for invalid explorer extensions");
 
                 if (regKey != null)
                 {
@@ -523,7 +523,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 RegistryKey rkFileExt = null;
 
-                ScanWizard.Report.WriteLine("Checking for invalid explorer file extensions");
+                Wizard.Report.WriteLine("Checking for invalid explorer file extensions");
 
                 if (regKey != null)
                 {
@@ -630,7 +630,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
 
             if (!bProgidExists && !bAppExists)
-                ScanWizard.StoreInvalidKey(Strings.InvalidFileExt, regKey.ToString());
+                Wizard.StoreInvalidKey(Strings.InvalidFileExt, regKey.ToString());
 
             return;
         }
@@ -643,7 +643,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 string strHotIcon = regKey.GetValue("HotIcon") as string;
                 if (!string.IsNullOrEmpty(strHotIcon))
                     if (!ScanFunctions.IconExists(strHotIcon))
-                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "HotIcon");
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "HotIcon");
             }
             catch (Exception ex)
             {
@@ -655,7 +655,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 string strIcon = regKey.GetValue("Icon") as string;
                 if (!string.IsNullOrEmpty(strIcon))
                     if (!ScanFunctions.IconExists(strIcon))
-                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Icon");
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Icon");
             }
             catch (Exception ex)
             {
@@ -667,7 +667,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // Lookup CLSID extension
                 string strClsidExt = regKey.GetValue("ClsidExtension") as string;
                 if (!string.IsNullOrEmpty(strClsidExt))
-                    ScanWizard.StoreInvalidKey(Strings.MissingCLSID, regKey.ToString(), "ClsidExtension");
+                    Wizard.StoreInvalidKey(Strings.MissingCLSID, regKey.ToString(), "ClsidExtension");
             }
             catch (Exception ex)
             {
@@ -679,8 +679,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // See if files exist
                 string strExec = regKey.GetValue("Exec") as string;
                 if (!string.IsNullOrEmpty(strExec))
-                    if (!Utils.FileExists(strExec) && !ScanWizard.IsOnIgnoreList(strExec))
-                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Exec");
+                    if (!Utils.FileExists(strExec) && !Wizard.IsOnIgnoreList(strExec))
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Exec");
             }
             catch (Exception ex)
             {
@@ -691,8 +691,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 string strScript = regKey.GetValue("Script") as string;
                 if (!string.IsNullOrEmpty(strScript))
-                    if (!Utils.FileExists(strScript) && !ScanWizard.IsOnIgnoreList(strScript))
-                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Script");
+                    if (!Utils.FileExists(strScript) && !Wizard.IsOnIgnoreList(strScript))
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Script");
             }
             catch (Exception ex)
             {
@@ -750,7 +750,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer = regKeyInprocSrvr.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer))
-                            if (Utils.FileExists(strInprocServer) || ScanWizard.IsOnIgnoreList(strInprocServer))
+                            if (Utils.FileExists(strInprocServer) || Wizard.IsOnIgnoreList(strInprocServer))
                                 return true;
                     }
                 }
@@ -773,7 +773,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer32))
-                            if (Utils.FileExists(strInprocServer32) || ScanWizard.IsOnIgnoreList(strInprocServer32))
+                            if (Utils.FileExists(strInprocServer32) || Wizard.IsOnIgnoreList(strInprocServer32))
                                 return true;
                     }
                 }
@@ -859,7 +859,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         subKey = rk.OpenSubKey(appName);
 
                         if (subKey != null)
-                            if (!ScanWizard.IsOnIgnoreList(appName.ToString()))
+                            if (!Wizard.IsOnIgnoreList(appName.ToString()))
                                 return true;
                     }
                     catch (Exception ex)
@@ -915,7 +915,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         subKey = rk.OpenSubKey(clsid);
 
                         if (subKey != null)
-                            if (!ScanWizard.IsOnIgnoreList(subKey.ToString()))
+                            if (!Wizard.IsOnIgnoreList(subKey.ToString()))
                                 return true;
                     }
                     catch (Exception ex)
@@ -971,7 +971,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         subKey = rk.OpenSubKey(progID);
 
                         if (subKey != null)
-                            if (!ScanWizard.IsOnIgnoreList(subKey.ToString()))
+                            if (!Wizard.IsOnIgnoreList(subKey.ToString()))
                                 return true;
                     }
                     catch (Exception ex)
@@ -1027,7 +1027,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         subKey = rk.OpenSubKey(appID);
 
                         if (subKey != null)
-                            if (!ScanWizard.IsOnIgnoreList(subKey.ToString()))
+                            if (!Wizard.IsOnIgnoreList(subKey.ToString()))
                                 return true;
                     }
                     catch (Exception ex)

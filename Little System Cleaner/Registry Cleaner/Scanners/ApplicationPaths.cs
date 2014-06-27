@@ -42,10 +42,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                ScanWizard.Report.WriteLine("Checking for invalid installer folders");
+                Wizard.Report.WriteLine("Checking for invalid installer folders");
                 ScanInstallFolders();
 
-                ScanWizard.Report.WriteLine("Checking for invalid application paths");
+                Wizard.Report.WriteLine("Checking for invalid application paths");
                 ScanAppPaths();
             }
             catch (System.Security.SecurityException ex)
@@ -63,8 +63,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             foreach (string strFolder in regKey.GetValueNames())
             {
-                if (!ScanFunctions.DirExists(strFolder) && !ScanWizard.IsOnIgnoreList(strFolder))
-                    ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
+                if (!ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder))
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
             }
         }
 
@@ -89,13 +89,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     if (string.IsNullOrEmpty(strAppPath))
                     {
-                        ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
+                        Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
                         continue;
                     }
 
                     if (!string.IsNullOrEmpty(strAppDir))
                     {
-                        if (ScanWizard.IsOnIgnoreList(strAppDir))
+                        if (Wizard.IsOnIgnoreList(strAppDir))
                             continue;
                         else if (Utils.SearchPath(strAppPath, strAppDir))
                             continue;
@@ -104,11 +104,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     else
                     {
-                        if (Utils.FileExists(strAppPath) || ScanWizard.IsOnIgnoreList(strAppPath))
+                        if (Utils.FileExists(strAppPath) || Wizard.IsOnIgnoreList(strAppPath))
                             continue;
                     }
 
-                    ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.Name);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.Name);
                 }
             }
 

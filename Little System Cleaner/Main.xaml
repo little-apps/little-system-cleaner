@@ -264,7 +264,7 @@
                 <my1:Welcome x:Name="ctrlWelcome" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemScanWiz">
-                <regCleanCntrls:ScanWizard x:Name="ctrlScanWiz" />
+                <regCleanCntrls:Wizard x:Name="ctrlScanWiz" />
             </TabItem>
 
             <TabItem Style="{DynamicResource WindowTabItem}" Name="tabItemStartupMgr">

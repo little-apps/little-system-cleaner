@@ -55,7 +55,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             Sort((this.listViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
         }
 
-        public bool OnUnloaded()
+        public bool OnUnloaded(bool forceExit = false)
         {
             if (this.listViewProgs.Items.Count > 0)
                 this.listViewProgs.Items.Clear();

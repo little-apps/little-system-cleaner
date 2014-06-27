@@ -47,14 +47,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 if (regKey == null)
                     return;
 
-                ScanWizard.Report.WriteLine("Scanning for missing shared DLLs");
+                Wizard.Report.WriteLine("Scanning for missing shared DLLs");
 
                 // Validate Each DLL from the value names
                 foreach (string strFilePath in regKey.GetValueNames())
                 {
                     if (!string.IsNullOrEmpty(strFilePath))
-                        if (!Utils.FileExists(strFilePath) && !ScanWizard.IsOnIgnoreList(strFilePath))
-                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
+                        if (!Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
+                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
                 }
 
                 regKey.Close();

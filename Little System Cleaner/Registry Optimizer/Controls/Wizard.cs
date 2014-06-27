@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 this.SetCurrentControl(1);
         }
 
-        public bool OnUnloaded()
+        public bool OnUnloaded(bool forceExit = false)
         {
             if (!HivesLoaded)
             {
@@ -77,9 +77,13 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 return false;
             }
 
+            bool exit;
+
             if (this.userControl is AnalyzeResults)
             {
-                if (MessageBox.Show(App.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+
+                if (exit)
                 {
                     foreach (Hive h in Wizard.RegistryHives) {
                         h.Reset();

@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                ScanWizard.Report.WriteLine("Verifying programs in Add/Remove list");
+                Wizard.Report.WriteLine("Verifying programs in Add/Remove list");
 
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
                 {
@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                                 if (regKey2.ValueCount <= 0)
                                 {
-                                    ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
+                                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
                                     continue;
                                 }
 
@@ -70,40 +70,40 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                                 if (string.IsNullOrEmpty(progInfo._displayName) && (!progInfo.Uninstallable))
                                 {
-                                    ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
+                                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
                                     continue;
                                 }
 
                                 // Check display icon
                                 if (!string.IsNullOrEmpty(progInfo._displayIcon))
                                     if (!ScanFunctions.IconExists(progInfo._displayIcon))
-                                        ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "DisplayIcon");
+                                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "DisplayIcon");
 
                                 // Check install location 
                                 if (!string.IsNullOrEmpty(progInfo._installLocation))
                                     if ((!ScanFunctions.DirExists(progInfo._installLocation)) && (!Utils.FileExists(progInfo._installLocation)))
-                                        if (!ScanWizard.IsOnIgnoreList(progInfo._installLocation))
-                                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
+                                        if (!Wizard.IsOnIgnoreList(progInfo._installLocation))
+                                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
 
                                 // Check install source 
                                 if (!string.IsNullOrEmpty(progInfo._installSource))
                                     if ((!ScanFunctions.DirExists(progInfo._installSource)) && (!Utils.FileExists(progInfo._installSource)))
-                                        if (!ScanWizard.IsOnIgnoreList(progInfo._installSource))
-                                            ScanWizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
+                                        if (!Wizard.IsOnIgnoreList(progInfo._installSource))
+                                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
                                 // Check ARP Cache
                                 if (progInfo.SlowCache)
                                 {
                                     if (!string.IsNullOrEmpty(progInfo.FileName))
-                                        if (!Utils.FileExists(progInfo.FileName) && !ScanWizard.IsOnIgnoreList(progInfo.FileName))
-                                            ScanWizard.StoreInvalidKey(Strings.InvalidRegKey, progInfo.SlowInfoCacheRegKey);
+                                        if (!Utils.FileExists(progInfo.FileName) && !Wizard.IsOnIgnoreList(progInfo.FileName))
+                                            Wizard.StoreInvalidKey(Strings.InvalidRegKey, progInfo.SlowInfoCacheRegKey);
                                 }
                             }
                         }
                     }
                 }
 
-                ScanWizard.Report.WriteLine("Verifying registry entries in Add/Remove Cache");
+                Wizard.Report.WriteLine("Verifying registry entries in Add/Remove Cache");
 
                 checkARPCache(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\"));
                 checkARPCache(Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\"));
@@ -126,7 +126,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             foreach (string subKey in regKey.GetSubKeyNames())
             {
                 if (Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + subKey) == null)
-                    ScanWizard.StoreInvalidKey(Strings.ObsoleteRegKey, string.Format("{0}/{1}", regKey.Name, subKey));
+                    Wizard.StoreInvalidKey(Strings.ObsoleteRegKey, string.Format("{0}/{1}", regKey.Name, subKey));
             }
         }
     }

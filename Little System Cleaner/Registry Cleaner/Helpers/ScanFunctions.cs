@@ -39,14 +39,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 strFileName = strFileName.Substring(0, nSlash);
 
-                return (Utils.FileExists(strFileName) || ScanWizard.IsOnIgnoreList(strFileName));
+                return (Utils.FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName));
             }
             else
             {
                 StringBuilder sb = new StringBuilder(strFileName);
                 if (PInvoke.PathParseIconLocation(sb) >= 0)
                     if (!string.IsNullOrEmpty(sb.ToString()))
-                        return (Utils.FileExists(sb.ToString()) || ScanWizard.IsOnIgnoreList(strFileName));
+                        return (Utils.FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName));
             }
 
             return false;

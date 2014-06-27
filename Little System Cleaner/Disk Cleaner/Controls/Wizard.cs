@@ -95,11 +95,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded()
+        public bool OnUnloaded(bool forceExit = false)
         {
+            bool exit;
+
             if (this.userControl is Analyze)
             {
-                if (MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) {
+                exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+
+                if (exit) {
                     (this.userControl as Analyze).timerUpdate.Stop();
 
                     if ((this.userControl as Analyze).threadMain != null)
@@ -117,7 +121,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (this.userControl is Results)
             {
-                if (MessageBox.Show(App.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+
+                if (exit)
                 {
                     Wizard.fileList.Clear();
                     return true;

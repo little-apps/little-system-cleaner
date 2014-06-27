@@ -29,7 +29,6 @@ using System.Windows.Navigation;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Xceed.Wpf.Toolkit;
 using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner
@@ -85,11 +84,27 @@ namespace Little_System_Cleaner
         {
             if (System.Windows.MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                ScanWizard.CancelScan();
-                this.ctrlOptions.UpdateSettings();
+                bool? canExit = null;
+
+                UserControl lastCtrl = (this.tabControl.SelectedContent as UserControl);
+                System.Reflection.MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
+                if (methodUnload != null)
+                    canExit = (bool)methodUnload.Invoke(lastCtrl, new object[] { true });
+
+                if ((canExit.HasValue) && canExit.Value == false)
+                {
+                    // NOTE: Invoked function is responsible for displaying message on why it can't exit
+                    e.Cancel = true;
+                }
+                else
+                {
+                    this.ctrlOptions.UpdateSettings();
+                }
             }
             else
+            {
                 e.Cancel = true;
+            }
         }
 
         private void imageHelp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

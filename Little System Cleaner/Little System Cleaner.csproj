@@ -402,7 +402,7 @@
     <Compile Include="Registry Cleaner\Controls\Scan.xaml.cs">
       <DependentUpon>Scan.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Registry Cleaner\Controls\ScanWizard.cs" />
+    <Compile Include="Registry Cleaner\Controls\Wizard.cs" />
     <Compile Include="Registry Cleaner\Controls\Start.xaml.cs">
       <DependentUpon>Start.xaml</DependentUpon>
     </Compile>

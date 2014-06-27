@@ -64,11 +64,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded()
+        public bool OnUnloaded(bool forceExit = false)
         {
+            bool exit;
+
             if (this.userControl is Scan)
             {
-                if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+
+                if (exit)
                 {
                     (this.userControl as Scan).AbortScanThread();
 
@@ -82,7 +86,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (this.userControl is Results)
             {
-                if (MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+
+                if (exit)
                 {
                     return true;
                 }

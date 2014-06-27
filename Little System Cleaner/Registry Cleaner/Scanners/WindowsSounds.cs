@@ -43,7 +43,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 {
                     if (regKey != null)
                     {
-                        ScanWizard.Report.WriteLine("Scanning for missing sound events");
+                        Wizard.Report.WriteLine("Scanning for missing sound events");
                         ParseSoundKeys(regKey);
                     }
                 }
@@ -74,8 +74,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strSoundPath = rk2.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strSoundPath))
-                            if (!Utils.FileExists(strSoundPath) && !ScanWizard.IsOnIgnoreList(strSoundPath))
-                                ScanWizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
+                            if (!Utils.FileExists(strSoundPath) && !Wizard.IsOnIgnoreList(strSoundPath))
+                                Wizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
                     }
 
                 }

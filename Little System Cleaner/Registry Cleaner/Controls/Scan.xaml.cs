@@ -36,13 +36,14 @@ using System.Windows.Media.Imaging;
 using CommonTools.WpfAnimatedGif;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Misc;
+using System.Diagnostics;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
 	public partial class Scan : UserControl
 	{
         static List<ScannerBase> enabledScanners = new List<ScannerBase>();
-        ScanWizard scanBase;
+        Wizard scanBase;
         System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
         DateTime dateTimeStart = DateTime.MinValue;
         Thread threadScan;
@@ -65,7 +66,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// </summary>
         internal static int TotalProblems
         {
-            get { return ScanWizard.badRegKeyArray.Count; }
+            get { return Wizard.badRegKeyArray.Count; }
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             get { return _SectionCollection; }
         }
 
-        public Scan(ScanWizard sb)
+        public Scan(Wizard sb)
         {
             this.InitializeComponent();
 
@@ -118,14 +119,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 this._SectionCollection.Add(new lviScanner(scanBase.ScannerName));
             }
 
-            ScanWizard.ScanThread = new Thread(new ThreadStart(StartScanning));
-            ScanWizard.ScanThread.Start();
+            Wizard.ScanThread = new Thread(new ThreadStart(StartScanning));
+            Wizard.ScanThread.Start();
         }
 
         public void AbortScanThread()
         {
-            if (ScanWizard.ScanThread.IsAlive)
-                ScanWizard.ScanThread.Abort();
+            if (Wizard.ScanThread.IsAlive)
+                Wizard.ScanThread.Abort();
 
             if (this.threadScan.IsAlive)
                 this.threadScan.Abort();
@@ -142,7 +143,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (this.currentListViewIndex != -1)
             {
-                this.CurrentListViewItem.Errors = string.Format("{0} Errors", ScanWizard.badRegKeyArray.Problems(this.CurrentListViewItem.Section));
+                this.CurrentListViewItem.Errors = string.Format("{0} Errors", Wizard.badRegKeyArray.Problems(this.CurrentListViewItem.Section));
                 this.listView.Items.Refresh();
             }
         }
@@ -158,27 +159,27 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.dateTimeStart = DateTime.Now;
 
             // Create log file + Write Header
-            ScanWizard.CreateNewLogFile();
+            Wizard.CreateNewLogFile();
 
             // Begin Critical Region
             Thread.BeginCriticalRegion();
 
             try
             {
-                ScanWizard.Report.WriteLine("Started scan at " + DateTime.Now.ToString());
-                ScanWizard.Report.WriteLine();
+                Wizard.Report.WriteLine("Started scan at " + DateTime.Now.ToString());
+                Wizard.Report.WriteLine();
 
                 // Begin Scanning
                 foreach (ScannerBase scanner in Scan.EnabledScanners)
                 {
                     invokeCurrentSection(scanner.ScannerName);
 
-                    ScanWizard.Report.WriteLine("Starting scanning: " + scanner.ScannerName);
+                    Wizard.Report.WriteLine("Starting scanning: " + scanner.ScannerName);
 
                     this.StartScanner(scanner);
 
-                    ScanWizard.Report.WriteLine("Finished scanning: " + scanner.ScannerName);
-                    ScanWizard.Report.WriteLine();
+                    Wizard.Report.WriteLine("Finished scanning: " + scanner.ScannerName);
+                    Wizard.Report.WriteLine();
                 }
 
                 // Scan was successful
@@ -189,12 +190,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 // Scanning was aborted
                 scanAborted = true;
 
-                ScanWizard.Report.Write("User aborted scan... ");
+                Wizard.Report.Write("User aborted scan... ");
 
                 if (this.threadScan.IsAlive)
                     this.threadScan.Abort();
 
-                ScanWizard.Report.WriteLine("Exiting.\r\n");
+                Wizard.Report.WriteLine("Exiting.\r\n");
             }
             finally
             {
@@ -211,11 +212,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 this.timerUpdate.Stop();
 
                 // Write scan stats to log file
-                ScanWizard.Report.WriteLine(string.Format("Total time elapsed: {0} minutes {0} seconds", ts.Minutes, ts.Seconds));
-                ScanWizard.Report.WriteLine(string.Format("Total problems found: {0}", TotalProblems));
-                ScanWizard.Report.WriteLine(string.Format("Total objects scanned: {0}", TotalItemsScanned));
-                ScanWizard.Report.WriteLine();
-                ScanWizard.Report.WriteLine("Finished scan at " + DateTime.Now.ToString());
+                Wizard.Report.WriteLine(string.Format("Total time elapsed: {0} minutes {0} seconds", ts.Minutes, ts.Seconds));
+                Wizard.Report.WriteLine(string.Format("Total problems found: {0}", TotalProblems));
+                Wizard.Report.WriteLine(string.Format("Total objects scanned: {0}", TotalItemsScanned));
+                Wizard.Report.WriteLine();
+                Wizard.Report.WriteLine("Finished scan at " + DateTime.Now.ToString());
             }
 
             // End Critical Region
@@ -245,7 +246,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.progressBar.Value++;
             this.currentListViewIndex++;
 
-            ScanWizard.currentScannerName = sectionName;
+            Wizard.currentScannerName = sectionName;
             this.currentSection.Content = "Section: " + sectionName;
 
             this.CurrentListViewItem.Status = "Scanning";
@@ -256,7 +257,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void StartScanner(ScannerBase scanner)
         {
-            System.Reflection.MethodInfo mi = scanner.GetType().GetMethod("Scan", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            System.Reflection.MethodInfo mi = scanner.GetType().GetMethod("Scan", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+
+            if (mi == null)
+            {
+                Debug.WriteLine("Unable to get method info for " + scanner.ScannerName);
+                return;
+            }
+
             Action objScan = (Action)Delegate.CreateDelegate(typeof(Action), mi);
 
             // Start thread

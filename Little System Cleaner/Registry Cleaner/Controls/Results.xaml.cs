@@ -38,9 +38,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
 	public partial class Results : UserControl
 	{
-        ScanWizard scanWiz;
+        Wizard scanWiz;
 
-		public Results(ScanWizard scanBase)
+		public Results(Wizard scanBase)
 		{
 			this.InitializeComponent();
 
@@ -57,7 +57,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
             else
             {
-                ScanWizard.Report.DisplayLogFile((Properties.Settings.Default.registryCleanerOptionsShowLog && !Properties.Settings.Default.registryCleanerOptionsAutoRepair));
+                Wizard.Report.DisplayLogFile((Properties.Settings.Default.registryCleanerOptionsShowLog && !Properties.Settings.Default.registryCleanerOptionsAutoRepair));
 
                 // Set last scan errors found
                 Properties.Settings.Default.lastScanErrors = 0;
