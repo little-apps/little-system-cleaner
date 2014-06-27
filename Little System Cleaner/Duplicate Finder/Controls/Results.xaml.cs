@@ -93,6 +93,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 long seqNum = 0;
                 bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
+                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                Main.TaskbarProgressValue = 0;
+
                 this.progressBar.Value = 0;
                 this.progressBar.Minimum = 0;
                 this.progressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
@@ -153,6 +156,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 MessageBox.Show(App.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                Main.TaskbarProgressValue = 0;
+
                 this.scanBase.MoveFirst();
             }
         }
@@ -226,5 +233,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             return;
         }
         #endregion
+
+        private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.progressBar.Maximum != 0)
+            {
+                Main.TaskbarProgressValue = (e.NewValue / this.progressBar.Maximum);
+            }
+        }
     }
 }

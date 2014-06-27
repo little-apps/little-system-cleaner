@@ -26,6 +26,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class BadRegKeyArray : CollectionBase
     {
+        private static object _lockObj = new object();
+
         public BadRegistryKey this[int index]
         {
             get { return (BadRegistryKey)this.InnerList[index]; }
@@ -37,12 +39,26 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             if (BadRegKey == null)
                 throw new ArgumentNullException("BadRegKey");
 
-            return (this.InnerList.Add(BadRegKey));
+            int index; 
+
+            lock (_lockObj)
+            {
+                index = this.InnerList.Add(BadRegKey);
+            }
+
+            return index;
         }
 
         public int IndexOf(BadRegistryKey BadRegKey)
         {
-            return (this.InnerList.IndexOf(BadRegKey));
+            int index;
+
+            lock (_lockObj)
+            {
+                index = this.InnerList.IndexOf(BadRegKey);
+            }
+
+            return index;
         }
 
         public void Insert(int index, BadRegistryKey BadRegKey)
@@ -50,7 +66,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             if (BadRegKey == null)
                 throw new ArgumentNullException("BadRegKey");
 
-            this.InnerList.Insert(index, BadRegKey);
+            lock (_lockObj)
+            {
+                this.InnerList.Insert(index, BadRegKey);
+            }
         }
 
         public void Remove(BadRegistryKey BadRegKey)
@@ -58,7 +77,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             if (BadRegKey == null)
                 throw new ArgumentNullException("BadRegKey");
 
-            this.InnerList.Remove(BadRegKey);
+            lock (_lockObj)
+            {
+                this.InnerList.Remove(BadRegKey);
+            }
         }
 
         /// <summary>
@@ -69,17 +91,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if it exists</returns>
         public bool Contains(string regPath, string valueName)
         {
-            foreach (BadRegistryKey brk in this.InnerList)
+            lock (_lockObj)
             {
-                if (string.IsNullOrEmpty(valueName))
+                foreach (BadRegistryKey brk in this.InnerList)
                 {
-                    if (brk.RegKeyPath == regPath)
-                        return true;
-                }
-                else
-                {
-                    if (brk.RegKeyPath == regPath && brk.ValueName == valueName)
-                        return true;
+                    if (string.IsNullOrEmpty(valueName))
+                    {
+                        if (brk.RegKeyPath == regPath)
+                            return true;
+                    }
+                    else
+                    {
+                        if (brk.RegKeyPath == regPath && brk.ValueName == valueName)
+                            return true;
+                    }
                 }
             }
 
@@ -90,10 +115,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
             int count = 0;
 
-            foreach (BadRegistryKey badRegKey in (ArrayList)this.InnerList.Clone())
+            lock (_lockObj)
             {
-                if (badRegKey.SectionName == sectionName)
-                    count++;
+                foreach (BadRegistryKey badRegKey in (ArrayList)this.InnerList.Clone())
+                {
+                    if (badRegKey.SectionName == sectionName)
+                        count++;
+                }
             }
 
             return count;

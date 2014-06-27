@@ -34,7 +34,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 2 of 3</Label>
             </Grid>
         </Border>
-        <ProgressBar VerticalAlignment="Top" Height="24" x:Name="progressBar" Grid.Row="2" />
+        <ProgressBar VerticalAlignment="Top" Height="24" x:Name="progressBar" Grid.Row="2" ValueChanged="progressBar_ValueChanged" />
         <Button x:Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" />

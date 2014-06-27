@@ -54,6 +54,21 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             InitializeComponent();
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Set task bar progress bar
+            Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Little_System_Cleaner.Main.TaskbarProgressValue = 0;
+
+            // Set progress bar
+            this.progressBar1.Minimum = 0;
+            this.progressBar1.Maximum = Wizard.RegistryHives.Count;
+            this.progressBar1.Value = 0;
+
+            this.threadScan = new Thread(new ThreadStart(CompactRegistry));
+            this.threadScan.Start();
+        }
+
         private void CompactRegistry()
         {
             long lSeqNum = 0;
@@ -111,7 +126,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             Properties.Settings.Default.totalScans++;
 
             SetDialogResult(true);
-            this.Dispatcher.BeginInvoke(new Action(this.Close));
+
+            this.Dispatcher.BeginInvoke(new Action(() => {
+                Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                this.Close();
+            }));
         }
 
         private void SetDialogResult(bool bResult)
@@ -167,14 +186,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 ShutdownBlockReasonDestroy(hWnd);
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.progressBar1.Minimum = 0;
-            this.progressBar1.Maximum = Wizard.RegistryHives.Count;
-            this.progressBar1.Value = 0;
+        
 
-            this.threadScan = new Thread(new ThreadStart(CompactRegistry));
-            this.threadScan.Start();
+        private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.progressBar1.Maximum != 0)
+                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / this.progressBar1.Maximum);
         }
     }
 }

@@ -27,7 +27,7 @@
             </Border>
             <StackPanel Grid.Row="1" Background="#789FE7">
                 <TextBlock Height="20" Name="textBlockStatus" Text="TextBlock" Margin="3,0,0,0" Width="239" FontWeight="Bold" />
-                <ProgressBar Height="20" Name="progressBar1" VerticalAlignment="Top" Width="238" />
+                <ProgressBar Height="20" Name="progressBar1" VerticalAlignment="Top" Width="238" ValueChanged="progressBar1_ValueChanged" />
             </StackPanel>
             <Border BorderBrush="Silver" BorderThickness="0" Name="border1" Background="#2044AE" Grid.Row="2">
                 <StackPanel>

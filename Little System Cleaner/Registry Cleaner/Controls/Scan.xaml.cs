@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 	{
         static List<ScannerBase> enabledScanners = new List<ScannerBase>();
         Wizard scanBase;
-        System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
+        System.Timers.Timer timerUpdate = new System.Timers.Timer(750);
         DateTime dateTimeStart = DateTime.MinValue;
         Thread threadScan;
         int currentListViewIndex = -1;
@@ -108,6 +108,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
             this.timerUpdate.Start();
 
+            // Set taskbar progress bar
+            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Main.TaskbarProgressValue = 0;
+
             // Set the progress bar
             this.progressBar.Minimum = 0;
             this.progressBar.Maximum = Scan.EnabledScanners.Count;
@@ -125,10 +129,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public void AbortScanThread()
         {
-            if (Wizard.ScanThread.IsAlive)
+            if (Wizard.ScanThread.IsAlive && Wizard.ScanThread.ThreadState == System.Threading.ThreadState.Running)
                 Wizard.ScanThread.Abort();
 
-            if (this.threadScan.IsAlive)
+            if (this.threadScan.IsAlive && this.threadScan.ThreadState == System.Threading.ThreadState.Running)
                 this.threadScan.Abort();
         }
 
@@ -153,7 +157,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// </summary>
         private void StartScanning()
         {
-            bool scanAborted;
+            bool scanAborted = true;
 
             // Set scan start time
             this.dateTimeStart = DateTime.Now;
@@ -217,13 +221,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 Wizard.Report.WriteLine(string.Format("Total objects scanned: {0}", TotalItemsScanned));
                 Wizard.Report.WriteLine();
                 Wizard.Report.WriteLine("Finished scan at " + DateTime.Now.ToString());
+
+                // End Critical Region
+                Thread.EndCriticalRegion();
+
+                // Reset taskbar progress bar
+                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+
+                if (!scanAborted)
+                    this.Dispatcher.BeginInvoke(new Action(this.scanBase.MoveNext));
             }
-
-            // End Critical Region
-            Thread.EndCriticalRegion();
-
-            if (!scanAborted)
-                this.Dispatcher.Invoke(new Action(this.scanBase.MoveNext));
         }
 
         /// <summary>
@@ -289,6 +296,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             this.AbortScanThread();
+        }
+
+        private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.progressBar.Maximum != 0)
+                Main.TaskbarProgressValue = (e.NewValue / this.progressBar.Maximum);
         }
        
 	}

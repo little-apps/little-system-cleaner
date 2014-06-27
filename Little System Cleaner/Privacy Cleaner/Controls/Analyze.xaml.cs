@@ -101,6 +101,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
+            // Set task bar progress bar
+            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Main.TaskbarProgressValue = 0;
+
+            // Set progress bar
             this.progressBar.Value = 0;
             this.progressBar.Minimum = 0;
             this.progressBar.Maximum = max;
@@ -111,11 +116,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             bool scanAborted = false;
             int currentParent = -1;
 
-            // Begin critical region
-            Thread.BeginCriticalRegion();
-
             try
             {
+                // Begin critical region
+                Thread.BeginCriticalRegion();
+
                 foreach (ScannerBase n in this.SectionsCollection)
                 {
                     currentParent++;
@@ -160,14 +165,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
             finally
             {
+                // End critical region
+                Thread.EndCriticalRegion();
 
+                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+
+                if (scanAborted)
+                    this.scanBase.MoveNext();
             }
-
-            // End critical region
-            Thread.EndCriticalRegion();
-
-            if (scanAborted)
-                this.scanBase.MoveNext();
         }
 
         /// <summary>
@@ -287,6 +292,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
                 this.AbortScanThread();
                 this.scanBase.MoveFirst();
+            }
+        }
+
+        private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.progressBar.Maximum != 0)
+            {
+                Main.TaskbarProgressValue = (e.NewValue / this.progressBar.Maximum);
             }
         }
     }

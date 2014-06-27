@@ -145,7 +145,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action(() => SetCurrentControl(index)));
+                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
+
                 return;
             }
 

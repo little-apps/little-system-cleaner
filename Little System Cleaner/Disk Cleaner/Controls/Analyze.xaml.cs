@@ -35,6 +35,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Shell;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -96,6 +97,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             try
             {
+                // Show taskbar progress bar
+                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+
                 // Set last scan date
                 Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
@@ -123,12 +127,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     this.msgBox("No problem files were detected");
                     this.scanBase.MovePrev();
                 }
-                    
             }
             catch (ThreadAbortException)
             {
                 // Will end up here if user accepts to change tab
                 // No need to change tab
+            }
+            finally
+            {
+                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
             }
         }
 

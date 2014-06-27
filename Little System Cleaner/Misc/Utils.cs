@@ -38,6 +38,7 @@ using System.Collections.Specialized;
 using System.Net;
 using System.Net.NetworkInformation;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Windows.Shell;
 
 namespace Little_System_Cleaner.Misc
 {

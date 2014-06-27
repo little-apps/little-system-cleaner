@@ -95,8 +95,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             try
             {
-                Thread.BeginCriticalRegion();
-
+                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
                 this.StatusText = "Building list of all files";
 
                 if (this.scanBase.Options.AllDrives.GetValueOrDefault())
@@ -132,8 +131,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (drives == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "No drives found to scan. Please ensure that the drive types are not all selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
-                        
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
+
                         this.scanBase.MoveFirst();
                         return;
                     }
@@ -164,7 +167,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByFilename.Count == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); }));
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
 
                         this.scanBase.MoveFirst();
                         return;
@@ -178,7 +185,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); }));
+                        this.Dispatcher.Invoke(new Action(() => { 
+                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); 
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
 
                         this.scanBase.MoveFirst();
                         return;
@@ -192,7 +202,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); }));
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
 
                         this.scanBase.MoveFirst();
                         return;
@@ -207,7 +221,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             finally
             {
-                Thread.EndCriticalRegion();
+                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
             }
         }
 

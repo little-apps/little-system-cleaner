@@ -185,8 +185,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="taskBarItemInfo" />
+    </Window.TaskbarItemInfo>
     <Grid Background="{StaticResource LightBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="71" />

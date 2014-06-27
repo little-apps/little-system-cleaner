@@ -30,12 +30,25 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
+using System.Windows.Shell;
 
 namespace Little_System_Cleaner
 {
     public partial class Main
 	{
         internal static bool IsTabsEnabled { get; set; }
+
+        internal static TaskbarItemProgressState TaskbarProgressState
+        {
+            get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressState; }
+            set { (App.Current.MainWindow as Main).taskBarItemInfo.ProgressState = value; }
+        }
+
+        internal static double TaskbarProgressValue
+        {
+            get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue; }
+            set { (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue = value; }
+        }
 
         System.Timers.Timer timerCheck = new System.Timers.Timer(500);
 
@@ -44,7 +57,7 @@ namespace Little_System_Cleaner
 			this.InitializeComponent();
 
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
-
+            
 		}
 
         void timerCheck_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -78,6 +91,8 @@ namespace Little_System_Cleaner
                 AutoUpdaterWPF.AutoUpdater.MainDispatcher = this.Dispatcher;
                 AutoUpdaterWPF.AutoUpdater.Start(Properties.Settings.Default.updateURL);
             }
+
+            this.taskBarItemInfo.Description = Utils.ProductName;
         }
 
         private void OnClose(object sender, System.ComponentModel.CancelEventArgs e)

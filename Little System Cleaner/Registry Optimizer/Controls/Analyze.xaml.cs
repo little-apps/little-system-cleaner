@@ -61,6 +61,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             Properties.Settings.Default.lastScanErrors = 0;
             Properties.Settings.Default.lastScanErrorsFixed = 0;
 
+            // Set taskbar progress bar
+            Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Little_System_Cleaner.Main.TaskbarProgressValue = 0;
+
             // Set progress bar
             this.progressBar1.Minimum = 0;
             this.progressBar1.Maximum = Wizard.RegistryHives.Count;
@@ -86,7 +90,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Thread.EndCriticalRegion();
 
-            this.Dispatcher.BeginInvoke(new Action(this.Close));
+            this.Dispatcher.BeginInvoke(new Action(() => {
+                Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                this.Close();
+            }));
         }
 
         private void IncrementProgressBar(string currentHive)
@@ -99,6 +106,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             this.progressBar1.Value++;
             this.textBlockStatus.Text = string.Format("Analyzing: {0}", currentHive);
+        }
+
+        private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.progressBar1.Maximum != 0)
+                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / this.progressBar1.Maximum);
         }
     }
 }

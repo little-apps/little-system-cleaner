@@ -88,7 +88,7 @@
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" />
+        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" ValueChanged="progressBar1_ValueChanged" />
         <TextBlock Grid.Row="3" Height="30" Name="progressBarText" VerticalAlignment="Top" MinWidth="567" TextAlignment="Center" Margin="0,5,0,5" />
     </Grid>
 </UserControl>

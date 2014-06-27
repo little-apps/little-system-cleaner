@@ -139,6 +139,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.buttonCancel.IsEnabled = false;
             this.buttonFix.IsEnabled = false;
 
+            // Set taskbar progress bar
+            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Main.TaskbarProgressValue = 0;
+
             // Set progress bar range
             this.progressBar1.Minimum = 0;
             this.progressBar1.Maximum = badRegKeys.Count;
@@ -208,6 +212,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
+            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
 
             // If power user option selected -> automatically exit program
             if (Properties.Settings.Default.registryCleanerOptionsAutoExit)
@@ -289,6 +295,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         break;
                     }
             }
+        }
+
+        private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.progressBar1.Maximum != 0)
+                Main.TaskbarProgressValue = (e.NewValue / this.progressBar1.Maximum);
         }
         
 	}
