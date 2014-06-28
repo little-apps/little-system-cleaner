@@ -40,10 +40,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             Name = "Internet Explorer";
             Icon = Properties.Resources.InternetExplorer;
+
+            this.Children.Add(new InternetExplorer(this, "History"));
+            this.Children.Add(new InternetExplorer(this, "Cookies"));
+            this.Children.Add(new InternetExplorer(this, "Auto Complete"));
+            this.Children.Add(new InternetExplorer(this, "Temporary Internet Files"));
+            //this.Children.Add(new InternetExplorer(this, "Index.dat Files"));
         }
 
-        public InternetExplorer(string header)
+        public InternetExplorer(ScannerBase parent, string header)
         {
+            Parent = parent;
             Name = header;
         }
 

@@ -41,47 +41,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (InternetExplorer.IsInstalled())
             {
-                sectionModel.RootChildren.Add(new InternetExplorer()
-                {
-                    Children =
-                {
-                    new InternetExplorer("History"),
-                    new InternetExplorer("Cookies"),
-                    new InternetExplorer("Auto Complete"),
-                    new InternetExplorer("Temporary Internet Files"),
-                    //new InternetExplorer("Index.dat Files")
-                }
-                });
+                sectionModel.RootChildren.Add(new InternetExplorer());
             }
 
             if (Firefox.IsInstalled())
             {
-                sectionModel.RootChildren.Add(new Firefox()
-                {
-                    Children =
-                    {
-                        new Firefox("Internet History"),
-                        new Firefox("Cookies"),
-                        new Firefox("Internet Cache"),
-                        new Firefox("Saved Form Information"),
-                        new Firefox("Download History")
-                    }
-                });
+                sectionModel.RootChildren.Add(new Firefox());
             }
 
             // Check for chrome.exe in install directory
             if (gChrome.IsInstalled())
             {
-                sectionModel.RootChildren.Add(new gChrome()
-                {
-                    Children =
-                    {
-                        new gChrome("Cookies"),
-                        new gChrome("Download History"),
-                        new gChrome("Internet Cache"),
-                        new gChrome("Internet History")
-                    }
-                });
+                sectionModel.RootChildren.Add(new gChrome());
             }
 
             // Misc scanners

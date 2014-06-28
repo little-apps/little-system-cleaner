@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools" 
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinWidth="579" MinHeight="384">
@@ -32,7 +33,7 @@
         <ProgressBar VerticalAlignment="Center" Height="24" x:Name="progressBar" Grid.Row="2" Margin="0,3" ValueChanged="progressBar_ValueChanged" />
         <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Margin="0,7" Height="16" />
 
-        <ListView ItemsSource="{Binding SectionsCollection}" Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">
+        <ListView Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3">
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn Header="Section" x:Name="_section">
@@ -40,7 +41,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <ContentPresenter Content="{Binding Image}" Width="16" Height="16"/>
-                                    <TextBlock Text="{Binding Path=Section}"></TextBlock>
+                                    <TextBlock Text="{Binding Section}"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

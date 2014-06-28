@@ -23,6 +23,7 @@ using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -41,14 +42,26 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
     /// <summary>
     /// Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class Analyze : UserControl
+    public partial class Analyze : UserControl, INotifyPropertyChanged
     {
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+        #endregion
+
         static List<ScannerBase> enabledScanners = new List<ScannerBase>();
         Wizard scanBase;
         System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
         int currentListViewParentIndex = -1;
         int currentListViewIndex = -1;
         Thread threadScan;
+        private ObservableCollection<ScannerBase> _sectionsCollection;
 
         public ScannerBase CurrentListViewItem
         {
@@ -59,9 +72,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             get
             {
+                string currentSection = (this.CurrentListViewItem.Parent != null ? this.CurrentListViewItem.Parent.Section : this.CurrentListViewItem.Section);
+
                 foreach (ResultNode n in Wizard.ResultArray)
                 {
-                    if (this.CurrentListViewItem.Section == n.Section)
+                    if (currentSection == n.Section)
                         return n.Children.Count;
                 }
 
@@ -71,13 +86,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         public ObservableCollection<ScannerBase> SectionsCollection
         {
-            get 
-            {
-                if (this.scanBase != null)
-                    return this.scanBase.Model.RootChildren;
+            get { return this.scanBase.Model.RootChildren; }
+            //get { return this._sectionsCollection; }
+            //set
+            //{
+            //    this._sectionsCollection = value;
 
-                return new ObservableCollection<ScannerBase>();
-            }
+            //    this.OnPropertyChanged("SectionsCollection");
+            //}
         }
 
         public Analyze(Wizard sb)
@@ -85,6 +101,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             InitializeComponent();
 
             this.scanBase = sb;
+
+            this.listView.ItemsSource = this.SectionsCollection;
 
             // Set last scan date
             Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
@@ -167,6 +185,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         if (n.Results.Children.Count > 0)
                             Wizard.ResultArray.Add(n.Results);
                     }
+
+                    // Update info before going to next section (or exiting) 
+                    this.Dispatcher.Invoke(new Action(() => {
+                        n.Errors = string.Format("{0} Errors", this.CurrentSectionProblems);
+                        n.Status = "Finished";
+                        n.UnloadGif();
+                    }));
                 }
 
                 scanAborted = true;
@@ -197,14 +222,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action<string, int>(InvokeCurrentSection), new object[] { sectionName, parentSection });
+                this.Dispatcher.Invoke(new Action<string, int>(InvokeCurrentSection), new object[] { sectionName, parentSection });
                 return;
-            }
-
-            if (this.currentListViewIndex != -1)
-            {
-                this.CurrentListViewItem.Status = "Finished";
-                this.CurrentListViewItem.UnloadGif();
             }
 
             if (currentListViewParentIndex != parentSection)
@@ -216,8 +235,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             Wizard.CurrentSectionName = sectionName;
             this.currentSection.Text = "Section: " + sectionName;
 
-            this.CurrentListViewItem.Status = "Scanning";
+            this.CurrentListViewItem.Status = "Scanning " + sectionName;
             this.CurrentListViewItem.LoadGif();
+
+            Utils.AutoResizeColumns(this.listView);
 
             this.listView.Items.Refresh();
         }
@@ -255,6 +276,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
 
             }
+
+
         }
 
         private void StartScanner(ScannerBase parent)

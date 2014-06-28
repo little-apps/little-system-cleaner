@@ -227,7 +227,7 @@ namespace Little_System_Cleaner
             UserControl lastCtrl = (this.tabControl.SelectedContent as UserControl);
             System.Reflection.MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
-                bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { });
+                bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
 
             if (bUnload == true || !bUnload.HasValue)
             {

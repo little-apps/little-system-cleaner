@@ -140,7 +140,27 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             return false;
         }
 
-        public string Errors { get; set; }
+
+        private string _errors;
+
+        public string Errors
+        {
+            get
+            {
+                return this._errors;
+            }
+            set
+            {
+                if (this.Parent != null)
+                    this.Parent.Errors = value;
+                else
+                {
+                    this._errors = value;
+                    this.OnPropertyChanged("Errors");
+                }
+                    
+            }
+        }
 
         /// <summary>
         /// Returns process name for scanner
@@ -189,22 +209,54 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
+        private string _status;
+
         public string Status
         {
-            get;
-            set;
+            get { return this._status; }
+            set 
+            {
+                if (this.Parent != null)
+                    this.Parent.Status = value;
+                else
+                {
+                    this._status = value;
+                    this.OnPropertyChanged("Status");
+                }
+                    
+            }
         }
+
+        private Image _image;
 
         public Image Image
         {
-            get;
-            set;
+            get { return this._image; }
+            set
+            {
+                if (this.Parent != null)
+                    this.Parent.Image = value;
+                else
+                {
+                    this._image = value;
+                    this.OnPropertyChanged("Image");
+                }
+            }
         }
 
-        public ScannerBase() { }
+        public ScannerBase() 
+        {
+        
+        }
 
         public void LoadGif()
         {
+            if (this.Parent != null)
+            {
+                this.Parent.LoadGif();
+                return;
+            }
+
             this.Image = new System.Windows.Controls.Image();
 
             BitmapSource gif = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
@@ -213,6 +265,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public void UnloadGif()
         {
+            if (this.Parent != null)
+            {
+                this.Parent.UnloadGif();
+                return;
+            }
+
             this.Image = null;
 
             this.Image = new System.Windows.Controls.Image();

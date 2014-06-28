@@ -41,10 +41,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             Name = "Mozilla Firefox";
             Icon = Properties.Resources.Firefox;
+
+            this.Children.Add(new Firefox(this, "Internet History"));
+            this.Children.Add(new Firefox(this, "Cookies"));
+            this.Children.Add(new Firefox(this, "Internet Cache"));
+            this.Children.Add(new Firefox(this, "Saved Form Information"));
+            this.Children.Add(new Firefox(this, "Download History"));
         }
 
-        public Firefox(string header)
+        public Firefox(ScannerBase parent, string header)
         {
+            Parent = parent;
             Name = header;
         }
 

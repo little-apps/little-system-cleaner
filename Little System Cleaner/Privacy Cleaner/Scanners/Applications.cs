@@ -43,13 +43,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             //    this.Nodes.Add(new Applications("OpenOffice 3.1"));
             //if (Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Office\12.0") != null)
             //    this.Nodes.Add(new Applications("Microsoft Office 2007"));
-
-            
-            
         }
 
-        public Applications(string header)
+        public Applications(ScannerBase parent, string header)
         {
+            Parent = parent;
             Name = header;
         }
 

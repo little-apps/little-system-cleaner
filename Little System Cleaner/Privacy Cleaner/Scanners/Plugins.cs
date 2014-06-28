@@ -37,12 +37,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 string name, desc;
 
                 if (PluginIsValid(filePath, out name, out desc))
-                    this.Children.Add(new Plugins(name, desc, filePath));
+                    this.Children.Add(new Plugins(this, name, desc, filePath));
             }
         }
 
-        public Plugins(string header, string description, string pluginPath)
+        public Plugins(ScannerBase parent, string header, string description, string pluginPath)
         {
+            Parent = parent;
             Name = header;
             Description = description;
             PluginPath = pluginPath;

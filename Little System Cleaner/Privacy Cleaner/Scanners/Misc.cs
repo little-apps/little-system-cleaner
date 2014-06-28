@@ -38,12 +38,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             Name = "Miscellaneous";
 
-            this.Children.Add(new Misc("Recycle Bin"));
-            this.Children.Add(new Misc("Desktop and Start Menu Icons"));
+            this.Children.Add(new Misc(this, "Recycle Bin"));
+            this.Children.Add(new Misc(this, "Desktop and Start Menu Icons"));
         }
 
-        public Misc(string header)
+        public Misc(ScannerBase parent, string header)
         {
+            Parent = parent;
             Name = header;
         }
 

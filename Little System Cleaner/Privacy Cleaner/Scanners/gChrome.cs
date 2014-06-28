@@ -35,10 +35,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             Name = "Google Chrome";
             Icon = Properties.Resources.gChrome;
+
+            this.Children.Add(new gChrome(this, "Cookies"));
+            this.Children.Add(new gChrome(this, "Download History"));
+            this.Children.Add(new gChrome(this, "Internet Cache"));
+            this.Children.Add(new gChrome(this, "Internet History"));
         }
 
-        public gChrome(string header)
+        public gChrome(ScannerBase parent, string header)
         {
+            Parent = parent;
             Name = header;
         }
 
