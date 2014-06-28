@@ -168,7 +168,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 // End critical region
                 Thread.EndCriticalRegion();
 
-                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
 
                 if (scanAborted)
                     this.scanBase.MoveNext();
@@ -182,7 +182,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action<string, int>(InvokeCurrentSection), new object[] { sectionName, parentSection });
+                this.Dispatcher.BeginInvoke(new Action<string, int>(InvokeCurrentSection), new object[] { sectionName, parentSection });
                 return;
             }
 
@@ -218,7 +218,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     // Skip plugin
                     if (this.Dispatcher.Thread != Thread.CurrentThread)
                     {
-                        this.Dispatcher.Invoke(new Action(() => this.progressBar.Value++));
+                        this.Dispatcher.BeginInvoke(new Action(() => this.progressBar.Value++));
                     }
                     else
                     {
@@ -245,7 +245,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     // Skip plugin
                     if (this.Dispatcher.Thread != Thread.CurrentThread)
                     {
-                        this.Dispatcher.Invoke(new Action(() => this.progressBar.Value++));
+                        this.Dispatcher.BeginInvoke(new Action(() => this.progressBar.Value++));
                     }
                     else
                     {
@@ -265,7 +265,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                this.Dispatcher.BeginInvoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
                 return;
             }
 

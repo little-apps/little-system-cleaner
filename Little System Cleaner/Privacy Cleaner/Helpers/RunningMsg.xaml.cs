@@ -85,7 +85,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new EventHandler<ElapsedEventArgs>(timer_Elapsed), sender, e);
+                this.Dispatcher.BeginInvoke(new EventHandler<ElapsedEventArgs>(timer_Elapsed), sender, e);
                 return;
             }
 

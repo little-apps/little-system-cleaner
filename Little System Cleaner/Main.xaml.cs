@@ -64,7 +64,7 @@ namespace Little_System_Cleaner
         {
             if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new EventHandler<System.Timers.ElapsedEventArgs>(timerCheck_Elapsed), new object[] { sender, e });
+                this.Dispatcher.BeginInvoke(new EventHandler<System.Timers.ElapsedEventArgs>(timerCheck_Elapsed), new object[] { sender, e });
                 return;
             }
 

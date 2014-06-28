@@ -85,7 +85,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                this.Dispatcher.BeginInvoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             try
             {
                 // Show taskbar progress bar
-                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
 
                 // Set last scan date
                 Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
@@ -135,7 +135,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
             finally
             {
-                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
+                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
             }
         }
 
@@ -143,7 +143,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action(() => msgBox(text)));
+                this.Dispatcher.BeginInvoke(new Action(() => msgBox(text)));
                 return;
             }
 

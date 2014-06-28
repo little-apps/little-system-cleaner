@@ -148,10 +148,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                this.Dispatcher.BeginInvoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
                 return;
             }
-
 
             if (this.currentListViewIndex != -1)
             {
@@ -276,7 +275,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action<string>(invokeCurrentSection), new object[] { sectionName });
+                this.Dispatcher.BeginInvoke(new Action<string>(invokeCurrentSection), new object[] { sectionName });
                 return;
             }
 

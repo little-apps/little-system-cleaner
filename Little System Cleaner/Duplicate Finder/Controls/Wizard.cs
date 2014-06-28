@@ -110,7 +110,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action(() => SetCurrentControl(index)));
+                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
                 return;
             }
 

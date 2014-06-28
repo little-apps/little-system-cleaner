@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 if (this.Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    this.Dispatcher.Invoke(new Action(() => this.StatusText = value ));
+                    this.Dispatcher.BeginInvoke(new Action(() => this.StatusText = value));
                     return;
                 }
 
@@ -70,7 +70,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 if (this.Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    this.Dispatcher.Invoke(new Action(() => this.CurrentFile = value));
+                    this.Dispatcher.BeginInvoke(new Action(() => this.CurrentFile = value));
                     return;
                 }
 
@@ -95,7 +95,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             try
             {
-                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
+                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
                 this.StatusText = "Building list of all files";
 
                 if (this.scanBase.Options.AllDrives.GetValueOrDefault())
@@ -131,7 +131,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (drives == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() =>
+                        this.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
@@ -167,7 +167,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByFilename.Count == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() =>
+                        this.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
@@ -185,7 +185,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() => { 
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        { 
                             MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); 
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
@@ -202,7 +203,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
-                        this.Dispatcher.Invoke(new Action(() =>
+                        this.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
@@ -221,7 +222,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             finally
             {
-                this.Dispatcher.Invoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
             }
         }
 
@@ -363,8 +364,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 this.scanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList<FileEntry>());
             }
-
-            
         }
 
         private void GroupByChecksum()
@@ -397,7 +396,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 // Nothing found
                 return;
 
-            this.Dispatcher.Invoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
                 this.progressBar.IsIndeterminate = false;
                 this.progressBar.Value = 0;
@@ -420,7 +419,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     file.GetChecksum(this.scanBase.Options.HashAlgorithm.Algorithm, compareFilename);
 
-                    this.Dispatcher.Invoke(new Action(() => this.progressBar.Value++ ));
+                    this.Dispatcher.BeginInvoke(new Action(() => this.progressBar.Value++ ));
                 }
 
                 var query3 = from p in files
