@@ -230,8 +230,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
 
             threadScan = new Thread(() => parent.Scan(child));
-            threadScan.Start();
-            threadScan.Join();
+
+            try
+            {
+                threadScan.Start();
+                threadScan.Join();
+            }
+            catch (ThreadInterruptedException)
+            {
+
+            }
         }
 
         private void StartScanner(ScannerBase parent)
@@ -257,8 +265,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
 
             threadScan = new Thread(parent.Scan);
-            threadScan.Start();
-            threadScan.Join();
+
+            try
+            {
+                threadScan.Start();
+                threadScan.Join();
+            }
+            catch (ThreadInterruptedException)
+            {
+
+            }
         }
 
         void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -280,7 +296,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         public void AbortScanThread()
         {
             if (Wizard.ScanThread.IsAlive)
+            {
+                Wizard.ScanThread.Interrupt();
                 Wizard.ScanThread.Abort();
+            }
 
             if (this.threadScan.IsAlive)
                 this.threadScan.Abort();
