@@ -39,7 +39,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <ContentPresenter Content="{Binding Image}" Width="16" Height="16"/>
+                                    <ContentPresenter Content="{Binding Image}" Width="16" Height="16" Margin="0,0,5,0" />
                                     <TextBlock Text="{Binding Section}"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>
