@@ -64,7 +64,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded(bool forceExit = false)
+        public bool OnUnloaded(bool forceExit)
         {
             bool exit;
 

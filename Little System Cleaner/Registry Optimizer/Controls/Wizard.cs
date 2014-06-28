@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 this.SetCurrentControl(1);
         }
 
-        public bool OnUnloaded(bool forceExit = false)
+        public bool OnUnloaded(bool forceExit)
         {
             if (!HivesLoaded)
             {

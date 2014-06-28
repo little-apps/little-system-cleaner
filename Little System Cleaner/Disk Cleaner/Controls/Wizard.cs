@@ -95,7 +95,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded(bool forceExit = false)
+        public bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
