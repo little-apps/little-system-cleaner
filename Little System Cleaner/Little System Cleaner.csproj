@@ -297,7 +297,6 @@
     <Compile Include="Privacy Cleaner\Helpers\DetailItem.cs" />
     <Compile Include="Privacy Cleaner\Helpers\MiscFunctions.cs" />
     <Compile Include="Privacy Cleaner\Helpers\PluginFunctions.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultArray.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results\ResultDelegate.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results\ResultFiles.cs" />
     <Compile Include="Privacy Cleaner\Helpers\Results\ResultFolders.cs" />

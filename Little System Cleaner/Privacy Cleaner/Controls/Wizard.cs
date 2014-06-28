@@ -23,6 +23,7 @@ using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -36,6 +37,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         List<Type> arrayControls = new List<Type>();
         int currentControl = 0;
 
+        private static object LockObj = new object();
         internal static ScannerBase CurrentScanner;
         private static int ProblemsFound = 0;
 
@@ -55,7 +57,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             set;
         }
 
-        internal static ResultArray ResultArray = new ResultArray();
+        private static ObservableCollection<ResultNode> _resultArray = new ObservableCollection<ResultNode>();
+
+        internal static ObservableCollection<ResultNode> ResultArray
+        {
+            get
+            {
+                lock (LockObj)
+                {
+                    return _resultArray;
+                }
+            }
+        }
 
         internal static Thread ScanThread { get; set; }
 

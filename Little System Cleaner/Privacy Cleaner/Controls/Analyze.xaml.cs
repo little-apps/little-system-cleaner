@@ -18,6 +18,7 @@
 
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         public ScannerBase CurrentListViewItem
         {
             get { return this.SectionsCollection[currentListViewParentIndex].Children[currentListViewIndex] as ScannerBase; }
+        }
+
+        private int CurrentSectionProblems
+        {
+            get
+            {
+                foreach (ResultNode n in Wizard.ResultArray)
+                {
+                    if (this.CurrentListViewItem.Section == n.Section)
+                        return n.Children.Count;
+                }
+
+                return 0;
+            }
         }
 
         public ObservableCollection<ScannerBase> SectionsCollection
@@ -288,7 +303,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             if (this.currentListViewIndex != -1)
             {
-                this.CurrentListViewItem.Errors = string.Format("{0} Errors", Wizard.ResultArray.Problems(this.CurrentListViewItem.Section));
+                this.CurrentListViewItem.Errors = string.Format("{0} Errors", this.CurrentSectionProblems);
                 this.listView.Items.Refresh();
             }
         }
