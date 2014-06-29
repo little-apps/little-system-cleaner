@@ -67,7 +67,7 @@
             <TabItem Header="Options">
                 <StackPanel>
                     <GroupBox Header="Select a folder to backup deleted registry entries" x:Name="groupBox1" VerticalAlignment="Top">
-                        <Grid>
+                        <Grid Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="483*" />
                                 <ColumnDefinition Width="66" />

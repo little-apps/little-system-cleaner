@@ -41,7 +41,7 @@
                 <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <Label Content="Section: " x:Name="currentSection" VerticalAlignment="Top" Grid.Row="2" Height="24" HorizontalAlignment="Center" VerticalContentAlignment="Center"  />
+        <Label Content="Section: " x:Name="currentSection" VerticalAlignment="Top" Grid.Row="2" Height="24" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="0"  />
 
         <ListView ItemsSource="{Binding SectionsCollection}" Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">
             <ListView.View>
@@ -50,7 +50,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <ContentPresenter Content="{Binding Image}" Width="16" Height="16"/>
+                                    <ContentPresenter Margin="0,0,5,0" Content="{Binding Image}" Width="16" Height="16"/>
                                     <TextBlock Text="{Binding Path=Section}"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>
