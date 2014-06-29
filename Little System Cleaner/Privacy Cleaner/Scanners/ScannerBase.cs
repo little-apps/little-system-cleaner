@@ -112,6 +112,29 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         public ScannerBase Parent { get; set; }
         public string Description { get; set; }
 
+        private bool _skipped;
+
+        /// <summary>
+        /// If true, all scanners under Parent will be skipped
+        /// </summary>
+        public bool Skipped
+        {
+            get
+            {
+                if (this.Parent != null)
+                    return this.Parent.Skipped;
+                else
+                    return this._skipped;
+            }
+            set
+            {
+                if (this.Parent != null)
+                    this.Parent.Skipped = value;
+                else
+                    this._skipped = value;
+            }
+        }
+
         public ImageSource bMapImg { get; private set; }
         public System.Drawing.Bitmap Icon
         {

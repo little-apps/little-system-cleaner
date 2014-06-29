@@ -247,6 +247,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (!string.IsNullOrEmpty(parent.ProcessName))
             {
+                if (parent.Skipped)
+                    return;
+
                 bool? ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
 
                 if (ret.GetValueOrDefault() == false)
@@ -260,6 +263,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     {
                         this.progressBar.Value++;
                     }
+
+                    parent.Skipped = true;
                     
                     return;
                 }
@@ -284,6 +289,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (!string.IsNullOrEmpty(parent.ProcessName))
             {
+                if (parent.Skipped)
+                    return;
+
                 bool? ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
 
                 if (ret.GetValueOrDefault() == false)
@@ -297,6 +305,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     {
                         this.progressBar.Value++;
                     }
+
+                    parent.Skipped = true;
 
                     return;
                 }
