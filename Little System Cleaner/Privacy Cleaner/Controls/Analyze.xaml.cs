@@ -233,7 +233,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             this.currentListViewIndex++;
 
             Wizard.CurrentSectionName = sectionName;
-            this.currentSection.Text = "Section: " + sectionName;
+            this.currentSection.Content = "Section: " + sectionName;
 
             this.CurrentListViewItem.Status = "Scanning " + sectionName;
             this.CurrentListViewItem.LoadGif();

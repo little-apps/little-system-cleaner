@@ -29,8 +29,8 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 2 of 3</Label>
             </Grid>
         </Border>
-        <ProgressBar VerticalAlignment="Center" Height="24" x:Name="progressBar" Grid.Row="2" Margin="0,3" ValueChanged="progressBar_ValueChanged" />
-        <TextBlock Text="Section: " x:Name="currentSection" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Margin="0,7" Height="16" />
+        <ProgressBar x:Name="progressBar" Grid.Row="2" Margin="0,3" ValueChanged="progressBar_ValueChanged" />
+        <Label x:Name="currentSection" Content="Section: " Padding="0,3,0,3" Grid.Row="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
 
         <ListView Name="listView" IsSynchronizedWithCurrentItem="True" Grid.Row="3">
             <ListView.View>

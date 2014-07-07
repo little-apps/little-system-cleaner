@@ -67,24 +67,24 @@
             <TabItem Header="Options">
                 <StackPanel>
                     <GroupBox Header="Select a folder to backup deleted registry entries" x:Name="groupBox1" VerticalAlignment="Top">
-                        <Grid Margin="5">
+                        <Grid Margin="5" Height="26">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="483*" />
                                 <ColumnDefinition Width="66" />
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="buttonBrowseBackupDir" Margin="2,0,0,0" Content="Browse..." Grid.Column="1" Click="buttonBrowseBackupDir_Click" />
+                            <Button x:Name="buttonBrowseBackupDir" Margin="2,0,0,0" Padding="8,0,8,0" Content="Browse..." Grid.Column="1" Click="buttonBrowseBackupDir_Click" />
                             <TextBox Margin="0,0,1,0" x:Name="textBoxBackups" IsReadOnly="True" Grid.Column="0" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Options" x:Name="groupBox3">
                         <StackPanel Margin="5,5,5,5">
                             <CheckBox Name="checkBoxLog" HorizontalAlignment="Left" VerticalAlignment="Top">Log registry scan and repairs</CheckBox>
-                            <CheckBox Name="checkBoxShowLog" HorizontalAlignment="Left" VerticalAlignment="Top">Show log after finished scanning</CheckBox>
-                            <CheckBox Name="checkBoxAutoRescan" HorizontalAlignment="Left" VerticalAlignment="Top">Re-scan after repairing registry issues</CheckBox>
-                            <CheckBox Name="checkBoxDelBackup" HorizontalAlignment="Left" VerticalAlignment="Top">Delete backup file after restoring the registry</CheckBox>
-                            <CheckBox Name="checkBoxIgnoreRemMedia" HorizontalAlignment="Left" VerticalAlignment="Top">Ignore missing files on removable media</CheckBox>
-                            <CheckBox Name="checkBoxAutoRepair" HorizontalAlignment="Left" VerticalAlignment="Top">Automatically repair registry items (not recommended)</CheckBox>
-                            <CheckBox Name="checkBoxAutoExit" HorizontalAlignment="Left" VerticalAlignment="Top">Exit program after repairing registry (not recommended)</CheckBox>
+                            <CheckBox Name="checkBoxShowLog" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Show log after finished scanning</CheckBox>
+                            <CheckBox Name="checkBoxAutoRescan" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Re-scan after repairing registry issues</CheckBox>
+                            <CheckBox Name="checkBoxDelBackup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Delete backup file after restoring the registry</CheckBox>
+                            <CheckBox Name="checkBoxIgnoreRemMedia" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Ignore missing files on removable media</CheckBox>
+                            <CheckBox Name="checkBoxAutoRepair" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Automatically repair registry items (not recommended)</CheckBox>
+                            <CheckBox Name="checkBoxAutoExit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Exit program after repairing registry (not recommended)</CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
