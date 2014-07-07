@@ -207,6 +207,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
             }
 
+            Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
+
             if (lSeqNum != 0)
             {
                 try

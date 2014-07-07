@@ -104,6 +104,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             this.listView.ItemsSource = this.SectionsCollection;
 
+            // Increase total number of scans
+            Properties.Settings.Default.totalScans++;
+
+            // Zero last scan errors found + fixed and elapsed
+            Properties.Settings.Default.lastScanErrors = 0;
+            Properties.Settings.Default.lastScanErrorsFixed = 0;
+            Properties.Settings.Default.lastScanElapsed = 0;
+
             // Set last scan date
             Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
@@ -149,6 +157,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             bool scanAborted = false;
             int currentParent = -1;
 
+            DateTime dtStart = DateTime.Now;
+
             try
             {
                 // Begin critical region
@@ -174,7 +184,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         }
 
                         if (n.Results.Children.Count > 0)
+                        {
                             Wizard.ResultArray.Add(n.Results);
+                            Properties.Settings.Default.lastScanErrors += n.Results.Children.Count;
+                        }
                     }
                     else
                     {
@@ -183,7 +196,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         this.StartScanner(n);
 
                         if (n.Results.Children.Count > 0)
+                        {
                             Wizard.ResultArray.Add(n.Results);
+                            Properties.Settings.Default.lastScanErrors += n.Results.Children.Count;
+                        }
+                            
                     }
 
                     // Update info before going to next section (or exiting) 
@@ -207,6 +224,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
                 // End critical region
                 Thread.EndCriticalRegion();
+
+                Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
 
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
 

@@ -32,6 +32,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     {
                         MiscFunctions.DeleteDir(folderPath, recurse);
                         report.WriteLine(string.Format("Deleted Folder: {0}", folderPath));
+                        Properties.Settings.Default.lastScanErrorsFixed++;
                     }
                 }
                 catch (UnauthorizedAccessException)

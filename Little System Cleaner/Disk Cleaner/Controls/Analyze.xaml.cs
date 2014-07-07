@@ -73,6 +73,17 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             // Set scan start time
             Wizard.ScanStartTime = DateTime.Now;
 
+            // Increase total number of scans
+            Properties.Settings.Default.totalScans++;
+
+            // Zero last scan errors found + fixed and elapsed
+            Properties.Settings.Default.lastScanErrors = 0;
+            Properties.Settings.Default.lastScanErrorsFixed = 0;
+            Properties.Settings.Default.lastScanElapsed = 0;
+
+            // Set last scan date
+            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+
             // Start timer
             this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
             this.timerUpdate.Start();
@@ -99,16 +110,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 // Show taskbar progress bar
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
-
-                // Set last scan date
-                Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
-
-                // Increase total number of scans
-                Properties.Settings.Default.totalScans++;
-
-                // Zero last scan errors found + fixed
-                Properties.Settings.Default.lastScanErrors = 0;
-                Properties.Settings.Default.lastScanErrorsFixed = 0;
 
                 foreach (DriveInfo driveInfo in this.scanBase.selectedDrives)
                 {

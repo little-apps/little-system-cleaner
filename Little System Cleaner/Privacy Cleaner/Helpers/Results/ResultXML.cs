@@ -66,10 +66,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     foreach (XmlNode xmlNode in xmlNodes)
                     {
                         XmlNode parentNode = xmlNode.ParentNode;
+
                         if (parentNode != null)
                             parentNode.RemoveChild(xmlNode);
                         else
                             xmlDoc.RemoveChild(xmlNode);
+
+                        Properties.Settings.Default.lastScanErrorsFixed++;
                     }
                     
                     report.WriteLine("Removed XML File: {0} Matching XPath: {0}", filePath, xPath);

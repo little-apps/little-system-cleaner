@@ -113,6 +113,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
+            Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
+
             report.WriteLine("Successfully Cleaned Disk @ " + DateTime.Now.ToLongTimeString());
             report.DisplayLogFile(Properties.Settings.Default.privacyCleanerDisplayLog);
 

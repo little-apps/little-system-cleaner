@@ -31,6 +31,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     {
                         MiscFunctions.DeleteFile(filePath);
                         report.WriteLine(string.Format("Deleted File: {0}", filePath));
+                        Properties.Settings.Default.lastScanErrorsFixed++;
                     }
                 }
                 catch (UnauthorizedAccessException)

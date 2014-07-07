@@ -88,6 +88,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         reg.Close();
 
                         report.WriteLine(string.Format("Removed Registry Key: {0}", regKey.Name));
+                        Properties.Settings.Default.lastScanErrorsFixed++;
                     }
                 }
             }
@@ -120,6 +121,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                             {
                                 regKey.DeleteValue(valueName);
                                 report.WriteLine(string.Format("Removed Registry Key: {0} Value Name: {0}", regKey.Name, valueName));
+                                Properties.Settings.Default.lastScanErrorsFixed++;
                             }
                         }
                         catch (UnauthorizedAccessException ex)

@@ -56,6 +56,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     PInvoke.WritePrivateProfileString(section, valueName, null, filePath);
                     report.WriteLine(string.Format("Erased INI File: {0} Section: {1} Value Name: {2}", filePath, section, valueName));
                 }
+
+                Properties.Settings.Default.lastScanErrorsFixed++;
             }
         }
     }

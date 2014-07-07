@@ -64,8 +64,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
                 this.mcChart.Title = "The Windows Registry Needs To Be Compacted";
             } else {
-                // Set errors to zero
-                Properties.Settings.Default.lastScanErrors = 0;
+                // Properties.Settings.Default.lastScanErrors will still equal 0
+
                 this.mcChart.Title = "The Windows Registry Does Not Need To Be Compacted";
                 this.buttonCompact.IsEnabled = false;
             }
@@ -88,6 +88,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             // Set errors fixed to number of registry hives
             Properties.Settings.Default.lastScanErrorsFixed = Wizard.RegistryHives.Count;
+            Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
 
             Wizard.IsBusy = false;
 

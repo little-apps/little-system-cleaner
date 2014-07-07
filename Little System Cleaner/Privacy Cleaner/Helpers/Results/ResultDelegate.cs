@@ -30,6 +30,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             {
                 this.CleanDelegate();
                 report.WriteLine(this.Description);
+                Properties.Settings.Default.lastScanErrorsFixed++;
             }
         }
     }

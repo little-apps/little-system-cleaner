@@ -105,6 +105,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             // Reset AbortScan
             AbortScan = false;
 
+            // Zero last scan errors found + fixed and elapsed
+            Properties.Settings.Default.lastScanErrors = 0;
+            Properties.Settings.Default.lastScanErrorsFixed = 0;
+            Properties.Settings.Default.lastScanElapsed = 0;
+
             // Set last scan date
             Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 

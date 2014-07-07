@@ -65,7 +65,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Utils.AutoResizeColumns(this._tree);
         }
 
-
         private void buttonFix_Click(object sender, RoutedEventArgs e)
         {
             List<FileEntry> files = new List<FileEntry>();
@@ -134,7 +133,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
 
                     this.progressBar.Value++;
+                    Properties.Settings.Default.lastScanErrorsFixed++;
                 }
+
+                Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
 
                 if (sysRestoreAvailable)
                 {

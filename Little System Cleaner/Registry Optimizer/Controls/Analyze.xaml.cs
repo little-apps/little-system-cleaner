@@ -48,18 +48,16 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Set start time
-            Wizard.ScanStartTime = DateTime.Now;
-
-            // Set last scan date
-            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
-
             // Increase total number of scans
             Properties.Settings.Default.totalScans++;
 
-            // Zero last scan errors found + fixed
+            // Zero last scan errors found + fixed and elapsed
             Properties.Settings.Default.lastScanErrors = 0;
             Properties.Settings.Default.lastScanErrorsFixed = 0;
+            Properties.Settings.Default.lastScanElapsed = 0;
+
+            // Set last scan date
+            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Set taskbar progress bar
             Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
@@ -76,11 +74,13 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void AnalyzeHives()
         {
+            DateTime dtStart = DateTime.Now;
+
             Thread.BeginCriticalRegion();
 
             foreach (Hive h in Wizard.RegistryHives)
             {
-                IncrementProgressBar(h.RegistryHive);;
+                IncrementProgressBar(h.RegistryHive);
 
                 // Analyze Hive
                 threadCurrent = new Thread(new ThreadStart(h.AnalyzeHive));
@@ -89,6 +89,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             }
 
             Thread.EndCriticalRegion();
+
+            Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
 
             this.Dispatcher.BeginInvoke(new Action(() => {
                 Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;

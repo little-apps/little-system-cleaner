@@ -117,14 +117,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             // Set IsCompacted
             Main.IsCompacted = true;
 
-            // Update last scan stats
-            long elapsedTime = DateTime.Now.Subtract(Wizard.ScanStartTime).Ticks;
-
-            Properties.Settings.Default.lastScanElapsed = elapsedTime;
-
-            // Update total scans
-            Properties.Settings.Default.totalScans++;
-
             SetDialogResult(true);
 
             this.Dispatcher.BeginInvoke(new Action(() => {

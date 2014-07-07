@@ -87,6 +87,17 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.FileList = new List<FileEntry>();
 
+            // Increase total number of scans
+            Properties.Settings.Default.totalScans++;
+
+            // Zero last scan errors found + fixed and elapsed
+            Properties.Settings.Default.lastScanErrors = 0;
+            Properties.Settings.Default.lastScanErrorsFixed = 0;
+            Properties.Settings.Default.lastScanElapsed = 0;
+
+            // Set last scan date
+            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+
             this.threadScan = new Thread(new ThreadStart(this.ScanDisk));
             this.threadScan.Start();
         }
@@ -95,6 +106,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             try
             {
+                DateTime dtStart = DateTime.Now;
+
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
                 this.StatusText = "Building list of all files";
 
@@ -137,6 +150,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
                         this.scanBase.MoveFirst();
                         return;
                     }
@@ -173,9 +188,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
                         this.scanBase.MoveFirst();
                         return;
                     }
+
+                    Properties.Settings.Default.lastScanErrors = this.scanBase.FilesGroupedByFilename.Count;
                 }
 
                 if (this.scanBase.Options.CompareChecksum.GetValueOrDefault() || this.scanBase.Options.CompareChecksumFilename.GetValueOrDefault())
@@ -191,9 +210,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
                         this.scanBase.MoveFirst();
                         return;
                     }
+
+                    Properties.Settings.Default.lastScanErrors = this.scanBase.FilesGroupedByHash.Count;
                 }
 
                 if (this.scanBase.Options.CompareMusicTags.GetValueOrDefault())
@@ -209,10 +232,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
                         this.scanBase.MoveFirst();
                         return;
                     }
+
+                    Properties.Settings.Default.lastScanErrors = this.scanBase.FilesGroupedByHash.Count;
                 }
+
+                Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
 
                 this.scanBase.MoveNext();
             }
