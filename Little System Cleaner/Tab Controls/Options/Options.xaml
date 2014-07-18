@@ -121,14 +121,6 @@
                                         <Run Text="Search Text Box Control with WPF - Le Duc Anh (CPOL)" />
                                     </Hyperlink>
                                     <LineBreak />
-                                    <Hyperlink NavigateUri="http://blogs.msdn.com/b/mgrayson/archive/2007/02/16/creating-a-glass-button-the-complete-tutorial.aspx" RequestNavigate="Hyperlink_RequestNavigate">
-                                        <Run Text="WPF Glass Button - Martin Grayson (Unknown)" />
-                                    </Hyperlink>
-                                    <LineBreak />
-                                    <Hyperlink NavigateUri="http://www.codeproject.com/KB/XML/registryxml.aspx" RequestNavigate="Hyperlink_RequestNavigate">
-                                        <Run Text="XML Registry - Sam DenHartog (Unknown)" />
-                                    </Hyperlink>
-                                    <LineBreak />
                                     <Hyperlink NavigateUri="http://www.codeproject.com/KB/cs/RegEdit_JumpTo.aspx" RequestNavigate="Hyperlink_RequestNavigate">
                                         <Run Text="JumpTo RegEdit - Reto Ravasio (CPOL)" />
                                     </Hyperlink>
