@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class RestoreFile
     {
-        FileInfo _fileInfo;
-        string _file, _date, _size;
+        private FileInfo _fileInfo;
+        private string _file, _date, _size;
 
         public FileInfo FileInfo
         {
@@ -30,11 +31,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             get { return _size; }
         }
 
-        public RestoreFile(FileInfo fileInfo)
+        public RestoreFile(FileInfo fileInfo, DateTime fileDateTime)
         {
             _fileInfo = fileInfo;
             _file = fileInfo.Name;
-            _date = fileInfo.CreationTime.ToString();
+            _date = fileDateTime.ToString();
             _size = Utils.ConvertSizeToString((uint)fileInfo.Length);
         }
     }

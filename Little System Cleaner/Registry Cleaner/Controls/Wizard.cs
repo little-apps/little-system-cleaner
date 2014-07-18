@@ -158,10 +158,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (this.userControl is Results)
             {
+                if ((!forceExit && (this.userControl as Results).FixThread != null) && (this.userControl as Results).FixThread.IsAlive)
+                    return false;
+
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
+                    // Forced to exit -> abort fix thread
+                    if (((this.userControl as Results).FixThread != null) && (this.userControl as Results).FixThread.IsAlive)
+                        (this.userControl as Results).FixThread.Abort();
+
                     Wizard.badRegKeyArray.Clear();
                     Scan.EnabledScanners.Clear();
 
@@ -278,7 +285,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// </summary>
         /// <param name="problem">Reason its invalid</param>
         /// <param name="regPath">The path to registry key (including registry hive)</param>
-        /// <param name="valueName">Value name (leave blank if theres none)</param>
+        /// <param name="valueName">Value name (See remarks)</param>
+        /// <remarks>Set value name to null/empty for no value name or (default) to use default value</remarks>
         /// <returns>True if it was added. Otherwise, false.</returns>
         internal static bool StoreInvalidKey(string problem, string regPath, string valueName)
         {
@@ -308,10 +316,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (!string.IsNullOrEmpty(valueName))
                 if (!ScanFunctions.ValueNameExists(baseKey, subKey, valueName))
                     return false;
-
-            // Make sure we have the correct permissions for the registry key
-            if (!CanDeleteKey(Utils.RegOpenKey(baseKey, subKey)))
-                return false;
 
             int severity = 1;
 
@@ -416,49 +420,5 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             return false;
         }
 
-        /// <summary>
-        /// Checks if we have permission to delete a registry key
-        /// </summary>
-        /// <param name="key">Registry key</param>
-        /// <returns>True if we can delete it</returns>
-        private static bool CanDeleteKey(RegistryKey key)
-        {
-            try
-            {
-                if (key.SubKeyCount > 0)
-                {
-                    bool ret = false;
-
-                    foreach (string subKey in key.GetSubKeyNames())
-                    {
-                        ret = CanDeleteKey(key.OpenSubKey(subKey));
-
-                        if (!ret)
-                            break;
-                    }
-
-                    return ret;
-                }
-                else
-                {
-                    System.Security.AccessControl.RegistrySecurity regSecurity = key.GetAccessControl();
-
-                    foreach (System.Security.AccessControl.AuthorizationRule rule in regSecurity.GetAccessRules(true, false, typeof(System.Security.Principal.NTAccount)))
-                    {
-                        if ((System.Security.AccessControl.RegistryRights.Delete & ((System.Security.AccessControl.RegistryAccessRule)(rule)).RegistryRights) != System.Security.AccessControl.RegistryRights.Delete)
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-
-            }
-            catch (SecurityException)
-            {
-                return false;
-            }
-        }
     }
 }

@@ -9,7 +9,7 @@
 	MinWidth="579" MinHeight="384"
     xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools" 
     Loaded="UserControl_Loaded" 
-    
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
     d:DesignHeight="384" d:DesignWidth="579">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -88,7 +88,7 @@
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" ValueChanged="progressBar1_ValueChanged" />
-        <TextBlock Grid.Row="3" Height="30" Name="progressBarText" VerticalAlignment="Top" MinWidth="567" TextAlignment="Center" Margin="0,5,0,5" />
+        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" Value="{Binding ProgressBarValue}" />
+        <Label Grid.Row="3" Height="30" Name="progressBarText" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
     </Grid>
 </UserControl>

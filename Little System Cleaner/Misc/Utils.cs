@@ -232,14 +232,15 @@ namespace Little_System_Cleaner.Misc
         /// Opens a registry key
         /// </summary>
         /// <param name="regPath">Registry path (including hive)</param>
+        /// <param name="openReadOnly">If true, opens the key with read-only access (default: true)</param>
         /// <returns>Registry Key class</returns>
-        internal static RegistryKey RegOpenKey(string regPath)
+        internal static RegistryKey RegOpenKey(string regPath, bool openReadOnly = true)
         {
             string mainKey = "", subKey = "";
 
             ParseRegKeyPath(regPath, out mainKey, out subKey);
 
-            return RegOpenKey(mainKey, subKey);
+            return RegOpenKey(mainKey, subKey, openReadOnly);
         }
 
         /// <summary>
@@ -247,40 +248,29 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="MainKey">The hive (begins with HKEY)</param>
         /// <param name="SubKey">The sub key (cannot be null or whitespace)</param>
+        /// <param name="openReadOnly">If true, opens the key with read-only access (default: true)</param>
         /// <returns>RegistryKey or null if error occurred</returns>
-        internal static RegistryKey RegOpenKey(string MainKey, string SubKey)
+        internal static RegistryKey RegOpenKey(string MainKey, string SubKey, bool openReadOnly = true)
         {
             RegistryKey reg = null;
-
-            if (string.IsNullOrWhiteSpace(SubKey))
-            {
-                return null;
-            }
 
             try
             {
                 if (MainKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
-                {
-                    reg = Registry.ClassesRoot.OpenSubKey(SubKey, true);
-                }
+                    reg = Registry.ClassesRoot;
                 else if (MainKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
-                {
-                    reg = Registry.CurrentUser.OpenSubKey(SubKey, true);
-                }
+                    reg = Registry.CurrentUser;
                 else if (MainKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
-                {
-                    reg = Registry.LocalMachine.OpenSubKey(SubKey, true);
-                }
+                    reg = Registry.LocalMachine;
                 else if (MainKey.ToUpper().CompareTo("HKEY_USERS") == 0)
-                {
-                    reg = Registry.Users.OpenSubKey(SubKey, true);
-                }
+                    reg = Registry.Users;
                 else if (MainKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
-                {
-                    reg = Registry.CurrentConfig.OpenSubKey(SubKey, true);
-                }
+                    reg = Registry.CurrentConfig;
                 else
                     return null; // break here
+
+                if (!string.IsNullOrWhiteSpace(SubKey))
+                    reg = reg.OpenSubKey(SubKey, (!openReadOnly));
             }
             catch (Exception ex)
             {

@@ -52,7 +52,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // Validate Each DLL from the value names
                 foreach (string strFilePath in regKey.GetValueNames())
                 {
-                    if (!string.IsNullOrEmpty(strFilePath))
+                    if (!string.IsNullOrWhiteSpace(strFilePath))
                         if (!Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
                             Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
                 }

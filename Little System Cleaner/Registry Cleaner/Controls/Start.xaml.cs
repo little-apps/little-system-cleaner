@@ -37,8 +37,8 @@ using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.IO;
 using System.Diagnostics;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
@@ -110,6 +110,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void PopulateListView()
         {
+            string error;
             DirectoryInfo di = new DirectoryInfo(Properties.Settings.Default.optionsBackupDir);
 
             // If directory doesnt exist -> create it
@@ -124,7 +125,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             {
                 if (fi.Extension.CompareTo(".bakx") == 0)
                 {
-                    this._restoreFiles.Add(new RestoreFile(fi));
+                    // Deserialize to creation date
+                    using (BackupRegistry backupReg = new BackupRegistry(fi.FullName))
+                    {
+                        if (!backupReg.Open(true))
+                            continue;
+
+                        if (!backupReg.Deserialize(out error))
+                            continue;
+
+                        this._restoreFiles.Add(new RestoreFile(fi, backupReg.Created));
+                    }
+
+                    
                 }
             }
 
@@ -192,8 +205,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void buttonRestore_Click(object sender, RoutedEventArgs e)
         {
             long lSeqNum = 0;
-            xmlReader xmlReader = new xmlReader();
-            xmlRegistry xmlReg = new xmlRegistry();
+            string message;
 
             if (this.listViewFiles.SelectedItem == null)
             {
@@ -204,42 +216,68 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            try
+            string filePath = (this.listViewFiles.SelectedItem as RestoreFile).FileInfo.FullName;
+
+            using (BackupRegistry backupReg = new BackupRegistry(filePath))
             {
-                SysRestore.StartRestore("Before Little Registry Cleaner Restore", out lSeqNum);
-            }
-            catch (Win32Exception ex)
-            {
-                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            
-            if (xmlReg.loadAsXml(xmlReader, (this.listViewFiles.SelectedItem as RestoreFile).FileInfo.FullName))
-            {
-                MessageBox.Show(Application.Current.MainWindow, "Successfully restored registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                if (Properties.Settings.Default.registryCleanerOptionsDelBackup)
+                if (!backupReg.Open(true))
                 {
-                    // Delete file
-                    (this.listViewFiles.SelectedItem as RestoreFile).FileInfo.Delete();
-
-                    // Remove from listview and refresh
-                    RestoreFiles.Remove(this.listViewFiles.SelectedItem as RestoreFile);
-                    PopulateListView();
+                    message = string.Format("Failed to open backup file ({0}).\nUnable to restore registry.", filePath);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
-            }
-            else
-                MessageBox.Show(Application.Current.MainWindow, "Error restoring the registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
-            if (lSeqNum != 0)
-            {
                 try
                 {
-                    SysRestore.EndRestore(lSeqNum);
+                    SysRestore.StartRestore("Before Little Registry Cleaner Restore", out lSeqNum);
                 }
                 catch (Win32Exception ex)
                 {
-                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                    message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
                     MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                if (!backupReg.Deserialize(out message))
+                {
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (backupReg.RegistryEntries.Count == 0)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "No registry entries found in backup file.\nUnable to restore registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (backupReg.Restore())
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "Successfully restored registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (Properties.Settings.Default.registryCleanerOptionsDelBackup)
+                    {
+                        // Delete file
+                        (this.listViewFiles.SelectedItem as RestoreFile).FileInfo.Delete();
+
+                        // Remove from listview and refresh
+                        RestoreFiles.Remove(this.listViewFiles.SelectedItem as RestoreFile);
+                        PopulateListView();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "Error restoring the registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                if (lSeqNum != 0)
+                {
+                    try
+                    {
+                        SysRestore.EndRestore(lSeqNum);
+                    }
+                    catch (Win32Exception ex)
+                    {
+                        message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }

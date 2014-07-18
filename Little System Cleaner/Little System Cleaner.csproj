@@ -327,6 +327,10 @@
       <SubType>Code</SubType>
       <DependentUpon>Results.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Registry Cleaner\Helpers\Backup\BackupRegistry.cs" />
+    <Compile Include="Registry Cleaner\Helpers\Backup\RegistryEntries.cs" />
+    <Compile Include="Registry Cleaner\Helpers\Backup\RegistryEntry.cs" />
+    <Compile Include="Registry Cleaner\Helpers\Backup\RegistryValue.cs" />
     <Compile Include="Registry Cleaner\Helpers\BadRegKeyArray.cs" />
     <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
@@ -421,11 +425,6 @@
       <DependentUpon>Welcome.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uninstall Manager\Helpers\ProgramInfo.cs" />
-    <Compile Include="Registry Cleaner\Helpers\XML Registry\keyValue.cs" />
-    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlElement.cs" />
-    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlReader.cs" />
-    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlRegistry.cs" />
-    <Compile Include="Registry Cleaner\Helpers\XML Registry\xmlWriter.cs" />
     <Page Include="Tab Controls\Options\Options.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

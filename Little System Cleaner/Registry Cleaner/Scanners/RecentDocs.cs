@@ -56,6 +56,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     foreach (string valueName in regKey.GetValueNames())
                     {
+                        if (string.IsNullOrWhiteSpace(valueName))
+                            continue;
+
                         if (valueName.StartsWith("@") || valueName == "LangID")
                             continue;
 
@@ -108,12 +111,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             foreach (string strValueName in regKey.GetValueNames())
             {
                 string filePath = "", fileArgs = "";
+                object value;
+
+                // Skip if value name is null/empty
+                if (string.IsNullOrWhiteSpace(strValueName))
+                    continue;
 
                 // Ignore MRUListEx and others
                 if (!Regex.IsMatch(strValueName, "[0-9]"))
                     continue;
 
-                string fileName = ExtractUnicodeStringFromBinary(regKey.GetValue(strValueName));
+                value = regKey.GetValue(strValueName);
+
+                string fileName = ExtractUnicodeStringFromBinary(value);
                 string shortcutPath = string.Format("{0}\\{1}.lnk", Environment.GetFolderPath(Environment.SpecialFolder.Recent), fileName);
 
                 // See if file exists in Recent Docs folder

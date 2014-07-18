@@ -55,7 +55,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                         if (!string.IsNullOrEmpty(strValue))
                             if (!Utils.FileExists(strValue) && !Wizard.IsOnIgnoreList(strValue))
-                                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strDriverName);
+                                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(strDriverName) ? "(default)" : strDriverName));
                     }
                 }
             }

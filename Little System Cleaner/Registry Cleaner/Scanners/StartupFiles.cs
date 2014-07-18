@@ -125,7 +125,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (Wizard.IsOnIgnoreList(strFilePath))
                         continue;
 
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strProgName);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(strProgName) ? "(default)" : strProgName));
                 }
             }
 

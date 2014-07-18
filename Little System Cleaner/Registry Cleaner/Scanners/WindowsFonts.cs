@@ -79,7 +79,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         string strFontPath = String.Format("{0}\\{1}", strPath.ToString(), strValue);
 
                         if (!File.Exists(strFontPath) && !Wizard.IsOnIgnoreList(strFontPath))
-                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strFontName);
+                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(strFontName) ? "(default)" : strFontName));
                     }
 
                 }

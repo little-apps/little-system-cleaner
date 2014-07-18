@@ -140,7 +140,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                             // Registry key
                             string strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
                             string strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
-                            RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey);
+                            RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey, false);
 
                             try
                             {
@@ -189,20 +189,33 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                             // Registry key
                             string strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
                             string strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
-                            RegistryKey rk = Utils.RegOpenKey(strMainKey, null);
-
-                            try
+                            using (RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey, false))
                             {
-                                if (rk != null)
-                                    rk.DeleteSubKey(strSubKey);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                                bFailed = true;
-                            }
+                                if (rk == null)
+                                {
+                                    string message = string.Format("Unable to open registry key ({0}) to delete all entries.", sectionName);
+                                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                                    bFailed = true;
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string[] valueNames = rk.GetValueNames();
 
-                            rk.Close();
+                                        // Clear all values
+                                        foreach (string valueName in valueNames)
+                                        {
+                                            rk.DeleteValue(valueName, false);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                                        bFailed = true;
+                                    }
+                                }
+                            }
                         }
 
                         if (!bFailed)

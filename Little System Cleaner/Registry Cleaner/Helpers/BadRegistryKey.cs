@@ -27,6 +27,8 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using System.Windows.Media.Imaging;
 using Little_System_Cleaner.Misc;
+using System.Diagnostics;
+using System.Security.AccessControl;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers 
 {
@@ -236,7 +238,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 // Convert value to string
                 if (regKey != null)
-                    this._strData = RegConvertXValueToString(regKey, valueName);
+                    this._strData = ScanFunctions.RegConvertXValueToString(regKey, valueName);
             }
         }
 
@@ -266,70 +268,82 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
         }
 
-        /// <summary>
-        /// Gets the value kind and converts it accordingly
-        /// </summary>
-        /// <returns>Registry value formatted to a string</returns>
-        private static string RegConvertXValueToString(RegistryKey regKey, string valueName)
+        public bool Delete()
         {
-            string strRet = "";
+            RegistryKey regKey = Utils.RegOpenKey(this.RegKeyPath, false);
 
             if (regKey == null)
-                return strRet;
-
-            try
             {
+                Debug.WriteLine("Failed to open registry key ({0}) with write permission. Unable to delete it.", new object[] { this.RegKeyPath });
+                return false;
+            }
 
-                switch (regKey.GetValueKind(valueName))
+            // If we dont have proper permission -> try to add permission
+            if (!ScanFunctions.CanDeleteKey(regKey))
+            {
+                // Set proper access for sub key
+                ScanFunctions.GrantRegistryKeyRights(regKey, RegistryRights.FullControl);
+
+                // Recheck if we have proper permissions
+                if (!ScanFunctions.CanDeleteKey(regKey))
                 {
-                    case RegistryValueKind.MultiString:
-                        {
-                            string strValue = "";
-                            string[] strValues = (string[])regKey.GetValue(valueName);
-
-                            for (int i = 0; i < strValues.Length; i++)
-                            {
-                                if (i != 0)
-                                    strValue = string.Concat(strValue, ",");
-
-                                strValue = string.Format("{0} {1}", strValue, strValues[i]);
-                            }
-
-                            strRet = string.Copy(strValue);
-
-                            break;
-                        }
-                    case RegistryValueKind.Binary:
-                        {
-                            string strValue = "";
-
-                            foreach (byte b in (byte[])regKey.GetValue(valueName))
-                                strValue = string.Format("{0} {1:X2}", strValue, b);
-
-                            strRet = string.Copy(strValue);
-
-                            break;
-                        }
-                    case RegistryValueKind.DWord:
-                    case RegistryValueKind.QWord:
-                        {
-                            strRet = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
-                            break;
-                        }
-                    default:
-                        {
-                            strRet = string.Format("{0}", regKey.GetValue(valueName));
-                            break;
-                        }
-
+                    Debug.WriteLine("Failed to get proper permission to delete registry ({0}).", new object[] { this.RegKeyPath });
+                    return false;
                 }
             }
-            catch
+
+            if (!string.IsNullOrEmpty(this.ValueName))
             {
-                return "";
+                string valueName = (this.ValueName.ToUpper() == "(DEFAULT)" ? string.Empty : this.ValueName);
+                
+                try
+                {
+                    regKey.DeleteValue(valueName, true);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Unable to delete value name ({0}) from registry key ({1}).\nError: {2}", this.ValueName, this.RegKeyPath, ex.Message);
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                RegistryKey reg = null;
+
+                try
+                {
+                    if (this.baseRegKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
+                        reg = Registry.ClassesRoot;
+                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
+                        reg = Registry.CurrentUser;
+                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
+                        reg = Registry.LocalMachine;
+                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_USERS") == 0)
+                        reg = Registry.Users;
+                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
+                        reg = Registry.CurrentConfig;
+                    else
+                        return false; // break here
+
+                    if (reg != null)
+                    {
+                        reg.DeleteSubKeyTree(this.subRegKey);
+                        reg.Flush();
+                        reg.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("An error occurred deleting registry key ({0}).\nError: {1}", this.RegKeyPath, e.Message);
+                    return false;
+                }
             }
 
-            return strRet;
+            regKey.Close();
+
+            return true;
         }
 
         public override string ToString()

@@ -30,15 +30,75 @@ using CommonTools.TreeListView.Tree;
 using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.Xml;
 using System.ComponentModel;
 using Little_System_Cleaner.Misc;
+using System.Threading;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
-	public partial class Results : UserControl
-	{
-        Wizard scanWiz;
+    public partial class Results : UserControl, INotifyPropertyChanged
+    {
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string prop)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
+
+        private Wizard scanWiz;
+        private Thread _fixThread;
+        private int _progressBarValue = 0;
+        private string _progressBarText;
+
+        public int ProgressBarValue
+        {
+            get { return this._progressBarValue; }
+            set
+            {
+                if (Thread.CurrentThread != this.Dispatcher.Thread)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() => this.ProgressBarValue = value));
+                    return;
+                }
+
+                int val = value;
+
+                this._progressBarValue = val;
+
+                if (this.progressBar1.Maximum != 0)
+                    Main.TaskbarProgressValue = (val / this.progressBar1.Maximum);
+
+                this.OnPropertyChanged("ProgressBarValue");
+            }
+        }
+
+        public string ProgressBarText
+        {
+            get { return this._progressBarText; }
+            set
+            {
+                if (Thread.CurrentThread != this.Dispatcher.Thread)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() => this.ProgressBarText = value));
+                    return;
+                }
+
+                this._progressBarText = value;
+                this.OnPropertyChanged("ProgressBarText");
+            }
+        }
+
+        public Thread FixThread
+        {
+            get { return this._fixThread; }
+            private set { this._fixThread = value; }
+        }
 
 		public Results(Wizard scanBase)
 		{
@@ -119,21 +179,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)
         {
-            FixProblems();
-        }
+            int selectedCount = this.GetSelectedRegKeys().Count;
 
-        private void FixProblems()
-        {
-            List<BadRegistryKey> badRegKeys = GetSelectedRegKeys();
-
-            long lSeqNum = 0;
-            xmlWriter w = new xmlWriter();
-            xmlRegistry xmlReg = new xmlRegistry();
+            if (selectedCount == 0)
+            {
+                MessageBox.Show(App.Current.MainWindow, "You must select registry keys to be removed first.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             // Ask to remove registry keys
             if (!Properties.Settings.Default.registryCleanerOptionsAutoRepair)
                 if (MessageBox.Show("Would you like to fix all selected problems?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
+
+            
 
             // Disable buttons
             this.buttonCancel.IsEnabled = false;
@@ -145,90 +204,170 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             // Set progress bar range
             this.progressBar1.Minimum = 0;
-            this.progressBar1.Maximum = badRegKeys.Count;
+            this.progressBar1.Maximum = selectedCount;
             this.progressBar1.Value = 0;
 
-            // Create Restore Point
-            this.progressBarText.Text = "Creating system restore point";
+            this.FixThread = new Thread(new ThreadStart(this.FixProblems));
+            this.FixThread.Start();
+        }
+
+        private void FixProblems()
+        {
+            bool cancelled = false;
 
             try
             {
-                SysRestore.StartRestore("Before Little Registry Cleaner Registry Fix", out lSeqNum);
-            }
-            catch (Win32Exception ex)
-            {
-                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            
-            // Generate filename to backup registry
-            this.progressBarText.Text = "Creating backup file";
-            string strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx", Properties.Settings.Default.optionsBackupDir, DateTime.Now);
+                List<BadRegistryKey> badRegKeys = GetSelectedRegKeys();
 
-            // Write opening tags to Backup File
-            if (!w.open(strBackupFile))
-                return;
+                long lSeqNum = 0;
+                BackupRegistry backupReg;
 
-            xmlElement wroot = new xmlElement(xmlRegistry.XML_ROOT);
-            wroot.write(w, 1, false, true);
+                if (SysRestore.SysRestoreAvailable())
+                {
+                    // Create Restore Point
+                    this.ProgressBarText = "Creating system restore point";
 
-            Properties.Settings.Default.lastScanErrorsFixed = 0;
+                    try
+                    {
+                        SysRestore.StartRestore("Before Little Registry Cleaner Registry Fix", out lSeqNum);
+                    }
+                    catch (Win32Exception ex)
+                    {
+                        string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                        this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                    }
+                }
 
-            foreach (BadRegistryKey brk in badRegKeys)
-            {
-                // Backup & Delete key
-                xmlReg.deleteAsXml(brk, w);
+                // Generate filename to backup registry
+                this.ProgressBarText = "Creating backup file";
+                string strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx", Properties.Settings.Default.optionsBackupDir, DateTime.Now);
 
-                // Set icon to check mark
-                brk.bMapImg = new Image();
-                brk.bMapImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-
-                this._tree.Items.Refresh();
-
-                // Increase & Update progress bar
-                this.progressBarText.Text = string.Format("Items Repaired: {0}/{1}", ++this.progressBar1.Value, this.progressBar1.Maximum);
-
-                // Set last scan erors fixed
-                Properties.Settings.Default.lastScanErrorsFixed++;
-            }
-
-            // Set total errors fixed
-            Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
-
-            // Write Closing Tag to Backup File
-            wroot.writeClosingTag(w, -1, false, true);
-            w.close();
-
-            // Finish creating restore point
-            if (lSeqNum != 0)
-            {
                 try
                 {
-                    SysRestore.EndRestore(lSeqNum);
+                    backupReg = new BackupRegistry(strBackupFile);
+                    backupReg.Open(false);
                 }
-                catch (Win32Exception ex)
+                catch (Exception ex)
                 {
-                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    string message = string.Format("Unable to create backup file ({0}).\nError: {1}", strBackupFile, ex.Message);
+                    this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                    return;
+                }
+
+                Properties.Settings.Default.lastScanErrorsFixed = 0;
+
+                foreach (BadRegistryKey brk in badRegKeys)
+                {
+                    bool skip = false;
+
+                    // Backup key
+                    if (!backupReg.Store(brk))
+                    {
+                        string message = string.Format("An error occurred trying to backup registry key ({0}).\nWould you like to remove it (not recommended)?", brk.RegKeyPath);
+
+                        MessageBoxResult msgBoxResult = (MessageBoxResult)this.Dispatcher.Invoke(new Func<MessageBoxResult>(() => {
+                            return MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Exclamation); 
+                        }));
+
+                        if (msgBoxResult != MessageBoxResult.Yes)
+                            skip = true;
+                    }
+
+                    if (!skip)
+                    {
+                        // Delete key/value
+                        if (!brk.Delete())
+                        {
+                            string message = string.Format("An error occurred trying to remove registry key {0}", brk.RegKeyPath);
+                            this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                        }
+                        else
+                        {
+                            // Set last scan erors fixed
+                            Properties.Settings.Default.lastScanErrorsFixed++;
+                        }
+                    }
+                    
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        // Set icon to check mark
+                        brk.bMapImg = new Image();
+                        brk.bMapImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+
+                        this._tree.Items.Refresh();
+
+                        // Increase & Update progress bar
+                        this.ProgressBarText = string.Format("Items Repaired: {0}/{1}", ++this.progressBar1.Value, this.progressBar1.Maximum);
+                    }));
+                }
+
+                // Store data as file
+                backupReg.Serialize();
+
+                // Set total errors fixed
+                Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
+
+                if (SysRestore.SysRestoreAvailable())
+                {
+                    // Finish creating restore point
+                    if (lSeqNum != 0)
+                    {
+                        try
+                        {
+                            SysRestore.EndRestore(lSeqNum);
+                        }
+                        catch (Win32Exception ex)
+                        {
+                            string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                            this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                        }
+                    }
                 }
             }
-
-            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-
-            // If power user option selected -> automatically exit program
-            if (Properties.Settings.Default.registryCleanerOptionsAutoExit)
+            catch (ThreadAbortException)
             {
-                Application.Current.Shutdown();
-                return;
+                cancelled = true;
             }
+            finally
+            {
+                if (cancelled)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() => {
+                        // Enable buttons
+                        this.buttonCancel.IsEnabled = true;
+                        this.buttonFix.IsEnabled = true;
 
-            // Display message box and go back to first control
-            MessageBox.Show("Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Reset taskbar progress bar
+                        Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        Main.TaskbarProgressValue = 0;
 
-            if (Properties.Settings.Default.registryCleanerOptionsAutoRescan)
-                this.scanWiz.Rescan();
-            else
-                this.scanWiz.MoveFirst();
+                        // Reset progress bar
+                        this.ProgressBarValue = 0;
+                        this.ProgressBarText = "";
+                    }));
+                }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+
+                    // If power user option selected -> automatically exit program
+                    if (Properties.Settings.Default.registryCleanerOptionsAutoExit)
+                    {
+                        Application.Current.Shutdown();
+                    }
+                    else
+                    {
+                        // Display message box and go back to first control
+                        this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show("Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information)));
+
+                        if (Properties.Settings.Default.registryCleanerOptionsAutoRescan)
+                            this.scanWiz.Rescan();
+                        else
+                            this.scanWiz.MoveFirst();
+                    }
+                }
+            }
+            
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -295,12 +434,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         break;
                     }
             }
-        }
-
-        private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (this.progressBar1.Maximum != 0)
-                Main.TaskbarProgressValue = (e.NewValue / this.progressBar1.Maximum);
         }
         
 	}

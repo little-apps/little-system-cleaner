@@ -63,10 +63,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 string strHelpPath = regKey.GetValue(strHelpFile) as string;
 
                 if (!HelpFileExists(strHelpFile, strHelpPath))
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strHelpFile);
+                    // (Won't include default value name as strHelpFile must not be null/empty)
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(strHelpFile) ? "(default)" : strHelpFile));
             }
-
-            return;
         }
 
         /// <summary>

@@ -798,6 +798,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             bool bRet = false;
 
+            // Guid cannot be null/empty
+            if (string.IsNullOrEmpty(strGuid))
+                return true;
+
             if (!clsidExists(strGuid))
                 bRet = false;
 

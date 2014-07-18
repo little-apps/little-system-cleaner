@@ -701,7 +701,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 string regPath = xmlReader.GetAttribute("RegKey");
                                 string valueNameRegEx = xmlReader.GetAttribute("ValueName");
 
-                                RegistryKey regKey = Utils.RegOpenKey(regPath);
+                                RegistryKey regKey = Utils.RegOpenKey(regPath, false);
 
                                 pluginFunctions.DeleteValue(regKey, valueNameRegEx);
                             }
@@ -744,7 +744,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 string regKey = xmlReader.GetAttribute("RegKey");
                                 bool includeSubKeys = ((xmlReader.GetAttribute("IncludeSubKeys") == "Y") ? (true) : (false));
 
-                                RegistryKey rk = Utils.RegOpenKey(regKey);
+                                RegistryKey rk = Utils.RegOpenKey(regKey, false);
                                 XmlReader xmlChildren = xmlReader.ReadSubtree();
 
                                 pluginFunctions.DeleteFoundRegKeys(rk, includeSubKeys, xmlChildren);

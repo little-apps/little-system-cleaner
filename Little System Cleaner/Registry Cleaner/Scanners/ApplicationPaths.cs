@@ -63,6 +63,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             foreach (string strFolder in regKey.GetValueNames())
             {
+                if (string.IsNullOrWhiteSpace(strFolder))
+                    continue;
+
                 if (!ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder))
                     Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
             }
