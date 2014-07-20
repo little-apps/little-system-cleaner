@@ -152,9 +152,9 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="35" />
+                        <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="listViewIncFolders" ItemsSource="{Binding IncFoldersCollection}" Grid.Row="0" Margin="5,5,5,5" SelectionMode="Single">
+                    <ListView x:Name="listViewIncFolders" ItemsSource="{Binding IncFoldersCollection}" Grid.Row="0" Margin="5,5,5,0" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="List of folders to include" DisplayMemberBinding="{Binding Folder}" Width="240" />
@@ -162,8 +162,18 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="5,5,5,5" Grid.Row="1">
-                        <Button x:Name="buttonAddIncFolder" Content="Add" Margin="0,0,5,0" Height="25" Padding="8,0,8,0" Click="buttonAddIncFolder_Click" />
-                        <Button x:Name="buttonRemIncFolder" Content="Remove" Height="25" Padding="8,0,8,0" Click="buttonRemIncFolder_Click" />
+                        <Button x:Name="buttonAddIncFolder" Margin="0,0,5,0" Height="26" Padding="8,0,8,0" Click="buttonAddIncFolder_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
+                                <TextBlock VerticalAlignment="Center">Add...</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="buttonRemIncFolder" Height="26" Padding="8,0,8,0" Click="buttonRemIncFolder_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
+                                <TextBlock VerticalAlignment="Center">Remove</TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -171,9 +181,9 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="35" />
+                        <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="listViewExcludeFolders" ItemsSource="{Binding ExcFoldersCollection}" Grid.Row="0" Margin="5,5,5,5" SelectionMode="Single">
+                    <ListView x:Name="listViewExcludeFolders" ItemsSource="{Binding ExcFoldersCollection}" Grid.Row="0" Margin="5,5,5,0" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="List of folders to exclude" DisplayMemberBinding="{Binding Folder}" Width="240" />
@@ -181,18 +191,28 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="5,5,5,5" Grid.Row="1">
-                        <Button x:Name="buttonAddExcludeFolder" Content="Add" Margin="0,0,5,0" Padding="8,0,8,0" Height="25" Click="buttonAddExcludeFolder_Click" />
-                        <Button x:Name="buttonRemExcludeFolder" Content="Remove" Padding="8,0,8,0" Height="25" Click="buttonRemExcludeFolder_Click" />
+                        <Button x:Name="buttonAddExcludeFolder" Margin="0,0,5,0" Padding="8,0,8,0" Height="26" Click="buttonAddExcludeFolder_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
+                                <TextBlock VerticalAlignment="Center">Add...</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="buttonRemExcludeFolder" Padding="8,0,8,0" Height="26" Click="buttonRemExcludeFolder_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
+                                <TextBlock VerticalAlignment="Center">Remove</TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Excluded Files">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="35" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="listViewFiles" ItemsSource="{Binding ExcFilesCollection}" Grid.Row="0" Margin="5,5,5,5" IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
+                    <ListView x:Name="listViewFiles" ItemsSource="{Binding ExcFilesCollection}" Grid.Row="0" Margin="5,5,5,0" IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="List of files to exclude" DisplayMemberBinding="{Binding File}" Width="240" />
@@ -200,8 +220,18 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1"  Margin="5,5,5,5">
-                        <Button x:Name="buttonAddExcludeFile" Content="Add" Margin="0,0,5,0" Height="25" Padding="8,0,8,0" Click="buttonFilesAdd_Click" />
-                        <Button x:Name="buttonRemExcludeFile" Content="Remove" Height="25" Padding="8,0,8,0" Click="buttonRemExcludeFile_Click" />
+                        <Button x:Name="buttonAddExcludeFile" Margin="0,0,5,0" Height="26" Padding="8,0,8,0" Click="buttonFilesAdd_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
+                                <TextBlock VerticalAlignment="Center">Add...</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="buttonRemExcludeFile" Height="26" Padding="8,0,8,0" Click="buttonRemExcludeFile_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
+                                <TextBlock VerticalAlignment="Center">Remove</TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
