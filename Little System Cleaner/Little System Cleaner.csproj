@@ -332,12 +332,13 @@
     <Compile Include="Registry Cleaner\Helpers\Backup\RegistryEntries.cs" />
     <Compile Include="Registry Cleaner\Helpers\Backup\RegistryEntry.cs" />
     <Compile Include="Registry Cleaner\Helpers\Backup\RegistryValue.cs" />
-    <Compile Include="Registry Cleaner\Helpers\BadRegKeyArray.cs" />
+    <Compile Include="Registry Cleaner\Helpers\BadRegistryKeys\BadRegKeyArray.cs" />
     <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
     <Compile Include="Registry Cleaner\Helpers\ResultModel.cs" />
     <Compile Include="Registry Cleaner\Helpers\ScanFunctions.cs" />
-    <Compile Include="Registry Cleaner\Helpers\SectionModel.cs" />
+    <Compile Include="Registry Cleaner\Helpers\Sections\Section.cs" />
+    <Compile Include="Registry Cleaner\Helpers\Sections\SectionModel.cs" />
     <Compile Include="Registry Cleaner\Scanners\ActivexComObjects.cs" />
     <Compile Include="Registry Cleaner\Scanners\ApplicationPaths.cs" />
     <Compile Include="Registry Cleaner\Scanners\ApplicationSettings.cs" />
@@ -393,7 +394,7 @@
     <Compile Include="Uninstall Manager\Controls\UninstallManager.xaml.cs">
       <DependentUpon>UninstallManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Registry Cleaner\Helpers\BadRegistryKey.cs" />
+    <Compile Include="Registry Cleaner\Helpers\BadRegistryKeys\BadRegistryKey.cs" />
     <Compile Include="Registry Cleaner\Helpers\ExcludeItem.cs" />
     <Compile Include="Misc\Report.cs" />
     <Compile Include="Misc\Utils.cs" />

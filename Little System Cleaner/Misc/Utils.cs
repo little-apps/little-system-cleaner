@@ -655,6 +655,11 @@ namespace Little_System_Cleaner.Misc
             return SearchPath(fileName, null, out retPath);
         }
 
+        internal static bool SearchPath(string fileName, out string retPath)
+        {
+            return SearchPath(fileName, null, out retPath);
+        }
+
         internal static bool SearchPath(string fileName, string Path)
         {
             string retPath = "";
@@ -675,14 +680,17 @@ namespace Little_System_Cleaner.Misc
 
             int ret = PInvoke.SearchPath(((!string.IsNullOrEmpty(Path)) ? (Path) : (null)), fileName, null, 260, strBuffer, null);
 
-            if (ret != 0)
+            if (ret != 0 && !string.IsNullOrWhiteSpace(strBuffer.ToString()))
             {
                 retPath = strBuffer.ToString();
+
                 return true;
             }
             else
-                retPath = "";
-
+            {
+                retPath = string.Empty;
+            }
+            
             return false;
         }
 
@@ -786,12 +794,97 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Checks for default program then launches URI
+        /// Checks for suitable browser then launches URI
         /// </summary>
         /// <param name="WebAddress">The address to launch</param>
-        internal static void LaunchURI(string WebAddress)
+        internal static bool LaunchURI(string WebAddress)
         {
-            Help.ShowHelp(Form.ActiveForm, string.Copy(WebAddress));
+            // Try default application for http://
+            try
+            {
+                string keyValue = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Classes\http\shell\open\command", "", null) as string;
+                if (!string.IsNullOrEmpty(keyValue))
+                {
+                    string browserPath = keyValue.Replace("%1", WebAddress);
+                    Process.Start(browserPath);
+
+                    return true;
+                }
+            }
+            catch
+            {
+            }
+
+            // Try to open using Process.Start
+            try
+            {
+                Process.Start(WebAddress);
+
+                return true;
+            }
+            catch
+            {
+            }
+
+            // Try to open with 'explorer.exe' (on newer Windows systems, this will open the default for http://)
+            try
+            {
+                string browserPath;
+
+                if (SearchPath("explorer.exe", out browserPath))
+                {
+                    string argUrl = "\"" + WebAddress + "\"";
+
+                    Process.Start(browserPath, argUrl);
+
+                    return true;
+                }
+
+            }
+            catch
+            {
+            }
+
+            // Try to open with 'firefox.exe'
+            try
+            {
+                string progFilesDir = (Utils.Is64BitOS ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) : Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+                string firefoxPath = progFilesDir + @"\Mozilla Firefox\firefox.exe";
+
+                if (File.Exists(firefoxPath))
+                {
+                    string argUrl = "\"" + WebAddress + "\"";
+
+                    Process.Start(firefoxPath, argUrl);
+
+                    return true;
+                }
+            }
+            catch
+            {
+            }
+
+            // Try to open with 'chrome.exe'
+            try
+            {
+                string chromePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\Application\chrome.exe";
+
+                if (File.Exists(chromePath))
+                {
+                    string argUrl = "\"" + WebAddress + "\"";
+
+                    Process.Start(chromePath, argUrl);
+
+                    return true;
+                }
+            }
+            catch
+            {
+
+            }
+
+            // return false, all failed
+            return false;
         }
 
         /// <summary>
