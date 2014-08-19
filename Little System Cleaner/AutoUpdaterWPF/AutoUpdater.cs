@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
@@ -178,68 +180,127 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             Stream appCastStream = webResponse.GetResponseStream();
 
-            var receivedAppCastDocument = new XmlDocument();
-
-            if (appCastStream != null) receivedAppCastDocument.Load(appCastStream);
-            else return;
-
-            XmlNodeList appCastItems = receivedAppCastDocument.SelectNodes("item");
-
-            if (appCastItems != null)
+            if (appCastStream == null)
             {
-                foreach (XmlNode item in appCastItems)
+                Debug.WriteLine("Response stream from update server was null.");
+                return;
+            }
+
+            if (appCastStream.Length == 0)
+            {
+                Debug.WriteLine("Response stream from update server was empty.");
+                return;
+            }
+
+            if (appCastStream.Position > 0)
+                appCastStream.Position = 0;
+
+            UpdateXML updateXml = new UpdateXML();
+
+            XmlSerializer serializer = new XmlSerializer(updateXml.GetType());
+
+            try
+            {
+                using (XmlTextReader reader = new XmlTextReader(appCastStream))
                 {
-                    XmlNode appCastVersion = item.SelectSingleNode("version");
-                    if (appCastVersion != null)
+                    if (serializer.CanDeserialize(reader))
                     {
-                        String appVersion = appCastVersion.InnerText;
-                        var version = new Version(appVersion);
-                        if (version <= InstalledVersion)
-                            continue;
-                        CurrentVersion = version;
+                        updateXml = (UpdateXML)serializer.Deserialize(reader);
                     }
                     else
-                        continue;
-
-                    XmlNode appCastTitle = item.SelectSingleNode("title");
-
-                    DialogTitle = appCastTitle != null ? appCastTitle.InnerText : "";
-
-                    XmlNode appCastChangeLog = item.SelectSingleNode("changelog");
-
-                    ChangeLogURL = appCastChangeLog != null ? appCastChangeLog.InnerText : "";
-
-                    XmlNode appCastUrl = item.SelectSingleNode("url");
-
-                    DownloadURL = appCastUrl != null ? appCastUrl.InnerText : "";
-                }
-            }
-
-            if (updateKey != null)
-            {
-                object skip = updateKey.GetValue("skip");
-                object applicationVersion = updateKey.GetValue("version");
-                if (skip != null && applicationVersion != null)
-                {
-                    string skipValue = skip.ToString();
-                    var skipVersion = new Version(applicationVersion.ToString());
-                    if (skipValue.Equals("1") && CurrentVersion <= skipVersion)
-                        return;
-                    if (CurrentVersion > skipVersion)
                     {
-                        RegistryKey updateKeyWrite = Registry.CurrentUser.CreateSubKey(RegistryLocation);
-                        if (updateKeyWrite != null)
-                        {
-                            updateKeyWrite.SetValue("version", CurrentVersion.ToString());
-                            updateKeyWrite.SetValue("skip", 0);
-                        }
+                        throw new Exception("Update file is in the wrong format.");
                     }
                 }
-                updateKey.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred trying to restore the registry: {0}", new object[] { ex.Message });
+
+                return;
             }
 
+            foreach (UpdateXML.Item item in updateXml.Items)
+            {
+                if (item.Version != null)
+                {
+                    if (item.Version <= InstalledVersion)
+                        continue;
+
+                    CurrentVersion = item.Version;
+                }
+                else
+                    continue;
+
+                DialogTitle = item.Title;
+                ChangeLogURL = item.ChangeLog;
+                DownloadURL = item.URL;
+            }
+
+            //var receivedAppCastDocument = new XmlDocument();
+
+            //if (appCastStream != null) receivedAppCastDocument.Load(appCastStream);
+            //else return;
+
+            //XmlNodeList appCastItems = receivedAppCastDocument.SelectNodes("descendant::item");
+
+            //if (appCastItems != null)
+            //{
+                
+            //    foreach (XmlNode item in appCastItems)
+            //    {
+            //        XmlNode appCastVersion = item.SelectSingleNode("version");
+            //        if (appCastVersion != null)
+            //        {
+            //            String appVersion = appCastVersion.InnerText;
+            //            var version = new Version(appVersion);
+            //            if (version <= InstalledVersion)
+            //                continue;
+            //            CurrentVersion = version;
+            //        }
+            //        else
+            //            continue;
+
+            //        XmlNode appCastTitle = item.SelectSingleNode("title");
+
+            //        DialogTitle = appCastTitle != null ? appCastTitle.InnerText : "";
+
+            //        XmlNode appCastChangeLog = item.SelectSingleNode("changelog");
+
+            //        ChangeLogURL = appCastChangeLog != null ? appCastChangeLog.InnerText : "";
+
+            //        XmlNode appCastUrl = item.SelectSingleNode("url");
+
+            //        DownloadURL = appCastUrl != null ? appCastUrl.InnerText : "";
+            //    }
+            //}
+
+            
             if (CurrentVersion != null && CurrentVersion > InstalledVersion)
             {
+                if (updateKey != null)
+                {
+                    object skip = updateKey.GetValue("skip");
+                    object applicationVersion = updateKey.GetValue("version");
+                    if (skip != null && applicationVersion != null)
+                    {
+                        string skipValue = skip.ToString();
+                        var skipVersion = new Version(applicationVersion.ToString());
+                        if (skipValue.Equals("1") && CurrentVersion <= skipVersion)
+                            return;
+                        if (CurrentVersion > skipVersion)
+                        {
+                            RegistryKey updateKeyWrite = Registry.CurrentUser.CreateSubKey(RegistryLocation);
+                            if (updateKeyWrite != null)
+                            {
+                                updateKeyWrite.SetValue("version", CurrentVersion.ToString());
+                                updateKeyWrite.SetValue("skip", 0);
+                            }
+                        }
+                    }
+                    updateKey.Close();
+                }
+
                 var thread = new Thread(ShowUI);
                 thread.CurrentCulture = thread.CurrentUICulture = CurrentCulture ?? System.Windows.Forms.Application.CurrentCulture;
                 thread.SetApartmentState(ApartmentState.STA);

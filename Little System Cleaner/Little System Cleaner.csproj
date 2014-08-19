@@ -231,6 +231,7 @@
     <Compile Include="AutoUpdaterWPF\Update.xaml.cs">
       <DependentUpon>Update.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AutoUpdaterWPF\UpdateXML.cs" />
     <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
       <DependentUpon>Analyze.xaml</DependentUpon>
     </Compile>
