@@ -187,17 +187,20 @@ namespace Little_System_Cleaner.Controls
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Utils.LaunchURI(e.Uri.ToString());
+            if (!Utils.LaunchURI(e.Uri.ToString()))
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonSupportThisProject_Click(object sender, RoutedEventArgs e)
         {
-            Utils.LaunchURI(@"http://www.little-apps.com/?donate");
+            if (!Utils.LaunchURI(@"http://www.little-apps.com/?donate"))
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonWebsite_Click(object sender, RoutedEventArgs e)
         {
-            Utils.LaunchURI(@"http://www.little-apps.com/");
+            if (!Utils.LaunchURI(@"http://www.little-apps.com/"))
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)

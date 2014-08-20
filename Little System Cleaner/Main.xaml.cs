@@ -169,7 +169,7 @@ namespace Little_System_Cleaner
                     {
                         if (!File.Exists("Little System Cleaner.chm"))
                         {
-                            System.Windows.MessageBox.Show(this, "No help file could be found", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(this, "No help file could be found", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
 
@@ -178,7 +178,9 @@ namespace Little_System_Cleaner
                     }
                 case "Visit Website":
                     {
-                        Utils.LaunchURI(@"http://www.little-apps.com/little-system-cleaner/");
+                        if (!Utils.LaunchURI(@"http://www.little-apps.com/little-system-cleaner/"))
+                            MessageBox.Show(this, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
                         break;
                     }
                 case "Check for updates":
