@@ -165,13 +165,14 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 if (MainDispatcher != null) // Make sure MainDispatcher is set
                 {
-                    if (ex is WebException)
+                    if (ForceCheck)
                     {
-                        MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "An error ocurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
-                    }
-                    else
-                    {
-                        MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                        // Only display errors if user requested update check
+
+                        if (ex is WebException)
+                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "An error ocurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                        else
+                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
                     }
                 }
                 
@@ -215,7 +216,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred trying to restore the registry: {0}", new object[] { ex.Message });
+                Debug.WriteLine("The following error occurred trying to check for updates: {0}", new object[] { ex.Message });
 
                 return;
             }
