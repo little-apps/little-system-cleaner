@@ -49,6 +49,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         internal static Dispatcher MainDispatcher;
 
+        internal static bool BackgroundWorkerRunning;
+
         //internal static CultureInfo CurrentCulture;
 
         /// <summary>
@@ -98,6 +100,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
         internal static void Start(String appCast, bool forceUpdate = false)
         {
+            if (BackgroundWorkerRunning)
+            {
+                MessageBox.Show(App.Current.MainWindow, "An update check is already in progress.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             AppCastURL = appCast;
             ForceCheck = forceUpdate;
 
@@ -113,8 +121,16 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             var backgroundWorker = new BackgroundWorker();
 
             backgroundWorker.DoWork += BackgroundWorkerDoWork;
+            backgroundWorker.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
 
             backgroundWorker.RunWorkerAsync();
+
+            BackgroundWorkerRunning = true;
+        }
+
+        static void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            BackgroundWorkerRunning = false;
         }
 
         private static void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
