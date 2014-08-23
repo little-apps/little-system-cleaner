@@ -195,46 +195,52 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 return;
             }
 
-            Stream appCastStream = webResponse.GetResponseStream();
-
-            if (appCastStream == null)
-            {
-                Debug.WriteLine("Response stream from update server was null.");
-                return;
-            }
-
-            if (appCastStream.Length == 0)
-            {
-                Debug.WriteLine("Response stream from update server was empty.");
-                return;
-            }
-
-            if (appCastStream.Position > 0)
-                appCastStream.Position = 0;
-
             UpdateXML updateXml = new UpdateXML();
 
-            XmlSerializer serializer = new XmlSerializer(updateXml.GetType());
 
-            try
+            using (Stream appCastStream = webResponse.GetResponseStream())
             {
-                using (XmlTextReader reader = new XmlTextReader(appCastStream))
+                if (appCastStream == null)
                 {
-                    if (serializer.CanDeserialize(reader))
+                    Debug.WriteLine("Response stream from update server was null.");
+                    return;
+                }
+
+                //if (appCastStream.Length == 0)
+                //{
+                //    Debug.WriteLine("Response stream from update server was empty.");
+                //    return;
+                //}
+
+                //if (appCastStream.Position > 0)
+                //    appCastStream.Position = 0;
+
+                var rootAttribute = new XmlRootAttribute();
+                rootAttribute.ElementName = "items";
+                rootAttribute.IsNullable = true;
+
+                XmlSerializer serializer = new XmlSerializer(typeof(UpdateXML));
+
+                try
+                {
+                    using (XmlTextReader reader = new XmlTextReader(appCastStream))
                     {
-                        updateXml = (UpdateXML)serializer.Deserialize(reader);
-                    }
-                    else
-                    {
-                        throw new Exception("Update file is in the wrong format.");
+                        if (serializer.CanDeserialize(reader))
+                        {
+                            updateXml = (UpdateXML)serializer.Deserialize(reader);
+                        }
+                        else
+                        {
+                            throw new Exception("Update file is in the wrong format.");
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("The following error occurred trying to check for updates: {0}", new object[] { ex.Message });
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("The following error occurred trying to check for updates: {0}", new object[] { ex.Message });
 
-                return;
+                    return;
+                }
             }
 
             foreach (UpdateXML.Item item in updateXml.Items)
@@ -253,45 +259,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 ChangeLogURL = item.ChangeLog;
                 DownloadURL = item.URL;
             }
-
-            //var receivedAppCastDocument = new XmlDocument();
-
-            //if (appCastStream != null) receivedAppCastDocument.Load(appCastStream);
-            //else return;
-
-            //XmlNodeList appCastItems = receivedAppCastDocument.SelectNodes("descendant::item");
-
-            //if (appCastItems != null)
-            //{
-                
-            //    foreach (XmlNode item in appCastItems)
-            //    {
-            //        XmlNode appCastVersion = item.SelectSingleNode("version");
-            //        if (appCastVersion != null)
-            //        {
-            //            String appVersion = appCastVersion.InnerText;
-            //            var version = new Version(appVersion);
-            //            if (version <= InstalledVersion)
-            //                continue;
-            //            CurrentVersion = version;
-            //        }
-            //        else
-            //            continue;
-
-            //        XmlNode appCastTitle = item.SelectSingleNode("title");
-
-            //        DialogTitle = appCastTitle != null ? appCastTitle.InnerText : "";
-
-            //        XmlNode appCastChangeLog = item.SelectSingleNode("changelog");
-
-            //        ChangeLogURL = appCastChangeLog != null ? appCastChangeLog.InnerText : "";
-
-            //        XmlNode appCastUrl = item.SelectSingleNode("url");
-
-            //        DownloadURL = appCastUrl != null ? appCastUrl.InnerText : "";
-            //    }
-            //}
-
             
             if (CurrentVersion != null && CurrentVersion > InstalledVersion)
             {
@@ -299,6 +266,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 {
                     object skip = updateKey.GetValue("skip");
                     object applicationVersion = updateKey.GetValue("version");
+
                     if (skip != null && applicationVersion != null)
                     {
                         string skipValue = skip.ToString();
@@ -315,6 +283,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                             }
                         }
                     }
+
                     updateKey.Close();
                 }
 

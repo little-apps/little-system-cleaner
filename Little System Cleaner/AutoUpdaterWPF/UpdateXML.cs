@@ -7,8 +7,10 @@ using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
+    [XmlRootAttribute("items")]
     public class UpdateXML
     {
+        //[Serializable, XmlRoot("item")]
         public class Item
         {
             private string _versionString;
@@ -58,8 +60,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private List<Item> _items = new List<Item>();
 
-        [XmlArray("items")]
-        [XmlArrayItem("item")]
+        [XmlElement("item")]
         public List<Item> Items
         {
             get { return this._items; }
