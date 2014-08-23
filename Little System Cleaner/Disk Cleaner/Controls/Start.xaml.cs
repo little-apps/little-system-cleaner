@@ -329,5 +329,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
             }
         }
+
+        private void FilterRadioChanged(object sender, RoutedEventArgs e)
+        {
+            if (this.radioButtonFilterSafe.IsChecked.GetValueOrDefault())
+                this.textBoxSearchFilters.Text = "*.tmp; *.temp; *.gid; *.chk; *.~*;";
+            else if (this.radioButtonFilterMed.IsChecked.GetValueOrDefault())
+                this.textBoxSearchFilters.Text = "*.tmp; *.temp; *.gid; *.chk; *.~*;*.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir;";
+            else if (this.radioButtonFilterAgg.IsChecked.GetValueOrDefault())
+                this.textBoxSearchFilters.Text = "*.tmp; *.temp; *.gid; *.chk; *.~*;*.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir;*.wbk; *log.txt; *.err; *.log; *.sik; *.bak; *.ilk; *.aps; *.ncb; *.pch; *.?$?; *.?~?; *.^; *._dd; *._detmp; 0*.nch; *.*_previous; *_previous;";
+        }
     }
 }

@@ -90,9 +90,9 @@
                             <TextBox x:Name="textBoxSearchFilters" Margin="5,5,5,5"></TextBox>
                             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                                 <Label Content="Mode:"  VerticalAlignment="Center" />
-                                <RadioButton x:Name="radioButtonFilterSafe" Content="Safe" VerticalAlignment="Center" Margin="5,0,5,0" />
-                                <RadioButton x:Name="radioButtonFilterMed" Content="Medium" VerticalAlignment="Center" Margin="5,0,5,0" />
-                                <RadioButton x:Name="radioButtonFilterAgg" Content="Aggressive" VerticalAlignment="Center" Margin="5,0,5,0" />
+                                <RadioButton x:Name="radioButtonFilterSafe" Content="Safe" VerticalAlignment="Center" Margin="5,0,5,0" Checked="FilterRadioChanged" />
+                                <RadioButton x:Name="radioButtonFilterMed" Content="Medium" VerticalAlignment="Center" Margin="5,0,5,0" Checked="FilterRadioChanged" />
+                                <RadioButton x:Name="radioButtonFilterAgg" Content="Aggressive" VerticalAlignment="Center" Margin="5,0,5,0" Checked="FilterRadioChanged" />
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
