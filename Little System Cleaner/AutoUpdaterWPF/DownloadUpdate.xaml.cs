@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -33,19 +34,38 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             _downloadURL = downloadURL;
         }
 
-        private void DownloadUpdateDialogLoad(object sender, EventArgs e)
+        private void DownloadUpdateDialogLoad(object sender, RoutedEventArgs e)
         {
             var webClient = new WebClient();
 
             var uri = new Uri(_downloadURL);
 
-            _tempPath = string.Format(@"{0}{1}", Path.GetTempPath(), GetFileName(_downloadURL));
+            string fileName;
+
+            if (!string.IsNullOrEmpty(AutoUpdater.LocalFileName))
+            {
+                fileName = AutoUpdater.LocalFileName;
+            }
+            else
+            {
+                fileName = GetFileName(_downloadURL);
+
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    Debug.WriteLine("Unable to get filename from {0}", new object[] { _downloadURL });
+
+                    this.Close();
+                    return;
+                }
+            }
+
+            _tempPath = string.Format(@"{0}{1}", Path.GetTempPath(), fileName);
 
             webClient.DownloadProgressChanged += OnDownloadProgressChanged;
-
             webClient.DownloadFileCompleted += OnDownloadComplete;
 
             webClient.DownloadFileAsync(uri, _tempPath);
+
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -55,8 +75,18 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private void OnDownloadComplete(object sender, AsyncCompletedEventArgs e)
         {
+            if (e.Error != null)
+            {
+                MessageBox.Show(this, "Unable to download update.\n" + e.Error.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+
+                return;
+            }
+
             var processStartInfo = new ProcessStartInfo {FileName = _tempPath, UseShellExecute = true};
+
             Process.Start(processStartInfo);
+
             if (App.Current.Dispatcher.Thread == System.Threading.Thread.CurrentThread) // Check if were on the main thread
             {
                 Application.Current.Shutdown();
@@ -75,7 +105,21 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             httpWebRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
             httpWebRequest.Method = "HEAD";
             httpWebRequest.AllowAutoRedirect = false;
-            var httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+
+            HttpWebResponse httpWebResponse = null;
+
+            try
+            {
+                httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            }
+            catch (WebException ex)
+            {
+                string message = "Unable to download file.\n" + ex.Message;
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return string.Empty;
+            }
+
             if (httpWebResponse.StatusCode.Equals(HttpStatusCode.Redirect) || httpWebResponse.StatusCode.Equals(HttpStatusCode.Moved) || httpWebResponse.StatusCode.Equals(HttpStatusCode.MovedPermanently))
             {
                 if (httpWebResponse.Headers["Location"] != null)
@@ -85,6 +129,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     return fileName;
                 }
             }
+
             if (httpWebResponse.Headers["content-disposition"] != null)
             {
                 var contentDisposition = httpWebResponse.Headers["content-disposition"];
@@ -94,18 +139,21 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     var index = contentDisposition.IndexOf(lookForFileName, StringComparison.CurrentCultureIgnoreCase);
                     if (index >= 0)
                         fileName = contentDisposition.Substring(index + lookForFileName.Length);
+
                     if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
                     {
                         fileName = fileName.Substring(1, fileName.Length - 2);
                     }
                 }
             }
+
             if (string.IsNullOrEmpty(fileName))
             {
                 var uri = new Uri(url);
 
                 fileName = Path.GetFileName(uri.LocalPath);
             }
+
             return fileName;
         }
     }

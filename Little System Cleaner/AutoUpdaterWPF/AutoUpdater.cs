@@ -37,6 +37,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         internal static String DownloadURL;
 
+        internal static string LocalFileName;
+
         internal static String RegistryLocation;
 
         internal static String AppTitle;
@@ -62,7 +64,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// <summary>
         /// Opens the download url in default browser if true. Very usefull if you have portable application.
         /// </summary>
-        internal static bool OpenDownloadPage;
+        internal static bool OpenDownloadPage = false;
 
         /// <summary>
         /// Sets the current culture of the auto update notification window. Set this value if your application supports functionalty to change the languge of the application.
@@ -197,7 +199,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             UpdateXML updateXml = new UpdateXML();
 
-
             using (Stream appCastStream = webResponse.GetResponseStream())
             {
                 if (appCastStream == null)
@@ -205,19 +206,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     Debug.WriteLine("Response stream from update server was null.");
                     return;
                 }
-
-                //if (appCastStream.Length == 0)
-                //{
-                //    Debug.WriteLine("Response stream from update server was empty.");
-                //    return;
-                //}
-
-                //if (appCastStream.Position > 0)
-                //    appCastStream.Position = 0;
-
-                var rootAttribute = new XmlRootAttribute();
-                rootAttribute.ElementName = "items";
-                rootAttribute.IsNullable = true;
 
                 XmlSerializer serializer = new XmlSerializer(typeof(UpdateXML));
 
@@ -258,6 +246,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 DialogTitle = item.Title;
                 ChangeLogURL = item.ChangeLog;
                 DownloadURL = item.URL;
+                LocalFileName = item.FileName;
             }
             
             if (CurrentVersion != null && CurrentVersion > InstalledVersion)

@@ -10,13 +10,13 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     [XmlRootAttribute("items")]
     public class UpdateXML
     {
-        //[Serializable, XmlRoot("item")]
         public class Item
         {
             private string _versionString;
             private string _title;
             private string _changelog;
             private string _url;
+            private string _fileName;
 
             [XmlElement("version")]
             public string VersionString
@@ -55,6 +55,13 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 get { return this._url; }
                 set { this._url = value; }
+            }
+
+            [XmlElement("filename")]
+            public string FileName
+            {
+                get { return this._fileName; }
+                set { this._fileName = value; }
             }
         }
 
