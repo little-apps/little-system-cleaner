@@ -1004,8 +1004,6 @@ namespace Little_System_Cleaner.Misc
         /// <returns>True if match found</returns>
         internal static bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
         {
-            int i = 0, k = 0;
-
             // Cannot continue with Mask empty
             if (string.IsNullOrEmpty(Mask))
                 return false;
@@ -1026,51 +1024,10 @@ namespace Little_System_Cleaner.Misc
             if (string.Compare(WildString, Mask, IgnoreCase) == 0)
                 return true;
 
-            while (k != WildString.Length)
-            {
-                switch (Mask[i])
-                {
-                    case '*':
-
-                        if ((i + 1) == Mask.Length)
-                            return true;
-
-                        while (k != WildString.Length)
-                        {
-                            if (CompareWildcard(WildString.Substring(k + 1), Mask.Substring(i + 1), IgnoreCase))
-                                return true;
-
-                            k += 1;
-                        }
-
-                        return false;
-
-                    case '?':
-
-                        break;
-
-                    default:
-
-                        if (IgnoreCase == false && WildString[k] != Mask[i])
-                            return false;
-
-                        if (IgnoreCase && Char.ToLower(WildString[k]) != Char.ToLower(Mask[i]))
-                            return false;
-
-                        break;
-                }
-
-                i += 1;
-                k += 1;
-            }
-
-            if (k == WildString.Length)
-            {
-                if (i == Mask.Length || Mask[i] == ';' || Mask[i] == '*')
-                    return true;
-            }
-
-            return false;
+            string regExPattern = "^" + Regex.Escape(Mask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
+            Regex regEx = new Regex(regExPattern, (IgnoreCase ? RegexOptions.Singleline | RegexOptions.IgnoreCase : RegexOptions.Singleline));
+            
+            return regEx.IsMatch(WildString);
         }
     }
 }
