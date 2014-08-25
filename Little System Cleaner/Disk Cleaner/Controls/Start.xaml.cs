@@ -21,6 +21,7 @@ using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,13 +41,25 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
     /// <summary>
     /// Interaction logic for Start.xaml
     /// </summary>
-    public partial class Start : UserControl
+    public partial class Start : UserControl, INotifyPropertyChanged
     {
         ObservableCollection<lviFolder> _incFoldersCollection = new ObservableCollection<lviFolder>();
         ObservableCollection<lviFolder> _excFoldersCollection = new ObservableCollection<lviFolder>();
         ObservableCollection<lviFile> _excFilesCollection = new ObservableCollection<lviFile>();
 
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+        #endregion
+
         public Wizard scanBase;
+
         public ObservableCollection<lviDrive> DrivesCollection
         {
             get { return Wizard.DiskDrives; }
@@ -63,6 +76,322 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         public ObservableCollection<lviFile> ExcFilesCollection
         {
             get { return this._excFilesCollection; }
+        }
+
+        public bool? JunkFilesDelete
+        {
+            get { return (Properties.Settings.Default.diskCleanerRemoveMode == 0); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerRemoveMode = 0;
+
+                this.OnPropertyChanged("JunkFilesDelete");
+                this.OnPropertyChanged("JunkFilesRecycle");
+                this.OnPropertyChanged("JunkFilesMove");
+            }
+        }
+
+        public bool? JunkFilesRecycle
+        {
+            get { return (Properties.Settings.Default.diskCleanerRemoveMode == 1); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerRemoveMode = 1;
+
+                this.OnPropertyChanged("JunkFilesDelete");
+                this.OnPropertyChanged("JunkFilesRecycle");
+                this.OnPropertyChanged("JunkFilesMove");
+            }
+        }
+
+        public bool? JunkFilesMove
+        {
+            get { return (Properties.Settings.Default.diskCleanerRemoveMode == 2); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerRemoveMode = 2;
+
+                this.OnPropertyChanged("JunkFilesDelete");
+                this.OnPropertyChanged("JunkFilesRecycle");
+                this.OnPropertyChanged("JunkFilesMove");
+            }
+        }
+
+        public string MoveFolder
+        {
+            get { return Properties.Settings.Default.diskCleanerMoveFolder; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerMoveFolder = value;
+                this.OnPropertyChanged("MoveFolder");
+            }
+        }
+
+        public bool? AutoCreateSysRestorePoint
+        {
+            get { return Properties.Settings.Default.diskCleanerAutoRestorePoints; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerAutoRestorePoints = value.GetValueOrDefault();
+                this.OnPropertyChanged("AutoCreateSysRestorePoint");
+            }
+        }
+
+        public bool? IgnoreWriteProtectedFiles
+        {
+            get { return Properties.Settings.Default.diskCleanerIgnoreWriteProtected; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerIgnoreWriteProtected = value.GetValueOrDefault();
+                this.OnPropertyChanged("IgnoreWriteProtectedFiles");
+            }
+        }
+
+        public bool? ZeroLengthFilesAreJunk
+        {
+            get { return Properties.Settings.Default.diskCleanerSearchZeroByte; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerSearchZeroByte = value.GetValueOrDefault();
+                this.OnPropertyChanged("ZeroLengthFilesAreJunk");
+            }
+        }
+
+        public string SearchFilter
+        {
+            get { return Properties.Settings.Default.diskCleanerSearchFilters; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerSearchFilters = value;
+
+                this.OnPropertyChanged("SearchFilter");
+            }
+        }
+
+        public bool? SearchFilterSafe
+        {
+            get { return (Properties.Settings.Default.diskCleanerFilterMode == 0); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerFilterMode = 0;
+
+                this.SearchFilterChange();
+
+                this.OnPropertyChanged("SearchFilterSafe");
+                this.OnPropertyChanged("SearchFilterMedium");
+                this.OnPropertyChanged("SearchFilterAggressive");
+            }
+        }
+
+        public bool? SearchFilterMedium
+        {
+            get { return (Properties.Settings.Default.diskCleanerFilterMode == 1); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerFilterMode = 1;
+
+                this.SearchFilterChange();
+
+                this.OnPropertyChanged("SearchFilterSafe");
+                this.OnPropertyChanged("SearchFilterMedium");
+                this.OnPropertyChanged("SearchFilterAggressive");
+            }
+        }
+
+        public bool? SearchFilterAggressive
+        {
+            get { return (Properties.Settings.Default.diskCleanerFilterMode == 2); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerFilterMode = 2;
+
+                this.SearchFilterChange();
+
+                this.OnPropertyChanged("SearchFilterSafe");
+                this.OnPropertyChanged("SearchFilterMedium");
+                this.OnPropertyChanged("SearchFilterAggressive");
+            }
+        }
+
+        public bool? AutoRemoveFiles
+        {
+            get { return Properties.Settings.Default.diskCleanerAutoClean; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerAutoClean = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("AutoRemoveFiles");
+            }
+        }
+
+        public bool? AttributesHidden
+        {
+            get { return Properties.Settings.Default.diskCleanerSearchHidden; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerSearchHidden = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("AttributesHidden");
+            }
+        }
+
+        public bool? AttributesReadonly
+        {
+            get { return Properties.Settings.Default.diskCleanerSearchReadOnly; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerSearchReadOnly = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("AttributesReadonly");
+            }
+        }
+
+        public bool? AttributesArchive
+        {
+            get { return Properties.Settings.Default.diskCleanerSearchArchives; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerSearchArchives = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("AttributesArchive");
+            }
+        }
+
+        public bool? AttributesSystem
+        {
+            get { return Properties.Settings.Default.diskCleanerSearchSystem; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerSearchSystem = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("AttributesSystem");
+            }
+        }
+
+
+        public bool? FindFilesCreated
+        {
+            get { return (Properties.Settings.Default.diskCleanerFindFilesMode == 0); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerFindFilesMode = 0;
+
+                this.OnPropertyChanged("FindFilesCreated");
+                this.OnPropertyChanged("FindFilesModified");
+                this.OnPropertyChanged("FindFilesAccessed");
+            }
+        }
+
+        public bool? FindFilesModified
+        {
+            get { return (Properties.Settings.Default.diskCleanerFindFilesMode == 1); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerFindFilesMode = 1;
+
+                this.OnPropertyChanged("FindFilesCreated");
+                this.OnPropertyChanged("FindFilesModified");
+                this.OnPropertyChanged("FindFilesAccessed");
+            }
+        }
+
+        public bool? FindFilesAccessed
+        {
+            get { return (Properties.Settings.Default.diskCleanerFindFilesMode == 2); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.diskCleanerFindFilesMode = 2;
+
+                this.OnPropertyChanged("FindFilesCreated");
+                this.OnPropertyChanged("FindFilesModified");
+                this.OnPropertyChanged("FindFilesAccessed");
+            }
+        }
+
+        public bool? FindFilesAfter
+        {
+            get { return Properties.Settings.Default.diskCleanerFindFilesAfter; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerFindFilesAfter = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesAfter");
+            }
+        }
+
+        public bool? FindFilesBefore
+        {
+            get { return Properties.Settings.Default.diskCleanerFindFilesBefore; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerFindFilesBefore = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesBefore");
+            }
+        }
+
+        public DateTime? FindFilesAfterDateTime
+        {
+            get { return Properties.Settings.Default.diskCleanerDateTimeAfter; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerDateTimeAfter = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesAfterDateTime");
+            }
+        }
+
+        public DateTime? FindFilesBeforeDateTime
+        {
+            get { return Properties.Settings.Default.diskCleanerDateTimeBefore; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerDateTimeBefore = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesBeforeDateTime");
+            }
+        }
+
+        public bool? FindFilesBySize
+        {
+            get { return Properties.Settings.Default.diskCleanerCheckFileSize; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerCheckFileSize = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesBySize");
+            }
+        }
+
+        public int? FindFilesBySizeAtLeast
+        {
+            get { return Properties.Settings.Default.diskCleanerCheckFileSizeLeast; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerCheckFileSizeLeast = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesBySizeAtLeast");
+            }
+        }
+
+        public int? FindFilesBySizeAtMost
+        {
+            get { return Properties.Settings.Default.diskCleanerCheckFileSizeMost; }
+            set
+            {
+                Properties.Settings.Default.diskCleanerCheckFileSizeMost = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("FindFilesBySizeAtMost");
+            }
         }
 
         public Start(Wizard sb)
@@ -117,8 +446,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     this.DrivesCollection.Add(listViewItem);
                 }
 
-                this.listViewDrives.ItemsSource = this.DrivesCollection;
-
                 if (Properties.Settings.Default.diskCleanerIncludedFolders == null)
                 {
                     Properties.Settings.Default.diskCleanerIncludedFolders = new System.Collections.Specialized.StringCollection();
@@ -130,53 +457,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
             }
 
-            // Advanced
-            this.checkBoxArchive.IsChecked = Properties.Settings.Default.diskCleanerSearchArchives;
-            this.checkBoxHidden.IsChecked = Properties.Settings.Default.diskCleanerSearchHidden;
-            this.checkBoxReadOnly.IsChecked = Properties.Settings.Default.diskCleanerSearchReadOnly;
-            this.checkBoxSystem.IsChecked = Properties.Settings.Default.diskCleanerSearchSystem;
-
-            if (Properties.Settings.Default.diskCleanerFindFilesMode == 0)
-                this.radioButtonFindCreated.IsChecked = true;
-            else if (Properties.Settings.Default.diskCleanerFindFilesMode == 1)
-                this.radioButtonFindModified.IsChecked = true;
-            else if (Properties.Settings.Default.diskCleanerFindFilesMode == 2)
-                this.radioButtonFindAccessed.IsChecked = true;
-
-            this.checkBoxFindAfter.IsChecked = Properties.Settings.Default.diskCleanerFindFilesAfter;
-            this.checkBoxFindBefore.IsChecked = Properties.Settings.Default.diskCleanerFindFilesBefore;
-
-            this.dateTimePickerAfter.Value = Properties.Settings.Default.diskCleanerDateTimeAfter;
-            this.dateTimePickerBefore.Value = Properties.Settings.Default.diskCleanerDateTimeBefore;
-
-            this.checkBoxSize.IsChecked = Properties.Settings.Default.diskCleanerCheckFileSize;
-            this.numericUpDownSizeAtLeast.Value = (int?)Convert.ToDecimal(Properties.Settings.Default.diskCleanerCheckFileSizeLeast);
-            this.numericUpDownSizeAtMost.Value = (int?)Convert.ToDecimal(Properties.Settings.Default.diskCleanerCheckFileSizeMost);
-
-            // Search Options
-            this.checkBoxWriteProtected.IsChecked = Properties.Settings.Default.diskCleanerIgnoreWriteProtected;
-            this.checkBoxZeroLength.IsChecked = Properties.Settings.Default.diskCleanerSearchZeroByte;
-
-            if (Properties.Settings.Default.diskCleanerFilterMode == 0)
-                this.radioButtonFilterSafe.IsChecked = true;
-            else if (Properties.Settings.Default.diskCleanerFilterMode == 1)
-                this.radioButtonFilterMed.IsChecked = true;
-            else if (Properties.Settings.Default.diskCleanerFilterMode == 2)
-                this.radioButtonFilterAgg.IsChecked = true;
-
-            this.textBoxSearchFilters.Text = Properties.Settings.Default.diskCleanerSearchFilters;
-
-            this.checkBoxAutoClean.IsChecked = Properties.Settings.Default.diskCleanerAutoClean;
-
-            // Removal
-            if (Properties.Settings.Default.diskCleanerRemoveMode == 0)
-                this.radioButtonRemove.IsChecked = true;
-            else if (Properties.Settings.Default.diskCleanerRemoveMode == 1)
-                this.radioButtonRecycle.IsChecked = true;
-            else if (Properties.Settings.Default.diskCleanerRemoveMode == 2)
-                this.radioButtonMove.IsChecked = true;
-            this.textBoxMoveFolder.Text = Properties.Settings.Default.diskCleanerMoveFolder;
-            this.checkBoxAutoSysRestore.IsChecked = Properties.Settings.Default.diskCleanerAutoRestorePoints;
+            this.OnPropertyChanged("DrivesCollection");
 
             // Excluded Dirs
             foreach (string excludeDir in Properties.Settings.Default.diskCleanerExcludedDirs)
@@ -196,56 +477,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void UpdateOptions()
         {
-            // Searching
-            if (this.radioButtonFilterSafe.IsChecked == true)
-                Properties.Settings.Default.diskCleanerFilterMode = 0;
-            else if (this.radioButtonFilterMed.IsChecked == true)
-                Properties.Settings.Default.diskCleanerFilterMode = 1;
-            else if (this.radioButtonFilterAgg.IsChecked == true)
-                Properties.Settings.Default.diskCleanerFilterMode = 2;
-
-            Properties.Settings.Default.diskCleanerSearchFilters = this.textBoxSearchFilters.Text;
-
-            Properties.Settings.Default.diskCleanerIgnoreWriteProtected = this.checkBoxWriteProtected.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerSearchZeroByte = this.checkBoxZeroLength.IsChecked.GetValueOrDefault();
-
-            Properties.Settings.Default.diskCleanerAutoClean = this.checkBoxAutoClean.IsChecked.GetValueOrDefault();
-
-            // Advanced
-            Properties.Settings.Default.diskCleanerSearchHidden = this.checkBoxHidden.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerSearchArchives = this.checkBoxArchive.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerSearchReadOnly = this.checkBoxReadOnly.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerSearchSystem = this.checkBoxSystem.IsChecked.GetValueOrDefault();
-
-            if (this.radioButtonFindCreated.IsChecked == true)
-                Properties.Settings.Default.diskCleanerFindFilesMode = 0;
-            else if (this.radioButtonFindModified.IsChecked == true)
-                Properties.Settings.Default.diskCleanerFindFilesMode = 1;
-            else if (this.radioButtonFindAccessed.IsChecked == true)
-                Properties.Settings.Default.diskCleanerFindFilesMode = 2;
-
-            Properties.Settings.Default.diskCleanerFindFilesAfter = this.checkBoxFindAfter.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerFindFilesBefore = this.checkBoxFindBefore.IsChecked.GetValueOrDefault();
-
-            Properties.Settings.Default.diskCleanerDateTimeAfter = this.dateTimePickerAfter.Value.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerDateTimeBefore = this.dateTimePickerBefore.Value.GetValueOrDefault();
-
-            Properties.Settings.Default.diskCleanerCheckFileSize = this.checkBoxSize.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.diskCleanerCheckFileSizeLeast = Convert.ToInt32(this.numericUpDownSizeAtLeast.Value);
-            Properties.Settings.Default.diskCleanerCheckFileSizeMost = Convert.ToInt32(this.numericUpDownSizeAtMost.Value);
-
-            // Removal
-            if (this.radioButtonRemove.IsChecked == true)
-                Properties.Settings.Default.diskCleanerRemoveMode = 0;
-            else if (this.radioButtonRecycle.IsChecked == true)
-                Properties.Settings.Default.diskCleanerRemoveMode = 1;
-            else if (this.radioButtonMove.IsChecked == true)
-                Properties.Settings.Default.diskCleanerRemoveMode = 2;
-
-            Properties.Settings.Default.diskCleanerMoveFolder = this.textBoxMoveFolder.Text;
-
-            Properties.Settings.Default.diskCleanerAutoRestorePoints = this.checkBoxAutoSysRestore.IsChecked.GetValueOrDefault();
-
             // Included Folders
             Properties.Settings.Default.diskCleanerIncludedFolders.Clear();
             foreach (lviFolder lvi in this._incFoldersCollection)
@@ -330,14 +561,30 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-        private void FilterRadioChanged(object sender, RoutedEventArgs e)
+        private void SearchFilterChange()
         {
-            if (this.radioButtonFilterSafe.IsChecked.GetValueOrDefault())
-                this.textBoxSearchFilters.Text = "*.tmp; *.temp; *.gid; *.chk; *.~*;";
-            else if (this.radioButtonFilterMed.IsChecked.GetValueOrDefault())
-                this.textBoxSearchFilters.Text = "*.tmp; *.temp; *.gid; *.chk; *.~*;*.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir;";
-            else if (this.radioButtonFilterAgg.IsChecked.GetValueOrDefault())
-                this.textBoxSearchFilters.Text = "*.tmp; *.temp; *.gid; *.chk; *.~*;*.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir;*.wbk; *log.txt; *.err; *.log; *.sik; *.bak; *.ilk; *.aps; *.ncb; *.pch; *.?$?; *.?~?; *.^; *._dd; *._detmp; 0*.nch; *.*_previous; *_previous;";
+            if (this.SearchFilterSafe.GetValueOrDefault())
+                this.SearchFilter = "*.tmp; *.temp; *.gid; *.chk; *.~*;";
+            else if (this.SearchFilterMedium.GetValueOrDefault())
+                this.SearchFilter = "*.tmp; *.temp; *.gid; *.chk; *.~*; *.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir;";
+            else if (this.SearchFilterAggressive.GetValueOrDefault())
+                this.SearchFilter = "*.tmp; *.temp; *.gid; *.chk; *.~*; *.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir; *.wbk; *log.txt; *.err; *.log; *.sik; *.bak; *.ilk; *.aps; *.ncb; *.pch; *.?$?; *.?~?; *.^; *._dd; *._detmp; 0*.nch; *.*_previous; *_previous;";
+        }
+
+        private void buttonSelectMoveFolder_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.Windows.Forms.FolderBrowserDialog folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                if (!string.IsNullOrEmpty(this.MoveFolder))
+                    folderBrowserDlg.SelectedPath = this.MoveFolder;
+
+                if (folderBrowserDlg.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) == System.Windows.Forms.DialogResult.OK)
+                {
+                    this.MoveFolder = folderBrowserDlg.SelectedPath;
+
+                    System.Windows.MessageBox.Show(App.Current.MainWindow, "Folder to move junk files to has been updated", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
         }
     }
 }

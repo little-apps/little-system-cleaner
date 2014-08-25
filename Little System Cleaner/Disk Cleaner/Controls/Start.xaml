@@ -31,7 +31,7 @@
         </Border>
         <TabControl Margin="0,10,0,0" Grid.Row="1">
             <TabItem Header="Drives">
-                <ListView x:Name="listViewDrives" Margin="5,5,5,5" IsSynchronizedWithCurrentItem="True">
+                <ListView x:Name="listViewDrives" Margin="5,5,5,5" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding DrivesCollection}">
                     <ListView.View>
                         <GridView AllowsColumnReorder="False">
                             <GridViewColumn Header="Drive" Width="60">
@@ -56,22 +56,22 @@
                 <StackPanel>
                     <GroupBox Header="Select the mode of removing files from the disk">
                         <StackPanel>
-                            <RadioButton x:Name="radioButtonRemove" Content="Remove the junk files from the hard drive (recommended)" Margin="5,5,5,5" />
-                            <RadioButton x:Name="radioButtonRecycle" Content="Send junk files to the recycle bin" Margin="5,5,5,5" />
-                            <RadioButton x:Name="radioButtonMove" Content="Move files to the specified folder:" Margin="5,5,5,5" />
+                            <RadioButton x:Name="radioButtonRemove" Content="Remove the junk files from the hard drive (recommended)" Margin="5,5,5,5" IsChecked="{Binding JunkFilesDelete}" />
+                            <RadioButton x:Name="radioButtonRecycle" Content="Send junk files to the recycle bin" Margin="5,5,5,5" IsChecked="{Binding JunkFilesRecycle}" />
+                            <RadioButton x:Name="radioButtonMove" Content="Move files to the specified folder:" Margin="5,5,5,5" IsChecked="{Binding JunkFilesMove}" />
                             <Grid Margin="5,5,5,5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="textBoxMoveFolder" Grid.Column="0" Margin="0,0,5,0" IsReadOnly="True" />
-                                <Button x:Name="buttonSelectMoveFolder" Grid.Column="1" Content="..." />
+                                <TextBox x:Name="textBoxMoveFolder" Grid.Column="0" Margin="0,0,5,0" IsReadOnly="True" Text="{Binding MoveFolder}" />
+                                <Button x:Name="buttonSelectMoveFolder" Grid.Column="1" Content="..." Click="buttonSelectMoveFolder_Click" />
                             </Grid>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="System Restore">
                         <StackPanel>
-                            <CheckBox x:Name="checkBoxAutoSysRestore" Content="Create system restore points automatically (recommended)" Margin="5,5,5,5" />
+                            <CheckBox x:Name="checkBoxAutoSysRestore" Content="Create system restore points automatically (recommended)" Margin="5,5,5,5" IsChecked="{Binding AutoCreateSysRestorePoint}" />
                             <TextBlock Margin="5,5,5,5">This will backup essential system files in order to prevent your computer from crashing.</TextBlock>
                         </StackPanel>
                     </GroupBox>
@@ -81,23 +81,23 @@
                 <StackPanel>
                     <GroupBox Header="Search Options">
                         <StackPanel>
-                            <CheckBox x:Name="checkBoxWriteProtected" Content="Ignore write protected and files in use (recommended)" Margin="5,5,5,5" />
-                            <CheckBox x:Name="checkBoxZeroLength" Content="Assume zero length files are junk (slower)" Margin="5,5,5,5" />
+                            <CheckBox x:Name="checkBoxWriteProtected" Content="Ignore write protected and files in use (recommended)" Margin="5,5,5,5" IsChecked="{Binding IgnoreWriteProtectedFiles}" />
+                            <CheckBox x:Name="checkBoxZeroLength" Content="Assume zero length files are junk (slower)" Margin="5,5,5,5" IsChecked="{Binding ZeroLengthFilesAreJunk}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Search Filters">
                         <StackPanel>
-                            <TextBox x:Name="textBoxSearchFilters" Margin="5,5,5,5"></TextBox>
+                            <TextBox x:Name="textBoxSearchFilters" Margin="5,5,5,5" Text="{Binding SearchFilter}" />
                             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                                 <Label Content="Mode:"  VerticalAlignment="Center" />
-                                <RadioButton x:Name="radioButtonFilterSafe" Content="Safe" VerticalAlignment="Center" Margin="5,0,5,0" Checked="FilterRadioChanged" />
-                                <RadioButton x:Name="radioButtonFilterMed" Content="Medium" VerticalAlignment="Center" Margin="5,0,5,0" Checked="FilterRadioChanged" />
-                                <RadioButton x:Name="radioButtonFilterAgg" Content="Aggressive" VerticalAlignment="Center" Margin="5,0,5,0" Checked="FilterRadioChanged" />
+                                <RadioButton x:Name="radioButtonFilterSafe" Content="Safe" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterSafe}" />
+                                <RadioButton x:Name="radioButtonFilterMed" Content="Medium" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterMedium}" />
+                                <RadioButton x:Name="radioButtonFilterAgg" Content="Aggressive" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterAggressive}" />
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Power Users">
-                        <CheckBox x:Name="checkBoxAutoClean" Content="Automatically remove files after scanning (not recommended)" Margin="5,5,5,5" />
+                        <CheckBox x:Name="checkBoxAutoClean" Content="Automatically remove files after scanning (not recommended)" Margin="5,5,5,5" IsChecked="{Binding AutoRemoveFiles}" />
                     </GroupBox>
                 </StackPanel>
             </TabItem>
@@ -105,27 +105,27 @@
                 <StackPanel>
                     <GroupBox Header="Attributes">
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5">
-                            <CheckBox x:Name="checkBoxHidden" Content="Hidden" Margin="0,0,5,0" />
-                            <CheckBox x:Name="checkBoxReadOnly" Content="Read Only" Margin="0,0,5,0" />
-                            <CheckBox x:Name="checkBoxArchive" Content="Archive" Margin="0,0,5,0" />
-                            <CheckBox x:Name="checkBoxSystem" Content="System" Margin="0,0,5,0" />
+                            <CheckBox x:Name="checkBoxHidden" Content="Hidden" Margin="0,0,5,0" IsChecked="{Binding AttributesHidden}" />
+                            <CheckBox x:Name="checkBoxReadOnly" Content="Read Only" Margin="0,0,5,0" IsChecked="{Binding AttributesReadonly}" />
+                            <CheckBox x:Name="checkBoxArchive" Content="Archive" Margin="0,0,5,0" IsChecked="{Binding AttributesArchive}" />
+                            <CheckBox x:Name="checkBoxSystem" Content="System" Margin="0,0,5,0" IsChecked="{Binding AttributesSystem}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Find Files">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="5,5,0,5">
-                                <RadioButton x:Name="radioButtonFindCreated" Content="Created" Margin="0,0,5,0" />
-                                <RadioButton x:Name="radioButtonFindModified" Content="Modified" Margin="0,0,5,0" />
-                                <RadioButton x:Name="radioButtonFindAccessed" Content="Accessed" Margin="0,0,5,0" />
+                                <RadioButton x:Name="radioButtonFindCreated" Content="Created" Margin="0,0,5,0" IsChecked="{Binding FindFilesCreated}" />
+                                <RadioButton x:Name="radioButtonFindModified" Content="Modified" Margin="0,0,5,0" IsChecked="{Binding FindFilesModified}" />
+                                <RadioButton x:Name="radioButtonFindAccessed" Content="Accessed" Margin="0,0,5,0" IsChecked="{Binding FindFilesAccessed}" />
                             </StackPanel>
                             <DockPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="5,5,0,5">
-                                    <CheckBox x:Name="checkBoxFindAfter" Content="After:" Margin="0,0,5,0" VerticalAlignment="Center" />
-                                    <xctk:DateTimeUpDown x:Name="dateTimePickerAfter" Format="ShortDate" Margin="0,0,5,0" />
+                                    <CheckBox x:Name="checkBoxFindAfter" Content="After:" Margin="0,0,5,0" VerticalAlignment="Center" IsChecked="{Binding FindFilesAfter}" />
+                                    <xctk:DateTimeUpDown x:Name="dateTimePickerAfter" Format="ShortDate" Margin="0,0,5,0" Value="{Binding FindFilesAfterDateTime}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,5,0,5">
-                                    <CheckBox x:Name="checkBoxFindBefore" Content="Before:" Margin="0,0,5,0" VerticalAlignment="Center"  />
-                                    <xctk:DateTimeUpDown x:Name="dateTimePickerBefore" Format="ShortDate" Margin="0,0,5,0" />
+                                    <CheckBox x:Name="checkBoxFindBefore" Content="Before:" Margin="0,0,5,0" VerticalAlignment="Center" IsChecked="{Binding FindFilesBefore}" />
+                                    <xctk:DateTimeUpDown x:Name="dateTimePickerBefore" Format="ShortDate" Margin="0,0,5,0" Value="{Binding FindFilesBeforeDateTime}" />
                                 </StackPanel>
                             </DockPanel>
 
@@ -134,14 +134,14 @@
                     <GroupBox Header="Size">
                         <DockPanel LastChildFill="True">
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="5,5,0,5">
-                                <CheckBox x:Name="checkBoxSize" Content="Size:" VerticalAlignment="Center" Margin="0,0,1,0" />
+                                <CheckBox x:Name="checkBoxSize" Content="Size:" VerticalAlignment="Center" Margin="0,0,1,0" IsChecked="{Binding FindFilesBySize}" />
                                 <Label Content="At least:" Margin="0,0,5,0" />
-                                <xctk:IntegerUpDown x:Name="numericUpDownSizeAtLeast" Margin="0,0,2,0" DefaultValue="0" Width="39" />
+                                <xctk:IntegerUpDown x:Name="numericUpDownSizeAtLeast" Margin="0,0,2,0" DefaultValue="0" Width="39" Value="{Binding FindFilesBySizeAtLeast}" />
                                 <Label Content="KB" Margin="0,0,5,0" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="5,5,0,5">
                                 <Label Content="At most:" Margin="0,0,5,0" />
-                                <xctk:IntegerUpDown x:Name="numericUpDownSizeAtMost" Margin="0,0,2,0" DefaultValue="0" Width="36" />
+                                <xctk:IntegerUpDown x:Name="numericUpDownSizeAtMost" Margin="0,0,2,0" DefaultValue="0" Width="39" Value="{Binding FindFilesBySizeAtMost}" />
                                 <Label Content="KB" Margin="0,0,5,0" />
                             </StackPanel>
                         </DockPanel>
