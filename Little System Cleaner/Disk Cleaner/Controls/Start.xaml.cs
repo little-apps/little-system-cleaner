@@ -416,13 +416,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (this.scanBase.selectedDrives.Count == 0)
             {
-                System.Windows.MessageBox.Show(Window.GetWindow(this), "No drives selected", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "No drives selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(this.SearchFilter))
             {
-                System.Windows.MessageBox.Show(Window.GetWindow(this), "At least one search filter must be specified", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "At least one search filter must be specified", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
