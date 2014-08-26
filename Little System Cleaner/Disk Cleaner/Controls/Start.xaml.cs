@@ -539,7 +539,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (this.listViewFiles.SelectedItems[0] != null)
             {
-                if (System.Windows.MessageBox.Show(Window.GetWindow(this), "Are you sure?", System.Windows.Forms.Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+                if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
                 {
                     this._excFilesCollection.Remove(this.listViewFiles.SelectedItems[0] as lviFile);
                 }
@@ -550,7 +550,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (this.listViewExcludeFolders.SelectedItems[0] != null)
             {
-                if (System.Windows.MessageBox.Show(Window.GetWindow(this), "Are you sure?", System.Windows.Forms.Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+                if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
                 {
                     this._excFoldersCollection.Remove(this.listViewExcludeFolders.SelectedItems[0] as lviFolder);
                 }
@@ -561,7 +561,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (this.listViewIncFolders.SelectedItems[0] != null)
             {
-                if (System.Windows.MessageBox.Show(Window.GetWindow(this), "Are you sure?", System.Windows.Forms.Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+                if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
                 {
                     this._incFoldersCollection.Remove(this.listViewIncFolders.SelectedItems[0] as lviFolder);
                 }
