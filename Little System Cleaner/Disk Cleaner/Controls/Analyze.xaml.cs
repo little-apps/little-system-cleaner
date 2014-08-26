@@ -175,6 +175,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                             }
                         }
 
+
                         // Check if file matches types
                         if (!this.CompareWildcards(fileInfo.Name, Properties.Settings.Default.diskCleanerSearchFilters))
                             continue;
@@ -378,30 +379,22 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// <param name="WildString">String to compare</param>
         /// <param name="Mask">Wildcard masks seperated by a semicolon (;)</param>
         /// <returns>True if match found</returns>
-        private bool CompareWildcards(string WildString, string Mask, bool IgnoreCase = true)
+        private bool CompareWildcards(string WildString, string Masks, bool IgnoreCase = true)
         {
-            int i = 0;
-
-            if (String.IsNullOrEmpty(Mask))
+            if (String.IsNullOrEmpty(Masks))
                 return false;
-            if (Mask == "*")
+
+            if (Masks == "*")
                 return true;
 
-            while (i != Mask.Length)
+            foreach (string mask in Masks.Split(';'))
             {
-                if (Utils.CompareWildcard(WildString, Mask.Substring(i), IgnoreCase))
-                    return true;
+                string maskTrimmed = mask.Trim();
 
-                while (i != Mask.Length && Mask[i] != ';')
-                    i += 1;
+                if (!string.IsNullOrEmpty(maskTrimmed))
+                    if (Utils.CompareWildcard(WildString, maskTrimmed, IgnoreCase))
+                        return true;
 
-                if (i != Mask.Length && Mask[i] == ';')
-                {
-                    i += 1;
-
-                    while (i != Mask.Length && Mask[i] == ' ')
-                        i += 1;
-                }
             }
 
             return false;
