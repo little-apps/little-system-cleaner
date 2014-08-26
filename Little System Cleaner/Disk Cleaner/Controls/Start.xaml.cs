@@ -420,6 +420,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(this.SearchFilter))
+            {
+                System.Windows.MessageBox.Show(Window.GetWindow(this), "At least one search filter must be specified", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             this.scanBase.MoveNext();
         }
 
