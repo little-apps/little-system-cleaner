@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -563,12 +564,32 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void SearchFilterChange()
         {
+            List<string> masks = new List<string>();
+            string[] allFilters = new string[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous" };
+            string[] filters = new string[] { };
+
             if (this.SearchFilterSafe.GetValueOrDefault())
-                this.SearchFilter = "*.tmp; *.temp; *.gid; *.chk; *.~*;";
+                filters = new string[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*" };
             else if (this.SearchFilterMedium.GetValueOrDefault())
-                this.SearchFilter = "*.tmp; *.temp; *.gid; *.chk; *.~*; *.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir;";
+                filters = new string[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir" };
             else if (this.SearchFilterAggressive.GetValueOrDefault())
-                this.SearchFilter = "*.tmp; *.temp; *.gid; *.chk; *.~*; *.old; *.fts; *.ftg; *.$$$; *.---; ~*.*; *.??$; *.___; *._mp; *.dmp; *.prv; CHKLIST.MS; *.$db; *.??~; *.db$; chklist.*; mscreate.dir; *.wbk; *log.txt; *.err; *.log; *.sik; *.bak; *.ilk; *.aps; *.ncb; *.pch; *.?$?; *.?~?; *.^; *._dd; *._detmp; 0*.nch; *.*_previous; *_previous;";
+                filters = new string[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous" };
+
+            foreach (string mask in this.SearchFilter.Split(';'))
+            {
+                string maskTrimmed = mask.Trim();
+
+                if (!string.IsNullOrWhiteSpace(mask) && !allFilters.Contains(maskTrimmed))
+                    masks.Add(maskTrimmed);
+            }
+
+            foreach (string mask in filters)
+            {
+                if (!masks.Contains(mask))
+                    masks.Add(mask);
+            }
+
+            this.SearchFilter = string.Join("; ", masks);
         }
 
         private void buttonSelectMoveFolder_Click(object sender, RoutedEventArgs e)
