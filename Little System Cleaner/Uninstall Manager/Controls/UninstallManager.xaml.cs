@@ -247,7 +247,10 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
 
                 if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Main.Watcher.Event("Uninstall Manager", "Remove from registry");
                     progInfo.RemoveFromRegistry();
+                }
 
                 PopulateListView();
 
@@ -263,8 +266,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
 
                 if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Main.Watcher.Event("Uninstall Manager", "Uninstall");
                     progInfo.Uninstall();
-
+                }
+                    
                 PopulateListView();
 
                 // Manually sort listview

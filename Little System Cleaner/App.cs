@@ -43,19 +43,49 @@ namespace Little_System_Cleaner
         [STAThread]
         static void Main()
         {
-            bool bMutexCreated = false;
-            Mutex mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated);
+            bool bMutexCreated = false, bWaitToExit = false;
 
-            // If mutex isnt available, show message and exit...
-            if (!bMutexCreated)
+            foreach (string arg in Environment.GetCommandLineArgs())
             {
-                MessageBox.Show("Another program seems to be already running...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                if (arg == "/restart" || arg == "--restart")
+                    bWaitToExit = true;
             }
 
-            new App();
+            using (Mutex mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated))
+            {
+                if (!bMutexCreated)
+                {
+                    if (bWaitToExit)
+                    {
+                        try
+                        {
+                            if (!mutexMain.WaitOne())
+                            {
+                                Debug.WriteLine("Unable to acquire mutex");
+                                Environment.Exit(0);
+                            }
+                        }
+                        catch (AbandonedMutexException)
+                        {
+                            Debug.WriteLine("Mutex was abandoned");
+                        }
+                    }
+                    else
+                    {
+                        // If mutex isnt available, show message and exit...
+                        if (!bMutexCreated)
+                        {
+                            MessageBox.Show("Another program seems to be already running...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                    }
+                    
+                }
 
-            mutexMain.Close();
+                new App();
+
+                mutexMain.ReleaseMutex();
+            }
         }
 
         /// <summary>

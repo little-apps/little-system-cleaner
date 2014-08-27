@@ -216,6 +216,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 // Compute time between start and end of scan
                 TimeSpan ts = DateTime.Now.Subtract(dateTimeStart);
 
+                // Report to Little Software Stats
+                Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int)ts.TotalSeconds, true);
+
                 // Set last scan elapsed time (in ticks)
                 Properties.Settings.Default.lastScanElapsed = ts.Ticks;
 

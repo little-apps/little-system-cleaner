@@ -225,6 +225,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 // End critical region
                 Thread.EndCriticalRegion();
 
+                Main.Watcher.EventPeriod("Privacy Cleaner", "Analyze", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+
                 Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
 
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));

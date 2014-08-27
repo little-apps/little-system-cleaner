@@ -75,6 +75,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
+            Main.Watcher.Event("Startup Manager", "Add");
+
             AddEditEntry addEditEntryWnd = new AddEditEntry();
             if (addEditEntryWnd.ShowDialog().GetValueOrDefault() == true)
                 // Refresh treelistview
@@ -98,6 +100,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 return;
             }
 
+            Main.Watcher.Event("Startup Manager", "Edit");
+
             AddEditEntry addEditEntryWnd = new AddEditEntry(selectedItem.Parent.SectionName, selectedItem.SectionName, selectedItem.Path, selectedItem.Args, selectedItem.RegKey);
 
             if (addEditEntryWnd.ShowDialog().GetValueOrDefault() == true)
@@ -116,8 +120,9 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove the selected entry from startup?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         bool bFailed = false;
-
                         string sectionName = (node.Parent as StartupEntry).SectionName;
+
+                        Main.Watcher.Event("Startup Manager", "Delete Single Entry");
 
                         if (Directory.Exists(sectionName))
                         {
@@ -169,6 +174,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
                         // Registry key or folder
                         string sectionName = node.SectionName;
+
+                        Main.Watcher.Event("Startup Manager", "Delete Multiple Entries");
 
                         if (Directory.Exists(sectionName))
                         {
@@ -238,6 +245,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 if (!node.IsLeaf)
                     return;
 
+                Main.Watcher.Event("Startup Manager", "View");
+
                 if (node.RegKey == null)
                 {
                     Process.Start(node.Parent.SectionName);
@@ -261,6 +270,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
                 if (MessageBox.Show("Are you sure you want to run this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
+                    Main.Watcher.Event("Startup Manager", "Run");
+
                     try
                     {
                         Process.Start(node.Path, node.Args);

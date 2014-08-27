@@ -154,6 +154,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (MessageBox.Show(Window.GetWindow(this), "Are you sure you want to remove these files?", System.Windows.Forms.Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != System.Windows.MessageBoxResult.Yes)
                     return;
 
+            Main.Watcher.Event("Disk Cleaner", "Remove Files");
+
             long lSeqNum = 0;
 
             try

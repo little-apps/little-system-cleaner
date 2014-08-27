@@ -118,6 +118,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (di.IsReady && di.TotalFreeSpace != 0 && (di.DriveType == DriveType.Fixed || di.DriveType == DriveType.Network || di.DriveType == DriveType.Removable))
                             RecurseDirectory(di.RootDirectory);
                     }
+
+                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
                 }
                 else if (this.scanBase.Options.AllExceptDrives.GetValueOrDefault())
                 {
@@ -141,6 +143,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                         drives++;
                     }
+
+                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
 
                     if (drives == 0)
                     {
@@ -166,6 +170,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (this.scanBase.Options.Drives.Contains(new IncludeDrive(di)))
                             RecurseDirectory(di.RootDirectory);
                     }
+
+                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
                 }
                 else // Only selected folders
                 {
@@ -173,6 +179,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     {
                         RecurseDirectory(dir.DirInfo);
                     }
+
+                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
                 }
 
                 if (this.scanBase.Options.CompareFilename.GetValueOrDefault())
@@ -381,6 +389,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             this.StatusText = "Grouping files by filename";
 
+            Main.Watcher.Event("Duplicate Finder", "Group by filename");
+
             this.scanBase.FilesGroupedByFilename.Clear();
 
             var query = from p in this.FileList
@@ -403,6 +413,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.StatusText = "Grouping files by size";
             this.CurrentFile = "Please wait...";
+
+            Main.Watcher.Event("Duplicate Finder", "Group by checksum");
 
             this.scanBase.FilesGroupedByHash.Clear();
 
@@ -480,6 +492,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             this.StatusText = "Getting checksums from audio files";
             this.CurrentFile = "Please wait...";
+
+            Main.Watcher.Event("Duplicate Finder", "Group by audio tags");
 
             List<FileEntry> fileEntriesTags = new List<FileEntry>();
 

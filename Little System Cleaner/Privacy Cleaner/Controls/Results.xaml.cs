@@ -92,6 +92,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
+            Main.Watcher.Event("Privacy Cleaner", "Clean Files");
+
             Report report = Report.CreateReport(Properties.Settings.Default.privacyCleanerLog);
 
 #if (!DEBUG)

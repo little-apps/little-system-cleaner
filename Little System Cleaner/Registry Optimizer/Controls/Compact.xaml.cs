@@ -74,6 +74,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             long lSeqNum = 0;
             long lSpaceSaved = 0;
 
+            Little_System_Cleaner.Main.Watcher.Event("Registry Optimizer", "Compact Registry");
+
             Thread.BeginCriticalRegion();
 
             try

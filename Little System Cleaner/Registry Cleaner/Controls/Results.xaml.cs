@@ -192,7 +192,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (MessageBox.Show("Would you like to fix all selected problems?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
 
-            
+            // Report
+            Main.Watcher.Event("Registry Cleaner", "Fix Problems");
 
             // Disable buttons
             this.buttonCancel.IsEnabled = false;

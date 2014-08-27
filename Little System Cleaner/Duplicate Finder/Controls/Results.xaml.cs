@@ -92,6 +92,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 long seqNum = 0;
                 bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
+                Main.Watcher.Event("Duplicate Finder", "Remove Duplicates");
+
                 Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
                 Main.TaskbarProgressValue = 0;
 

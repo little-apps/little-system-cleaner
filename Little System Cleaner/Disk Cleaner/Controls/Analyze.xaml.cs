@@ -116,6 +116,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     ScanFiles(driveInfo.RootDirectory);
                 }
 
+                Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
+
                 if (Wizard.fileList.Count > 0)
                 {
                     // Set last scan errors found

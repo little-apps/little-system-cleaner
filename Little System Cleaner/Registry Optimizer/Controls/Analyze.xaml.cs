@@ -90,7 +90,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Thread.EndCriticalRegion();
 
-            Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+            TimeSpan timeSpan = DateTime.Now.Subtract(dtStart);
+
+            Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds, true);
+
+            Properties.Settings.Default.lastScanElapsed = timeSpan.Ticks;
 
             this.Dispatcher.BeginInvoke(new Action(() => {
                 Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;

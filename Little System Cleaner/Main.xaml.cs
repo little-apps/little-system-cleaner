@@ -31,6 +31,7 @@ using System.Windows.Input;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
 using System.Windows.Shell;
+using System.Reflection;
 
 namespace Little_System_Cleaner
 {
@@ -48,6 +49,12 @@ namespace Little_System_Cleaner
         {
             get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue; }
             set { (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue = value; }
+        }
+
+        private static LittleSoftwareStats.Watcher _watcher;
+        internal static LittleSoftwareStats.Watcher Watcher
+        {
+            get { return _watcher; }
         }
 
         System.Timers.Timer timerCheck = new System.Timers.Timer(500);
@@ -80,6 +87,14 @@ namespace Little_System_Cleaner
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            // Send usage data to Little Software Stats
+            _watcher = new LittleSoftwareStats.Watcher();
+            LittleSoftwareStats.Config.Enabled = Properties.Settings.Default.optionsReportUsage;
+
+            string appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            Watcher.Start("922492147b2e47744961de5b9a5d0886", appVer);
+
             IsTabsEnabled = true;
 
             this.timerCheck.Elapsed += new System.Timers.ElapsedEventHandler(timerCheck_Elapsed);
@@ -120,6 +135,9 @@ namespace Little_System_Cleaner
             {
                 e.Cancel = true;
             }
+
+            if (!e.Cancel)
+                Watcher.Stop();
         }
 
         private void imageHelp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
