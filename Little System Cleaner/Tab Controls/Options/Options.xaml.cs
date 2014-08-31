@@ -40,31 +40,12 @@ namespace Little_System_Cleaner.Controls
         #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void RaisePropertyChanged(string propertyName)
+        public void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-
-        public Visibility ShowProxySettings
-        {
-            get 
-            {
-                if (this.radioButtonProxy.IsChecked.GetValueOrDefault())
-                    return System.Windows.Visibility.Visible;
-                else
-                    return System.Windows.Visibility.Hidden;
-            }
-        }
-
-        public bool ProxyAuthenticate
-        {
-            get
-            {
-                return (Properties.Settings.Default.optionsProxyAuthenticate);
-            }
-        }
 
         public int SelectedUpdateDelay
         {
@@ -92,38 +73,176 @@ namespace Little_System_Cleaner.Controls
                 else // if (index == 3)
                     Properties.Settings.Default.optionsUpdateDelay = 14;
 
-                RaisePropertyChanged("SelectedUpdateDelay");
+                this.OnPropertyChanged("SelectedUpdateDelay");
             }
         }
+
+        public bool? AutoUpdate
+        {
+            get { return Properties.Settings.Default.updateAuto; }
+            set
+            {
+                Properties.Settings.Default.updateAuto = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("AutoUpdate");
+            }
+        }
+
+        public bool? SysRestore
+        {
+            get { return Properties.Settings.Default.optionsSysRestore; }
+            set
+            {
+                Properties.Settings.Default.optionsSysRestore = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("SysRestore");
+            }
+        }
+
+        public bool? UsageStats
+        {
+            get { return Properties.Settings.Default.optionsUsageStats; }
+            set
+            {
+                Properties.Settings.Default.optionsUsageStats = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("UsageStats");
+            }
+        }
+
+        public string LogDirectory
+        {
+            get { return Properties.Settings.Default.optionsLogDir; }
+            set
+            {
+                Properties.Settings.Default.optionsLogDir = value;
+
+                this.OnPropertyChanged("LogDirectory");
+            }
+        }
+
+        public bool? NoProxy
+        {
+            get { return (Properties.Settings.Default.optionsUseProxy == 0); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.optionsUseProxy = 0;
+
+                this.OnPropertyChanged("NoProxy");
+                this.OnPropertyChanged("IEProxy");
+                this.OnPropertyChanged("Proxy");
+                this.OnPropertyChanged("ShowProxySettings");
+            }
+        }
+
+        public bool? IEProxy
+        {
+            get { return (Properties.Settings.Default.optionsUseProxy == 1); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.optionsUseProxy = 1;
+
+                this.OnPropertyChanged("NoProxy");
+                this.OnPropertyChanged("IEProxy");
+                this.OnPropertyChanged("Proxy");
+                this.OnPropertyChanged("ShowProxySettings");
+            }
+        }
+
+        public bool? Proxy
+        {
+            get { return (Properties.Settings.Default.optionsUseProxy == 2); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    Properties.Settings.Default.optionsUseProxy = 2;
+
+                this.OnPropertyChanged("NoProxy");
+                this.OnPropertyChanged("IEProxy");
+                this.OnPropertyChanged("Proxy");
+                this.OnPropertyChanged("ShowProxySettings");
+            }
+        }
+
+        public Visibility ShowProxySettings
+        {
+            get
+            {
+                if (this.Proxy.GetValueOrDefault())
+                    return System.Windows.Visibility.Visible;
+                else
+                    return System.Windows.Visibility.Hidden;
+            }
+        }
+
+        public string ProxyAddress
+        {
+            get { return Properties.Settings.Default.optionsProxyHost; }
+            set
+            {
+                Properties.Settings.Default.optionsProxyHost = value;
+
+                this.OnPropertyChanged("ProxyAddress");
+            }
+        }
+
+        public int? ProxyPort
+        {
+            get { return Properties.Settings.Default.optionsProxyPort; }
+            set
+            {
+                Properties.Settings.Default.optionsProxyPort = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("ProxyPort");
+            }
+        }
+
+        public bool? ProxyAuthenticate
+        {
+            get { return Properties.Settings.Default.optionsProxyAuthenticate; }
+            set
+            {
+                Properties.Settings.Default.optionsProxyAuthenticate = value.GetValueOrDefault();
+
+                this.OnPropertyChanged("ProxyAuthenticate");
+            }
+        }
+
+        public string ProxyUser
+        {
+            get { return Properties.Settings.Default.optionsProxyUser; }
+            set
+            {
+                Properties.Settings.Default.optionsProxyUser = value;
+
+                this.OnPropertyChanged("ProxyUser");
+            }
+        }
+
+        public string ProxyPassword
+        {
+            get
+            {
+                using (SecureString secureStr = Utils.DecryptString(Properties.Settings.Default.optionsProxyPassword))
+                {
+                    return Utils.ToInsecureString(secureStr);
+                }
+            }
+
+            set
+            {
+                string encryptedPassword = Utils.EncryptString(this.proxyPassword.SecurePassword);
+                if (Properties.Settings.Default.optionsProxyPassword != encryptedPassword)
+                    Properties.Settings.Default.optionsProxyPassword = encryptedPassword;
+            }
+        }
+
 
 		public Options()
 		{
             this.InitializeComponent();
-
-            this.textBoxLog.Text = Properties.Settings.Default.optionsLogDir;
-
-            this.checkBoxAutoUpdate.IsChecked = Properties.Settings.Default.updateAuto;
-
-            this.checkBoxSysRestore.IsChecked = Properties.Settings.Default.optionsSysRestore;
-            this.checkBoxUsageStats.IsChecked = Properties.Settings.Default.optionsUsageStats;
-
-            if (Properties.Settings.Default.optionsUseProxy == 0)
-                this.radioButtonNoProxy.IsChecked = true;
-            else if (Properties.Settings.Default.optionsUseProxy == 1)
-                this.radioButtonIEProxy.IsChecked = true;
-            else if (Properties.Settings.Default.optionsUseProxy == 2)
-                this.radioButtonProxy.IsChecked = true;
-
-            RaisePropertyChanged("ShowProxySettings");
-
-            this.proxyAddress.Text = Properties.Settings.Default.optionsProxyHost;
-            this.numericUpDownProxyPort.Value = Properties.Settings.Default.optionsProxyPort;
-
-            this.checkBoxProxyAuthenticate.IsChecked = (Properties.Settings.Default.optionsProxyAuthenticate);
-
-            RaisePropertyChanged("ProxyAuthenticate");
-
-            this.proxyUser.Text = Properties.Settings.Default.optionsProxyUser;
 
             using (SecureString secureStr = Utils.DecryptString(Properties.Settings.Default.optionsProxyPassword)) {
                 this.proxyPassword.Password = Utils.ToInsecureString(secureStr);
@@ -133,56 +252,6 @@ namespace Little_System_Cleaner.Controls
         public void ShowAboutTab()
         {
             this.tabControl1.SelectedIndex = this.tabControl1.Items.IndexOf(this.tabItemAbout);
-        }
-
-        private void UpdateSettings(object sender, RoutedEventArgs e)
-        {
-            this.UpdateSettings();
-        }
-
-        public void UpdateSettings()
-        {
-            if (this.textBoxLog != null)
-                Properties.Settings.Default.optionsLogDir = this.textBoxLog.Text;
-
-            if (this.checkBoxAutoUpdate != null)
-                Properties.Settings.Default.optionsUpdate = this.checkBoxAutoUpdate.IsChecked.GetValueOrDefault();
-
-            if (this.checkBoxSysRestore != null)
-                Properties.Settings.Default.optionsSysRestore = this.checkBoxSysRestore.IsChecked.GetValueOrDefault();
-            if (this.checkBoxUsageStats != null)
-                Properties.Settings.Default.optionsUsageStats = this.checkBoxUsageStats.IsChecked.GetValueOrDefault();
-
-            if (this.radioButtonNoProxy != null 
-                && this.radioButtonIEProxy != null
-                && this.radioButtonProxy != null
-                && this.proxyAddress != null
-                && this.numericUpDownProxyPort != null
-                && this.checkBoxProxyAuthenticate != null
-                && this.proxyUser != null
-                && this.proxyPassword != null)
-            {
-                if (Properties.Settings.Default.optionsProxyHost != this.proxyAddress.Text.Trim())
-                    Properties.Settings.Default.optionsProxyHost = this.proxyAddress.Text.Trim();
-
-                if (Properties.Settings.Default.optionsProxyPort != this.numericUpDownProxyPort.Value.GetValueOrDefault()) {
-                    if (this.numericUpDownProxyPort.Value.GetValueOrDefault() > 0 && this.numericUpDownProxyPort.Value.GetValueOrDefault() < 65535) 
-                    {
-                        Properties.Settings.Default.optionsProxyPort = this.numericUpDownProxyPort.Value.GetValueOrDefault();
-                    } 
-                    else
-                    {
-                        this.numericUpDownProxyPort.Value = Properties.Settings.Default.optionsProxyPort;
-                    }
-                }
-
-                if (Properties.Settings.Default.optionsProxyUser != this.proxyUser.Text.Trim())
-                    Properties.Settings.Default.optionsProxyUser = this.proxyUser.Text.Trim();
-
-                string encryptedPassword = Utils.EncryptString(this.proxyPassword.SecurePassword);
-                if (Properties.Settings.Default.optionsProxyPassword != encryptedPassword)
-                    Properties.Settings.Default.optionsProxyPassword = encryptedPassword;
-            }
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -212,38 +281,15 @@ namespace Little_System_Cleaner.Controls
                 folderBrowserDlg.ShowNewFolderButton = true;
 
                 if (folderBrowserDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    this.textBoxLog.Text = folderBrowserDlg.SelectedPath;
-
-                UpdateSettings();
+                    this.LogDirectory = folderBrowserDlg.SelectedPath;
             }
         }
 
-        private void ChangeProxyUse(object sender, RoutedEventArgs e)
+        private void proxyPassword_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (this.radioButtonNoProxy.IsChecked.GetValueOrDefault() && Properties.Settings.Default.optionsUseProxy != 0)
-            {
-                Properties.Settings.Default.optionsUseProxy = 0;
-                RaisePropertyChanged("ShowProxySettings");
-            }
-            else if (this.radioButtonIEProxy.IsChecked.GetValueOrDefault() && Properties.Settings.Default.optionsUseProxy != 1) 
-            {
-                Properties.Settings.Default.optionsUseProxy = 1;
-                RaisePropertyChanged("ShowProxySettings");
-            }
-            else if (this.radioButtonProxy.IsChecked.GetValueOrDefault() && Properties.Settings.Default.optionsUseProxy != 2)
-            {
-                Properties.Settings.Default.optionsUseProxy = 2;
-                RaisePropertyChanged("ShowProxySettings");
-            }
-        }
-
-        private void ShowOrHideProxyAuthenticate(object sender, RoutedEventArgs e)
-        {
-            if (Properties.Settings.Default.optionsProxyAuthenticate != this.checkBoxProxyAuthenticate.IsChecked.GetValueOrDefault())
-            {
-                Properties.Settings.Default.optionsProxyAuthenticate = this.checkBoxProxyAuthenticate.IsChecked.GetValueOrDefault();
-                RaisePropertyChanged("ProxyAuthenticate");
-            }
+            string encryptedPassword = Utils.EncryptString(this.proxyPassword.SecurePassword);
+            if (Properties.Settings.Default.optionsProxyPassword != encryptedPassword)
+                Properties.Settings.Default.optionsProxyPassword = encryptedPassword;
         }
 	}
 }

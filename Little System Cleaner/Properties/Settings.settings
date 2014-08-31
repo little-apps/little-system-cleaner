@@ -198,7 +198,7 @@
       <Value Profile="(Default)">14</Value>
     </Setting>
     <Setting Name="optionsUsageStats" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="privacyCleanerDeletePerm" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -244,9 +244,6 @@
     </Setting>
     <Setting Name="optionsProxyPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="optionsReportUsage" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

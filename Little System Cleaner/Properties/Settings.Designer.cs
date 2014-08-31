@@ -621,7 +621,7 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool optionsUsageStats {
             get {
                 return ((bool)(this["optionsUsageStats"]));
@@ -808,18 +808,6 @@ namespace Little_System_Cleaner.Properties {
             }
             set {
                 this["optionsProxyPassword"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool optionsReportUsage {
-            get {
-                return ((bool)(this["optionsReportUsage"]));
-            }
-            set {
-                this["optionsReportUsage"] = value;
             }
         }
     }

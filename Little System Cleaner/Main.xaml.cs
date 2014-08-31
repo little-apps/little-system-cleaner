@@ -89,7 +89,7 @@ namespace Little_System_Cleaner
         {
             // Send usage data to Little Software Stats
             _watcher = new LittleSoftwareStats.Watcher();
-            LittleSoftwareStats.Config.Enabled = Properties.Settings.Default.optionsReportUsage;
+            LittleSoftwareStats.Config.Enabled = Properties.Settings.Default.optionsUsageStats;
 
             string appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
@@ -125,10 +125,6 @@ namespace Little_System_Cleaner
                 {
                     // NOTE: Invoked function is responsible for displaying message on why it can't exit
                     e.Cancel = true;
-                }
-                else
-                {
-                    this.ctrlOptions.UpdateSettings();
                 }
             }
             else
