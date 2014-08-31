@@ -494,6 +494,9 @@
     <Resource Include="Resources\uninstall manager.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+    </None>
     <None Include="app.config" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
