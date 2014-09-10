@@ -428,10 +428,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                             return;
                         }
 
-                        string regKeyPath = (this._tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
-                        string regKeyValueName = (this._tree.SelectedNode.Tag as BadRegistryKey).ValueName;
+                        try
+                        {
+                            string regKeyPath = (this._tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
+                            string regKeyValueName = (this._tree.SelectedNode.Tag as BadRegistryKey).ValueName;
 
-                        RegEditGo.GoTo(regKeyPath, regKeyValueName);
+                            RegEditGo.GoTo(regKeyPath, regKeyValueName);
+                        }
+                        catch (Exception ex)
+                        {
+                            string message = string.Format("Unable to open registry key in RegEdit.\nThe following error occurred: {0}", ex.Message);
+
+                            MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        
                         break;
                     }
             }

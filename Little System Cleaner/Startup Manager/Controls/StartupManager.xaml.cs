@@ -249,11 +249,33 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
                 if (node.RegKey == null)
                 {
-                    Process.Start(node.Parent.SectionName);
+                    // Folder
+
+                    try
+                    {
+                        Process.Start(node.Parent.SectionName);
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to open startup folder.\nThe following error occurred: {0}", ex.Message);
+
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 else
                 {
-                    RegEditGo.GoTo(node.RegKey.Name, node.SectionName);
+                    // Registry key
+
+                    try
+                    {
+                        RegEditGo.GoTo(node.RegKey.Name, node.SectionName);
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = string.Format("Unable to open registry key in RegEdit.\nThe following error occurred: {0}", ex.Message);
+
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
 
@@ -276,9 +298,16 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     {
                         Process.Start(node.Path, node.Args);
                     }
-                    catch (FileNotFoundException ex)
+                    catch (Exception ex)
                     {
-                        MessageBox.Show(App.Current.MainWindow, "The file (" + ex.FileName + ") could not be found. This could mean the startup entry is erroneous.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        string message;
+
+                        if (ex is FileNotFoundException)
+                            message = "The file (" + (ex as FileNotFoundException).FileName + ") could not be found. This could mean the startup entry is erroneous.";
+                        else
+                            message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
+
+                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                     
