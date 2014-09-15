@@ -141,7 +141,6 @@ namespace Little_System_Cleaner
         internal static extern int GetSystemMetrics(int nIndex);
         #endregion
 
-
         internal static string GetOSVersion()
         {
             OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
