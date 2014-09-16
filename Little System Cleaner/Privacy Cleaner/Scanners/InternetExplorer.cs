@@ -132,8 +132,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies)
             {
-                System.Windows.Forms.MessageBox.Show(cacheEntry.lpszLocalFileName);
-
                 if (!PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
                 {
                     // ERROR_ACCESS_DENIED
