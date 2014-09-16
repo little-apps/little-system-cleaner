@@ -26,11 +26,20 @@ using System.IO;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Little_System_Cleaner.Misc;
+using System.Windows;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class gChrome : ScannerBase
     {
+        private static string _chromeProfileDir = string.Empty;
+
+        private string ChromeDefaultDir
+        {
+            get { return _chromeProfileDir; }
+        }
+
         public gChrome() 
         {
             Name = "Google Chrome";
@@ -55,7 +64,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         internal static bool IsInstalled()
         {
             string chromeExe = string.Format(@"{0}\Google\Chrome\Application\chrome.exe", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
-            return File.Exists(chromeExe);
+
+            if (File.Exists(chromeExe))
+            {
+                if (GetChromeUserDir())
+                    return true;
+                else
+                    Debug.WriteLine("Unable to determine Google Chrome profile directory.");
+            }
+
+            return false;
         }
 
         public override string ProcessName
@@ -74,6 +92,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             if (!child.IsChecked.GetValueOrDefault())
                 return;
 
+            // Just in case
+            if (string.IsNullOrEmpty(ChromeDefaultDir))
+            {
+                MessageBox.Show(App.Current.MainWindow, "Unable to determine Google Chrome profile directory. Skipping...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             switch (child.Name)
             {
                 case "Cookies":
@@ -91,14 +116,62 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        string chromeDefaultDir
+        private static bool GetChromeUserDir()
         {
-            get { return string.Format(@"{0}\Google\Chrome\User Data\Default", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)); }
+            string userDataDir = string.Format(@"{0}\Google\Chrome\User Data", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+
+            if (!Directory.Exists(userDataDir))
+                return false;
+
+            if (IsValidProfileDir(userDataDir + "\\Default")) {
+                _chromeProfileDir = userDataDir + "\\Default";
+
+                return true;
+            }
+
+            foreach (string dir in Directory.GetDirectories(userDataDir))
+            {
+                if (IsValidProfileDir(dir))
+                {
+                    _chromeProfileDir = dir;
+
+                    return true;
+                }
+            }
+
+            return false;
         }
+
+        private static bool IsValidProfileDir(string path)
+        {
+            if (!Directory.Exists(path))
+                return false;
+
+            try
+            {
+                // Make sure all the needed files + dirs are there
+                string[] neededFilesDirs = new string[] { "Cookies", "History", "Cache" };
+                List<string> fileSysEntries = new List<string>(Directory.EnumerateFileSystemEntries(path));
+
+                foreach (string neededFileDir in neededFilesDirs)
+                {
+                    if (!fileSysEntries.Contains(path + "\\" + neededFileDir))
+                        return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        
 
         private void ScanCookies()
         {
-            string cookiesFile = string.Format(@"{0}\Cookies", chromeDefaultDir);
+            string cookiesFile = string.Format(@"{0}\Cookies", ChromeDefaultDir);
 
             Wizard.CurrentFile = cookiesFile;
 
@@ -118,23 +191,29 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void CleanDownloadHistory()
         {
-            using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", string.Format(@"{0}\History", chromeDefaultDir))))
+            try
             {
-                sqliteConn.Open();
-
-                using (SQLiteCommand command = sqliteConn.CreateCommand())
+                using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;FailIfMissing=True", string.Format(@"{0}\History", ChromeDefaultDir))))
                 {
-                    command.CommandText = "DROP TABLE downloads";
-                    command.ExecuteNonQuery();
-                }
+                    sqliteConn.Open();
 
-                sqliteConn.Close();
+                    using (SQLiteCommand command = sqliteConn.CreateCommand())
+                    {
+                        command.CommandText = "DROP TABLE downloads";
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (SQLiteException ex)
+            {
+                MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear recent downloads in Google Chrome: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
         }
 
         private void ScanCache() 
         {
-            string cacheDir = string.Format(@"{0}\Cache", chromeDefaultDir);
+            string cacheDir = string.Format(@"{0}\Cache", ChromeDefaultDir);
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
@@ -158,64 +237,95 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             long nTotalSize = 0;
             string filePath = "";
 
-            filePath = string.Format(@"{0}\Archived History", chromeDefaultDir);
-            Wizard.CurrentFile = filePath;
-            if (File.Exists(filePath))
+            try
             {
-                if (MiscFunctions.IsFileValid(filePath))
-                {
-                    fileList.Add(filePath);
-                    nTotalSize += MiscFunctions.GetFileSize(filePath);
-                }
-            }
-
-            filePath = string.Format(@"{0}\Visited Links", chromeDefaultDir);
-            Wizard.CurrentFile = filePath;
-            if (File.Exists(filePath))
-            {
-                if (MiscFunctions.IsFileValid(filePath))
-                {
-                    fileList.Add(filePath);
-                    nTotalSize += MiscFunctions.GetFileSize(filePath);
-                }
-            }
-
-            filePath = string.Format(@"{0}\Current Tabs", chromeDefaultDir);
-            Wizard.CurrentFile = filePath;
-            if (File.Exists(filePath))
-            {
-                if (MiscFunctions.IsFileValid(filePath))
-                {
-                    fileList.Add(filePath);
-                    nTotalSize += MiscFunctions.GetFileSize(filePath);
-                }
-            }
-
-            filePath = string.Format(@"{0}\Last Tabs", chromeDefaultDir);
-            Wizard.CurrentFile = filePath;
-            if (File.Exists(filePath))
-            {
-                if (MiscFunctions.IsFileValid(filePath))
-                {
-                    fileList.Add(filePath);
-                    nTotalSize += MiscFunctions.GetFileSize(filePath);
-                }
-            }
-
-            foreach (string fileHistory in Directory.GetFiles(chromeDefaultDir, "History Index *")) 
-            {
+                filePath = string.Format(@"{0}\Archived History", ChromeDefaultDir);
                 Wizard.CurrentFile = filePath;
-
-                if (File.Exists(fileHistory))
+                if (File.Exists(filePath))
                 {
-                    if (MiscFunctions.IsFileValid(fileHistory))
+                    if (MiscFunctions.IsFileValid(filePath))
                     {
-                        fileList.Add(fileHistory);
-                        nTotalSize += MiscFunctions.GetFileSize(fileHistory);
+                        fileList.Add(filePath);
+                        nTotalSize += MiscFunctions.GetFileSize(filePath);
                     }
                 }
             }
+            catch (Exception)
+            {
+            }
 
+            try
+            {
+                filePath = string.Format(@"{0}\Visited Links", ChromeDefaultDir);
+                Wizard.CurrentFile = filePath;
+                if (File.Exists(filePath))
+                {
+                    if (MiscFunctions.IsFileValid(filePath))
+                    {
+                        fileList.Add(filePath);
+                        nTotalSize += MiscFunctions.GetFileSize(filePath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                filePath = string.Format(@"{0}\Current Tabs", ChromeDefaultDir);
+                Wizard.CurrentFile = filePath;
+                if (File.Exists(filePath))
+                {
+                    if (MiscFunctions.IsFileValid(filePath))
+                    {
+                        fileList.Add(filePath);
+                        nTotalSize += MiscFunctions.GetFileSize(filePath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            
+            try
+            {
+                filePath = string.Format(@"{0}\Last Tabs", ChromeDefaultDir);
+                Wizard.CurrentFile = filePath;
+                if (File.Exists(filePath))
+                {
+                    if (MiscFunctions.IsFileValid(filePath))
+                    {
+                        fileList.Add(filePath);
+                        nTotalSize += MiscFunctions.GetFileSize(filePath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            
+
+            try
+            {
+                foreach (string fileHistory in Directory.GetFiles(ChromeDefaultDir, "History Index *"))
+                {
+                    Wizard.CurrentFile = filePath;
+
+                    if (File.Exists(fileHistory))
+                    {
+                        if (MiscFunctions.IsFileValid(fileHistory))
+                        {
+                            fileList.Add(fileHistory);
+                            nTotalSize += MiscFunctions.GetFileSize(fileHistory);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            
             Wizard.StoreBadFileList("Clear Internet History", fileList.ToArray(), nTotalSize);
         }
     }

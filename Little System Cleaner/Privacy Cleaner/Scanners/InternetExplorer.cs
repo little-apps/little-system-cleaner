@@ -154,7 +154,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearFormData()
         {
-            if (System.Windows.Forms.MessageBox.Show("This will delete your saved form data and passwords. Continue?", "Little Privacy Cleaner", System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK)
+            if (System.Windows.Forms.MessageBox.Show("This will delete your saved form data and passwords. Continue?", Utils.ProductName, System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK)
             {
                 Process proc;
 

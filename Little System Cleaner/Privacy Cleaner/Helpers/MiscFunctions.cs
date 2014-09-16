@@ -389,9 +389,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 else
                     FileSystem.DeleteDirectory(dirPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to delete folder: " + dirPath);
             }
 
         }

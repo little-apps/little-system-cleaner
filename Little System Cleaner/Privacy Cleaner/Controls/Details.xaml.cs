@@ -83,7 +83,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (!File.Exists(path))
                 return;
 
-            if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", "Little Privacy Cleaner", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
                 startInfo.ErrorDialog = true;

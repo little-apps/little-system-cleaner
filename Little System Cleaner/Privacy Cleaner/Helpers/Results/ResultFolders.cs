@@ -35,9 +35,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         Properties.Settings.Default.lastScanErrorsFixed++;
                     }
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine("error accessing file");
+                    string message = string.Format("The following folder could not be removed: {0}\nError: {1}", kvp.Key, ex.Message);
+                    System.Diagnostics.Debug.WriteLine(message);
                 }
             }
         }

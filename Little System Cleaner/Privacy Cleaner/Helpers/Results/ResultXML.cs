@@ -48,7 +48,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     continue;
                 }
 
-
                 foreach (string xPath in xPaths)
                 {
                     XmlNodeList xmlNodes;
@@ -79,6 +78,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 }
 
                 xmlDoc.Save(filePath);
+
             }
         }
     }
