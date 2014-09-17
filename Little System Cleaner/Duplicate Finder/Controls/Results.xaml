@@ -72,6 +72,7 @@
 
                         <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" x:Name="_fileSize" />
                         <GridViewColumn Header="Type" DisplayMemberBinding="{Binding FileFormat}" x:Name="_fileFormat" />
+                        <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FilePath}" x:Name="_filePath" />
                     </GridView.Columns>
                 </GridView>
             </tree:TreeList.View>

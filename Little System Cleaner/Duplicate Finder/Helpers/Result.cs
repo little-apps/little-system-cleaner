@@ -264,6 +264,17 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
+        public string FilePath
+        {
+            get 
+            {
+                if (this._fileEntry != null)
+                    return this._fileEntry.FilePath;
+                else
+                    return string.Empty;
+            }
+        }
+
         public FileEntry FileEntry
         {
             get { return this._fileEntry; }

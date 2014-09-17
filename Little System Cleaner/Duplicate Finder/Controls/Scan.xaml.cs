@@ -162,13 +162,27 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
                 else if (this.scanBase.Options.OnlySelectedDrives.GetValueOrDefault())
                 {
-                    foreach (DriveInfo di in DriveInfo.GetDrives())
+                    foreach (IncludeDrive incDrive in this.scanBase.Options.Drives)
                     {
-                        if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType.HasFlag(DriveType.NoRootDirectory))
-                            continue;
+                        if (incDrive.IsChecked.GetValueOrDefault())
+                        {
+                            try
+                            {
+                                DriveInfo di = new DriveInfo(incDrive.Name);
 
-                        if (this.scanBase.Options.Drives.Contains(new IncludeDrive(di)))
-                            RecurseDirectory(di.RootDirectory);
+                                if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
+                                    continue;
+
+                                if (this.scanBase.Options.Drives.Contains(new IncludeDrive(di)))
+                                    RecurseDirectory(di.RootDirectory);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("Unable to scan drive ({0}). The following error occurred: {1}", incDrive.Name, ex.Message);
+                                continue;
+                            }
+                        }
+                        
                     }
 
                     Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
@@ -399,9 +413,26 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         where g.Count() > 1
                         select new { FileName = g.Key, Files = g };
 
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                this.progressBar.IsIndeterminate = false;
+
+                Main.TaskbarProgressValue = 0D;
+                this.progressBar.Value = 0;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = query.Count();
+            }));
+
             foreach (var group in query)
             {
                 this.scanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList<FileEntry>());
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    this.progressBar.Value += 1;
+                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                }));
             }
         }
 
@@ -418,11 +449,25 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.scanBase.FilesGroupedByHash.Clear();
 
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                this.progressBar.IsIndeterminate = false;
+            }));
+
             var query2 = from p in this.FileList
                             where p.IsDeleteable == true
                             group p by p.FileSize into g
                             where g.Count() > 1
                             select new { FileSize = g.Key, Files = g };
+
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressValue = 0D;
+                this.progressBar.Value = 0;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = query2.Count();
+            }));
 
             foreach (var group in query2)
             {
@@ -431,26 +476,32 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 filesGroupedBySize.Add(group.FileSize, filesGroup);
 
                 totalFiles += filesGroup.Count;
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    this.progressBar.Value += 1;
+                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                }));
             }
 
             if (filesGroupedBySize.Count == 0)
                 // Nothing found
                 return;
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                this.progressBar.IsIndeterminate = false;
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = totalFiles;
-            }));
-            
             this.StatusText = "Getting checksums from files";
 
             // Sort file sizes from least to greatest
             var fileSizesSorted = from p in filesGroupedBySize
                         orderby p.Key ascending
                         select p.Value;
+
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressValue = 0D;
+                this.progressBar.Value = 0;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = totalFiles;
+            }));
 
             foreach (List<FileEntry> files in fileSizesSorted)
             {
@@ -460,7 +511,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     file.GetChecksum(this.scanBase.Options.HashAlgorithm.Algorithm, compareFilename);
 
-                    this.Dispatcher.BeginInvoke(new Action(() => this.progressBar.Value++ ));
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        this.progressBar.Value += 1;
+                        Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                    }));
                 }
 
                 var query3 = from p in files
@@ -490,12 +545,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void GroupByTags()
         {
+            List<FileEntry> fileEntriesTags = new List<FileEntry>();
+
             this.StatusText = "Getting checksums from audio files";
             this.CurrentFile = "Please wait...";
 
             Main.Watcher.Event("Duplicate Finder", "Group by audio tags");
 
-            List<FileEntry> fileEntriesTags = new List<FileEntry>();
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                this.progressBar.IsIndeterminate = false;
+
+                Main.TaskbarProgressValue = 0D;
+                this.progressBar.Value = 0;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = this.FileList.Count;
+            }));
 
             foreach (FileEntry fileEntry in this.FileList)
             {
@@ -504,6 +570,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     fileEntry.GetTagsChecksum(this.scanBase.Options);
                     fileEntriesTags.Add(fileEntry);
                 }
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    this.progressBar.Value += 1;
+                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                }));
             }
 
             this.StatusText = "Grouping files by audio tags";
@@ -515,12 +587,26 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         where g.Count() > 1
                         select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
 
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressValue = 0D;
+                this.progressBar.Value = 0;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = query.Count();
+            }));
+
             foreach (var group in query)
             {
                 string checksum = group.Checksum;
                 List<FileEntry> files = group.Files;
 
                 this.scanBase.FilesGroupedByHash.Add(checksum, files);
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    this.progressBar.Value += 1;
+                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                }));
             }
         }
     }

@@ -42,13 +42,25 @@ namespace Little_System_Cleaner
         internal static TaskbarItemProgressState TaskbarProgressState
         {
             get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressState; }
-            set { (App.Current.MainWindow as Main).taskBarItemInfo.ProgressState = value; }
+            set 
+            {
+                TaskbarItemInfo taskBarItemInfo = (App.Current.MainWindow as Main).taskBarItemInfo;
+
+                if (taskBarItemInfo != null)
+                    taskBarItemInfo.ProgressState = value; 
+            }
         }
 
         internal static double TaskbarProgressValue
         {
             get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue; }
-            set { (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue = value; }
+            set
+            {
+                TaskbarItemInfo taskBarItemInfo = (App.Current.MainWindow as Main).taskBarItemInfo;
+
+                if (taskBarItemInfo != null)
+                    taskBarItemInfo.ProgressValue = value; 
+            }
         }
 
         private static LittleSoftwareStats.Watcher _watcher;
