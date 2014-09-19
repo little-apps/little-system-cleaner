@@ -113,17 +113,39 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (this.scanBase.Options.AllDrives.GetValueOrDefault())
                 {
+                    bool driveSelected = false;
+
                     foreach (DriveInfo di in DriveInfo.GetDrives())
                     {
                         if (di.IsReady && di.TotalFreeSpace != 0 && (di.DriveType == DriveType.Fixed || di.DriveType == DriveType.Network || di.DriveType == DriveType.Removable))
+                        {
+                            if (!driveSelected)
+                                driveSelected = true;
+
                             RecurseDirectory(di.RootDirectory);
+                        }
+                            
+                    }
+
+                    if (!driveSelected)
+                    {
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
+
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                        this.scanBase.MoveFirst();
+                        return;
                     }
 
                     Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
                 }
                 else if (this.scanBase.Options.AllExceptDrives.GetValueOrDefault())
                 {
-                    int drives = 0;
+                    bool driveSelected = false;
 
                     foreach (DriveInfo di in DriveInfo.GetDrives())
                     {
@@ -139,18 +161,17 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (this.scanBase.Options.AllExceptNetwork.GetValueOrDefault() && di.DriveType == DriveType.Network)
                             continue;
 
-                        RecurseDirectory(di.RootDirectory);
+                        if (!driveSelected)
+                            driveSelected = true;
 
-                        drives++;
+                        RecurseDirectory(di.RootDirectory);
                     }
 
-                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
-
-                    if (drives == 0)
+                    if (!driveSelected)
                     {
                         this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
@@ -159,13 +180,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         this.scanBase.MoveFirst();
                         return;
                     }
+
+                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
                 }
                 else if (this.scanBase.Options.OnlySelectedDrives.GetValueOrDefault())
                 {
+                    bool driveSelected = false;
+
                     foreach (IncludeDrive incDrive in this.scanBase.Options.Drives)
                     {
                         if (incDrive.IsChecked.GetValueOrDefault())
                         {
+                            if (!driveSelected)
+                                driveSelected = true;
+
                             try
                             {
                                 DriveInfo di = new DriveInfo(incDrive.Name);
@@ -185,16 +213,64 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         
                     }
 
+                    if (!driveSelected)
+                    {
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "No disk drives are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
+
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                        this.scanBase.MoveFirst();
+                        return;
+                    }
+
                     Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
                 }
                 else // Only selected folders
                 {
+                    bool dirSelected = false;
+
                     foreach (IncludeFolder dir in this.scanBase.Options.IncFolders)
                     {
-                        RecurseDirectory(dir.DirInfo);
+                        if (dir.IsChecked.GetValueOrDefault())
+                        {
+                            if (!dirSelected)
+                                dirSelected = true;
+
+                            RecurseDirectory(dir.DirInfo);
+                        }
+                    }
+
+                    if (!dirSelected)
+                    {
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            MessageBox.Show(App.Current.MainWindow, "No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                        }));
+
+                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                        this.scanBase.MoveFirst();
+                        return;
                     }
 
                     Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+                }
+
+                if (this.FileList.Count == 0)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                    }));
+
+                    this.scanBase.MoveFirst();
+                    return;
                 }
 
                 if (this.scanBase.Options.CompareFilename.GetValueOrDefault())
@@ -401,6 +477,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void GroupByFilename()
         {
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (Main.TaskbarProgressState != System.Windows.Shell.TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+
+                if (!this.progressBar.IsIndeterminate)
+                    this.progressBar.IsIndeterminate = true;
+            }));
+
             this.StatusText = "Grouping files by filename";
 
             Main.Watcher.Event("Duplicate Finder", "Group by filename");
@@ -413,26 +498,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         where g.Count() > 1
                         select new { FileName = g.Key, Files = g };
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
-                this.progressBar.IsIndeterminate = false;
-
-                Main.TaskbarProgressValue = 0D;
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = query.Count();
-            }));
-
             foreach (var group in query)
             {
-                this.scanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList<FileEntry>());
-
-                this.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    this.progressBar.Value += 1;
-                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
-                }));
+                if (!string.IsNullOrEmpty(group.FileName) && group.Files.Count() > 0)
+                    this.scanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList<FileEntry>());
             }
         }
 
@@ -442,6 +511,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             bool compareFilename = this.scanBase.Options.CompareChecksumFilename.GetValueOrDefault();
             long totalFiles = 0;
 
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (Main.TaskbarProgressState != System.Windows.Shell.TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+
+                if (!this.progressBar.IsIndeterminate)
+                    this.progressBar.IsIndeterminate = true;
+            }));
+
             this.StatusText = "Grouping files by size";
             this.CurrentFile = "Please wait...";
 
@@ -449,39 +527,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.scanBase.FilesGroupedByHash.Clear();
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
-                this.progressBar.IsIndeterminate = false;
-            }));
-
             var query2 = from p in this.FileList
                             where p.IsDeleteable == true
                             group p by p.FileSize into g
                             where g.Count() > 1
                             select new { FileSize = g.Key, Files = g };
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                Main.TaskbarProgressValue = 0D;
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = query2.Count();
-            }));
-
             foreach (var group in query2)
             {
-                List<FileEntry> filesGroup = group.Files.ToList<FileEntry>();
-
-                filesGroupedBySize.Add(group.FileSize, filesGroup);
-
-                totalFiles += filesGroup.Count;
-
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                if (group.Files.Count() > 0)
                 {
-                    this.progressBar.Value += 1;
-                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
-                }));
+                    List<FileEntry> filesGroup = group.Files.ToList<FileEntry>();
+
+                    filesGroupedBySize.Add(group.FileSize, filesGroup);
+
+                    totalFiles += filesGroup.Count;
+                }
             }
 
             if (filesGroupedBySize.Count == 0)
@@ -497,7 +558,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
+                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
                 Main.TaskbarProgressValue = 0D;
+
+                this.progressBar.IsIndeterminate = false;
                 this.progressBar.Value = 0;
                 this.progressBar.Minimum = 0;
                 this.progressBar.Maximum = totalFiles;
@@ -505,40 +569,43 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             foreach (List<FileEntry> files in fileSizesSorted)
             {
-                foreach (FileEntry file in files)
+                if (files.Count > 0)
                 {
-                    this.CurrentFile = file.FilePath;
-
-                    file.GetChecksum(this.scanBase.Options.HashAlgorithm.Algorithm, compareFilename);
-
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    foreach (FileEntry file in files)
                     {
-                        this.progressBar.Value += 1;
-                        Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
-                    }));
-                }
+                        this.CurrentFile = file.FilePath;
 
-                var query3 = from p in files
-                                group p by p.Checksum into g
-                                where g.Count() > 1
-                                select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
+                        file.GetChecksum(this.scanBase.Options.HashAlgorithm.Algorithm, compareFilename);
 
-                foreach (var group in query3)
-                {
-                    if (group.Files.Count<FileEntry>() > 0)
-                    {
-                        if (!this.scanBase.FilesGroupedByHash.ContainsKey(group.Checksum))
-                            this.scanBase.FilesGroupedByHash.Add(group.Checksum, group.Files);
-                        else
+                        this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            List<FileEntry> existingKey = this.scanBase.FilesGroupedByHash[group.Checksum];
-
-                            var mergedList = existingKey.Union(group.Files).Distinct();
-
-                            this.scanBase.FilesGroupedByHash[group.Checksum] = mergedList.ToList();
-                        }
+                            this.progressBar.Value += 1;
+                            Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                        }));
                     }
-                        
+
+                    var query3 = from p in files
+                                 group p by p.Checksum into g
+                                 where g.Count() > 1
+                                 select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
+
+                    foreach (var group in query3)
+                    {
+                        if (!string.IsNullOrEmpty(group.Checksum) && group.Files.Count<FileEntry>() > 0)
+                        {
+                            if (!this.scanBase.FilesGroupedByHash.ContainsKey(group.Checksum))
+                                this.scanBase.FilesGroupedByHash.Add(group.Checksum, group.Files);
+                            else
+                            {
+                                List<FileEntry> existingKey = this.scanBase.FilesGroupedByHash[group.Checksum];
+
+                                var mergedList = existingKey.Union(group.Files).Distinct();
+
+                                this.scanBase.FilesGroupedByHash[group.Checksum] = mergedList.ToList();
+                            }
+                        }
+
+                    }
                 }
             }
         }
@@ -554,15 +621,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
-                this.progressBar.IsIndeterminate = false;
+                if (Main.TaskbarProgressState != System.Windows.Shell.TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
 
-                Main.TaskbarProgressValue = 0D;
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = this.FileList.Count;
+                if (!this.progressBar.IsIndeterminate)
+                    this.progressBar.IsIndeterminate = true;
             }));
-
+            
             foreach (FileEntry fileEntry in this.FileList)
             {
                 if (fileEntry.IsDeleteable && fileEntry.HasAudioTags)
@@ -587,26 +652,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         where g.Count() > 1
                         select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                Main.TaskbarProgressValue = 0D;
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = query.Count();
-            }));
-
             foreach (var group in query)
             {
                 string checksum = group.Checksum;
                 List<FileEntry> files = group.Files;
 
-                this.scanBase.FilesGroupedByHash.Add(checksum, files);
-
-                this.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    this.progressBar.Value += 1;
-                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
-                }));
+                if (!string.IsNullOrEmpty(checksum) && files.Count > 0)
+                    this.scanBase.FilesGroupedByHash.Add(checksum, files);
             }
         }
     }
