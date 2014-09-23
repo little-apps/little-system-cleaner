@@ -29,6 +29,7 @@ using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Misc;
+using System.Windows;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -182,23 +183,29 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 if (!File.Exists(historyFile))
                     continue;
 
-                using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", historyFile)))
+                try
                 {
-                    sqliteConn.Open();
-
-                    using (SQLiteCommand command = sqliteConn.CreateCommand())
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", historyFile)))
                     {
-                        command.CommandText = "TRUNCATE TABLE moz_places";
-                        command.ExecuteNonQuery();
-                    }
+                        sqliteConn.Open();
 
-                    using (SQLiteCommand command = sqliteConn.CreateCommand())
-                    {
-                        command.CommandText = "TRUNCATE TABLE moz_historyvisits";
-                        command.ExecuteNonQuery();
-                    }
+                        using (SQLiteCommand command = sqliteConn.CreateCommand())
+                        {
+                            command.CommandText = "TRUNCATE TABLE moz_places";
+                            command.ExecuteNonQuery();
+                        }
 
-                    sqliteConn.Close();
+                        using (SQLiteCommand command = sqliteConn.CreateCommand())
+                        {
+                            command.CommandText = "TRUNCATE TABLE moz_historyvisits";
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the internet history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
                 }
             }
         }
@@ -239,18 +246,25 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 if (!File.Exists(cookiesFile))
                     continue;
 
-                using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", cookiesFile)))
+                try
                 {
-                    sqliteConn.Open();
-
-                    using (SQLiteCommand command = sqliteConn.CreateCommand())
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", cookiesFile)))
                     {
-                        command.CommandText = "TRUNCATE TABLE moz_cookies";
-                        command.ExecuteNonQuery();
-                    }
+                        sqliteConn.Open();
 
-                    sqliteConn.Close();
+                        using (SQLiteCommand command = sqliteConn.CreateCommand())
+                        {
+                            command.CommandText = "TRUNCATE TABLE moz_cookies";
+                            command.ExecuteNonQuery();
+                        }
+                    }
                 }
+                catch (SQLiteException ex)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the cookies in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
+                }
+                
             }
         }
 
@@ -318,17 +332,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 if (!File.Exists(formHistoryFile))
                     continue;
 
-                using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", formHistoryFile)))
+                try
                 {
-                    sqliteConn.Open();
-
-                    using (SQLiteCommand command = sqliteConn.CreateCommand())
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", formHistoryFile)))
                     {
-                        command.CommandText = "DROP TABLE moz_formhistory";
-                        command.ExecuteNonQuery();
-                    }
+                        sqliteConn.Open();
 
-                    sqliteConn.Close();
+                        using (SQLiteCommand command = sqliteConn.CreateCommand())
+                        {
+                            command.CommandText = "DROP TABLE moz_formhistory";
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the form history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
                 }
             }
         }
@@ -369,18 +389,25 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 if (!File.Exists(downloadsFile))
                     continue;
 
-                using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", downloadsFile)))
+                try
                 {
-                    sqliteConn.Open();
-
-                    using (SQLiteCommand command = sqliteConn.CreateCommand())
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", downloadsFile)))
                     {
-                        command.CommandText = "DROP TABLE moz_downloads";
-                        command.ExecuteNonQuery();
-                    }
+                        sqliteConn.Open();
 
-                    sqliteConn.Close();
+                        using (SQLiteCommand command = sqliteConn.CreateCommand())
+                        {
+                            command.CommandText = "DROP TABLE moz_downloads";
+                            command.ExecuteNonQuery();
+                        }
+                    }
                 }
+                catch (SQLiteException ex)
+                {
+                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the download history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
+                }
+                
             }
         }
     }
