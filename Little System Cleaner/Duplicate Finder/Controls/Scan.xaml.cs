@@ -385,7 +385,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (this.scanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
                             continue;
 
-                        if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && fi.Attributes.HasFlag(FileAttributes.Hidden))
+                        if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                             continue;
 
                         if (this.IsSizeGreaterThan(fi.Length))
@@ -424,7 +424,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         {
                             DirectoryInfo dirInfo = new DirectoryInfo(dir);
 
-                            if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && dirInfo.Attributes.HasFlag(FileAttributes.Hidden))
+                            if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (dirInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                                 continue;
 
                             RecurseDirectory(dirInfo);
