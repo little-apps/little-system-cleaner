@@ -252,6 +252,10 @@ namespace Little_System_Cleaner
                                         case 3:
                                             osName += osVersionInfo.wProductType == VER_NT_WORKSTATION ? "Windows 8.1" : "Windows Server 2012 R2";
                                             break;
+                                        case 4:
+                                            // TODO: May need updating when next version of Windows Server announced
+                                            osName += "Windows 10";
+                                            break;
                                     }
                                 }
                                 break;
