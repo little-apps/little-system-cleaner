@@ -33,7 +33,6 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System.ComponentModel;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -42,11 +41,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// </summary>
     public partial class Compact : Window
     {
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool ShutdownBlockReasonCreate(IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)] string reason);
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool ShutdownBlockReasonDestroy(IntPtr hWnd);
-
         Thread threadScan, threadCurrent;
 
         public Compact()
@@ -78,6 +72,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Thread.BeginCriticalRegion();
 
+            this.SetShutdownBlockReason(true);
+
             try
             {
                 SysRestore.StartRestore("Before Registry Optimization", out lSeqNum);
@@ -85,18 +81,26 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             catch (Win32Exception ex)
             {
                 string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(App.Current.MainWindow, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
             foreach (Hive h in Wizard.RegistryHives)
             {
                 SetStatusText(string.Format("Compacting: {0}", h.RegistryHive));
 
-                threadCurrent = new Thread(new ThreadStart(h.CompactHive));
-                threadCurrent.Start();
-                threadCurrent.Join();
+                try
+                {
+                    threadCurrent = new Thread(new ThreadStart(h.CompactHive));
+                    threadCurrent.Start();
+                    threadCurrent.Join();
 
-                lSpaceSaved += h.OldHiveSize - h.NewHiveSize;
+                    lSpaceSaved += h.OldHiveSize - h.NewHiveSize;
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Format("Unable to compact registry hive: {0}\nThe following error occurred: {1}", h.RegistryHive, ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
                 IncrementProgressBar();
             }
@@ -110,9 +114,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 catch (Win32Exception ex)
                 {
                     string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(App.Current.MainWindow, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
+            this.SetShutdownBlockReason(false);
             
             Thread.EndCriticalRegion();
 
@@ -164,23 +170,24 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         /// Enables/Disables the shutdown block reason
         /// </summary>
         /// <param name="enable">True to enable the shutdown block reason</param>
-        private void SetShutdownBlockReason(bool enable)
+        private bool SetShutdownBlockReason(bool enable)
         {
+            // The shutdown block will only succeed if it is called from the main thread
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action<bool>(SetShutdownBlockReason), enable);
-                return;
+                return (bool)this.Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
             }
 
+            bool ret;
             IntPtr hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
 
             if (enable)
-                ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted");
+                ret = PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted");
             else
-                ShutdownBlockReasonDestroy(hWnd);
-        }
+                ret = PInvoke.ShutdownBlockReasonDestroy(hWnd);
 
-        
+            return ret;
+        }
 
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

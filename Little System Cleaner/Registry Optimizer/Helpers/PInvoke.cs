@@ -10,19 +10,34 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
     {
         [DllImport("advapi32.dll", EntryPoint = "RegOpenKey", SetLastError = true)]
         internal static extern int RegOpenKeyA(uint hKey, string lpSubKey, ref int phkResult);
+
         [DllImport("advapi32.dll", EntryPoint = "RegReplaceKey", SetLastError = true)]
         internal static extern int RegReplaceKeyA(int hKey, string lpSubKey, string lpNewFile, string lpOldFile);
+
         [DllImport("advapi32.dll", EntryPoint = "RegSaveKey", SetLastError = true)]
         internal static extern int RegSaveKeyA(int hKey, string lpFile, int lpSecurityAttributes);
+
         [DllImport("advapi32.dll")]
         internal static extern int RegCloseKey(int hKey);
+
         [DllImport("advapi32.dll")]
         internal static extern int RegFlushKey(int hKey);
+
         [DllImport("advapi32.dll")]
         internal static extern int RegSaveKeyEx(IntPtr hKey, string lpFile, IntPtr lpSecurityAttributes, int Flags);
+
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool ShutdownBlockReasonCreate(IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)] string reason);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool ShutdownBlockReasonDestroy(IntPtr hWnd);
+
         [DllImport("shell32.dll")]
         internal static extern bool IsUserAnAdmin();
 
