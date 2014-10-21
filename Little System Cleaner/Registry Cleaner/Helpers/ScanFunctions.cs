@@ -143,6 +143,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// </summary>
         /// <param name="regKey"></param>
         /// <param name="registryRights"></param>
+        [Obsolete("No longer used")]
         internal static void GrantRegistryKeyRights(RegistryKey regKey, RegistryRights registryRights)
         {
             // Just to be sure

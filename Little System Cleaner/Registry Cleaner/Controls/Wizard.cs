@@ -300,9 +300,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (_badRegKeyArray.Contains(regPath, valueName))
                 return false;
 
+            
+
             // Make sure registry key exists
             if (!Utils.RegKeyExists(regPath))
                 return false;
+
+            
 
             // Parse registry key to base and subkey
             if (!Utils.ParseRegKeyPath(regPath, out baseKey, out subKey))
@@ -311,6 +315,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             // Check for ignored registry path
             if (IsOnIgnoreList(regPath))
                 return false;
+
+            
+            using (RegistryKey regKey = Utils.RegOpenKey(regPath, false))
+            {
+                // Can we get write access?
+                if (regKey == null)
+                    return false;
+
+                // Can we delete it?
+                if (!ScanFunctions.CanDeleteKey(regKey))
+                    return false;
+            }
 
             // If value name is specified, see if it exists
             if (!string.IsNullOrEmpty(valueName))

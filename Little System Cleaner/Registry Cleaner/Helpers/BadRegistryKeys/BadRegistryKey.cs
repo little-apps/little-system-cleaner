@@ -278,20 +278,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 return false;
             }
 
-            // If we dont have proper permission -> try to add permission
-            if (!ScanFunctions.CanDeleteKey(regKey))
-            {
-                // Set proper access for sub key
-                ScanFunctions.GrantRegistryKeyRights(regKey, RegistryRights.FullControl);
-
-                // Recheck if we have proper permissions
-                if (!ScanFunctions.CanDeleteKey(regKey))
-                {
-                    Debug.WriteLine("Failed to get proper permission to delete registry ({0}).", new object[] { this.RegKeyPath });
-                    return false;
-                }
-            }
-
             if (!string.IsNullOrEmpty(this.ValueName))
             {
                 string valueName = (this.ValueName.ToUpper() == "(DEFAULT)" ? string.Empty : this.ValueName);

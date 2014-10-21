@@ -206,7 +206,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             // Set progress bar range
             this.progressBar1.Minimum = 0;
             this.progressBar1.Maximum = selectedCount;
-            this.progressBar1.Value = 0;
+            this.ProgressBarValue = 0;
 
             this.FixThread = new Thread(new ThreadStart(this.FixProblems));
             this.FixThread.Start();
@@ -235,7 +235,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     catch (Win32Exception ex)
                     {
                         string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                        this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                        this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
                     }
                 }
 
@@ -251,7 +251,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 catch (Exception ex)
                 {
                     string message = string.Format("Unable to create backup file ({0}).\nError: {1}", strBackupFile, ex.Message);
-                    this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                    this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
                     return;
                 }
 
@@ -280,7 +280,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         if (!brk.Delete())
                         {
                             string message = string.Format("An error occurred trying to remove registry key {0}", brk.RegKeyPath);
-                            this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                            this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
                         }
                         else
                         {
@@ -289,7 +289,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         }
                     }
                     
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                     {
                         // Set icon to check mark
                         brk.bMapImg = new Image();
@@ -298,7 +298,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         this._tree.Items.Refresh();
 
                         // Increase & Update progress bar
-                        this.ProgressBarText = string.Format("Items Repaired: {0}/{1}", ++this.progressBar1.Value, this.progressBar1.Maximum);
+                        this.ProgressBarValue++;
+                        this.ProgressBarText = string.Format("Items Repaired: {0}/{1}", this.ProgressBarValue, this.progressBar1.Maximum);
                     }));
                 }
 
