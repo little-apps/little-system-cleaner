@@ -299,6 +299,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     this.textBoxBackups.Text = folderBrowserDlg.SelectedPath;
 
                 UpdateSettings();
+                PopulateListView();
             }
         }
 
