@@ -111,15 +111,28 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void PopulateListView()
         {
             string error;
-            DirectoryInfo di = new DirectoryInfo(Properties.Settings.Default.optionsBackupDir);
+            DirectoryInfo di;
 
-            // If directory doesnt exist -> create it
-            if (!di.Exists)
-                di.Create();
+            try
+            {
+                di = new DirectoryInfo(Properties.Settings.Default.optionsBackupDir);
 
-            // If list is already populated -> clear it
-            if (RestoreFiles.Count > 0)
-                RestoreFiles.Clear();
+                // If directory doesnt exist -> create it
+                if (!di.Exists)
+                    di.Create();
+
+                // If list is already populated -> clear it
+                if (RestoreFiles.Count > 0)
+                    RestoreFiles.Clear();
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("Unable to get files from backup directory.\nThe following error occurred: {0}", ex.Message);
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+            
 
             foreach (FileInfo fi in di.GetFiles())
             {

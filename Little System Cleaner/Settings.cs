@@ -52,7 +52,7 @@ namespace Little_System_Cleaner.Properties {
             get
             {
                 if (string.IsNullOrEmpty(this["strProgramSettingsDir"] as string))
-                    this["strProgramSettingsDir"] = string.Format("{0}\\Little Registry Cleaner", global::System.Environment.GetFolderPath(global::System.Environment.SpecialFolder.CommonProgramFiles));
+                    this["strProgramSettingsDir"] = string.Format("{0}\\Little System Cleaner", global::System.Environment.GetFolderPath(global::System.Environment.SpecialFolder.CommonProgramFiles));
 
                 if (!global::System.IO.Directory.Exists(this["strProgramSettingsDir"] as string))
                     global::System.IO.Directory.CreateDirectory(this["strProgramSettingsDir"] as string);
