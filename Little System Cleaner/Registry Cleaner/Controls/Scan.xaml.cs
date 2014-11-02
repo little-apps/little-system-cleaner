@@ -82,7 +82,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 currentItemScanned = string.Copy(value);
             }
         }
-
         
         public lviScanner CurrentListViewItem
         {

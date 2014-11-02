@@ -42,7 +42,7 @@ namespace Little_System_Cleaner
     /// </summary>
     public partial class CrashReporter : Window
     {
-        private Exception _exception;
+        private readonly Exception exception;
 
         public System.Windows.Media.Imaging.BitmapSource ImageSource
         {
@@ -58,12 +58,29 @@ namespace Little_System_Cleaner
             }
         }
 
+        /// <summary>
+        /// Opens crash report window properly
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        public static void ShowCrashReport(Exception ex)
+        {
+            // Are we in the UI thread?
+            if (Thread.CurrentThread != Application.Current.Dispatcher.Thread)
+            {
+                Application.Current.Dispatcher.Invoke(new Action<Exception>(ShowCrashReport), ex);
+                return;
+            }
+
+            CrashReporter crashRep = new CrashReporter(ex);
+            crashRep.Show();
+        }
+
 
         public CrashReporter(Exception e)
         {
             InitializeComponent();
 
-            this._exception = e;
+            this.exception = e;
 
             GenerateDialogReport();
         }
@@ -105,7 +122,7 @@ namespace Little_System_Cleaner
             sb.AppendLine(string.Format("CLR Version: {0}", Environment.Version.ToString()));
 
 
-            Exception ex = this._exception;
+            Exception ex = this.exception;
             for (int i = 0; ex != null; ex = ex.InnerException, i++)
             {
                 sb.AppendLine();
@@ -133,7 +150,7 @@ namespace Little_System_Cleaner
 
             sb.AppendLine();
             sb.AppendLine("StackTrace:");
-            sb.AppendLine(this._exception.StackTrace);
+            sb.AppendLine(this.exception.StackTrace);
 
             this.textBox1.Text = sb.ToString();
         }
@@ -146,7 +163,7 @@ namespace Little_System_Cleaner
         private void buttonSend_Click(object sender, RoutedEventArgs e)
         {
             if (Main.Watcher != null)
-                Main.Watcher.Exception(this._exception);
+                Main.Watcher.Exception(this.exception);
 
             this.Close();
         }

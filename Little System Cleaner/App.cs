@@ -106,6 +106,7 @@ namespace Little_System_Cleaner
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             this.DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(Application_DispatcherUnhandledException);
             this.Exit += new ExitEventHandler(App_Exit);
 
@@ -114,28 +115,19 @@ namespace Little_System_Cleaner
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            CrashReporter crashReporter = new CrashReporter(e.ExceptionObject as Exception);
-            crashReporter.Show();
+            CrashReporter.ShowCrashReport(e.ExceptionObject as Exception);
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            CrashReporter.ShowCrashReport(e.Exception);
+
+            e.Handled = true;
         }
 
         void App_Exit(object sender, ExitEventArgs e)
         {
             Little_System_Cleaner.Properties.Settings.Default.Save();
-        }
-
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            CrashReporter crashReporter = new CrashReporter(e.Exception);
-            crashReporter.Show();
-            e.Handled = true;
-        }
-
-        
-
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            // TODO: Add startup code here...
-
         }
     }
 }
