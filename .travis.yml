@@ -1,3 +1,5 @@
+language: csharp
+solution: Little System Cleaner.sln
 branches:
   except:
     - master
