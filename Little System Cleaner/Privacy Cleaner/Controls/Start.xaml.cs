@@ -61,6 +61,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             this.scanBase = sb;
 
             this._tree.Model = SectionModel.CreateSectionModel();
+            this._tree.ExpandAll();
 
             this.radioButtonPerm.IsChecked = Properties.Settings.Default.privacyCleanerDeletePerm;
             this.radioButtonMove.IsChecked = Properties.Settings.Default.privacyCleanerDeleteRecBin;
