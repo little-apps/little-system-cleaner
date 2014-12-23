@@ -7,13 +7,17 @@
              MinWidth="579" MinHeight="384"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="74"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition />
             <RowDefinition Height="80" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <Border CornerRadius="5" Margin="0,0,0,0" Grid.Row="0">
+        <Border CornerRadius="5" Margin="0,0,0,0" Grid.Row="0" Grid.ColumnSpan="2">
             <Border.Effect>
                 <DropShadowEffect Color="#FF474747" />
             </Border.Effect>
@@ -28,7 +32,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <ListView x:Name="listViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged">
+        <ListView x:Name="listViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.ColumnSpan="2">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click"  />
@@ -53,21 +57,41 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <DockPanel Grid.Row="2">
-            <Image x:Name="Icon" Width="64" Height="64" Margin="5,0,5,0" DockPanel.Dock="Left" />
-            <DockPanel LastChildFill="False" DockPanel.Dock="Left" Margin="0,10,10,10">
-                <DockPanel DockPanel.Dock="Left" LastChildFill="False">
-                    <TextBlock x:Name="FileName" Text="File Name:" DockPanel.Dock="Top" HorizontalAlignment="Left" />
-                    <TextBlock x:Name="Location" Text="Location:" DockPanel.Dock="Bottom" HorizontalAlignment="Left" />
-                </DockPanel>
-                <DockPanel DockPanel.Dock="Right" LastChildFill="False">
-                    <TextBlock x:Name="FileSize" Text="File Size:" DockPanel.Dock="Top" HorizontalAlignment="Right" />
-                    <TextBlock x:Name="LastAccessed" Text="Last Accessed:" DockPanel.Dock="Bottom" HorizontalAlignment="Right" />
-                </DockPanel>
-            </DockPanel>
-        </DockPanel>
 
-        <Button Name="buttonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="4" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" />
-        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
+        <Image x:Name="Icon" Width="64" Height="64" Margin="5,0,5,0" Grid.Column="0" Grid.Row="2" />
+
+        <Grid Grid.Column="1" Grid.Row="2" Margin="0,0,5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="324*" />
+                <ColumnDefinition Width="255"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50*" />
+                <RowDefinition Height="50*" />
+            </Grid.RowDefinitions>
+
+            <DockPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Height="23">
+                <TextBlock Text="File Name:" Width="60" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
+                <TextBox x:Name="FileName" Text=""  Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
+            </DockPanel>
+
+            <DockPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Height="23">
+                <TextBlock Text="Location:" Width="60" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
+                <TextBox x:Name="Location" Text=""  Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
+            </DockPanel>
+
+            <DockPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Height="23">
+                <TextBlock Text="File Size:" Width="80" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
+                <TextBox x:Name="FileSize" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center"  />
+            </DockPanel>
+
+            <DockPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Height="23">
+                <TextBlock Text="Last Accessed:" Width="80" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
+                <TextBox x:Name="LastAccessed" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
+            </DockPanel>
+        </Grid>
+
+        <Button Name="buttonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="3" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" Grid.Column="1" />
+        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="3" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
     </Grid>
 </UserControl>

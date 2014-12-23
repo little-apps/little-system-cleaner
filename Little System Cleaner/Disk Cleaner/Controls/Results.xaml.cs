@@ -81,10 +81,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 this.Icon.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(fileIcon.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                this.FileName.Text = "File Name: " + fileInfo.Name;
-                this.FileSize.Text = "File Size: " + Utils.ConvertSizeToString(fileInfo.Length);
-                this.Location.Text = "Location: " + fileInfo.DirectoryName;
-                this.LastAccessed.Text = "Last Accessed: " + fileInfo.LastAccessTime.ToLongDateString();
+                this.FileName.Text = fileInfo.Name;
+                this.FileSize.Text = Utils.ConvertSizeToString(fileInfo.Length);
+                this.Location.Text = fileInfo.DirectoryName;
+                this.LastAccessed.Text = fileInfo.LastAccessTime.ToLongDateString();
+
             }
             else
             {
@@ -96,10 +97,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             this.Icon.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(System.Drawing.SystemIcons.Application.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-            this.FileName.Text = "File Name: N/A";
-            this.FileSize.Text = "File Size: N/A";
-            this.Location.Text = "Location: N/A";
-            this.LastAccessed.Text = "Last Accessed: N/A";
+            this.FileName.Text = "N/A";
+            this.FileSize.Text = "N/A";
+            this.Location.Text = "N/A";
+            this.LastAccessed.Text = "N/A";
         }
 
         private void selectAll_Click(object sender, RoutedEventArgs e)
