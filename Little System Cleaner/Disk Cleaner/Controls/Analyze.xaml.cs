@@ -186,6 +186,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                         if (Properties.Settings.Default.diskCleanerIgnoreWriteProtected && fileInfo.IsReadOnly)
                             continue;
 
+                        if (Properties.Settings.Default.diskCleanerIgnoreWriteProtected && this.IsFileLocked(fileInfo))
+                            continue;
+
                         // Check file attributes
                         if (!FileCheckAttributes(fileInfo))
                             continue;
@@ -340,6 +343,37 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return false;
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Checks if file is in use
+        /// </summary>
+        /// <param name="fileInfo">FileInfo class</param>
+        /// <returns>True if file is in use</returns>
+        private bool IsFileLocked(FileInfo fileInfo)
+        {
+            Stream stream = null;
+            bool ret = false;
+
+            try {
+                stream = fileInfo.Open(FileMode.Open);
+
+                if (!stream.CanWrite)
+                    ret = true;
+            }
+            catch (Exception ex)
+            {
+                if (ex is IOException)
+                    ret = true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+
+            return ret;
         }
 
         private bool FolderIsIncluded(string dirPath)
