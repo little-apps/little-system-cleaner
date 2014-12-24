@@ -46,6 +46,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private string _currentFile;
 
         internal static List<string> validAudioFiles = new List<string>() { "aac", "aif", "ape", "wma", "aa", "aax", "flac", "mka", "mpc", "mp+", "mpp", "mp4", "m4a", "ogg", "oga", "wav", "wv", "mp3", "m2a", "mp2", "mp1" };
+        internal static Dictionary<string, KeyValuePair<int, byte[]>> compressedFiles = new Dictionary<string, KeyValuePair<int, byte[]>>()
+            {
+                { "cab", new KeyValuePair<int, byte[]>(0, new byte[] { 0x4d, 0x53, 0x43, 0x46 } ) },
+                { "zip", new KeyValuePair<int, byte[]>(0, new byte[] { 0x50, 0x4B, 0x03, 0x04 } ) },
+                { "jar", new KeyValuePair<int, byte[]>(0, new byte[] { 0x50, 0x4B, 0x03, 0x04 } ) },
+                { "rar", new KeyValuePair<int, byte[]>(0, new byte[] { 0x52, 0x61, 0x72, 0x21, 0x1A, 0x07 } ) },
+                { "tar", new KeyValuePair<int, byte[]>(257, new byte[] { 0x75, 0x73, 0x74, 0x61, 0x72 } ) }, // offset 257
+                { "gz", new KeyValuePair<int, byte[]>(0, new byte[] { 0x1F, 0x8B, 0x08 } ) },
+                { "tgz", new KeyValuePair<int, byte[]>(0, new byte[] { 0x1F, 0x8B, 0x08 } ) },
+                { "bz", new KeyValuePair<int, byte[]>(0, new byte[] { 0x42, 0x5A, 0x68 } ) },
+                { "tbz", new KeyValuePair<int, byte[]>(0, new byte[] { 0x42, 0x5A, 0x68 } ) },
+                { "bz2", new KeyValuePair<int, byte[]>(0, new byte[] { 0x42, 0x5A, 0x68 } ) },
+                { "tbz2", new KeyValuePair<int, byte[]>(0, new byte[] { 0x42, 0x5A, 0x68 } ) },
+                { "xz", new KeyValuePair<int, byte[]>(0, new byte[] { 0xFD, 0x37, 0x7A, 0x58, 0x5A, 0x00 } ) },
+                { "xar", new KeyValuePair<int, byte[]>(0, new byte[] { 0x78, 0x61, 0x72, 0x21 } ) },
+                { "rpm", new KeyValuePair<int, byte[]>(0, new byte[] { 0xED, 0xAB, 0xEE, 0xDB } ) },
+            };
 
         public string StatusText
         {
@@ -70,7 +87,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 if (this.Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    this.Dispatcher.BeginInvoke(new Action(() => this.CurrentFile = value));
+                    this.Dispatcher.Invoke(new Action(() => this.CurrentFile = value));
                     return;
                 }
 
@@ -391,6 +408,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (this.IsSizeGreaterThan(fi.Length))
                             continue;
 
+                        if ((this.scanBase.Options.SkipCompressedFiles.GetValueOrDefault()) && this.IsCompressedFile(fi))
+                            continue;
+
                         FileEntry fileEntry = new FileEntry(fi, this.scanBase.Options.CompareMusicTags.GetValueOrDefault());
                         this.FileList.Add(fileEntry);
                     }
@@ -473,6 +493,84 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Checks if file is a compressed file
+        /// </summary>
+        /// <param name="fileInfo">FileInfo class</param>
+        /// <returns>True if file matches compressed file extension and signature</returns>
+        private bool IsCompressedFile(FileInfo fileInfo)
+        {
+            // Make sure fileInfo isn't null
+            if (fileInfo == null)
+                return false;
+
+            // Get file extension
+            string fileExt = fileInfo.Extension;
+
+            if (string.IsNullOrWhiteSpace(fileExt))
+                return false;
+
+            if (!compressedFiles.ContainsKey(fileExt))
+                return false;
+
+            int offset = compressedFiles[fileExt].Key;
+
+            byte[] expectedSignature = compressedFiles[fileExt].Value;
+            int expectedSignatureLen = expectedSignature.Length;
+
+            byte[] actualSignature = new byte[expectedSignatureLen];
+
+            FileStream fileStream = null;
+
+            try
+            {
+                // Open file
+                fileStream = fileInfo.OpenRead();
+
+                if (!fileStream.CanRead)
+                    throw new IOException("Unable to read file stream");
+
+                if (!fileStream.CanSeek)
+                    throw new IOException("Unable to seek file stream");
+
+                if ((offset + expectedSignatureLen) >= fileStream.Length)
+                    throw new IOException("File is smaller than offset and size of expected signature");
+
+                if (fileStream.Seek(offset, SeekOrigin.Begin) != offset)
+                    throw new IOException("There was an error seeking to position " + offset);
+
+                int bytesToRead = expectedSignatureLen;
+                int bytesRead = 0;
+
+                while (bytesToRead > 0)
+                {
+                    // Read may return anything from 0 to numBytesToRead. 
+                    int n = fileStream.Read(actualSignature, bytesRead, bytesToRead);
+
+                    // Break when the end of the file is reached. 
+                    if (n == 0)
+                        break;
+
+                    bytesRead += n;
+                    bytesToRead -= n;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred trying to read file ({0}): {1}", fileInfo.FullName, ex.Message);
+            }
+            finally
+            {
+                if (fileStream != null)
+                    fileStream.Close();
+            }
+
+            if (expectedSignature.SequenceEqual(actualSignature))
+                return true;
+
+            return false;
         }
 
         private void GroupByFilename()
