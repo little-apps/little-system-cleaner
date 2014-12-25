@@ -71,6 +71,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return this.FolderPath.GetHashCode();
         }
 
+        [Obsolete]
         internal static ObservableCollection<ExcludeFolder> GetDefaultExcFolders()
         {
             ObservableCollection<ExcludeFolder> excFolders = new ObservableCollection<ExcludeFolder>();
