@@ -60,7 +60,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             this.scanBase.Options.OnPropertyChanged("SkipFilesGreaterUnit");
 
             this.scanBase.Options.HashAlgorithms = HashAlgorithm.CreateList();
-            this.scanBase.Options.HashAlgorithm = this.scanBase.Options.HashAlgorithms[0];
+            this.scanBase.Options.HashAlgorithm = this.scanBase.Options.HashAlgorithms[2]; // SHA1
         }
 
         private void excludeFolderAdd_Click(object sender, RoutedEventArgs e)
