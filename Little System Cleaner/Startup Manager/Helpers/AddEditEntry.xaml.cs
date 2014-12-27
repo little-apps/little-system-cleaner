@@ -258,35 +258,56 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             // Remove old key if old entry is in registry
             if (IsEditing) 
             {
-                if (OldRegKey != null)
-                    OldRegKey.DeleteValue(OldValueName);
-                else // Otherwise remove old startup path
-                    System.IO.File.Delete(OldStartupPath);
+                try
+                {
+                    if (OldRegKey != null)
+                        OldRegKey.DeleteValue(OldValueName);
+                    else // Otherwise remove old startup path
+                        System.IO.File.Delete(OldStartupPath);
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Format("There was an error removing the previous startup entry from the registry or folder.\nThe following error occurred: {0}", ex.Message);
+
+                    MessageBox.Show(this, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
 
             // Store changed entry
-            RegistryKey regKey;
+            RegistryKey regKey = null;
             string filePath;
+            bool created = false;
 
             if (this.comboBox1.SelectedIndex <= 1)
             {
-                if (this.comboBox1.SelectedIndex == 0)
-                    filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP), this.textBoxName.Text + ".lnk");
-                else
-                    filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), this.textBoxName.Text + ".lnk");
-
-                string fileDir = Path.GetDirectoryName(filePath);
-                if (!Directory.Exists(fileDir))
-                    Directory.CreateDirectory(fileDir);
-
-                // Make sure file doesn't already exist
-                if (File.Exists(filePath))
+                try
                 {
-                    MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                    if (this.comboBox1.SelectedIndex == 0)
+                        filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP), this.textBoxName.Text + ".lnk");
+                    else
+                        filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), this.textBoxName.Text + ".lnk");
 
-                this.CreateShortcut(filePath, this.textBoxPath.Text, this.textBoxArgs.Text);
+                    string fileDir = Path.GetDirectoryName(filePath);
+                    if (!Directory.Exists(fileDir))
+                        Directory.CreateDirectory(fileDir);
+
+                    // Make sure file doesn't already exist
+                    if (File.Exists(filePath))
+                    {
+                        MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    if (!(created = this.CreateShortcut(filePath, this.textBoxPath.Text, this.textBoxArgs.Text)))
+                        MessageBox.Show(this, "There was an error creating the shortcut for the startup entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Format("There was an error creating the shortcut for the startup entry.\nThe following error occurred: {0}", ex.Message);
+
+                    MessageBox.Show(this, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
@@ -297,8 +318,10 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 else
                     strPath = string.Format("\"{0}\"", this.textBoxPath.Text);
 
-                using (regKey = this.GetSelectedRegKey())
+                try
                 {
+                    regKey = this.GetSelectedRegKey();
+
                     // Make sure registry value name doesn't already exist
                     if (regKey.GetValue(this.textBoxName.Text) != null)
                     {
@@ -307,13 +330,30 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     }
 
                     regKey.SetValue(this.textBoxName.Text, strPath);
+
+                    created = true;
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Format("There was an error adding the startup entry to the registry.\nThe following error occurred: {0}", ex.Message);
+
+                    MessageBox.Show(this, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    if (regKey != null)
+                        regKey.Close();
                 }
             }
 
-            MessageBox.Show(this, "Successfully created startup entry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            if (created)
+            {
+                MessageBox.Show(this, "Successfully created startup entry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
-            this.DialogResult = true;
-            this.Close();
+                this.DialogResult = true;
+                this.Close();
+            }
+            
         }
 
         private RegistryKey GetSelectedRegKey()
