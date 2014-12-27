@@ -624,7 +624,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Main.Watcher.Event("Duplicate Finder", "Group by checksum");
 
             this.scanBase.FilesGroupedByHash.Clear();
-
+            
             var query2 = from p in this.FileList
                             where p.IsDeleteable == true
                             group p by p.FileSize into g

@@ -249,7 +249,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void buttonOK_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(this.textBoxName.Text) || string.IsNullOrEmpty(this.textBoxPath.Text))
+            if (string.IsNullOrWhiteSpace(this.textBoxName.Text) || string.IsNullOrWhiteSpace(this.textBoxPath.Text))
             {
                 MessageBox.Show(this, "You must enter a name and a path", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
