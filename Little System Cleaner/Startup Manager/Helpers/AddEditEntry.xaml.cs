@@ -279,6 +279,13 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 if (!Directory.Exists(fileDir))
                     Directory.CreateDirectory(fileDir);
 
+                // Make sure file doesn't already exist
+                if (File.Exists(filePath))
+                {
+                    MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 this.CreateShortcut(filePath, this.textBoxPath.Text, this.textBoxArgs.Text);
             }
             else
@@ -290,8 +297,15 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 else
                     strPath = string.Format("\"{0}\"", this.textBoxPath.Text);
 
-                using (regKey = GetSelectedRegKey())
+                using (regKey = this.GetSelectedRegKey())
                 {
+                    // Make sure registry value name doesn't already exist
+                    if (regKey.GetValue(this.textBoxName.Text) != null)
+                    {
+                        MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     regKey.SetValue(this.textBoxName.Text, strPath);
                 }
             }
