@@ -107,7 +107,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     try
                     {
-                        SysRestore.StartRestore("Before Duplicate Finder Clean", out seqNum);
+                        SysRestore.StartRestore("Before Little System Cleaner (Duplicate Finder) Clean", out seqNum);
                     }
                     catch (Win32Exception ex)
                     {

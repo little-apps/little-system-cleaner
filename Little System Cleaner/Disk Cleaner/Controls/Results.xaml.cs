@@ -161,7 +161,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             try
             {
-                SysRestore.StartRestore("Before Little Disk Cleaner Cleaning", out lSeqNum);
+                SysRestore.StartRestore("Before Little System Cleaner (Disk Cleaner) Cleaning", out lSeqNum);
             }
             catch (Win32Exception ex)
             {

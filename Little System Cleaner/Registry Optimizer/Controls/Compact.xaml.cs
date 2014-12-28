@@ -76,7 +76,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             try
             {
-                SysRestore.StartRestore("Before Registry Optimization", out lSeqNum);
+                SysRestore.StartRestore("Before Little System Cleaner Registry Optimization", out lSeqNum);
             }
             catch (Win32Exception ex)
             {

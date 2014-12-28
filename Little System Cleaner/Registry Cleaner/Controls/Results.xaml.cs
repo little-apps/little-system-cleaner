@@ -230,7 +230,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                     try
                     {
-                        SysRestore.StartRestore("Before Little Registry Cleaner Registry Fix", out lSeqNum);
+                        SysRestore.StartRestore("Before Little System Cleaner (Registry Cleaner) Fix", out lSeqNum);
                     }
                     catch (Win32Exception ex)
                     {
