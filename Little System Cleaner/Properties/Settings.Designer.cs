@@ -334,18 +334,6 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool diskCleanerAutoRestorePoints {
-            get {
-                return ((bool)(this["diskCleanerAutoRestorePoints"]));
-            }
-            set {
-                this["diskCleanerAutoRestorePoints"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int diskCleanerFilterMode {
             get {

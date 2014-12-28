@@ -69,12 +69,6 @@
                             </Grid>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="System Restore">
-                        <StackPanel>
-                            <CheckBox x:Name="checkBoxAutoSysRestore" Content="Create system restore points automatically (recommended)" Margin="5,5,5,5" IsChecked="{Binding AutoCreateSysRestorePoint}" />
-                            <TextBlock Margin="5,5,5,5">This will backup essential system files in order to prevent your computer from crashing.</TextBlock>
-                        </StackPanel>
-                    </GroupBox>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Searching">

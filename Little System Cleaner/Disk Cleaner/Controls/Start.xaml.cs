@@ -131,16 +131,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-        public bool? AutoCreateSysRestorePoint
-        {
-            get { return Properties.Settings.Default.diskCleanerAutoRestorePoints; }
-            set
-            {
-                Properties.Settings.Default.diskCleanerAutoRestorePoints = value.GetValueOrDefault();
-                this.OnPropertyChanged("AutoCreateSysRestorePoint");
-            }
-        }
-
         public bool? IgnoreWriteProtectedFiles
         {
             get { return Properties.Settings.Default.diskCleanerIgnoreWriteProtected; }
