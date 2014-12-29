@@ -27,7 +27,6 @@ Little Apps relies on people like you to keep our software running. If you would
 Little Apps would like to thank the following for helping Little System Cleaner:
 
  * [WPF TreeListView Control By Andrey Gliznetsov](http://www.codeproject.com/Articles/30721/WPF-TreeListView-Control)
- * [Import/Export registry sections as XML by Sam DenHartog](http://www.codeproject.com/Articles/9526/Import-Export-registry-sections-as-XML)
  * [JumpTo RegEdit by Reto Ravasio](http://www.codeproject.com/Articles/20283/JumpTo-RegEdit)
  * [Task Scheduler Managed Wrapper by David Hall](http://taskscheduler.codeplex.com/)
  * [WPF GIF Animation by Artem S. Dmitriev](http://www.codeproject.com/Articles/71891/WPF-GIF-Animation)

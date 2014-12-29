@@ -113,16 +113,24 @@
                                         <Run Text="WPF TreeListView Control - Andrey Gliznetsov (CPOL)" />
                                     </Hyperlink>
                                     <LineBreak />
+                                    <Hyperlink NavigateUri="http://www.codeproject.com/KB/cs/RegEdit_JumpTo.aspx" RequestNavigate="Hyperlink_RequestNavigate">
+                                        <Run Text="JumpTo RegEdit - Reto Ravasio (CPOL)" />
+                                    </Hyperlink>
+                                    <LineBreak />
+                                    <Hyperlink NavigateUri="http://taskscheduler.codeplex.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                                        <Run Text="Task Scheduler Managed Wrapper - David Hall (MIT)" />
+                                    </Hyperlink>
+                                    <LineBreak />
                                     <Hyperlink NavigateUri="http://www.codeproject.com/KB/WPF/wpfgif.aspx" RequestNavigate="Hyperlink_RequestNavigate">
                                         <Run Text="WPF GIF Animation - asprodotru (CPOL)" />
                                     </Hyperlink>
                                     <LineBreak />
-                                    <Hyperlink NavigateUri="http://www.codeproject.com/KB/WPF/WPFSearchTextBox.aspx" RequestNavigate="Hyperlink_RequestNavigate">
-                                        <Run Text="Search Text Box Control with WPF - Le Duc Anh (CPOL)" />
+                                    <Hyperlink NavigateUri="http://davidowens.wordpress.com/2009/02/18/wpf-search-text-box/" RequestNavigate="Hyperlink_RequestNavigate">
+                                        <Run Text="WPF Search Text Box - David Owens II (Public Domain)" />
                                     </Hyperlink>
                                     <LineBreak />
-                                    <Hyperlink NavigateUri="http://www.codeproject.com/KB/cs/RegEdit_JumpTo.aspx" RequestNavigate="Hyperlink_RequestNavigate">
-                                        <Run Text="JumpTo RegEdit - Reto Ravasio (CPOL)" />
+                                    <Hyperlink NavigateUri="http://taglib.github.io/" RequestNavigate="Hyperlink_RequestNavigate">
+                                        <Run Text="TagLib - Scott Wheeler (LGPL)" />
                                     </Hyperlink>
                                 </Paragraph>
                             </FlowDocument>
