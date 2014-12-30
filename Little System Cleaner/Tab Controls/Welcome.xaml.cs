@@ -72,6 +72,7 @@ namespace Little_System_Cleaner.Controls
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+            RegistryKey regKey = null;
 
             if (Properties.Settings.Default.lastScanDate != 0)
                 this.lastDateTime.Text = DateTime.FromBinary(Properties.Settings.Default.lastScanDate).ToString();
@@ -91,14 +92,28 @@ namespace Little_System_Cleaner.Controls
             this.totalErrors.Text = string.Format("{0} errors found", Properties.Settings.Default.totalErrorsFound);
             this.totalErrorsFixed.Text = string.Format("{0} errors fixed", Properties.Settings.Default.totalErrorsFixed);
 
-            using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0")) 
-            {
-                string procName = regKey.GetValue("ProcessorNameString") as string;
+            this.cpuType.Text = "Unknown";
 
-                if (!string.IsNullOrEmpty(procName))
-                    this.cpuType.Text = procName;
-                else
-                    this.cpuType.Text = "Unknown";
+            try
+            {
+                regKey = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+
+                if (regKey != null)
+                {
+                    string procName = regKey.GetValue("ProcessorNameString") as string;
+
+                    if (!string.IsNullOrEmpty(procName))
+                        this.cpuType.Text = procName;
+                }
+            }
+            catch (Exception)
+            {
+                this.cpuType.Text = "Unknown";
+            }
+            finally
+            {
+                if (regKey != null)
+                    regKey.Close();
             }
 
             if (GlobalMemoryStatusEx(memStatus))
