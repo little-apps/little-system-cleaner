@@ -157,7 +157,7 @@ namespace Little_System_Cleaner
             contextMenu.Items.Add(CreateMenuItem(Properties.Resources.internet, "Visit Website"));
             contextMenu.Items.Add(CreateMenuItem(Properties.Resources.update, "Check for updates"));
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(CreateMenuItem(Properties.Resources.icon, "About..."));
+            contextMenu.Items.Add(CreateMenuItem(Properties.Resources.little_system_cleaner.ToBitmap(), "About..."));
 
             contextMenu.IsOpen = true;
         }
