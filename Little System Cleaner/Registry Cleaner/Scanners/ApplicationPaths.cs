@@ -48,7 +48,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 Wizard.Report.WriteLine("Checking for invalid application paths");
                 ScanAppPaths();
             }
-            catch (System.Security.SecurityException ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
