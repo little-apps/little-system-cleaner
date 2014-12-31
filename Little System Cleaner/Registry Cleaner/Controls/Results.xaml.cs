@@ -264,14 +264,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     // Backup key
                     if (!backupReg.Store(brk))
                     {
-                        string message = string.Format("An error occurred trying to backup registry key ({0}).\nWould you like to remove it (not recommended)?", brk.RegKeyPath);
+                        if (Properties.Settings.Default.registryCleanerOptionsShowErrors)
+                        {
+                            string message = string.Format("An error occurred trying to backup registry key ({0}).\nWould you like to remove it (not recommended)?", brk.RegKeyPath);
 
-                        MessageBoxResult msgBoxResult = (MessageBoxResult)this.Dispatcher.Invoke(new Func<MessageBoxResult>(() => {
-                            return MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Exclamation); 
-                        }));
+                            MessageBoxResult msgBoxResult = (MessageBoxResult)this.Dispatcher.Invoke(new Func<MessageBoxResult>(() =>
+                            {
+                                return MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                            }));
 
-                        if (msgBoxResult != MessageBoxResult.Yes)
-                            skip = true;
+                            if (msgBoxResult != MessageBoxResult.Yes)
+                                skip = true;
+                        }
                     }
 
                     if (!skip)
@@ -279,8 +283,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         // Delete key/value
                         if (!brk.Delete())
                         {
-                            string message = string.Format("An error occurred trying to remove registry key {0}", brk.RegKeyPath);
-                            this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                            if (Properties.Settings.Default.registryCleanerOptionsShowErrors)
+                            {
+                                string message = string.Format("An error occurred trying to remove registry key {0}", brk.RegKeyPath);
+                                this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                            }
                         }
                         else
                         {

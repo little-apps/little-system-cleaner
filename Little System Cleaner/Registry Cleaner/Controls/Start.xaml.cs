@@ -99,6 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.checkBoxAutoRescan.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoRescan;
             this.checkBoxDelBackup.IsChecked = Properties.Settings.Default.registryCleanerOptionsDelBackup;
             this.checkBoxIgnoreRemMedia.IsChecked = Properties.Settings.Default.registryCleanerOptionsRemMedia;
+            this.checkBoxShowErrors.IsChecked = Properties.Settings.Default.registryCleanerOptionsShowErrors;
             this.checkBoxAutoRepair.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoRepair;
             this.checkBoxAutoExit.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoExit;
 
@@ -133,7 +134,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
             }
             
-
             foreach (FileInfo fi in di.GetFiles())
             {
                 if (fi.Extension.CompareTo(".bakx") == 0)
@@ -168,6 +168,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Properties.Settings.Default.registryCleanerOptionsAutoRescan = this.checkBoxAutoRescan.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsDelBackup = this.checkBoxDelBackup.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsRemMedia = this.checkBoxIgnoreRemMedia.IsChecked.Value;
+            Properties.Settings.Default.registryCleanerOptionsShowErrors = this.checkBoxShowErrors.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsAutoRepair = this.checkBoxAutoRepair.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsAutoExit = this.checkBoxAutoExit.IsChecked.Value;
 

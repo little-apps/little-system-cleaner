@@ -798,5 +798,17 @@ namespace Little_System_Cleaner.Properties {
                 this["optionsProxyPassword"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool registryCleanerOptionsShowErrors {
+            get {
+                return ((bool)(this["registryCleanerOptionsShowErrors"]));
+            }
+            set {
+                this["registryCleanerOptionsShowErrors"] = value;
+            }
+        }
     }
 }

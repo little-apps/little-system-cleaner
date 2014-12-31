@@ -83,6 +83,7 @@
                             <CheckBox Name="checkBoxAutoRescan" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Re-scan after repairing registry issues</CheckBox>
                             <CheckBox Name="checkBoxDelBackup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Delete backup file after restoring the registry</CheckBox>
                             <CheckBox Name="checkBoxIgnoreRemMedia" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Ignore missing files on removable media</CheckBox>
+                            <CheckBox Name="checkBoxShowErrors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Show error messages from backing up and deleting invalid registry keys</CheckBox>
                             <CheckBox Name="checkBoxAutoRepair" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Automatically repair registry items (not recommended)</CheckBox>
                             <CheckBox Name="checkBoxAutoExit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0">Exit program after repairing registry (not recommended)</CheckBox>
                         </StackPanel>
