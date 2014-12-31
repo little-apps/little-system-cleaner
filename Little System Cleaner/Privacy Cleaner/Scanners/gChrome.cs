@@ -28,6 +28,7 @@ using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Misc;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -63,17 +64,32 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// <returns>True if its installed</returns>
         internal static bool IsInstalled()
         {
-            string chromeExe = string.Format(@"{0}\Google\Chrome\Application\chrome.exe", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            RegistryKey regKey = null;
+            bool installed = false;
 
-            if (File.Exists(chromeExe))
+            try
             {
-                if (GetChromeUserDir())
-                    return true;
-                else
-                    Debug.WriteLine("Unable to determine Google Chrome profile directory.");
+                regKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome");
+
+                if (regKey != null)
+                {
+                    if (GetChromeUserDir())
+                        installed = true;
+                    else
+                        Debug.WriteLine("Unable to determine Google Chrome profile directory.");
+                }
+            }
+            catch
+            {
+                installed = false;
+            }
+            finally
+            {
+                if (regKey != null)
+                    regKey.Close();
             }
 
-            return false;
+            return installed;
         }
 
         public override string ProcessName
@@ -95,7 +111,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             // Just in case
             if (string.IsNullOrEmpty(ChromeDefaultDir))
             {
-                MessageBox.Show(App.Current.MainWindow, "Unable to determine Google Chrome profile directory. Skipping...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                App.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, "Unable to determine Google Chrome profile directory. Skipping...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                
                 return;
             }
 
@@ -118,24 +135,35 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private static bool GetChromeUserDir()
         {
-            string userDataDir = string.Format(@"{0}\Google\Chrome\User Data", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            string username = Environment.UserName;
 
-            if (!Directory.Exists(userDataDir))
-                return false;
+            string[] userDataDirs = new string[] {
+                string.Format(@"{0}\Google\Chrome\User Data", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)),
+                // Taken from http://www.chromium.org/user-experience/user-data-directory
+                string.Format(@"C:\Documents and Settings\{0}\Local Settings\Application Data\Google\Chrome\User Data", Environment.UserName),
+                string.Format(@"C:\Users\{0}\AppData\Local\Google\Chrome\User Data", Environment.UserName)
+            };
 
-            if (IsValidProfileDir(userDataDir + "\\Default")) {
-                _chromeProfileDir = userDataDir + "\\Default";
-
-                return true;
-            }
-
-            foreach (string dir in Directory.GetDirectories(userDataDir))
+            foreach (string userDataDir in userDataDirs)
             {
-                if (IsValidProfileDir(dir))
+                if (!Directory.Exists(userDataDir))
+                    return false;
+
+                if (IsValidProfileDir(userDataDir + "\\Default"))
                 {
-                    _chromeProfileDir = dir;
+                    _chromeProfileDir = userDataDir + "\\Default";
 
                     return true;
+                }
+
+                foreach (string dir in Directory.GetDirectories(userDataDir))
+                {
+                    if (IsValidProfileDir(dir))
+                    {
+                        _chromeProfileDir = dir;
+
+                        return true;
+                    }
                 }
             }
 
