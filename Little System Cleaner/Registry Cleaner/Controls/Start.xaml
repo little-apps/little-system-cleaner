@@ -73,7 +73,7 @@
                                 <ColumnDefinition Width="66" />
                             </Grid.ColumnDefinitions>
                             <Button x:Name="buttonBrowseBackupDir" Margin="2,0,0,0" Padding="8,0,8,0" Content="Browse..." Grid.Column="1" Click="buttonBrowseBackupDir_Click" />
-                            <TextBox Margin="0,0,1,0" x:Name="textBoxBackups" IsReadOnly="True" Grid.Column="0" />
+                            <TextBox Margin="0,0,1,0" x:Name="textBoxBackups" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Options" x:Name="groupBox3">
