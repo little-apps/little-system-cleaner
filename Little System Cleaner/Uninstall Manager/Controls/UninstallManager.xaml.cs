@@ -278,5 +278,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             }
         }
 
+        private void buttonRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            this.PopulateListView();
+
+            // Manually sort listview
+            Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
+        }
+
 	}
 }

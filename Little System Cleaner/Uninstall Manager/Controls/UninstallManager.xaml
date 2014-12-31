@@ -73,10 +73,16 @@
                     <TextBlock VerticalAlignment="Center">Uninstall</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0" Padding="8,0,8,0" Name="buttonRemove" Click="buttonRemove_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRemove" Click="buttonRemove_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/button_cancel.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Remove Entry</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="3" Margin="0" Padding="8,0,8,0" Name="buttonRefresh" Click="buttonRefresh_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/refresh.png" Width="16" Height="16" />
+                    <TextBlock VerticalAlignment="Center">Refresh</TextBlock>
                 </StackPanel>
             </Button>
         </StackPanel>
