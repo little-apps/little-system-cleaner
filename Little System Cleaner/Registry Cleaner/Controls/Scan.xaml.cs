@@ -205,7 +205,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 Wizard.Report.Write("User aborted scan... ");
 
-                if (this.threadScan.IsAlive)
+                if (this.threadScan.IsAlive && threadScan.ThreadState != System.Threading.ThreadState.AbortRequested)
                     this.threadScan.Abort();
 
                 Wizard.Report.WriteLine("Exiting.\r\n");

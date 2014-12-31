@@ -120,9 +120,13 @@ namespace Little_System_Cleaner
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            CrashReporter.ShowCrashReport(e.Exception);
+            if (!e.Handled)
+            {
+                CrashReporter.ShowCrashReport(e.Exception);
 
-            e.Handled = true;
+                e.Handled = true;
+            }
+            
         }
 
         void App_Exit(object sender, ExitEventArgs e)
