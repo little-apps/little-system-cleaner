@@ -213,12 +213,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
                 scanAborted = true;
             }
-            catch (ThreadAbortException)
+            catch (Exception ex)
             {
-                scanAborted = false;
+                if (ex is ThreadAbortException || ex is ThreadInterruptedException)
+                {
+                    scanAborted = false;
 
-                if (this.threadScan.IsAlive)
-                    this.threadScan.Abort();
+                    if (this.threadScan.IsAlive)
+                        this.threadScan.Abort();
+
+                    if (ex is ThreadAbortException)
+                        Thread.ResetAbort();
+                }
+                else
+                    throw;
             }
             finally
             {
@@ -291,7 +299,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            threadScan = new Thread(() => parent.Scan(child));
+            threadScan = new Thread(() => this.TryScanMethod(() => parent.Scan(child)));
 
             try
             {
@@ -333,7 +341,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            threadScan = new Thread(parent.Scan);
+            threadScan = new Thread(() => this.TryScanMethod(parent.Scan));
 
             try
             {
@@ -344,6 +352,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
 
             }
+        }
+
+        private void TryScanMethod(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (ThreadAbortException)
+            {
+                Thread.ResetAbort();
+            }
+            
         }
 
         void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

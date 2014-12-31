@@ -135,6 +135,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 // Will end up here if user accepts to change tab
                 // No need to change tab
+
+                Thread.ResetAbort();
             }
             finally
             {

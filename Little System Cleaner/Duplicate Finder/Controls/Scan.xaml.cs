@@ -362,7 +362,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             catch (ThreadAbortException)
             {
-
+                Thread.ResetAbort();
             }
             finally
             {
