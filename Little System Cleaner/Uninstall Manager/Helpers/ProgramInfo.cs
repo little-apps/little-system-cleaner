@@ -315,7 +315,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     
             }
 
-            MessageBox.Show("Sucessfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Successfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             return true;
         }
@@ -336,7 +336,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 return false;
             }
 
-            MessageBox.Show("Sucessfully removed registry key", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Successfully removed registry key", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             return true;
         }

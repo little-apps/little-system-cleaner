@@ -65,7 +65,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         {
             if (!HivesLoaded)
             {
-                // Registry hives not completley loaded, unload them
+                // Registry hives not completely loaded, unload them
                 Wizard.RegistryHives.Clear();
             }
 

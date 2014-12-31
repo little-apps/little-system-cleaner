@@ -87,7 +87,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// Recursively goes through the registry keys and finds how many values there are
         /// </summary>
         /// <param name="regKey">The base registry key</param>
-        /// <returns>True if the registry key is emtpy</returns>
+        /// <returns>True if the registry key is empty</returns>
         private static bool IsEmptyRegistryKey(RegistryKey regKey)
         {
             if (regKey == null)

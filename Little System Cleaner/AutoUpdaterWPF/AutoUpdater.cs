@@ -188,7 +188,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         // Only display errors if user requested update check
 
                         if (ex is WebException)
-                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "An error ocurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
                         else
                             MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
                     }

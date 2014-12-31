@@ -70,7 +70,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (this.userControl is Scan)
             {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
@@ -164,7 +164,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (this.savedControl == null)
             {
-                MessageBox.Show(App.Current.MainWindow, "An error occured going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(App.Current.MainWindow, "An error occurred going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 this.MoveFirst();
 
                 return;

@@ -309,7 +309,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 if (!Regex.IsMatch(this.FilePath, @"^[a-z?]:\\", RegexOptions.IgnoreCase))
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "File path must start with drive letter (Example: C:\\).\nDrive letter may also be substitued with ? to match any drive letter.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, "File path must start with drive letter (Example: C:\\).\nDrive letter may also be substituted with ? to match any drive letter.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }
@@ -323,7 +323,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 if (!Regex.IsMatch(this.FolderPath, @"^[a-z?]:\\", RegexOptions.IgnoreCase))
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "Folder path must start with drive letter (Example: C:\\).\nDrive letter may also be substitued with ? to match any drive letter.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, "Folder path must start with drive letter (Example: C:\\).\nDrive letter may also be substituted with ? to match any drive letter.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }

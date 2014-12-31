@@ -397,7 +397,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 this.AbortScanThread();
                 this.scanBase.MoveFirst();

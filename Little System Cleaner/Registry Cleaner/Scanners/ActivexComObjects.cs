@@ -284,7 +284,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid classes.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid classes.");
                 return;
             }
 
@@ -315,7 +315,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check file extension.");
+                        Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check file extension.");
                     }
                     finally
                     {
@@ -346,7 +346,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if DefaultIcon exists.");
+                        Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if DefaultIcon exists.");
                     }
                     finally
                     {
@@ -372,7 +372,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if referenced CLSID exists.");
+                        Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if referenced CLSID exists.");
                     }
                     finally
                     {
@@ -394,7 +394,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for unused ProgID or file extension.");
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for unused ProgID or file extension.");
                 }
                 finally
                 {
@@ -440,7 +440,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine("The following error occured: " + ex.Message + "\nSkipping check for invalid BHO.");
+                            Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping check for invalid BHO.");
                             continue;
                         }
                     }
@@ -448,7 +448,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid BHOs.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid BHOs.");
             }
             finally
             {
@@ -474,7 +474,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid explorer toolbars.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid explorer toolbars.");
             }
             finally
             {
@@ -514,7 +514,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid explorer extensions.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid explorer extensions.");
             }
             finally
             {
@@ -556,7 +556,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid explorer file extensions.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid explorer file extensions.");
             }
             finally
             {
@@ -597,7 +597,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid OpenWithProgId.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid OpenWithProgId.");
             }
             finally
             {
@@ -627,7 +627,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check for invalid OpenWithList.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check for invalid OpenWithList.");
             }
             finally
             {
@@ -653,7 +653,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if HotIcon exists.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if HotIcon exists.");
             }
 
             try
@@ -665,7 +665,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if Icon exists.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if Icon exists.");
             }
 
             try
@@ -677,7 +677,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if ClsidExtension exists.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if ClsidExtension exists.");
             }
 
             try
@@ -690,7 +690,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if Exec exists.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if Exec exists.");
             }
 
             try
@@ -702,7 +702,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if Script exists.");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if Script exists.");
             }
         }
 
@@ -762,7 +762,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if InprocServer exists.");
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if InprocServer exists.");
                 }
                 finally
                 {
@@ -785,7 +785,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if InprocServer32 exists.");
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if InprocServer32 exists.");
                 }
                 finally
                 {

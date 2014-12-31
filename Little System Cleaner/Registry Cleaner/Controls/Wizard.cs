@@ -92,7 +92,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
             catch (System.IO.IOException ex)
             {
-                MessageBox.Show(App.Current.MainWindow, "The following error occured: " + ex.Message + "\nDue to this, a log of the scan will not be created.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message + "\nDue to this, a log of the scan will not be created.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -140,7 +140,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (this.userControl is Scan)
             {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan thats in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
