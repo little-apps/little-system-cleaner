@@ -270,66 +270,56 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         public bool Delete()
         {
-            RegistryKey regKey = Utils.RegOpenKey(this.RegKeyPath, false);
+            bool ret = false;
+            RegistryKey regKey = null;
 
-            if (regKey == null)
+            try
             {
-                Debug.WriteLine("Failed to open registry key ({0}) with write permission. Unable to delete it.", new object[] { this.RegKeyPath });
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(this.ValueName))
-            {
-                string valueName = (this.ValueName.ToUpper() == "(DEFAULT)" ? string.Empty : this.ValueName);
-                
-                try
+                if (!string.IsNullOrEmpty(this.ValueName))
                 {
-                    regKey.DeleteValue(valueName, true);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Unable to delete value name ({0}) from registry key ({1}).\nError: {2}", this.ValueName, this.RegKeyPath, ex.Message);
-                    return false;
-                }
+                    regKey = Utils.RegOpenKey(this.RegKeyPath, false, true);
+                    string valueName = (this.ValueName.ToUpper() == "(DEFAULT)" ? string.Empty : this.ValueName);
 
-                return true;
-            }
-            else
-            {
-                RegistryKey reg = null;
-
-                try
-                {
-                    if (this.baseRegKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
-                        reg = Registry.ClassesRoot;
-                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
-                        reg = Registry.CurrentUser;
-                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
-                        reg = Registry.LocalMachine;
-                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_USERS") == 0)
-                        reg = Registry.Users;
-                    else if (this.baseRegKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
-                        reg = Registry.CurrentConfig;
-                    else
-                        return false; // break here
-
-                    if (reg != null)
+                    if (regKey != null)
                     {
-                        reg.DeleteSubKeyTree(this.subRegKey);
-                        reg.Flush();
-                        reg.Close();
+                        regKey.DeleteValue(valueName, true);
+
+                        ret = true;
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    Debug.WriteLine("An error occurred deleting registry key ({0}).\nError: {1}", this.RegKeyPath, e.Message);
-                    return false;
+                    regKey = Utils.RegOpenKey(this.baseRegKey, false, true);
+
+                    if (regKey != null)
+                    {
+                        regKey.DeleteSubKeyTree(this.subRegKey);
+                        regKey.Flush();
+
+                        ret = true;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                string message;
 
-            regKey.Close();
+                if (!string.IsNullOrEmpty(this.ValueName))
+                    message = string.Format("Unable to delete value name ({0}) from registry key ({1}).\nError: {2}", this.ValueName, this.RegKeyPath, ex.Message);
+                else
+                    message = string.Format("An error occurred deleting registry key ({0}).\nError: {1}", this.RegKeyPath, ex.Message);
 
-            return true;
+                Debug.WriteLine(message);
+
+                ret = false;
+            } 
+            finally
+            {
+                if (regKey != null)
+                    regKey.Close();
+            }
+
+            return ret;
         }
 
         public override string ToString()

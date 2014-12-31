@@ -233,14 +233,15 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="regPath">Registry path (including hive)</param>
         /// <param name="openReadOnly">If true, opens the key with read-only access (default: true)</param>
+        /// <param name="throwOnError">If true, throws an excpetion when an error occurs</param>
         /// <returns>Registry Key class</returns>
-        internal static RegistryKey RegOpenKey(string regPath, bool openReadOnly = true)
+        internal static RegistryKey RegOpenKey(string regPath, bool openReadOnly = true, bool throwOnError = false)
         {
             string mainKey = "", subKey = "";
 
-            ParseRegKeyPath(regPath, out mainKey, out subKey);
+            ParseRegKeyPath(regPath, out mainKey, out subKey, throwOnError);
 
-            return RegOpenKey(mainKey, subKey, openReadOnly);
+            return RegOpenKey(mainKey, subKey, openReadOnly, throwOnError);
         }
 
         /// <summary>
@@ -249,8 +250,9 @@ namespace Little_System_Cleaner.Misc
         /// <param name="MainKey">The hive (begins with HKEY)</param>
         /// <param name="SubKey">The sub key (cannot be null or whitespace)</param>
         /// <param name="openReadOnly">If true, opens the key with read-only access (default: true)</param>
+        /// <param name="throwOnError">If true, throws an excpetion when an error occurs</param>
         /// <returns>RegistryKey or null if error occurred</returns>
-        internal static RegistryKey RegOpenKey(string MainKey, string SubKey, bool openReadOnly = true)
+        internal static RegistryKey RegOpenKey(string MainKey, string SubKey, bool openReadOnly = true, bool throwOnError = false)
         {
             RegistryKey reg = null;
 
@@ -267,7 +269,16 @@ namespace Little_System_Cleaner.Misc
                 else if (MainKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
                     reg = Registry.CurrentConfig;
                 else
+                {
+                    if (throwOnError)
+                    {
+                        string message = string.Format("Unable to parse registry key.\nMain key: {0}\nSub Key: {1}", MainKey, SubKey);
+                        throw new Exception(message);
+                    }
+
                     return null; // break here
+                }
+                    
 
                 if (!string.IsNullOrWhiteSpace(SubKey))
                     reg = reg.OpenSubKey(SubKey, (!openReadOnly));
@@ -275,6 +286,10 @@ namespace Little_System_Cleaner.Misc
             catch (Exception ex)
             {
                 Debug.WriteLine("The following error occurred trying to open " + MainKey.ToUpper() + "/" + SubKey + ": " + ex.Message);
+
+                if (throwOnError)
+                    throw ex;
+
                 return null;
             }
 
@@ -287,8 +302,9 @@ namespace Little_System_Cleaner.Misc
         /// <param name="inPath">Registry key path</param>
         /// <param name="baseKey">Base Key (Hive name)</param>
         /// <param name="subKey">Sub Key Path</param>
+        /// <param name="throwOnError">If true, throws an excpetion when an error occurs</param>
         /// <returns>True if the path was parsed successfully</returns>
-        internal static bool ParseRegKeyPath(string inPath, out string baseKey, out string subKey)
+        internal static bool ParseRegKeyPath(string inPath, out string baseKey, out string subKey, bool throwOnError = false)
         {
             baseKey = subKey = "";
 
@@ -305,13 +321,25 @@ namespace Little_System_Cleaner.Misc
                     baseKey = strMainKeyname.Substring(0, nSlash);
                     subKey = strMainKeyname.Substring(nSlash + 1);
                 }
-                else if (strMainKeyname.ToUpper().StartsWith("HKEY"))
+                else if (strMainKeyname.ToUpper().StartsWith("HKEY")) {
                     baseKey = strMainKeyname;
+                }
                 else
+                {
+                    if (throwOnError)
+                    {
+                        string message = string.Format("Unable to parse registry key ({0})", inPath);
+                        throw new Exception(message);
+                    }
+
                     return false;
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                if (throwOnError)
+                    throw ex;
+
                 return false;
             }
 
