@@ -113,7 +113,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Start timer
-            this.timerUpdate.Interval = 500;
+            this.timerUpdate.Interval = 250;
             this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
             this.timerUpdate.Start();
 
