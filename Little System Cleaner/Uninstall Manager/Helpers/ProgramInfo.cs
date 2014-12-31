@@ -238,6 +238,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 {
                     Process proc = Process.Start("msiexec.exe", cmdArgs);
                     proc.WaitForExit();
+
+                    if (proc.ExitCode != 0)
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "It appears the program couldn't be uninstalled or the uninstall was aborted by the user.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        return false;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -273,6 +279,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 {
                     Process proc = Process.Start(cmdLine);
                     proc.WaitForExit();
+
+                    if (proc.ExitCode != 0)
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "It appears the program couldn't be uninstalled or the uninstall was aborted by the user.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        return false;
+                    }
                 }
                 catch (Exception ex)
                 {
