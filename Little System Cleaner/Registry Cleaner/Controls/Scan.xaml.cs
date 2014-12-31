@@ -209,6 +209,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     this.threadScan.Abort();
 
                 Wizard.Report.WriteLine("Exiting.\r\n");
+
+                Thread.ResetAbort();
             }
             finally
             {
@@ -265,13 +267,21 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 threadScan.Start();
                 threadScan.Join();
             }
-            catch (ThreadInterruptedException)
+            catch (Exception ex)
             {
-                if (!AbortScan)
-                    AbortScan = true;
+                if (ex is ThreadInterruptedException)
+                {
+                    if (!AbortScan)
+                        AbortScan = true;
 
-                if (threadScan.IsAlive)
-                    threadScan.Abort();
+                    if (threadScan.IsAlive)
+                        threadScan.Abort();
+                }
+                else
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+                
             }
         }
 

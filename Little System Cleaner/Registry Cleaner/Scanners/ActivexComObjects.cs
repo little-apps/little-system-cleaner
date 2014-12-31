@@ -26,6 +26,7 @@ using Little_System_Cleaner.Registry_Cleaner.Controls;
 using System.Diagnostics;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -41,44 +42,49 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// </summary>
         internal static void Scan()
         {
-            // Scan all CLSID sub keys
-            Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.ClassesRoot.OpenSubKey("CLSID")));
-            Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
-            Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
-            if (Utils.Is64BitOS)
+            try
             {
-                Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\CLSID")));
-                Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
-                Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
-            }
+                // Scan all CLSID sub keys
+                Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.ClassesRoot.OpenSubKey("CLSID")));
+                Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
+                Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
+                if (Utils.Is64BitOS)
+                {
+                    Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\CLSID")));
+                    Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
+                    Utils.SafeOpenRegistryKey(() => ScanCLSIDSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
+                }
 
-            // Scan file extensions + progids
-            Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot));
-            Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes")));
-            Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes")));
-            if (Utils.Is64BitOS)
+                // Scan file extensions + progids
+                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot));
+                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes")));
+                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes")));
+                if (Utils.Is64BitOS)
+                {
+                    Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot.OpenSubKey("Wow6432Node")));
+                    Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
+                    Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
+                }
+
+                // Scan appids
+                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("AppID")));
+                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\AppID")));
+                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\AppID")));
+                if (Utils.Is64BitOS)
+                {
+                    Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\AppID")));
+                    Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
+                    Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
+                }
+
+                // Scan explorer subkey
+                ScanExplorer();
+            }
+            catch (ThreadAbortException)
             {
-                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot.OpenSubKey("Wow6432Node")));
-                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
-                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
+                Thread.ResetAbort();
             }
-
-            // Scan appids
-            Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("AppID")));
-            Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\AppID")));
-            Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\AppID")));
-            if (Utils.Is64BitOS)
-            {
-                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\AppID")));
-                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
-                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
-            }
-
-            // Scan explorer subkey
-            ScanExplorer();
         }
-
-        
 
         #region Scan functions
 

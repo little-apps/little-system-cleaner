@@ -27,6 +27,7 @@ using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Uninstall_Manager.Helpers;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -111,6 +112,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             catch (System.Security.SecurityException ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+            catch (ThreadAbortException)
+            {
+                Thread.ResetAbort();
             }
         }
 

@@ -26,6 +26,7 @@ using System.Text.RegularExpressions;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -38,8 +39,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
         internal static void Scan()
         {
-            ScanMUICache();
-            ScanExplorerDocs();
+            try
+            {
+                ScanMUICache();
+                ScanExplorerDocs();
+            }
+            catch (ThreadAbortException)
+            {
+                Thread.ResetAbort();
+            }
         }
 
         /// <summary>
