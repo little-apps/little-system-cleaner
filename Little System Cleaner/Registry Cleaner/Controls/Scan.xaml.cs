@@ -299,6 +299,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (this.currentListViewIndex != -1)
             {
+                // Update number of errors in case it wasn't updated yet
+                this.CurrentListViewItem.Errors = string.Format("{0} Errors", Wizard.badRegKeyArray.Problems(this.CurrentListViewItem.Section));
+
                 this.CurrentListViewItem.Status = "Finished";
                 this.CurrentListViewItem.UnloadGif();
             }
@@ -311,6 +314,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             this.CurrentListViewItem.Status = "Scanning";
             this.CurrentListViewItem.LoadGif();
+
+            this.CurrentListViewItem.Errors = "0 Errors";
 
             this.listView.Items.Refresh();
         }
