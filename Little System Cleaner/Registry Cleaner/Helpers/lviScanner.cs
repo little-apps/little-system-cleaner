@@ -10,16 +10,31 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class lviScanner
     {
-        public string Section { get; set; }
-        public string Status { get; set; }
-        public string Errors { get; set; }
+        private string _section;
+        private string _status;
+        private string _errors;
+
+        public string Section
+        {
+            get { return this._section; }
+        }
+        public string Status
+        {
+            get { return this._status; }
+            set { this._status = value; }
+        }
+        public string Errors
+        {
+            get { return this._errors; }
+            set { this._errors = value; }
+        }
 
         public System.Windows.Controls.Image Image { get; private set; }
         public Uri bMapImg { get; private set; }
 
         public lviScanner(string section)
         {
-            Section = section;
+            this._section = section;
             Status = "Queued";
             Errors = "0 Errors";
         }

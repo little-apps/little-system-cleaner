@@ -113,6 +113,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Start timer
+            this.timerUpdate.Interval = 500;
             this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
             this.timerUpdate.Start();
 
@@ -152,7 +153,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             if (this.Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                this.Dispatcher.Invoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
                 return;
             }
 
