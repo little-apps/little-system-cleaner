@@ -297,6 +297,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     try
                     {
                         Process.Start(node.Path, node.Args);
+
+                        MessageBox.Show(App.Current.MainWindow, "Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
@@ -312,8 +314,6 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 }
                     
             }
-
-            MessageBox.Show(App.Current.MainWindow, "Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
         }   
 	}
 }
