@@ -100,6 +100,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.checkBoxDelBackup.IsChecked = Properties.Settings.Default.registryCleanerOptionsDelBackup;
             this.checkBoxIgnoreRemMedia.IsChecked = Properties.Settings.Default.registryCleanerOptionsRemMedia;
             this.checkBoxShowErrors.IsChecked = Properties.Settings.Default.registryCleanerOptionsShowErrors;
+            this.checkBoxDeleteOnBackupError.IsEnabled = (!this.checkBoxShowErrors.IsChecked.Value);
+            this.checkBoxDeleteOnBackupError.IsChecked = Properties.Settings.Default.registryCleanerOptionsDeleteOnBackupError;
             this.checkBoxAutoRepair.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoRepair;
             this.checkBoxAutoExit.IsChecked = Properties.Settings.Default.registryCleanerOptionsAutoExit;
 
@@ -169,8 +171,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Properties.Settings.Default.registryCleanerOptionsDelBackup = this.checkBoxDelBackup.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsRemMedia = this.checkBoxIgnoreRemMedia.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsShowErrors = this.checkBoxShowErrors.IsChecked.Value;
+            Properties.Settings.Default.registryCleanerOptionsDeleteOnBackupError = this.checkBoxDeleteOnBackupError.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsAutoRepair = this.checkBoxAutoRepair.IsChecked.Value;
             Properties.Settings.Default.registryCleanerOptionsAutoExit = this.checkBoxAutoExit.IsChecked.Value;
+
+            if (this.checkBoxDeleteOnBackupError.IsEnabled != (!this.checkBoxShowErrors.IsChecked.Value))
+                this.checkBoxDeleteOnBackupError.IsEnabled = (!this.checkBoxShowErrors.IsChecked.Value);
 
             if (this.textBoxBackups.Text != Properties.Settings.Default.optionsBackupDir)
                 Properties.Settings.Default.optionsBackupDir = this.textBoxBackups.Text;
@@ -432,6 +438,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             this._tree.ExpandAll();
             this._tree.AutoResizeColumns();
+        }
+
+        private void Option_Click(object sender, RoutedEventArgs e)
+        {
+            this.UpdateSettings();
         }
 
         

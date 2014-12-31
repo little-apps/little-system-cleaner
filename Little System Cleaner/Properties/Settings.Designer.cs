@@ -810,5 +810,17 @@ namespace Little_System_Cleaner.Properties {
                 this["registryCleanerOptionsShowErrors"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool registryCleanerOptionsDeleteOnBackupError {
+            get {
+                return ((bool)(this["registryCleanerOptionsDeleteOnBackupError"]));
+            }
+            set {
+                this["registryCleanerOptionsDeleteOnBackupError"] = value;
+            }
+        }
     }
 }

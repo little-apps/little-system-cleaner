@@ -276,6 +276,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                             if (msgBoxResult != MessageBoxResult.Yes)
                                 skip = true;
                         }
+                        else
+                        {
+                            skip = (!Properties.Settings.Default.registryCleanerOptionsDeleteOnBackupError);
+                        }
                     }
 
                     if (!skip)

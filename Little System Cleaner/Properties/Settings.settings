@@ -245,5 +245,8 @@
     <Setting Name="registryCleanerOptionsShowErrors" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="registryCleanerOptionsDeleteOnBackupError" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
