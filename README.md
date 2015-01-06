@@ -34,6 +34,12 @@ If you would like to submit a bug report, please go to the [Little Apps Bug Trac
 
 If you have an issue or an idea for Little System Cleaner, please check out [the forums for Little System Cleaner](https://www.little-apps.com/forums/forum/little-system-cleaner/).
 
+### Release Notes ###
+
+####Version 0.1#####
+
+ * First public release made available 
+
 ### Show Your Support ###
 
 Little Apps relies on people like you to keep our software running. If you would like to show your support for Little System Cleaner, then you can [make a donation](http://www.little-apps.com/?donate) using PayPal, Payza or Bitcoins. Please note that any amount helps (even just $1).
