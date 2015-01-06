@@ -1,14 +1,22 @@
 Little System Cleaner
 =====================
 
-Little System Cleaner will be an all in one system cleaner for Windows computers. Little System Cleaner combines the following existing Little Apps' projects:
-
- * [Little Registry Cleaner](http://www.little-apps.com/little-registry-cleaner/)
- * [Little Registry Optimizer](http://www.little-apps.com/little-registry-optimizer/)
- * [Little Privacy Cleaner](http://www.little-apps.com/little-privacy-cleaner/)
- * [Little Disk Cleaner](http://www.little-apps.com/little-disk-cleaner/)
+Little System Cleaner is an all in one system cleaner for Windows computers. Little System Cleaner combines the following tools:
  
-More information about Little System Cleaner can be found in [this blog post](http://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/).
+ * Registry Cleaner
+ * Registry Optimizer
+ * Privacy Cleaner
+ * Disk Cleaner
+ * Duplicate Finder
+ * Startup Manager
+ * Uninstall Manager
+
+#### More Info ####
+
+For more information about Little System Cleaner, check out any of the following blog posts:
+
+ * [Coming Soon: Little System Cleaner](http://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/)
+ * [A New Year And A New Little Apps](https://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/)
 
 ### Licensing ###
 
@@ -16,7 +24,15 @@ Little System Cleaner is licensed under the [GNU General Public License v3](http
 
 ### Development ###
 
-Little System Cleaner is currently a work in progress and therefore, it is not working 100%. If you would like to help develop Little System Cleaner, please [contact us](http://www.little-apps.com/contact.html). If you would like to submit a bug report or feature request, please go to [https://github.com/little-apps/little-system-cleaner/issues](https://github.com/little-apps/little-system-cleaner/issues).
+Little System Cleaner is currently a work in progress and therefore, it is not working 100%. If you would like to help develop Little System Cleaner, please [contact us](http://www.little-apps.com/contact.html). 
+
+#### Bugs ####
+
+If you would like to submit a bug report, please go to the [Little Apps Bug Tracker](http://bugs.little-apps.com/view_all_bug_page.php?project_id=2).
+
+#### Issues/Suggestions ####
+
+If you have an issue or an idea for Little System Cleaner, please check out [the forums for Little System Cleaner](https://www.little-apps.com/forums/forum/little-system-cleaner/).
 
 ### Show Your Support ###
 
