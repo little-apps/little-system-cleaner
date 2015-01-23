@@ -37,8 +37,10 @@ using System.Security;
 using System.Collections.Specialized;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.Windows.Shell;
+using System.Linq;
 
 namespace Little_System_Cleaner.Misc
 {
@@ -1056,6 +1058,35 @@ namespace Little_System_Cleaner.Misc
             Regex regEx = new Regex(regExPattern, (IgnoreCase ? RegexOptions.Singleline | RegexOptions.IgnoreCase : RegexOptions.Singleline));
             
             return regEx.IsMatch(WildString);
+        }
+
+        /// <summary>
+        /// Checks if assembly is loaded or not
+        /// </summary>
+        /// <param name="assembly">The name of the assembly (ie: System.Data.XYZ). This sometimes is (but not always) also the namespace of the assembly.</param>
+        /// <param name="ver">What the version of the assembly should be. Set to null for any version (default is null)</param>
+        /// <param name="publicKeyToken">What the public key token of the assembly should be. Set to null for any public key token (default is null)</param>
+        /// <returns>True if the assembly is loaded</returns>
+        internal static bool IsAssemblyLoaded(string assembly, Version ver = null, byte[] publicKeyToken = null) 
+        {
+            Assembly asm = Assembly.GetExecutingAssembly();
+
+            foreach (AssemblyName asmLoaded in asm.GetReferencedAssemblies())
+            {
+                if (string.Compare(asmLoaded.Name, assembly) == 0)
+                {
+                    if ((ver != null) && asmLoaded.Version != ver)
+                        continue;
+
+                    byte[] asmPublicKeyToken = asmLoaded.GetPublicKeyToken();
+                    if ((publicKeyToken != null) && !publicKeyToken.SequenceEqual(asmPublicKeyToken))
+                        continue;
+
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

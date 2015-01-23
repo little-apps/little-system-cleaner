@@ -31,6 +31,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
@@ -71,6 +72,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             this.checkBoxZeroByte.IsChecked = Properties.Settings.Default.privacyCleanerInc0ByteFile;
             this.checkBoxLogScan.IsChecked = Properties.Settings.Default.privacyCleanerLog;
             this.checkBoxDisplayLog.IsChecked = Properties.Settings.Default.privacyCleanerDisplayLog;
+
         }
 
         private void UpdateSettings(object sender, RoutedEventArgs e)
