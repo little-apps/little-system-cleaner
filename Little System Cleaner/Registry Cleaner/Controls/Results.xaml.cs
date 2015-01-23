@@ -55,6 +55,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private Thread _fixThread;
         private int _progressBarValue = 0;
         private string _progressBarText;
+        private BitmapSource _bMapSrcFinishedScanning = null;
 
         public int ProgressBarValue
         {
@@ -98,6 +99,21 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             get { return this._fixThread; }
             private set { this._fixThread = value; }
+        }
+
+        
+        /// <summary>
+        /// The finished scanning bitmap is converted once to a BitmapSource and stored so it can be used again in order to save resources
+        /// </summary>
+        public BitmapSource bMapSrcFinishedScanning
+        {
+            get
+            {
+                if (this._bMapSrcFinishedScanning == null)
+                    this._bMapSrcFinishedScanning = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+
+                return this._bMapSrcFinishedScanning;
+            }
         }
 
 		public Results(Wizard scanBase)
@@ -304,7 +320,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     {
                         // Set icon to check mark
                         brk.bMapImg = new Image();
-                        brk.bMapImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                        brk.bMapImg.Source = this.bMapSrcFinishedScanning;
 
                         this._tree.Items.Refresh();
 
