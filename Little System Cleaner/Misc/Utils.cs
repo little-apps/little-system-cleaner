@@ -1065,18 +1065,33 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="assembly">The name of the assembly (ie: System.Data.XYZ). This sometimes is (but not always) also the namespace of the assembly.</param>
         /// <param name="ver">What the version of the assembly should be. Set to null for any version (default is null)</param>
-        /// <param name="publicKeyToken">What the public key token of the assembly should be. Set to null for any public key token (default is null)</param>
+        /// <param name="versionCanBeGreater">If true, the version of the assembly can be greater than the specified version. Otherwise, the version must be the exact same as the assembly.</param>
+        /// <param name="publicKeyToken">What the public key token of the assembly should be. Set to null for any public key token (default is null). This needs to be 8 bytes.</param>
         /// <returns>True if the assembly is loaded</returns>
-        internal static bool IsAssemblyLoaded(string assembly, Version ver = null, byte[] publicKeyToken = null) 
+        /// <remarks>Please note that if versionCanBeGreater is set to true and publicKeyToken is not null, this function can return false even though the the version of the assembly is greater. This is due to the fact that the public key token is derived from the certificate used to sign the file and this certificate can change over time.</remarks>
+        internal static bool IsAssemblyLoaded(string assembly, Version ver = null, bool versionCanBeGreater = false, byte[] publicKeyToken = null) 
         {
+            if (string.IsNullOrWhiteSpace(assembly))
+                throw new ArgumentNullException("assembly", "The assembly name cannot be null or empty");
+
+            if ((publicKeyToken != null) && publicKeyToken.Length != 8)
+                throw new ArgumentException("The public key token must be 8 bytes long", "publicKeyToken");
+
             Assembly asm = Assembly.GetExecutingAssembly();
 
             foreach (AssemblyName asmLoaded in asm.GetReferencedAssemblies())
             {
                 if (string.Compare(asmLoaded.Name, assembly) == 0)
                 {
-                    if ((ver != null) && asmLoaded.Version != ver)
-                        continue;
+                    if (ver != null)
+                    {
+                        int n = asmLoaded.Version.CompareTo(ver);
+
+                        if (!versionCanBeGreater && n != 0)
+                            continue;
+                        else if (versionCanBeGreater && n < 0)
+                            continue;
+                    }
 
                     byte[] asmPublicKeyToken = asmLoaded.GetPublicKeyToken();
                     if ((publicKeyToken != null) && !publicKeyToken.SequenceEqual(asmPublicKeyToken))

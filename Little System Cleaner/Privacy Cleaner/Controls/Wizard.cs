@@ -40,6 +40,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         private static object LockObj = new object();
         internal static ScannerBase CurrentScanner;
         private static int ProblemsFound = 0;
+        internal static bool SQLiteLoaded = true;
 
         /// <summary>
         /// Gets/Sets the current file or registry key being scanned
