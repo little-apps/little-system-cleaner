@@ -140,31 +140,59 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         {
             Key = regKey.Name.Substring(regKey.Name.LastIndexOf('\\') + 1);
 
-            _displayName = this.TryGetValue(regKey, "DisplayName", "") as string;
-            _quietDisplayName = this.TryGetValue(regKey, "QuietDisplayName", "") as string;
-            _uninstallString = this.TryGetValue(regKey, "UninstallString", "") as string;
-            _quietUninstallString = this.TryGetValue(regKey, "QuietUninstallString", "") as string;
-            _publisher = this.TryGetValue(regKey, "Publisher", "") as string;
-            _displayVersion = this.TryGetValue(regKey, "DisplayVersion", "") as string;
-            _helpLink = this.TryGetValue(regKey, "HelpLink", "") as string;
-            _urlInfoAbout = this.TryGetValue(regKey, "URLInfoAbout", "") as string;
-            _helpTelephone = this.TryGetValue(regKey, "HelpTelephone", "") as string;
-            _contact = this.TryGetValue(regKey, "Contact", "") as string;
-            _readme = this.TryGetValue(regKey, "Readme", "") as string;
-            _comments = this.TryGetValue(regKey, "Comments", "") as string;
-            _displayIcon = this.TryGetValue(regKey, "DisplayIcon", "") as string;
-            _parentKeyName = this.TryGetValue(regKey, "ParentKeyName", "") as string;
-            _installLocation = this.TryGetValue(regKey, "InstallLocation", "") as string;
-            _installSource = this.TryGetValue(regKey, "InstallSource", "") as string;
+            _displayName = Convert.ToString(this.TryGetValue(regKey, "DisplayName", ""));
+            _quietDisplayName = Convert.ToString(this.TryGetValue(regKey, "QuietDisplayName", ""));
+            _uninstallString = Convert.ToString(this.TryGetValue(regKey, "UninstallString", ""));
+            _quietUninstallString = Convert.ToString(this.TryGetValue(regKey, "QuietUninstallString", ""));
+            _publisher = Convert.ToString(this.TryGetValue(regKey, "Publisher", ""));
+            _displayVersion = Convert.ToString(this.TryGetValue(regKey, "DisplayVersion", ""));
+            _helpLink = Convert.ToString(this.TryGetValue(regKey, "HelpLink", ""));
+            _urlInfoAbout = Convert.ToString(this.TryGetValue(regKey, "URLInfoAbout", ""));
+            _helpTelephone = Convert.ToString(this.TryGetValue(regKey, "HelpTelephone", ""));
+            _contact = Convert.ToString(this.TryGetValue(regKey, "Contact", ""));
+            _readme = Convert.ToString(this.TryGetValue(regKey, "Readme", ""));
+            _comments = Convert.ToString(this.TryGetValue(regKey, "Comments", ""));
+            _displayIcon = Convert.ToString(this.TryGetValue(regKey, "DisplayIcon", ""));
+            _parentKeyName = Convert.ToString(this.TryGetValue(regKey, "ParentKeyName", ""));
+            _installLocation = Convert.ToString(this.TryGetValue(regKey, "InstallLocation", ""));
+            _installSource = Convert.ToString(this.TryGetValue(regKey, "InstallSource", ""));
 
-            _noModify = this.TryGetValue(regKey, "NoModify") as int?;
-            _noRepair = this.TryGetValue(regKey, "NoRepair") as int?;
+            _noModify = this.ConvertToNullableInt32(this.TryGetValue(regKey, "NoModify"));
+            _noRepair = this.ConvertToNullableInt32(this.TryGetValue(regKey, "NoRepair"));
 
-            _systemComponent = (((Int32)this.TryGetValue(regKey, "SystemComponent", 0) == 1) ? (true) : (false));
-            _windowsInstaller = this.TryGetValue(regKey, "WindowsInstaller", 0) as int?;
-            _estimatedSize = this.TryGetValue(regKey, "EstimatedSize", 0) as int?;
+            _systemComponent = ((this.ConvertToNullableInt32(this.TryGetValue(regKey, "SystemComponent", 0)).GetValueOrDefault() == 1) ? (true) : (false));
+            _windowsInstaller = this.ConvertToNullableInt32(this.TryGetValue(regKey, "WindowsInstaller", 0));
+            _estimatedSize = this.ConvertToNullableInt32(this.TryGetValue(regKey, "EstimatedSize", 0));
 
             return;
+        }
+
+        private Nullable<int> ConvertToNullableInt32(object o)
+        {
+            if (o == null)
+                return null;
+
+            int? ret = null;
+
+            try
+            {
+                ret = Convert.ToInt32(o);
+            }
+            catch (Exception ex)
+            {
+                ret = null;
+
+                if (ex is OverflowException)
+                    Debug.WriteLine("The {0} value {1} is outside the range of the Int32 type.", o.GetType().Name, o);
+                else if (ex is FormatException)
+                    Debug.WriteLine("The {0} value {1} is not in a recognizable format.", o.GetType().Name, o);
+                else if (ex is InvalidCastException)
+                    Debug.WriteLine("No conversion to an Int32 exists for the {0} value {1}.", o.GetType().Name, o);
+                else
+                    Debug.WriteLine("The following exception occurred trying to convert {0} with value {1}:\n{2}", o.GetType().Name, o, ex.Message);
+            }
+
+            return ret;
         }
 
         /// <summary>
