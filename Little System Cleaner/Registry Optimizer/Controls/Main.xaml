@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Loaded="UserControl_Loaded"
              MinHeight="384" MinWidth="579">
     <Grid>
         <Grid.RowDefinitions>

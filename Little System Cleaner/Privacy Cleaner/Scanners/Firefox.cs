@@ -150,6 +150,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanInternetHistory()
         {
+            if (!Wizard.SQLiteLoaded)
+                return;
+
             // Firefox 2 and below
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
@@ -212,6 +215,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanCookies()
         {
+            if (!Wizard.SQLiteLoaded)
+                return;
+
             // Firefox 2 and below
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
@@ -299,6 +305,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanFormHistory()
         {
+            if (!Wizard.SQLiteLoaded)
+                return;
+
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
@@ -355,6 +364,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanDownloadHistory()
         {
+            if (!Wizard.SQLiteLoaded)
+                return;
+
             // Firefox 2 and below
             List<string> fileList = new List<string>();
             long nTotalSize = 0;

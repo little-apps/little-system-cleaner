@@ -57,6 +57,17 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             this.scanBase = sb;
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!Utils.IsAssemblyLoaded("System.Windows.Controls.DataVisualization.Toolkit", new Version(3, 5, 0), true))
+            {
+                MessageBox.Show(App.Current.MainWindow, "It appears that System.Windows.Controls.DataVisualization.Toolkit.dll is not loaded, because of this, the registry cannot be optimized.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 3.5.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                this.buttonAnalyze.IsEnabled = false;
+            }
+                
+        }
+
         private void buttonAnalyze_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show(Application.Current.MainWindow, "You must close running programs before optimizing the registry.\nPlease save your work and close any running programs now.", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Information) != MessageBoxResult.OK)
@@ -83,6 +94,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             this.scanBase.MoveNext();
         }
+
+       
 
         
     }

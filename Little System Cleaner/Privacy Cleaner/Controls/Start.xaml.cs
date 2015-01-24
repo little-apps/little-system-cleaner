@@ -72,12 +72,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             this.checkBoxZeroByte.IsChecked = Properties.Settings.Default.privacyCleanerInc0ByteFile;
             this.checkBoxLogScan.IsChecked = Properties.Settings.Default.privacyCleanerLog;
             this.checkBoxDisplayLog.IsChecked = Properties.Settings.Default.privacyCleanerDisplayLog;
+        }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
             Wizard.SQLiteLoaded = Utils.IsAssemblyLoaded("System.Data.SQLite", new Version(1, 0, 66), true);
 
             if (!Wizard.SQLiteLoaded)
                 MessageBox.Show(App.Current.MainWindow, "It appears that System.Data.SQLite.dll is not loaded, because of this, some privacy information will not be able to be cleaned.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.66.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);   
-
         }
 
         private void UpdateSettings(object sender, RoutedEventArgs e)
@@ -103,5 +105,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             this.scanBase.MoveNext();
         }
+
+        
     }
 }

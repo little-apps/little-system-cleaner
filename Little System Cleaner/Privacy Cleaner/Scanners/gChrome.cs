@@ -214,6 +214,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanDownloadHistory()
         {
+            if (!Wizard.SQLiteLoaded)
+                return;
+
             Wizard.StoreCleanDelegate(new CleanDelegate(CleanDownloadHistory), "Clear Download History", 0);
         }
 

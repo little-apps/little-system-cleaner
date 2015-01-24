@@ -6,6 +6,7 @@
              xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
              mc:Ignorable="d" 
              MinWidth="579" MinHeight="384"
+             Loaded="UserControl_Loaded"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.RowDefinitions>

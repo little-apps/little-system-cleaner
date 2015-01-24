@@ -82,6 +82,12 @@ namespace Little_System_Cleaner
                     
                 }
 
+                if (!Utils.IsAssemblyLoaded("Xceed.Wpf.Toolkit", new Version(2, 0), true))
+                {
+                    MessageBox.Show("It appears that Xceed.Wpf.Toolkit.dll is not loaded, because of this, Little System Cleaner cannot be loaded.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 2.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 new App();
 
                 mutexMain.ReleaseMutex();
