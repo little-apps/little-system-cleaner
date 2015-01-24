@@ -1077,6 +1077,7 @@ namespace Little_System_Cleaner.Misc
             if ((publicKeyToken != null) && publicKeyToken.Length != 8)
                 throw new ArgumentException("The public key token must be 8 bytes long", "publicKeyToken");
 
+            // Do not get Assembly from App because this function is called before App is initialized
             Assembly asm = Assembly.GetExecutingAssembly();
 
             foreach (AssemblyName asmLoaded in asm.GetReferencedAssemblies())
