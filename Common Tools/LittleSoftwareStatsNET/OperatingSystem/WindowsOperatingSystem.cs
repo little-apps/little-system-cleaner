@@ -317,6 +317,17 @@ namespace LittleSoftwareStats.OperatingSystem
                                             osName += osVersionInfo.wProductType == VER_NT_WORKSTATION ? "Windows 8.1" : "Windows Server 2012 R2";
                                             break;
                                         case 4:
+                                            // Windows 10 was originally v6.4 
+                                            osName += "Windows 10 (Technical Preview)";
+                                            break;
+                                    }
+                                }
+                                break;
+                            case 10:
+                                {
+                                    switch (osVersionInfo.dwMinorVersion)
+                                    {
+                                        case 0:
                                             // TODO: May need updating when next version of Windows Server announced
                                             osName += "Windows 10";
                                             break;
