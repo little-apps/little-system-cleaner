@@ -128,155 +128,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
                 this.StatusText = "Building list of all files";
 
-                if (this.scanBase.Options.AllDrives.GetValueOrDefault())
-                {
-                    bool driveSelected = false;
-
-                    foreach (DriveInfo di in DriveInfo.GetDrives())
-                    {
-                        if (di.IsReady && di.TotalFreeSpace != 0 && (di.DriveType == DriveType.Fixed || di.DriveType == DriveType.Network || di.DriveType == DriveType.Removable))
-                        {
-                            if (!driveSelected)
-                                driveSelected = true;
-
-                            RecurseDirectory(di.RootDirectory);
-                        }
-                            
-                    }
-
-                    if (!driveSelected)
-                    {
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                        }));
-
-                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
-
-                        this.scanBase.MoveFirst();
-                        return;
-                    }
-
-                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
-                }
-                else if (this.scanBase.Options.AllExceptDrives.GetValueOrDefault())
-                {
-                    bool driveSelected = false;
-
-                    foreach (DriveInfo di in DriveInfo.GetDrives())
-                    {
-                        if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
-                            continue;
-
-                        if (this.scanBase.Options.AllExceptSystem.GetValueOrDefault() && Environment.SystemDirectory[0] == di.RootDirectory.Name[0])
-                            continue;
-
-                        if (this.scanBase.Options.AllExceptRemovable.GetValueOrDefault() && di.DriveType == DriveType.Removable)
-                            continue;
-
-                        if (this.scanBase.Options.AllExceptNetwork.GetValueOrDefault() && di.DriveType == DriveType.Network)
-                            continue;
-
-                        if (!driveSelected)
-                            driveSelected = true;
-
-                        RecurseDirectory(di.RootDirectory);
-                    }
-
-                    if (!driveSelected)
-                    {
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                        }));
-
-                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
-
-                        this.scanBase.MoveFirst();
-                        return;
-                    }
-
-                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
-                }
-                else if (this.scanBase.Options.OnlySelectedDrives.GetValueOrDefault())
-                {
-                    bool driveSelected = false;
-
-                    foreach (IncludeDrive incDrive in this.scanBase.Options.Drives)
-                    {
-                        if (incDrive.IsChecked.GetValueOrDefault())
-                        {
-                            if (!driveSelected)
-                                driveSelected = true;
-
-                            try
-                            {
-                                DriveInfo di = new DriveInfo(incDrive.Name);
-
-                                if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
-                                    continue;
-
-                                if (this.scanBase.Options.Drives.Contains(new IncludeDrive(di)))
-                                    RecurseDirectory(di.RootDirectory);
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine("Unable to scan drive ({0}). The following error occurred: {1}", incDrive.Name, ex.Message);
-                                continue;
-                            }
-                        }
-                        
-                    }
-
-                    if (!driveSelected)
-                    {
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            MessageBox.Show(App.Current.MainWindow, "No disk drives are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                        }));
-
-                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
-
-                        this.scanBase.MoveFirst();
-                        return;
-                    }
-
-                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
-                }
-                else // Only selected folders
-                {
-                    bool dirSelected = false;
-
-                    foreach (IncludeFolder dir in this.scanBase.Options.IncFolders)
-                    {
-                        if (dir.IsChecked.GetValueOrDefault())
-                        {
-                            if (!dirSelected)
-                                dirSelected = true;
-
-                            RecurseDirectory(dir.DirInfo);
-                        }
-                    }
-
-                    if (!dirSelected)
-                    {
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            MessageBox.Show(App.Current.MainWindow, "No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                        }));
-
-                        Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
-
-                        this.scanBase.MoveFirst();
-                        return;
-                    }
-
-                    Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
-                }
+                this.BuildFileList(dtStart);
 
                 if (this.FileList.Count == 0)
                 {
@@ -374,6 +226,159 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             if ((this.threadScan != null) && threadScan.IsAlive)
                 this.threadScan.Abort();
+        }
+
+        private void BuildFileList(DateTime dtStart)
+        {
+            if (this.scanBase.Options.AllDrives.GetValueOrDefault())
+            {
+                bool driveSelected = false;
+
+                foreach (DriveInfo di in DriveInfo.GetDrives())
+                {
+                    if (di.IsReady && di.TotalFreeSpace != 0 && (di.DriveType == DriveType.Fixed || di.DriveType == DriveType.Network || di.DriveType == DriveType.Removable))
+                    {
+                        if (!driveSelected)
+                            driveSelected = true;
+
+                        RecurseDirectory(di.RootDirectory);
+                    }
+
+                }
+
+                if (!driveSelected)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                    }));
+
+                    Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                    this.scanBase.MoveFirst();
+                    return;
+                }
+
+                Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+            }
+            else if (this.scanBase.Options.AllExceptDrives.GetValueOrDefault())
+            {
+                bool driveSelected = false;
+
+                foreach (DriveInfo di in DriveInfo.GetDrives())
+                {
+                    if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
+                        continue;
+
+                    if (this.scanBase.Options.AllExceptSystem.GetValueOrDefault() && Environment.SystemDirectory[0] == di.RootDirectory.Name[0])
+                        continue;
+
+                    if (this.scanBase.Options.AllExceptRemovable.GetValueOrDefault() && di.DriveType == DriveType.Removable)
+                        continue;
+
+                    if (this.scanBase.Options.AllExceptNetwork.GetValueOrDefault() && di.DriveType == DriveType.Network)
+                        continue;
+
+                    if (!driveSelected)
+                        driveSelected = true;
+
+                    RecurseDirectory(di.RootDirectory);
+                }
+
+                if (!driveSelected)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                    }));
+
+                    Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                    this.scanBase.MoveFirst();
+                    return;
+                }
+
+                Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+            }
+            else if (this.scanBase.Options.OnlySelectedDrives.GetValueOrDefault())
+            {
+                bool driveSelected = false;
+
+                foreach (IncludeDrive incDrive in this.scanBase.Options.Drives)
+                {
+                    if (incDrive.IsChecked.GetValueOrDefault())
+                    {
+                        if (!driveSelected)
+                            driveSelected = true;
+
+                        try
+                        {
+                            DriveInfo di = new DriveInfo(incDrive.Name);
+
+                            if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
+                                continue;
+
+                            if (this.scanBase.Options.Drives.Contains(new IncludeDrive(di)))
+                                RecurseDirectory(di.RootDirectory);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Unable to scan drive ({0}). The following error occurred: {1}", incDrive.Name, ex.Message);
+                            continue;
+                        }
+                    }
+
+                }
+
+                if (!driveSelected)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "No disk drives are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                    }));
+
+                    Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                    this.scanBase.MoveFirst();
+                    return;
+                }
+
+                Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+            }
+            else // Only selected folders
+            {
+                bool dirSelected = false;
+
+                foreach (IncludeFolder dir in this.scanBase.Options.IncFolders)
+                {
+                    if (dir.IsChecked.GetValueOrDefault())
+                    {
+                        if (!dirSelected)
+                            dirSelected = true;
+
+                        RecurseDirectory(dir.DirInfo);
+                    }
+                }
+
+                if (!dirSelected)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        MessageBox.Show(App.Current.MainWindow, "No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                        Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                    }));
+
+                    Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+
+                    this.scanBase.MoveFirst();
+                    return;
+                }
+
+                Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+            }
         }
 
         private void RecurseDirectory(DirectoryInfo di)
