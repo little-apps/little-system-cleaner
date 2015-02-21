@@ -76,7 +76,6 @@ namespace Little_System_Cleaner
 			this.InitializeComponent();
 
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
-            
 		}
 
         void timerCheck_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

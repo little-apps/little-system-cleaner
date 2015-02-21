@@ -24,6 +24,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -87,7 +88,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void buttonClean_Click(object sender, RoutedEventArgs e)
         {
-            long seqNum = 0;
+            long lSeqNum = 0;
 
             if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
@@ -96,11 +97,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             Report report = Report.CreateReport(Properties.Settings.Default.privacyCleanerLog);
 
-#if (!DEBUG)
             // Create system restore point
-            if (Properties.Settings.Default.optionsSysRestore)
-                SysRestore.StartRestore("Before Little Privacy Cleaner Fix", out seqNum);
-#endif
+            try
+            {
+                SysRestore.StartRestore("Before Little System Cleaner (Privacy Cleaner) Cleaning", out lSeqNum);
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             foreach (ResultNode parent in (this._tree.Model as ResultModel).Root.Children)
             {
@@ -120,10 +126,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             report.WriteLine("Successfully Cleaned Disk @ " + DateTime.Now.ToLongTimeString());
             report.DisplayLogFile(Properties.Settings.Default.privacyCleanerDisplayLog);
 
-#if (!DEBUG)
-            // End restore point
-            SysRestore.EndRestore(seqNum);
-#endif
+            if (lSeqNum != 0)
+            {
+                try
+                {
+                    SysRestore.EndRestore(lSeqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
 
             MessageBox.Show(App.Current.MainWindow, "Successfully Cleaned Disk", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
