@@ -1,5 +1,4 @@
-Little System Cleaner
-=====================
+![Little System Cleaner](https://www.little-system-cleaner.com/img/logo-black.png)
 
 Little System Cleaner is an all in one system cleaner for Windows computers. Little System Cleaner combines the following tools:
  
@@ -13,10 +12,10 @@ Little System Cleaner is an all in one system cleaner for Windows computers. Lit
 
 #### More Info ####
 
-For more information about Little System Cleaner, check out any of the following blog posts:
+For more information, take a look at the [Little System Cleaner website](https://www.little-system-cleaner.com), or, check out any of the following blog posts:
 
- * [Coming Soon: Little System Cleaner](http://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/)
- * [A New Year And A New Little Apps](https://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/)
+ * [Coming Soon: Little System Cleaner](https://www.little-apps.com/blog/2014/04/coming-soon-system-cleaner/)
+ * [A New Year And A New Little Apps](https://www.little-apps.com/blog/2015/01/new-year-new-little-apps/)
 
 ### Licensing ###
 
@@ -28,7 +27,7 @@ Little System Cleaner is currently a work in progress and therefore, it is not w
 
 #### Bugs ####
 
-If you would like to submit a bug report, please go to the [Little Apps Bug Tracker](http://bugs.little-apps.com/view_all_bug_page.php?project_id=2).
+If you would like to submit a bug report, please go to the [Little Apps Bug Tracker](https://bugs.little-apps.com/view_all_bug_page.php?project_id=2).
 
 #### Issues/Suggestions ####
 
@@ -42,7 +41,7 @@ If you have an issue or an idea for Little System Cleaner, please check out [the
 
 ### Show Your Support ###
 
-Little Apps relies on people like you to keep our software running. If you would like to show your support for Little System Cleaner, then you can [make a donation](http://www.little-apps.com/?donate) using PayPal, Payza or Bitcoins. Please note that any amount helps (even just $1).
+Little Apps relies on people like you to keep our software running. If you would like to show your support for Little System Cleaner, then you can [make a donation](https://www.little-apps.com/?donate) using PayPal, Payza or Bitcoins. Please note that any amount helps (even just $1).
 
 ### Credits ###
 
