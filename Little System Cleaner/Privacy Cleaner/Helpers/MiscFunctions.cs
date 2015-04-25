@@ -22,52 +22,67 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             IntPtr bufferPtr = IntPtr.Zero;
             IntPtr cacheEnumHandle = PInvoke.FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
 
+            PInvoke.INTERNET_CACHE_ENTRY_INFO? cacheEntry = null;
+
             switch (Marshal.GetLastWin32Error())
             {
                 // ERROR_SUCCESS
                 case 0:
-                    if (cacheEnumHandle.ToInt32() > 0)
                     {
-                        // Store entry
-                        PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry = (PInvoke.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(PInvoke.INTERNET_CACHE_ENTRY_INFO));
-                        cacheEntryList.Add(cacheEntry);
+                        if (cacheEnumHandle.ToInt32() > 0)
+                        {
+                            // Store entry
+                            if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                cacheEntryList.Add(cacheEntry.Value);
+                        }
+
+                        break;
                     }
-                    break;
+                    
 
                 // ERROR_INSUFFICIENT_BUFFER
                 case 122:
-                    // Repeat call to API with size returned by first call
-                    bufferPtr = Marshal.AllocHGlobal(structSize);
-                    cacheEnumHandle = PInvoke.FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+                    {
+                        // Repeat call to API with size returned by first call
+                        bufferPtr = Marshal.AllocHGlobal(structSize);
+                        cacheEnumHandle = PInvoke.FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
 
-                    if (cacheEnumHandle.ToInt32() > 0)
-                    {
-                        // Store entry
-                        PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry = (PInvoke.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(PInvoke.INTERNET_CACHE_ENTRY_INFO));
-                        cacheEntryList.Add(cacheEntry);
-                        break;
+                        if (cacheEnumHandle.ToInt32() > 0)
+                        {
+                            // Store entry
+                            if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                cacheEntryList.Add(cacheEntry.Value);
+
+                            break;
+                        }
+                        else
+                        {
+                            // Failed to get handle, return...
+                            Marshal.FreeHGlobal(bufferPtr);
+                            PInvoke.FindCloseUrlCache(cacheEnumHandle);
+
+                            return cacheEntryList;
+                        }
                     }
-                    else
+
+                default:
                     {
-                        // Failed to get handle, return...
                         Marshal.FreeHGlobal(bufferPtr);
                         PInvoke.FindCloseUrlCache(cacheEnumHandle);
+
                         return cacheEntryList;
                     }
-                default:
-                    Marshal.FreeHGlobal(bufferPtr);
-                    PInvoke.FindCloseUrlCache(cacheEnumHandle);
-                    return cacheEntryList;
             }
 
             do
             {
                 bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
+
                 if (PInvoke.FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
                 {
                     // Store entry
-                    PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry = (PInvoke.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(PInvoke.INTERNET_CACHE_ENTRY_INFO));
-                    cacheEntryList.Add(cacheEntry);
+                    if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                        cacheEntryList.Add(cacheEntry.Value);
                 }
                 else
                 {
@@ -75,37 +90,70 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     {
                         // ERROR_INSUFFICIENT_BUFFER
                         case 122:
-                            // Repeat call to API with size returned by first call
-                            bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
-
-                            if (PInvoke.FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
                             {
-                                // Store entry
-                                PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry = (PInvoke.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(PInvoke.INTERNET_CACHE_ENTRY_INFO));
-                                cacheEntryList.Add(cacheEntry);
-                                break;
+                                // Repeat call to API with size returned by first call
+                                bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
+
+                                if (PInvoke.FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
+                                {
+                                    // Store entry
+                                    if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                        cacheEntryList.Add(cacheEntry.Value);
+
+                                    break;
+                                }
+                                else
+                                {
+                                    Marshal.FreeHGlobal(bufferPtr);
+                                    PInvoke.FindCloseUrlCache(cacheEnumHandle);
+
+                                    return cacheEntryList;
+                                }
                             }
-                            else
+                            
+                        // ERROR_NO_MORE_ITEMS
+                        case 259:
                             {
                                 Marshal.FreeHGlobal(bufferPtr);
                                 PInvoke.FindCloseUrlCache(cacheEnumHandle);
+
                                 return cacheEntryList;
                             }
-                        // ERROR_NO_MORE_ITEMS
-                        case 259:
-                            Marshal.FreeHGlobal(bufferPtr);
-                            PInvoke.FindCloseUrlCache(cacheEnumHandle);
-                            return cacheEntryList;
+
                         default:
-                            Marshal.FreeHGlobal(bufferPtr);
-                            PInvoke.FindCloseUrlCache(cacheEnumHandle);
-                            return cacheEntryList;
+                            {
+                                Marshal.FreeHGlobal(bufferPtr);
+                                PInvoke.FindCloseUrlCache(cacheEnumHandle);
+
+                                return cacheEntryList;
+                            }
                     }
                 }
             } while (true);
 
             // Wont reach here
         }
+
+        /// <summary>
+        /// Gets INTERNET_CACHE_ENTRY_INFO from buffer
+        /// </summary>
+        /// <param name="bufferPtr">Pointer to buffer</param>
+        /// <returns>INTERNET_CACHE_ENTRY_INFO struct or null on error</returns>
+        private static Nullable<PInvoke.INTERNET_CACHE_ENTRY_INFO> GetCacheEntry(IntPtr bufferPtr)
+        {
+            Nullable<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntry = null;
+
+            try
+            {
+                cacheEntry = (PInvoke.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(PInvoke.INTERNET_CACHE_ENTRY_INFO));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return cacheEntry;
+        } 
 
         /// <summary>
         /// Checks to see if a process is a running
