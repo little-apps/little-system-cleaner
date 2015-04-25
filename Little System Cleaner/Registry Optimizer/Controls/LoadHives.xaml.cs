@@ -60,8 +60,14 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     if (strHivePath[strHivePath.Length - 1] == 0)
                         strHivePath = strHivePath.Substring(0, strHivePath.Length - 1);
 
-                    if (!string.IsNullOrEmpty(strValueName) && !string.IsNullOrEmpty(strHivePath))
-                        Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Add(new Little_System_Cleaner.Registry_Optimizer.Helpers.Hive(strValueName, strHivePath));
+                    if (!string.IsNullOrEmpty(strValueName) && !string.IsNullOrEmpty(strHivePath)) 
+                    {
+                        Little_System_Cleaner.Registry_Optimizer.Helpers.Hive h = new Little_System_Cleaner.Registry_Optimizer.Helpers.Hive(strValueName, strHivePath);
+
+                        if (h.IsValid)
+                            Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Add(h);
+                    }
+                        
                 }
             }
 

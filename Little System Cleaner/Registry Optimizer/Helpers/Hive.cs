@@ -11,17 +11,31 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
     public class Hive : IDisposable
     {
-        private readonly string strHiveName, strHivePath;
+        private readonly string strHiveName;
+
+        /// <summary>
+        /// The file location of the hive that is loaded with Windows
+        /// </summary>
+        /// <remarks>This file is locked and cannot be removed or changed</remarks>
+        private readonly string strHivePath;
 
         private volatile string strRootKey, strKeyName;
 
         private volatile string strOldHivePath;
+
+        /// <summary>
+        /// Where a backup copy of the hive is saved when RegReplaceKey is called
+        /// </summary>
         public string OldHivePath
         {
             get { return strOldHivePath; }
         }
 
         private volatile string strNewHivePath;
+
+        /// <summary>
+        /// The location of the compacted hive (created with RegSaveKey)
+        /// </summary>
         public string NewHivePath
         {
             get { return strNewHivePath; }
@@ -74,6 +88,23 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         private volatile int hKey = 0;
         private bool disposed = false;
 
+        public bool IsValid
+        {
+            get
+            {
+                if (this.HiveFileInfo == null)
+                    return false;
+
+                if (this.lOldHiveSize == 0)
+                    return false;
+
+                if (!File.Exists(this.strHivePath))
+                    return false;
+
+                return true;
+            }
+        }
+
         /// <summary>
         /// Constructor for Hive class
         /// </summary>
@@ -82,38 +113,43 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         public Hive(string HiveName, string HivePath)
         {
             this.strHiveName = HiveName;
+
             if (File.Exists(HivePath))
                 this.strHivePath = HivePath;
             else
                 this.strHivePath = HiveManager.ConvertDeviceToMSDOSName(HivePath);
-
 
             try
             {
                 this._fi = new FileInfo(this.strHivePath);
                 this.lOldHiveSize = GetFileSize(this.strHivePath);
             }
-            catch (Exception) 
-            { 
-                System.Diagnostics.Debug.WriteLine("error opening registry hive"); 
-            }
-
-            // Temporary directory must be on same partition
-            char drive = this.strHivePath[0];
-
-            try
-            {
-                this.strOldHivePath = HiveManager.GetTempHivePath(drive);
-                this.strNewHivePath = HiveManager.GetTempHivePath(drive);
-            }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 this._fi = null;
                 this.lOldHiveSize = 0;
 
-                System.Diagnostics.Debug.WriteLine("The following error occurred trying to get temporary hive path: " + ex.Message); 
+                System.Diagnostics.Debug.WriteLine("The following error occurred trying to get registry hive information: " + ex.Message); 
             }
-            
+
+            if (this.IsValid)
+            {
+                // Temporary directory must be on same partition
+                char drive = this.strHivePath[0];
+
+                try
+                {
+                    this.strOldHivePath = HiveManager.GetTempHivePath(drive);
+                    this.strNewHivePath = HiveManager.GetTempHivePath(drive);
+                }
+                catch (Exception ex)
+                {
+                    this._fi = null;
+                    this.lOldHiveSize = 0;
+
+                    System.Diagnostics.Debug.WriteLine("The following error occurred trying to get temporary hive path: " + ex.Message);
+                }
+            }
         }
 
         public void Dispose()
