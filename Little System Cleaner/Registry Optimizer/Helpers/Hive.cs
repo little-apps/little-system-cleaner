@@ -93,12 +93,27 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                 this._fi = new FileInfo(this.strHivePath);
                 this.lOldHiveSize = GetFileSize(this.strHivePath);
             }
-            catch { System.Diagnostics.Debug.WriteLine("error opening registry hive"); }
+            catch (Exception) 
+            { 
+                System.Diagnostics.Debug.WriteLine("error opening registry hive"); 
+            }
 
             // Temporary directory must be on same partition
             char drive = this.strHivePath[0];
-            this.strOldHivePath = HiveManager.GetTempHivePath(drive);
-            this.strNewHivePath = HiveManager.GetTempHivePath(drive);
+
+            try
+            {
+                this.strOldHivePath = HiveManager.GetTempHivePath(drive);
+                this.strNewHivePath = HiveManager.GetTempHivePath(drive);
+            }
+            catch (Exception ex)
+            {
+                this._fi = null;
+                this.lOldHiveSize = 0;
+
+                System.Diagnostics.Debug.WriteLine("The following error occurred trying to get temporary hive path: " + ex.Message); 
+            }
+            
         }
 
         public void Dispose()
