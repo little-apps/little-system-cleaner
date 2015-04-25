@@ -15,13 +15,13 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
         private volatile string strRootKey, strKeyName;
 
-        private volatile string strOldHivePath = HiveManager.GetTempHivePath();
+        private volatile string strOldHivePath;
         public string OldHivePath
         {
             get { return strOldHivePath; }
         }
 
-        private volatile string strNewHivePath = HiveManager.GetTempHivePath();
+        private volatile string strNewHivePath;
         public string NewHivePath
         {
             get { return strNewHivePath; }
@@ -87,12 +87,18 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             else
                 this.strHivePath = HiveManager.ConvertDeviceToMSDOSName(HivePath);
 
+
             try
             {
                 this._fi = new FileInfo(this.strHivePath);
                 this.lOldHiveSize = GetFileSize(this.strHivePath);
             }
             catch { System.Diagnostics.Debug.WriteLine("error opening registry hive"); }
+
+            // Temporary directory must be on same partition
+            char drive = this.strHivePath[0];
+            this.strOldHivePath = HiveManager.GetTempHivePath(drive);
+            this.strNewHivePath = HiveManager.GetTempHivePath(drive);
         }
 
         public void Dispose()

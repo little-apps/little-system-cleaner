@@ -33,21 +33,36 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <summary>
         /// Gets a temporary path for a registry hive
         /// </summary>
-        internal static string GetTempHivePath()
+        /// <remarks>The temporary hive path MUST be on the same drive as the hive or RegReplaceKey() will return error code 17</remarks>
+        /// <returns>Temporary hive path</returns>
+        internal static string GetTempHivePath(char drive)
         {
             try
             {
-                string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                string tempPath = Path.GetTempPath();
+                string randFilename = Path.GetRandomFileName();
+
+                string tempHivePath;
+
+                if (tempPath[0] != drive)
+                {
+                    tempPath = drive + ":\\temp\\";
+
+                    if (!Directory.Exists(tempPath))
+                        Directory.CreateDirectory(tempPath);
+                }
+
+                tempHivePath = Path.Combine(tempPath, randFilename);
 
                 // File cant exists, keep retrying until we get a file that doesnt exist
-                if (File.Exists(tempPath))
-                    return GetTempHivePath();
+                if (File.Exists(tempHivePath))
+                    return GetTempHivePath(drive);
 
-                return tempPath;
+                return tempHivePath;
             }
             catch (IOException)
             {
-                return GetTempHivePath();
+                return GetTempHivePath(drive);
             }
         }
 
