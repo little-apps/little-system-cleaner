@@ -28,40 +28,29 @@ using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
-    public class Wizard : UserControl
+    public class Wizard : WizardBase
     {
-        List<Type> arrayControls = new List<Type>();
-        int currentControl = 0;
-
-        public UserControl userControl
-        {
-            get { return (UserControl)this.Content; }
-        }
-
         internal static ObservableCollection<Hive> RegistryHives { get; set; }
 
         internal static bool IsBusy { get; set; }
 
         public bool HivesLoaded = false;
 
-        public Wizard()
+        public Wizard() : base()
         {
-            this.arrayControls.Add(typeof(LoadHives));
-            this.arrayControls.Add(typeof(Main));
-            this.arrayControls.Add(typeof(AnalyzeResults));
+            this.Controls.Add(typeof(LoadHives));
+            this.Controls.Add(typeof(Main));
+            this.Controls.Add(typeof(AnalyzeResults));
 
             IsBusy = false;
         }
 
-        public void OnLoaded()
+        public override void OnLoaded()
         {
-            if (!this.HivesLoaded)
-                this.SetCurrentControl(0);
-            else
-                this.SetCurrentControl(1);
+            this.MoveFirst();
         }
 
-        public bool OnUnloaded(bool forceExit)
+        public override bool OnUnloaded(bool forceExit)
         {
             if (!HivesLoaded)
             {
@@ -77,7 +66,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             bool exit;
 
-            if (this.userControl is AnalyzeResults)
+            if (this.CurrentControl is AnalyzeResults)
             {
                 exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
@@ -98,48 +87,13 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             return true;
         }
 
-        /// <summary>
-        /// Changes the current control
-        /// </summary>
-        /// <param name="index">Index of control in list</param>
-        private void SetCurrentControl(int index)
+
+        public override void MoveFirst(bool autoMove = true)
         {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
-                return;
-            }
-
-            if (this.userControl != null)
-                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
-
-            this.Content = Activator.CreateInstance(this.arrayControls[index], this);
-        }
-
-        /// <summary>
-        /// Moves to the next control
-        /// </summary>
-        public void MoveNext()
-        {
-            this.SetCurrentControl(++currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the previous control
-        /// </summary>
-        public void MovePrev()
-        {
-            this.SetCurrentControl(--currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the first control
-        /// </summary>
-        public void MoveFirst()
-        {
-            this.currentControl = 0;
-
-            this.SetCurrentControl(currentControl);
+            if (!this.HivesLoaded)
+                this.SetCurrentControl(0, autoMove);
+            else
+                this.SetCurrentControl(1, autoMove);
         }
     }
 }

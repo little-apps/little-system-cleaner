@@ -39,13 +39,11 @@ using System.Security;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
-    public class Wizard : UserControl
+    public class Wizard : WizardBase
     {
-        List<Type> arrayControls = new List<Type>();
         List<ScannerBase> arrayScanners = new List<ScannerBase>();
         SectionModel _model = null;
         static BadRegKeyArray _badRegKeyArray = new BadRegKeyArray();
-        int currentControl = 0;
 
         public SectionModel Model
         {
@@ -101,20 +99,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             return true;
         }
 
-        public UserControl userControl
-        {
-            get { return (UserControl)this.Content; }
-        }
-
         internal static DateTime ScanStartTime { get; set; }
 
         internal static Thread ScanThread { get; set; }
 
         public Wizard()
         {
-            this.arrayControls.Add(typeof(Start));
-            this.arrayControls.Add(typeof(Scan));
-            this.arrayControls.Add(typeof(Results));
+            this.Controls.Add(typeof(Start));
+            this.Controls.Add(typeof(Scan));
+            this.Controls.Add(typeof(Results));
 
             this.arrayScanners.Add(new ApplicationInfo());
             this.arrayScanners.Add(new ApplicationPaths());
@@ -129,22 +122,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             this.arrayScanners.Add(new StartupFiles());
         }
 
-        public void OnLoaded()
+        public override void OnLoaded()
         {
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded(bool forceExit)
+        public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.userControl is Scan)
+            if (this.CurrentControl is Scan)
             {
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
-                    (this.userControl as Scan).AbortScanThread();
+                    (this.CurrentControl as Scan).AbortScanThread();
                     Wizard.badRegKeyArray.Clear();
                     Scan.EnabledScanners.Clear();
 
@@ -156,9 +149,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 }
             }
 
-            if (this.userControl is Results)
+            if (this.CurrentControl is Results)
             {
-                if ((!forceExit && (this.userControl as Results).FixThread != null) && (this.userControl as Results).FixThread.IsAlive)
+                if ((!forceExit && (this.CurrentControl as Results).FixThread != null) && (this.CurrentControl as Results).FixThread.IsAlive)
                     return false;
 
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
@@ -166,8 +159,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (exit)
                 {
                     // Forced to exit -> abort fix thread
-                    if (((this.userControl as Results).FixThread != null) && (this.userControl as Results).FixThread.IsAlive)
-                        (this.userControl as Results).FixThread.Abort();
+                    if (((this.CurrentControl as Results).FixThread != null) && (this.CurrentControl as Results).FixThread.IsAlive)
+                        (this.CurrentControl as Results).FixThread.Abort();
 
                     Wizard.badRegKeyArray.Clear();
                     Scan.EnabledScanners.Clear();
@@ -184,51 +177,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             return true;
         }
 
-        /// <summary>
-        /// Changes the current control
-        /// </summary>
-        /// <param name="index">Index of control in list</param>
-        private void SetCurrentControl(int index)
+        public override void MoveFirst(bool autoMove = true)
         {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
-                return;
-            }
-
-            if (this.userControl != null)
-                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
-
-            this.Content = Activator.CreateInstance(this.arrayControls[index], this);
-        }
-
-        /// <summary>
-        /// Moves to the next control
-        /// </summary>
-        public void MoveNext()
-        {
-            SetCurrentControl(++currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the previous control
-        /// </summary>
-        public void MovePrev()
-        {
-            SetCurrentControl(--currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the first control
-        /// </summary>
-        public void MoveFirst()
-        {
-            currentControl = 0;
-
             badRegKeyArray.Clear();
             Scan.EnabledScanners.Clear();
 
-            SetCurrentControl(currentControl);
+            base.MoveFirst(autoMove);
         }
 
         /// <summary>
@@ -236,11 +190,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// </summary>
         public void Rescan()
         {
-            currentControl = 1;
-
             badRegKeyArray.Clear();
 
-            SetCurrentControl(currentControl);
+            base.SetCurrentControl(1);
         }
 
         internal void ParseModelChild(SectionModel model)

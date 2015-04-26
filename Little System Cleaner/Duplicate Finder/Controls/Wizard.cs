@@ -9,20 +9,13 @@ using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
-    public class Wizard : UserControl
+    public class Wizard : WizardBase
     {
-        private List<Type> arrayControls = new List<Type>();
-        private int currentControl = 0;
         private UserControl savedControl;
         private readonly UserOptions _options;
 
         private Dictionary<string, List<FileEntry>> _filesGroupedByFilename;
         private Dictionary<string, List<FileEntry>> _filesGroupedByHash;
-
-        public UserControl userControl
-        {
-            get { return (UserControl)this.Content; }
-        }
 
         public UserOptions Options
         {
@@ -54,27 +47,27 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             this._options = new UserOptions();
 
-            this.arrayControls.Add(typeof(Start));
-            this.arrayControls.Add(typeof(Scan));
-            this.arrayControls.Add(typeof(Results));
+            this.Controls.Add(typeof(Start));
+            this.Controls.Add(typeof(Scan));
+            this.Controls.Add(typeof(Results));
         }
 
-        public void OnLoaded()
+        public override void OnLoaded()
         {
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded(bool forceExit)
+        public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.userControl is Scan)
+            if (this.CurrentControl is Scan)
             {
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
-                    (this.userControl as Scan).AbortScanThread();
+                    (this.CurrentControl as Scan).AbortScanThread();
 
                     return true;
                 }
@@ -84,7 +77,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
             }
 
-            if (this.userControl is Results)
+            if (this.CurrentControl is Results)
             {
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
@@ -102,56 +95,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             return true;
         }
 
-        /// <summary>
-        /// Changes the current control
-        /// </summary>
-        /// <param name="index">Index of control in list</param>
-        private void SetCurrentControl(int index)
-        {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
-                return;
-            }
-
-            if (this.userControl != null)
-                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
-
-            this.Content = Activator.CreateInstance(this.arrayControls[index], this);
-        }
-
-        /// <summary>
-        /// Moves to the next control
-        /// </summary>
-        public void MoveNext()
-        {
-            SetCurrentControl(++currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the previous control
-        /// </summary>
-        public void MovePrev()
-        {
-            SetCurrentControl(--currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the first control
-        /// </summary>
-        public void MoveFirst()
-        {
-            currentControl = 0;
-
-            SetCurrentControl(currentControl);
-        }
-
         public void ShowFileInfo(FileEntry fileEntry)
         {
-            if (this.userControl is Details)
+            if (this.CurrentControl is Details)
                 this.HideFileInfo();
 
-            this.savedControl = this.userControl;
+            this.savedControl = this.CurrentControl;
 
             Details fileInfoCntrl = new Details(this, fileEntry);
             this.Content = fileInfoCntrl;
@@ -159,7 +108,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public void HideFileInfo()
         {
-            if (this.userControl is Results)
+            if (this.CurrentControl is Results)
                 return;
 
             if (this.savedControl == null)

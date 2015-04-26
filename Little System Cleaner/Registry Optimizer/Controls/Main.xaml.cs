@@ -95,8 +95,5 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             this.scanBase.MoveNext();
         }
 
-       
-
-        
     }
 }

@@ -32,11 +32,8 @@ using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
-    public class Wizard : UserControl
+    public class Wizard : WizardBase
     {
-        List<Type> arrayControls = new List<Type>();
-        int currentControl = 0;
-
         private static object LockObj = new object();
         internal static ScannerBase CurrentScanner;
         private static int ProblemsFound = 0;
@@ -81,34 +78,29 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private Results StoredResults { get; set; }
 
-        public UserControl userControl
-        {
-            get { return (UserControl)this.Content; }
-        }
-
         public Wizard()
         {
-            this.arrayControls.Add(typeof(Start));
-            this.arrayControls.Add(typeof(Analyze));
-            this.arrayControls.Add(typeof(Results));
+            this.Controls.Add(typeof(Start));
+            this.Controls.Add(typeof(Analyze));
+            this.Controls.Add(typeof(Results));
         }
 
-        public void OnLoaded()
+        public override void OnLoaded()
         {
             this.SetCurrentControl(0);
         }
 
-        public bool OnUnloaded(bool forceExit)
+        public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.userControl is Analyze)
+            if (this.CurrentControl is Analyze)
             {
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
-                    (this.userControl as Analyze).AbortScanThread();
+                    (this.CurrentControl as Analyze).AbortScanThread();
                     Wizard.ResultArray.Clear();
 
                     return true;
@@ -119,7 +111,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            if (this.userControl is Results)
+            if (this.CurrentControl is Results)
             {
                 exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
@@ -141,7 +133,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         public void ShowDetails(ResultNode resultNode)
         {
             // Store current control
-            this.StoredResults = this.userControl as Results;
+            this.StoredResults = this.CurrentControl as Results;
 
             Details ctrlDetails = new Details(this, resultNode);
             this.Content = ctrlDetails;
@@ -161,49 +153,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Changes the current control
-        /// </summary>
-        /// <param name="index">Index of control in list</param>
-        private void SetCurrentControl(int index)
-        {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
-                return;
-            }
-
-            if (this.userControl != null)
-                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
-
-            this.Content = Activator.CreateInstance(this.arrayControls[index], this);
-        }
-
-        /// <summary>
-        /// Moves to the next control
-        /// </summary>
-        public void MoveNext()
-        {
-            SetCurrentControl(++currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the previous control
-        /// </summary>
-        public void MovePrev()
-        {
-            SetCurrentControl(--currentControl);
-        }
-
-        /// <summary>
         /// Moves to the first control
         /// </summary>
-        public void MoveFirst()
+        public override void MoveFirst(bool autoMove = true)
         {
-            currentControl = 0;
-
+            // Clear results before going back
             Wizard.ResultArray.Clear();
 
-            SetCurrentControl(currentControl);
+            base.MoveFirst(autoMove);
         }
 
         /// <summary>

@@ -300,6 +300,7 @@
     <Compile Include="Misc\SysRestore.cs" />
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Misc\WindowWrapper.cs" />
+    <Compile Include="Misc\WizardBase.cs" />
     <Compile Include="Privacy Cleaner\Controls\Details.xaml.cs">
       <DependentUpon>Details.xaml</DependentUpon>
     </Compile>

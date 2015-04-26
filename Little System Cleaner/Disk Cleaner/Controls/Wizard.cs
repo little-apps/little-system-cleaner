@@ -30,16 +30,9 @@ using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
-    public class Wizard : UserControl
+    public class Wizard : WizardBase
     {
-        List<Type> arrayControls = new List<Type>();
         List<DriveInfo> selDrives = new List<DriveInfo>();
-        int currentControl = 0;
-
-        public UserControl userControl
-        {
-            get { return (UserControl)this.Content; }
-        }
 
         public List<DriveInfo> selectedDrives
         {
@@ -83,31 +76,31 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         internal static DateTime ScanStartTime { get; set; }
 
-        public Wizard()
+        public Wizard() : base()
         {
-            this.arrayControls.Add(typeof(Start));
-            this.arrayControls.Add(typeof(Analyze));
-            this.arrayControls.Add(typeof(Results));
+            this.Controls.Add(typeof(Start));
+            this.Controls.Add(typeof(Analyze));
+            this.Controls.Add(typeof(Results));
         }
 
-        public void OnLoaded()
+        public override void OnLoaded()
         {
-            this.SetCurrentControl(0);
+            this.MoveFirst();
         }
 
-        public bool OnUnloaded(bool forceExit)
+        public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.userControl is Analyze)
+            if (this.CurrentControl is Analyze)
             {
                 exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit) {
-                    (this.userControl as Analyze).timerUpdate.Stop();
+                    (this.CurrentControl as Analyze).timerUpdate.Stop();
 
-                    if ((this.userControl as Analyze).threadMain != null)
-                        (this.userControl as Analyze).threadMain.Abort();
+                    if ((this.CurrentControl as Analyze).threadMain != null)
+                        (this.CurrentControl as Analyze).threadMain.Abort();
 
                     Analyze.CurrentFile = "";
 
@@ -119,7 +112,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
             }
 
-            if (this.userControl is Results)
+            if (this.CurrentControl is Results)
             {
                 exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
@@ -135,51 +128,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Changes the current control
-        /// </summary>
-        /// <param name="index">Index of control in list</param>
-        private void SetCurrentControl(int index)
-        {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => SetCurrentControl(index)));
-
-                return;
-            }
-
-            if (this.userControl != null)
-                this.userControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.userControl));
-
-            this.Content = Activator.CreateInstance(this.arrayControls[index], this);
-        }
-
-        /// <summary>
-        /// Moves to the next control
-        /// </summary>
-        public void MoveNext()
-        {
-            this.SetCurrentControl(++currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the previous control
-        /// </summary>
-        public void MovePrev()
-        {
-            this.SetCurrentControl(--currentControl);
-        }
-
-        /// <summary>
-        /// Moves to the first control
-        /// </summary>
-        public void MoveFirst()
-        {
-            this.currentControl = 0;
-
-            this.SetCurrentControl(currentControl);
         }
     }
 }
