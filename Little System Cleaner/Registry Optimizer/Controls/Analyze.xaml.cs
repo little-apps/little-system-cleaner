@@ -83,7 +83,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 IncrementProgressBar(h.RegistryHive);
 
                 // Analyze Hive
-                threadCurrent = new Thread(new ThreadStart(h.AnalyzeHive));
+                threadCurrent = new Thread(new ThreadStart(() => h.AnalyzeHive(this)));
                 threadCurrent.Start();
                 threadCurrent.Join();
             }

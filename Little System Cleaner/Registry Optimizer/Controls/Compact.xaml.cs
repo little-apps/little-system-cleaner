@@ -86,20 +86,19 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             
             foreach (Hive h in Wizard.RegistryHives)
             {
-                SetStatusText(string.Format("Compacting: {0}", h.RegistryHive));
-
-                try
+                if (h.SkipCompact)
                 {
-                    threadCurrent = new Thread(new ThreadStart(h.CompactHive));
+                    SetStatusText(string.Format("Skipping: {0}", h.RegistryHive));
+                }
+                else
+                {
+                    SetStatusText(string.Format("Compacting: {0}", h.RegistryHive));
+
+                    threadCurrent = new Thread(new ThreadStart(() => h.CompactHive(this)));
                     threadCurrent.Start();
                     threadCurrent.Join();
 
                     lSpaceSaved += h.OldHiveSize - h.NewHiveSize;
-                }
-                catch (Exception ex)
-                {
-                    string message = string.Format("Unable to compact registry hive: {0}\nThe following error occurred: {1}", h.RegistryHive, ex.Message);
-                    MessageBox.Show(App.Current.MainWindow, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
                 IncrementProgressBar();

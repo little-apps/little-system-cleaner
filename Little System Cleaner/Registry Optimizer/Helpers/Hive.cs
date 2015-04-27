@@ -2,10 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
@@ -20,6 +23,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         private readonly string strHivePath;
 
         private volatile string strRootKey, strKeyName;
+
+        public bool SkipCompact
+        {
+            get;
+            private set;
+        }
 
         private volatile string strOldHivePath;
 
@@ -134,13 +143,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
             if (this.IsValid)
             {
-                // Temporary directory must be on same partition
-                char drive = this.strHivePath[0];
-
                 try
                 {
-                    this.strOldHivePath = HiveManager.GetTempHivePath(drive);
-                    this.strNewHivePath = HiveManager.GetTempHivePath(drive);
+                    this.GetTempHivePaths();
                 }
                 catch (Exception ex)
                 {
@@ -150,6 +155,19 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                     System.Diagnostics.Debug.WriteLine("The following error occurred trying to get temporary hive path: " + ex.Message);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets and sets temporary hive paths
+        /// </summary>
+        /// <see cref="HiveManager.GetTempHivePath"/>
+        private void GetTempHivePaths()
+        {
+            // Temporary directory must be on same partition
+            char drive = this.strHivePath[0];
+
+            this.strOldHivePath = HiveManager.GetTempHivePath(drive);
+            this.strNewHivePath = HiveManager.GetTempHivePath(drive);
         }
 
         public void Dispose()
@@ -192,72 +210,205 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             this.bAnaylzed = false;
         }
 
+        private void OpenHKey()
+        {
+            int nRet = 0;
+
+            if (string.IsNullOrEmpty(this.strRootKey))
+                this.strRootKey = this.strHiveName.ToLower();
+
+            if (string.IsNullOrEmpty(this.strKeyName))
+                this.strKeyName = strRootKey.Substring(strRootKey.LastIndexOf('\\') + 1);
+
+            this.hKey = 0;
+
+            // Open Handle to registry key
+            if (strRootKey.StartsWith(@"\registry\machine"))
+                nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_LOCAL_MACHINE, strKeyName, ref this.hKey);
+            if (strRootKey.StartsWith(@"\registry\user"))
+                nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_USERS, strKeyName, ref this.hKey);
+
+            if (nRet != 0)
+                throw new Win32Exception(nRet);
+
+            if (this.hKey == 0)
+                throw new Win32Exception(6); // ERROR_INVALID_HANDLE
+        }
+
         /// <summary>
         /// Uses Windows RegSaveKeyA API to rewrite registry hive
         /// </summary>
-        public void AnalyzeHive()
+        public void AnalyzeHive(Window window)
+        {
+            if (this.bAnaylzed)
+                // Reset previous analyze info
+                this.Reset();
+
+            try
+            {
+                this.CanAnalyze();
+            }
+            catch (Exception ex)
+            {
+                // Don't compact hive
+                this.SkipCompact = true;
+
+                string message = string.Format("Unable to analyze registry hive: {0}\nThe following error occurred: {1}.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.Message);
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }));
+
+                return;
+            }
+
+            try
+            {
+                this.PerformAnalyze();
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to perform registry hive analyze on {0}\nError code {1} was returned.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.NativeErrorCode);
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }));
+
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Checks if registry hive can be analyzed
+        /// </summary>
+        /// <exception cref="System.Exception">This exception will be thrown if the registry cannot be analyzed. Further information is included in the description of the exception.</exception>
+        private void CanAnalyze()
         {
             try
             {
-                if (this.bAnaylzed)
-                    throw new Exception("Hive has already been analyzed");
-
-                int nRet = 0, hkey = 0;
-
-                this.strRootKey = this.strHiveName.ToLower();
-                this.strKeyName = strRootKey.Substring(strRootKey.LastIndexOf('\\') + 1);
-
-                // Open Handle to registry key
-                if (strRootKey.StartsWith(@"\registry\machine"))
-                    nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_LOCAL_MACHINE, strKeyName, ref hkey);
-                if (strRootKey.StartsWith(@"\registry\user"))
-                    nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_USERS, strKeyName, ref hkey);
-
-                if (nRet != 0)
-                    return;
-
-                this.hKey = hkey;
-
-                // Begin Critical Region
-                Thread.BeginCriticalRegion();
-
-                // Flush hive key
-                PInvoke.RegFlushKey(hkey);
-
-                // Function will fail if file already exists
-                if (File.Exists(this.strNewHivePath))
-                    File.Delete(this.strNewHivePath);
-
-                // Use API to rewrite the registry hive
-                nRet = PInvoke.RegSaveKeyA(hkey, this.strNewHivePath, 0);
-                if (nRet != 0)
-                    throw new Win32Exception(nRet);
-
-                this.lNewHiveSize = (uint)GetFileSize(this.strNewHivePath);
-
-                if (File.Exists(this.strNewHivePath))
-                    this.bAnaylzed = true;
-
-                // End Critical Region
-                Thread.EndCriticalRegion();
+                this.OpenHKey();
             }
-            catch
+            catch (Win32Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("error analyzing registry hive");
+                this.hKey = 0;
+
+                throw new Exception(string.Format("A handle for the registry hive could not be opened (error code {0} was returned).", ex.NativeErrorCode));
+            }
+        }
+
+        /// <summary>
+        /// Analyzes the registry hive
+        /// </summary>
+        /// <exception cref="System.ComponentModel.Win32Exception">This exception will be thrown if RegSaveKey fails</exception>
+        private void PerformAnalyze()
+        {
+            int nRet = 0;
+
+            // Begin Critical Region
+            Thread.BeginCriticalRegion();
+
+            // Flush hive key
+            PInvoke.RegFlushKey(this.hKey);
+
+            // Function will fail if file already exists
+            if (File.Exists(this.strNewHivePath))
+                File.Delete(this.strNewHivePath);
+
+            // Use API to rewrite the registry hive
+            nRet = PInvoke.RegSaveKeyA(this.hKey, this.strNewHivePath, 0);
+            if (nRet != 0)
+                throw new Win32Exception(nRet);
+
+            this.lNewHiveSize = (uint)GetFileSize(this.strNewHivePath);
+
+            if (File.Exists(this.strNewHivePath))
+                this.bAnaylzed = true;
+
+            // End Critical Region
+            Thread.EndCriticalRegion();
+        }
+
+        /// <summary>
+        /// Compacts the registry hive
+        /// </summary>
+        /// <param name="window">The window must be specified in order to show messageboxes over it</param>
+        public void CompactHive(Window window)
+        {
+            try 
+            {
+                this.CanCompact();
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("Unable to compact registry hive: {0}\nThe following error occurred: {1}\n\nPress 'Enter' to continue...", this.RegistryHive, ex.Message);
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }));
+
+                return;
+            }
+
+            try
+            {
+                this.PerformCompact();
+            }
+            catch (Win32Exception ex)
+            {
+                string message = string.Format("Unable to perform registry hive compact on {0}\nError code {1} was returned.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.NativeErrorCode);
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }));
+
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Determines if registry hive can be compacted
+        /// </summary>
+        /// <exception cref="System.Exception">This exception will be thrown if the registry cannot be compacted. Further information is included in the description of the exception.</exception>
+        private void CanCompact()
+        {
+            if (!this.bAnaylzed)
+            {
+                throw new Exception("The registry hive must be analyzed before it can be compacted.");
+            }
+            else if (this.hKey == 0)
+            {
+                // Try to open handle again
+                try
+                {
+                    this.OpenHKey();
+                }
+                catch (Win32Exception ex)
+                {
+                    this.hKey = 0;
+
+                    throw new Exception(string.Format("A handle for the registry hive could not be opened (error code {0} was returned).", ex.NativeErrorCode));
+                }
+            }
+            else if (!File.Exists(this.strNewHivePath))
+            {
+                throw new Exception(string.Format("The compacted version of the registry hive ({0}) was not created or was deleted from {1}.", this.strHiveName, this.strNewHivePath));
+            }
+            else if (this.bCompacted)
+            {
+                throw new Exception(string.Format("The registry hive ({0}) has already been compacted.", this.strHiveName));
             }
         }
 
         /// <summary>
         /// Compacts the registry hive
         /// </summary>
-        public void CompactHive()
+        /// <exception cref="System.ComponentModel.Win32Exception">This exception will be thrown if RegReplaceKey fails</exception>
+        private void PerformCompact()
         {
-            if (this.bAnaylzed == false || this.hKey <= 0 || !File.Exists(this.strNewHivePath))
-                throw new Exception("You must analyze the hive before you can compact it");
-
-            if (this.bCompacted)
-                throw new Exception("The hive has already been compacted");
-
             // Begin Critical Region
             Thread.BeginCriticalRegion();
 
