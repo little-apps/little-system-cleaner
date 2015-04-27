@@ -269,6 +269,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             }
             catch (Win32Exception ex)
             {
+                // Don't compact hive
+                this.SkipCompact = true;
+
                 string message = string.Format("Unable to perform registry hive analyze on {0}\nError code {1} was returned.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.NativeErrorCode);
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
