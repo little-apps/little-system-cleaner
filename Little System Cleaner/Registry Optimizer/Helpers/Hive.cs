@@ -22,7 +22,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <remarks>This file is locked and cannot be removed or changed</remarks>
         private readonly string strHivePath;
 
-        private volatile string strRootKey, strKeyName;
+        private string strRootKey, strKeyName;
 
         public bool SkipCompact
         {
@@ -30,7 +30,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             private set;
         }
 
-        private volatile string strOldHivePath;
+        private string strOldHivePath;
 
         /// <summary>
         /// Where a backup copy of the hive is saved when RegReplaceKey is called
@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             get { return strOldHivePath; }
         }
 
-        private volatile string strNewHivePath;
+        private string strNewHivePath;
 
         /// <summary>
         /// The location of the compacted hive (created with RegSaveKey)
@@ -62,7 +62,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             get { return lOldHiveSize; }
         }
 
-        private volatile uint lNewHiveSize = 0;
+        private uint lNewHiveSize = 0;
         public long NewHiveSize
         {
             get { return lNewHiveSize; }
@@ -92,9 +92,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         public System.Windows.Controls.Image Image { get; private set; }
         #endregion
 
-        public volatile bool bAnaylzed = false, bCompacted = false;
+        public bool bAnaylzed = false, bCompacted = false;
 
-        private volatile int hKey = 0;
+        private int hKey = 0;
         private bool disposed = false;
 
         public bool IsValid
