@@ -562,6 +562,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                         return hash;
                     }
 
+                    memStream.Seek(0, SeekOrigin.Begin);
+
                     hashBytes = md5.ComputeHash(memStream);
                 }
             }
@@ -608,6 +610,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                         return hash;
                     }
+
+                    memStream.Seek(0, SeekOrigin.Begin);
                     
                     hashBytes = sha1.ComputeHash(memStream);
                 }
@@ -657,6 +661,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                         return hash;
                     }
 
+                    memStream.Seek(0, SeekOrigin.Begin);
+
                     hashBytes = sha256.ComputeHash(memStream);
                 }
             }
@@ -703,6 +709,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                         return hash;
                     }
+
+                    memStream.Seek(0, SeekOrigin.Begin);
 
                     hashBytes = sha512.ComputeHash(memStream);
                 }
