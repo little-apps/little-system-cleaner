@@ -1088,10 +1088,10 @@ namespace Little_System_Cleaner.Misc
                     {
                         int n = asmLoaded.Version.CompareTo(ver);
 
-                        if (!versionCanBeGreater && n != 0)
+                        if (versionCanBeGreater && n > 0)
                             continue;
-                        else if (versionCanBeGreater && n < 0)
-                            continue;
+                        else if (!versionCanBeGreater && n != 0)
+                            continue; 
                     }
 
                     byte[] asmPublicKeyToken = asmLoaded.GetPublicKeyToken();
