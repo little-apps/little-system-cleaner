@@ -39,9 +39,21 @@ If you have an issue or an idea for Little System Cleaner, please check out [the
 
  * First public release made available 
 
+####Version 0.2#####
+
+ * Improved performance of computing hashes for duplicate finder
+ * Fixed bugs related to registry optimizer
+ * Improved error and exception handling for registry optimizer
+ * Wizard classes all use a base class
+ * Added missing System.Data.SQLite DLL files (for privacy cleaner)
+ * Added ability to determine if running Windows 10
+ * Added checks for needed assembly files
+ * Addressed GDI+ error when displaying registry cleaner results
+ * A few other minor bugs were fixed
+
 ### Show Your Support ###
 
-Little Apps relies on people like you to keep our software running. If you would like to show your support for Little System Cleaner, then you can [make a donation](https://www.little-apps.com/?donate) using PayPal, Payza or Bitcoins. Please note that any amount helps (even just $1).
+Little Apps relies on people like you to keep our software running. If you would like to show your support for Little System Cleaner, then you can [make a donation](https://www.little-apps.com/?donate) using PayPal, Payza or credit card (via Stripe). Please note that any amount helps (even just $1).
 
 ### Credits ###
 
@@ -56,11 +68,6 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  
 ### To do ###
 
- * ~~Implement [Little Software Stats](http://www.little-software-stats.com)~~
- * ~~Replace updater with [AutoUpdater](http://autoupdaterdotnet.codeplex.com) (modified for WPF)~~
- * Correct layout issues
- * ~~Fix main window preview not showing because of null exception~~
- * ~~Update icons~~
- * Fix button sizes
  * Fix bugs related to Little Registry Cleaner ([listed here](http://bugs.little-apps.com/view_all_bug_page.php))
- * ~~Allow non-existent files/folders to be added to registry cleaner ignore list~~
+ * Add cancel buttons to all scan functions
+ * Add ability to save search settings
