@@ -784,7 +784,9 @@
   <ItemGroup>
     <None Include="Resources\little system cleaner.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\arrow_right.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\duplicate finder\icon.png" />
   </ItemGroup>

@@ -97,12 +97,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit) {
-                    (this.CurrentControl as Analyze).timerUpdate.Stop();
-
-                    if ((this.CurrentControl as Analyze).threadMain != null)
-                        (this.CurrentControl as Analyze).threadMain.Abort();
-
-                    Analyze.CurrentFile = "";
+                    (this.CurrentControl as Analyze).CancelAnalyze();
 
                     return true;
                 }

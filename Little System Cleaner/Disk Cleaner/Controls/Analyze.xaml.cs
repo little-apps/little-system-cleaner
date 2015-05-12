@@ -120,15 +120,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 if (Wizard.fileList.Count > 0)
                 {
-                    // Set last scan errors found
-                    Properties.Settings.Default.lastScanErrors = Wizard.fileList.Count;
-
-                    this.scanBase.MoveNext();
+                    this.buttonContinue.IsEnabled = true;
                 }
                 else
                 {
                     this.msgBox("No problem files were detected");
-                    this.scanBase.MovePrev();
+                    
                 }
             }
             catch (ThreadAbortException)
@@ -436,6 +433,37 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Cancels timer and thread. Also sets current file to empty string.
+        /// </summary>
+        public void CancelAnalyze()
+        {
+            this.timerUpdate.Stop();
+
+            if (this.threadMain != null)
+                this.threadMain.Abort();
+
+            Analyze.CurrentFile = "";
+        }
+
+        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                this.CancelAnalyze();
+                this.scanBase.MovePrev();
+            }
+            
+        }
+
+        private void buttonContinue_Click(object sender, RoutedEventArgs e)
+        {
+            // Set last scan errors found
+            Properties.Settings.Default.lastScanErrors = Wizard.fileList.Count;
+
+            this.scanBase.MoveNext();
         }
     }
 }
