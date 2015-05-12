@@ -338,6 +338,11 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             CultureInfo ci = Thread.CurrentThread.CurrentUICulture;
 
             updateForm.ShowDialog();
+
+            // Focus window (so it's not hidden behind main window)
+            updateForm.Topmost = true;
+            updateForm.Topmost = false;
+            updateForm.Focus();
         }
 
         private static Attribute GetAttribute(Assembly assembly, Type attributeType)
