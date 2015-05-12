@@ -145,24 +145,44 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             RegistryLocation = !string.IsNullOrEmpty(appCompany) ? string.Format(@"Software\{0}\{1}\AutoUpdater", appCompany, AppTitle) : string.Format(@"Software\{0}\AutoUpdater", AppTitle);
 
-            RegistryKey updateKey = Registry.CurrentUser.OpenSubKey(RegistryLocation);
+            RegistryKey updateKey = null;
+            object skip = null;
+            object applicationVersion = null;
+            object remindLaterTime = null;
 
-            if (updateKey != null && ForceCheck == false)
+            try
             {
-                object remindLaterTime = updateKey.GetValue("remindlater");
+               updateKey = Registry.CurrentUser.OpenSubKey(RegistryLocation);
 
-                if (remindLaterTime != null)
+                if (updateKey != null)
                 {
-                    DateTime remindLater = Convert.ToDateTime(remindLaterTime.ToString(), CultureInfo.CreateSpecificCulture("en-US"));
+                    skip = updateKey.GetValue("skip");
+                    applicationVersion = updateKey.GetValue("version");
+                    remindLaterTime = updateKey.GetValue("remindlater");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following exception occurred trying to retrieve update settings: " + ex.Message);
+            }
+            finally
+            {
+                if (updateKey != null)
+                    updateKey.Close();
+            }
+            
 
-                    int compareResult = DateTime.Compare(DateTime.Now, remindLater);
+            if (ForceCheck == false && remindLaterTime != null)
+            {
+                DateTime remindLater = Convert.ToDateTime(remindLaterTime.ToString(), CultureInfo.CreateSpecificCulture("en-US"));
 
-                    if (compareResult < 0)
-                    {
-                        var updateForm = new Update(true);
-                        updateForm.SetTimer(remindLater);
-                        return;
-                    }
+                int compareResult = DateTime.Compare(DateTime.Now, remindLater);
+
+                if (compareResult < 0)
+                {
+                    var updateForm = new Update(true);
+                    updateForm.SetTimer(remindLater);
+                    return;
                 }
             }
 
@@ -199,36 +219,47 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             UpdateXML updateXml = new UpdateXML();
 
-            using (Stream appCastStream = webResponse.GetResponseStream())
+            Stream appCastStream = null;
+            XmlTextReader reader = null;
+
+            try
             {
+                appCastStream = webResponse.GetResponseStream();
+
                 if (appCastStream == null)
-                {
-                    Debug.WriteLine("Response stream from update server was null.");
-                    return;
-                }
+                    throw new Exception("Response stream from update server was null.");
 
                 XmlSerializer serializer = new XmlSerializer(typeof(UpdateXML));
 
-                try
-                {
-                    using (XmlTextReader reader = new XmlTextReader(appCastStream))
-                    {
-                        if (serializer.CanDeserialize(reader))
-                        {
-                            updateXml = (UpdateXML)serializer.Deserialize(reader);
-                        }
-                        else
-                        {
-                            throw new Exception("Update file is in the wrong format.");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("The following error occurred trying to check for updates: {0}", new object[] { ex.Message });
+                reader = new XmlTextReader(appCastStream);
 
-                    return;
-                }
+                if (reader == null)
+                    throw new NullReferenceException("XmlTextReader is null");
+                
+                if (serializer.CanDeserialize(reader))
+                    updateXml = (UpdateXML)serializer.Deserialize(reader);
+                else
+                    throw new Exception("Update file is in the wrong format.");
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("The following error occurred trying to read update file: {0}", ex.Message);
+
+                Debug.WriteLine(message);
+                MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+
+                return;
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+
+                if (appCastStream != null)
+                    appCastStream.Close();
+
+                if (webResponse != null)
+                    webResponse.Close();
             }
 
             foreach (UpdateXML.Item item in updateXml.Items)
@@ -251,29 +282,43 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             
             if (CurrentVersion != null && CurrentVersion > InstalledVersion)
             {
-                if (updateKey != null)
+                if (skip != null && applicationVersion != null)
                 {
-                    object skip = updateKey.GetValue("skip");
-                    object applicationVersion = updateKey.GetValue("version");
+                    string skipValue = skip.ToString();
+                    var skipVersion = new Version(applicationVersion.ToString());
 
-                    if (skip != null && applicationVersion != null)
+                    if (skipValue.Equals("1") && CurrentVersion <= skipVersion)
+                        return;
+
+                    if (CurrentVersion > skipVersion)
                     {
-                        string skipValue = skip.ToString();
-                        var skipVersion = new Version(applicationVersion.ToString());
-                        if (skipValue.Equals("1") && CurrentVersion <= skipVersion)
-                            return;
-                        if (CurrentVersion > skipVersion)
+                        RegistryKey updateKeyWrite = null;
+
+                        try 
                         {
-                            RegistryKey updateKeyWrite = Registry.CurrentUser.CreateSubKey(RegistryLocation);
+                            updateKeyWrite = Registry.CurrentUser.CreateSubKey(RegistryLocation);
+
                             if (updateKeyWrite != null)
                             {
                                 updateKeyWrite.SetValue("version", CurrentVersion.ToString());
                                 updateKeyWrite.SetValue("skip", 0);
                             }
                         }
-                    }
+                        catch (Exception ex)
+                        {
+                            string message = "The following error occurred trying to save update update settings: " + ex.Message;
 
-                    updateKey.Close();
+                            Debug.WriteLine(message);
+                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                        }
+                        finally
+                        {
+                            if (updateKeyWrite != null)
+                                updateKeyWrite.Close();
+                        }
+
+                            
+                    }
                 }
 
                 var thread = new Thread(ShowUI);
