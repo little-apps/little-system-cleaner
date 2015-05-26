@@ -439,21 +439,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 if (this._fileInfo != null)
                     fileStream = this._fileInfo.OpenRead();
-                else
+                else if (!string.IsNullOrEmpty(this._filePath))
                     fileStream = File.OpenRead(this._filePath);
+                else
+                    fileStream = null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("An error occurred ({0}) trying to open a FileStream for a file ({1})", ex.Message, this._filePath);
             }
 
-            if (fileStream == null)
-            {
-                fileStream.Close();
-                return null;
-            }
-
-            fileStream.Seek(0, SeekOrigin.Begin);
+            if (fileStream != null)
+                fileStream.Seek(0, SeekOrigin.Begin);
 
             return fileStream;
         }
