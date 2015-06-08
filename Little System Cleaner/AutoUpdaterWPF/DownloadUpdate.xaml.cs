@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Cache;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -115,7 +116,13 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             catch (WebException ex)
             {
                 string message = "Unable to download file.\n" + ex.Message;
-                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Action showMsgBox = new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error));
+
+                if (Thread.CurrentThread != App.Current.Dispatcher.Thread)
+                    App.Current.Dispatcher.Invoke(showMsgBox);
+                else
+                    showMsgBox();
 
                 return string.Empty;
             }
