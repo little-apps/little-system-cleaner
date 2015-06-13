@@ -404,7 +404,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                     MessageBox.Show(App.Current.MainWindow, "Successfully updated exclude entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    UpdateSettings();
+                    this.UpdateSettings();
                     Utils.AutoResizeColumns(this.listView1);
                 }
             }
@@ -418,7 +418,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 {
                     this.ExcludeArray.Remove(this.listView1.SelectedItem as ExcludeItem);
 
-                    UpdateSettings();
+                    this.UpdateSettings();
                     Utils.AutoResizeColumns(this.listView1);
                 }
             }
@@ -426,9 +426,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)
         {
-            // Update settings before scanning
-            this.UpdateSettings();
-
             this.scanBase.Model = this._tree.Model as SectionModel;
 
             if (Scan.EnabledScanners.Count == 0)
@@ -449,6 +446,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void Option_Click(object sender, RoutedEventArgs e)
         {
+            this.UpdateSettings();
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Update settings before unloading
             this.UpdateSettings();
         }
 
