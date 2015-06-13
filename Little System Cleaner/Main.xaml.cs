@@ -44,10 +44,19 @@ namespace Little_System_Cleaner
             get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressState; }
             set 
             {
-                TaskbarItemInfo taskBarItemInfo = (App.Current.MainWindow as Main).taskBarItemInfo;
+                if (App.Current != null)
+                {
+                    Main currentWindow = App.Current.MainWindow as Main;
 
-                if (taskBarItemInfo != null)
-                    taskBarItemInfo.ProgressState = value; 
+                    if (currentWindow != null)
+                    {
+                        TaskbarItemInfo taskBarItemInfo = currentWindow.taskBarItemInfo;
+
+                        if (taskBarItemInfo != null)
+                            taskBarItemInfo.ProgressState = value;
+                    }
+                }
+                
             }
         }
 
