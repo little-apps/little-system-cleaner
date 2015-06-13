@@ -431,6 +431,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             this.scanBase.Model = this._tree.Model as SectionModel;
 
+            if (Scan.EnabledScanners.Count == 0)
+            {
+                MessageBox.Show(App.Current.MainWindow, "At least one section must be selected in order for the Windows Registry to be scanned.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+
             this.scanBase.MoveNext();
         }
 
