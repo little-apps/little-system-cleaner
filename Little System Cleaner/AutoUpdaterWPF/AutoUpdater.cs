@@ -328,7 +328,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             else if (ForceCheck == true)
             {
-                MessageBox.Show(App.Current.MainWindow, Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+                MainDispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information)));
+
             }
         }
 
