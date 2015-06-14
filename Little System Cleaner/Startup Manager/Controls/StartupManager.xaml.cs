@@ -85,9 +85,9 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedItem == null)
+            if (this._tree.SelectedNode == null)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -111,171 +111,177 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNodes.Count > 0)
+            if (this._tree.SelectedNode == null)
             {
-                StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-                if (node.IsLeaf)
+            StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+
+            if (node.IsLeaf)
+            {
+                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove the selected entry from startup?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove the selected entry from startup?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    bool bFailed = false;
+                    string sectionName = (node.Parent as StartupEntry).SectionName;
+
+                    Main.Watcher.Event("Startup Manager", "Delete Single Entry");
+
+                    if (Directory.Exists(sectionName))
                     {
-                        bool bFailed = false;
-                        string sectionName = (node.Parent as StartupEntry).SectionName;
+                        // Startup folder
+                        string strPath = Path.Combine(sectionName, node.SectionName);
 
-                        Main.Watcher.Event("Startup Manager", "Delete Single Entry");
-
-                        if (Directory.Exists(sectionName))
+                        try
                         {
-                            // Startup folder
-                            string strPath = Path.Combine(sectionName, node.SectionName);
-
-                            try
-                            {
-                                if (File.Exists(strPath))
-                                    File.Delete(strPath);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                                bFailed = true;
-                            }
+                            if (File.Exists(strPath))
+                                File.Delete(strPath);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            // Registry key
-                            string strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
-                            string strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
-                            RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey, false);
-
-                            try
-                            {
-                                if (rk != null)
-                                    rk.DeleteValue(node.SectionName);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                                bFailed = true;
-                            }
-
-                            rk.Close();
+                            MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            bFailed = true;
                         }
-
-                        if (!bFailed)
-                            MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
                     }
-                }
-                else
-                {
-                    if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove these entries from startup?\nNOTE: This will remove all the entries in the selected startup area", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    else
                     {
-                        bool bFailed = false;
+                        // Registry key
+                        string strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
+                        string strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
+                        RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey, false);
 
-                        // Registry key or folder
-                        string sectionName = node.SectionName;
-
-                        Main.Watcher.Event("Startup Manager", "Delete Multiple Entries");
-
-                        if (Directory.Exists(sectionName))
+                        try
                         {
+                            if (rk != null)
+                                rk.DeleteValue(node.SectionName);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            bFailed = true;
+                        }
 
-                            try
+                        rk.Close();
+                    }
+
+                    if (!bFailed)
+                        MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                }
+            }
+            else
+            {
+                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove these entries from startup?\nNOTE: This will remove all the entries in the selected startup area", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    bool bFailed = false;
+
+                    // Registry key or folder
+                    string sectionName = node.SectionName;
+
+                    Main.Watcher.Event("Startup Manager", "Delete Multiple Entries");
+
+                    if (Directory.Exists(sectionName))
+                    {
+
+                        try
+                        {
+                            if (Directory.Exists(sectionName))
+                                Directory.Delete(sectionName);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            bFailed = true;
+                        }
+                    }
+                    else
+                    {
+                        // Registry key
+                        string strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
+                        string strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
+                        using (RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey, false))
+                        {
+                            if (rk == null)
                             {
-                                if (Directory.Exists(sectionName))
-                                    Directory.Delete(sectionName);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                                string message = string.Format("Unable to open registry key ({0}) to delete all entries.", sectionName);
+                                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                                 bFailed = true;
                             }
-                        }
-                        else
-                        {
-                            // Registry key
-                            string strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
-                            string strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
-                            using (RegistryKey rk = Utils.RegOpenKey(strMainKey, strSubKey, false))
+                            else
                             {
-                                if (rk == null)
+                                try
                                 {
-                                    string message = string.Format("Unable to open registry key ({0}) to delete all entries.", sectionName);
-                                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                                    string[] valueNames = rk.GetValueNames();
+
+                                    // Clear all values
+                                    foreach (string valueName in valueNames)
+                                    {
+                                        rk.DeleteValue(valueName, false);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                                     bFailed = true;
                                 }
-                                else
-                                {
-                                    try
-                                    {
-                                        string[] valueNames = rk.GetValueNames();
-
-                                        // Clear all values
-                                        foreach (string valueName in valueNames)
-                                        {
-                                            rk.DeleteValue(valueName, false);
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                                        bFailed = true;
-                                    }
-                                }
                             }
                         }
-
-                        if (!bFailed)
-                            MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entries", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
                     }
-                }
 
-                LoadStartupFiles();
+                    if (!bFailed)
+                        MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entries", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                }
             }
+
+            LoadStartupFiles();
             
         }
 
         private void buttonView_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNode != null)
+            if (this._tree.SelectedNode == null)
             {
-                StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-                if (!node.IsLeaf)
-                    return;
+            StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
 
-                Main.Watcher.Event("Startup Manager", "View");
+            if (!node.IsLeaf)
+                return;
 
-                if (node.RegKey == null)
+            Main.Watcher.Event("Startup Manager", "View");
+
+            if (node.RegKey == null)
+            {
+                // Folder
+
+                try
                 {
-                    // Folder
-
-                    try
-                    {
-                        Process.Start(node.Parent.SectionName);
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = string.Format("Unable to open startup folder.\nThe following error occurred: {0}", ex.Message);
-
-                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    Process.Start(node.Parent.SectionName);
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Registry key
+                    string message = string.Format("Unable to open startup folder.\nThe following error occurred: {0}", ex.Message);
 
-                    try
-                    {
-                        RegEditGo.GoTo(node.RegKey.Name, node.SectionName);
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = string.Format("Unable to open registry key in RegEdit.\nThe following error occurred: {0}", ex.Message);
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                // Registry key
 
-                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                try
+                {
+                    RegEditGo.GoTo(node.RegKey.Name, node.SectionName);
+                }
+                catch (Exception ex)
+                {
+                    string message = string.Format("Unable to open registry key in RegEdit.\nThe following error occurred: {0}", ex.Message);
+
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
@@ -283,36 +289,38 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonRun_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNode != null)
+            if (this._tree.SelectedNode == null)
             {
-                StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-                if (!node.IsLeaf)
-                    return;
+            StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
 
-                if (MessageBox.Show("Are you sure you want to run this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (!node.IsLeaf)
+                return;
+
+            if (MessageBox.Show("Are you sure you want to run this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                Main.Watcher.Event("Startup Manager", "Run");
+
+                try
                 {
-                    Main.Watcher.Event("Startup Manager", "Run");
+                    Process.Start(node.Path, node.Args);
 
-                    try
-                    {
-                        Process.Start(node.Path, node.Args);
-
-                        MessageBox.Show(App.Current.MainWindow, "Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    catch (Exception ex)
-                    {
-                        string message;
-
-                        if (ex is FileNotFoundException)
-                            message = "The file (" + (ex as FileNotFoundException).FileName + ") could not be found. This could mean the startup entry is erroneous.";
-                        else
-                            message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
-
-                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    MessageBox.Show(App.Current.MainWindow, "Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                    
+                catch (Exception ex)
+                {
+                    string message;
+
+                    if (ex is FileNotFoundException)
+                        message = "The file (" + (ex as FileNotFoundException).FileName + ") could not be found. This could mean the startup entry is erroneous.";
+                    else
+                        message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
+
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }   
 	}
