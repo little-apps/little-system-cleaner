@@ -304,16 +304,26 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             {
                 Main.Watcher.Event("Startup Manager", "Run");
 
+                string message;
+
                 try
                 {
-                    Process.Start(node.Path, node.Args);
+                    Process proc = Process.Start(node.Path, node.Args);
 
-                    MessageBox.Show(App.Current.MainWindow, "Successfully started program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Wait 1 sec
+                    System.Threading.Thread.Sleep(1000);
+
+                    if (proc.HasExited)
+                        message = string.Format("The program was started with ID {0} but then exited with exit code {1}", proc.Id, proc.ExitCode);
+                    else if (proc.MainWindowHandle == IntPtr.Zero)
+                        message = string.Format("The program was started with ID {0} but it does not appear to have a graphical interface", proc.Id);
+                    else
+                        message = string.Format("Successfully started program with ID {0}", proc.Id);
+
+                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    string message;
-
                     if (ex is FileNotFoundException)
                         message = "The file (" + (ex as FileNotFoundException).FileName + ") could not be found. This could mean the startup entry is erroneous.";
                     else
