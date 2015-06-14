@@ -242,40 +242,46 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void buttonRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewProgs.SelectedItems.Count > 0)
+            if (this.listViewProgs.SelectedItems.Count == 0)
             {
-                ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
-
-                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    Main.Watcher.Event("Uninstall Manager", "Remove from registry");
-                    progInfo.RemoveFromRegistry();
-                }
-
-                PopulateListView();
-
-                // Manually sort listview
-                Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
+
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                Main.Watcher.Event("Uninstall Manager", "Remove from registry");
+                progInfo.RemoveFromRegistry();
+            }
+
+            PopulateListView();
+
+            // Manually sort listview
+            Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewProgs.SelectedItems.Count > 0)
+            if (this.listViewProgs.SelectedItems.Count == 0)
             {
-                ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
-
-                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    Main.Watcher.Event("Uninstall Manager", "Uninstall");
-                    progInfo.Uninstall();
-                }
-                    
-                PopulateListView();
-
-                // Manually sort listview
-                Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
+
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                Main.Watcher.Event("Uninstall Manager", "Uninstall");
+                progInfo.Uninstall();
+            }
+                    
+            PopulateListView();
+
+            // Manually sort listview
+            Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
