@@ -372,7 +372,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearFormData()
         {
-            if (System.Windows.Forms.MessageBox.Show("This will delete your saved form data and passwords. Continue?", Utils.ProductName, System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK)
+            MessageBoxResult msgBoxResult;
+            Func<MessageBoxResult> askMsgBox = new Func<MessageBoxResult>(() => MessageBox.Show(App.Current.MainWindow, "This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question));
+
+            if (Thread.CurrentThread != App.Current.Dispatcher.Thread)
+                msgBoxResult = (MessageBoxResult)App.Current.Dispatcher.Invoke(askMsgBox);
+            else
+                msgBoxResult = askMsgBox();
+
+            if (msgBoxResult == MessageBoxResult.OK)
             {
                 Process proc;
 
