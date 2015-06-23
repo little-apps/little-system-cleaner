@@ -36,6 +36,173 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
         List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
 
+        #region Internet Explorer Enums
+        
+
+        /// <summary>
+        /// Flag on the dwFlags parameter of the STATURL structure, used by the SetFilter method.
+        /// </summary>
+        internal enum STATURLFLAGS : uint
+        {
+            /// <summary>
+            /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is in the cache.
+            /// </summary>
+            STATURLFLAG_ISCACHED = 0x00000001,
+            /// <summary>
+            /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is a top-level item.
+            /// </summary>
+            STATURLFLAG_ISTOPLEVEL = 0x00000002,
+        }
+
+        /// <summary>
+        /// Used bu the AddHistoryEntry method.
+        /// </summary>
+        internal enum ADDURL_FLAG : uint
+        {
+            /// <summary>
+            /// Write to both the visited links and the dated containers. 
+            /// </summary>
+            ADDURL_ADDTOHISTORYANDCACHE = 0,
+            /// <summary>
+            /// Write to only the visited links container.
+            /// </summary>
+            ADDURL_ADDTOCACHE = 1
+        }
+
+        /// <summary>
+        /// Used by QueryUrl method
+        /// </summary>
+        internal enum STATURL_QUERYFLAGS : uint
+        {
+            /// <summary>
+            /// The specified URL is in the content cache.
+            /// </summary>
+            STATURL_QUERYFLAG_ISCACHED = 0x00010000,
+            /// <summary>
+            /// Space for the URL is not allocated when querying for STATURL.
+            /// </summary>
+            STATURL_QUERYFLAG_NOURL = 0x00020000,
+            /// <summary>
+            /// Space for the Web page's title is not allocated when querying for STATURL.
+            /// </summary>
+            STATURL_QUERYFLAG_NOTITLE = 0x00040000,
+            /// <summary>
+            /// //The item is a top-level item.
+            /// </summary>
+            STATURL_QUERYFLAG_TOPLEVEL = 0x00080000,
+
+        }
+
+        #endregion
+        #region Internet Explorer Structures
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct UUID
+        {
+            public int Data1;
+            public short Data2;
+            public short Data3;
+            public byte[] Data4;
+        }
+
+        /// <summary>
+        /// The structure that contains statistics about a URL. 
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct STATURL
+        {
+            /// <summary>
+            /// Struct size
+            /// </summary>
+            public int cbSize;
+            /// <summary>
+            /// URL
+            /// </summary>                                                                   
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pwcsUrl;
+            /// <summary>
+            /// Page title
+            /// </summary>
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pwcsTitle;
+            /// <summary>
+            /// Last visited date (UTC)
+            /// </summary>
+            public FILETIME ftLastVisited;
+            /// <summary>
+            /// Last updated date (UTC)
+            /// </summary>
+            public FILETIME ftLastUpdated;
+            /// <summary>
+            /// The expiry date of the Web page's content (UTC)
+            /// </summary>
+            public FILETIME ftExpires;
+            /// <summary>
+            /// Flags. STATURLFLAGS Enumaration.
+            /// </summary>
+            public STATURLFLAGS dwFlags;
+
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public string URL
+            {
+                get { return pwcsUrl; }
+            }
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public string Title
+            {
+                get { return pwcsTitle; }
+            }
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime LastVisited
+            {
+                get { return DateTime.MinValue; }
+            }
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime LastUpdated
+            {
+                get { return DateTime.MinValue; }
+            }
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime Expires
+            {
+                get { return DateTime.MinValue; }
+            }
+
+        }
+        #endregion
+        #region Internet Explorer Interfaces
+        //UrlHistory class
+        [ComImport]
+        [Guid("3C374A40-BAE4-11CF-BF7D-00AA006946EE")]
+        internal class UrlHistoryClass
+        {
+        }
+
+        [ComImport]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
+        internal interface IUrlHistoryStg2
+        {
+            void AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
+            void DeleteUrl(string pocsUrl, int dwFlags);
+            void QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
+            void BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut);
+            object EnumUrls { [return: MarshalAs(UnmanagedType.IUnknown)] get; }
+
+            void AddUrlAndNotify(string pocsUrl, string pocsTitle, int dwFlags, int fWriteHistory, object poctNotify, object punkISFolder);
+            void ClearHistory();
+        }
+        #endregion
+
         public InternetExplorer() 
         {
             Name = "Internet Explorer";
@@ -107,8 +274,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearHistory()
         {
-            PInvoke.UrlHistoryClass url = new PInvoke.UrlHistoryClass();
-            PInvoke.IUrlHistoryStg2 obj = (PInvoke.IUrlHistoryStg2)url;
+            UrlHistoryClass url = new UrlHistoryClass();
+            IUrlHistoryStg2 obj = (IUrlHistoryStg2)url;
 
             obj.ClearHistory();
         }
