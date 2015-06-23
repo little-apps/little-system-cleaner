@@ -28,6 +28,8 @@ using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Misc;
+using System.Windows;
+using System.Threading;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -223,14 +225,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
         internal interface IUrlHistoryStg2
         {
-            void AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
-            void DeleteUrl(string pocsUrl, int dwFlags);
-            void QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
-            void BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut);
-            object EnumUrls { [return: MarshalAs(UnmanagedType.IUnknown)] get; }
-
-            void AddUrlAndNotify(string pocsUrl, string pocsTitle, int dwFlags, int fWriteHistory, object poctNotify, object punkISFolder);
-            void ClearHistory();
+            UInt32 AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
+            UInt32 DeleteUrl(string pocsUrl, int dwFlags);
+            UInt32 QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
+            UInt32 BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut);
+            UInt32 EnumUrls([Out] IntPtr ppEnum);
+            [PreserveSig]
+            UInt32 AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory, IntPtr IOleCommandTarget, IntPtr punkISFolder);
+            UInt32 ClearHistory();
         }
         #endregion
         #region Internet Explorer Functions
@@ -312,10 +314,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearHistory()
         {
-            UrlHistoryClass url = new UrlHistoryClass();
-            IUrlHistoryStg2 obj = (IUrlHistoryStg2)url;
+            try
+            {
+                UrlHistoryClass url = new UrlHistoryClass();
+                IUrlHistoryStg2 obj = (IUrlHistoryStg2)url;
 
-            obj.ClearHistory();
+                obj.ClearHistory();
+            }
+            catch (Exception ex)
+            {
+                Action showMsgBox = new Action(() => MessageBox.Show(App.Current.MainWindow, "An error occurred trying to clear Internet Explorer history. The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error));
+
+                if (Thread.CurrentThread != App.Current.Dispatcher.Thread)
+                    App.Current.Dispatcher.Invoke(showMsgBox);
+                else
+                    showMsgBox();
+            }
+            
         }
 
         private void ScanCookies()
