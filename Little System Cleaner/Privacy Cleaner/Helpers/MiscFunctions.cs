@@ -1,4 +1,5 @@
 ﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,37 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
     internal static class MiscFunctions
     {
-        internal static List<PInvoke.INTERNET_CACHE_ENTRY_INFO> FindUrlCacheEntries(string urlPattern)
+        #region Functions
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindFirstUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
+        internal static extern IntPtr FindFirstUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlSearchPattern, IntPtr lpFirstCacheEntryInfo, ref int lpdwFirstCacheEntryInfoBufferSize);
+
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindNextUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool FindNextUrlCacheEntry(IntPtr hFind, IntPtr lpNextCacheEntryInfo, ref int lpdwNextCacheEntryInfoBufferSize);
+
+        [DllImport("wininet.dll", SetLastError = true)]
+        internal static extern long FindCloseUrlCache(IntPtr hEnumHandle);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        internal static extern uint GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer, uint nSize, string lpFileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        internal static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpReturnedString, uint nSize, string lpFileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
+        #endregion
+
+        internal static List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> FindUrlCacheEntries(string urlPattern)
         {
-            List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntryList = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
+            List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> cacheEntryList = new List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO>();
 
             int structSize = 0;
 
             IntPtr bufferPtr = IntPtr.Zero;
-            IntPtr cacheEnumHandle = PInvoke.FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+            IntPtr cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
 
-            PInvoke.INTERNET_CACHE_ENTRY_INFO? cacheEntry = null;
+            InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry = null;
 
             switch (Marshal.GetLastWin32Error())
             {
@@ -45,7 +67,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     {
                         // Repeat call to API with size returned by first call
                         bufferPtr = Marshal.AllocHGlobal(structSize);
-                        cacheEnumHandle = PInvoke.FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+                        cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
 
                         if (cacheEnumHandle.ToInt32() > 0)
                         {
@@ -59,7 +81,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         {
                             // Failed to get handle, return...
                             Marshal.FreeHGlobal(bufferPtr);
-                            PInvoke.FindCloseUrlCache(cacheEnumHandle);
+                            FindCloseUrlCache(cacheEnumHandle);
 
                             return cacheEntryList;
                         }
@@ -68,7 +90,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 default:
                     {
                         Marshal.FreeHGlobal(bufferPtr);
-                        PInvoke.FindCloseUrlCache(cacheEnumHandle);
+                        FindCloseUrlCache(cacheEnumHandle);
 
                         return cacheEntryList;
                     }
@@ -78,7 +100,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
 
-                if (PInvoke.FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
+                if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
                 {
                     // Store entry
                     if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
@@ -94,7 +116,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                                 // Repeat call to API with size returned by first call
                                 bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
 
-                                if (PInvoke.FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
+                                if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
                                 {
                                     // Store entry
                                     if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
@@ -105,7 +127,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                                 else
                                 {
                                     Marshal.FreeHGlobal(bufferPtr);
-                                    PInvoke.FindCloseUrlCache(cacheEnumHandle);
+                                    FindCloseUrlCache(cacheEnumHandle);
 
                                     return cacheEntryList;
                                 }
@@ -115,7 +137,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         case 259:
                             {
                                 Marshal.FreeHGlobal(bufferPtr);
-                                PInvoke.FindCloseUrlCache(cacheEnumHandle);
+                                FindCloseUrlCache(cacheEnumHandle);
 
                                 return cacheEntryList;
                             }
@@ -123,7 +145,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         default:
                             {
                                 Marshal.FreeHGlobal(bufferPtr);
-                                PInvoke.FindCloseUrlCache(cacheEnumHandle);
+                                FindCloseUrlCache(cacheEnumHandle);
 
                                 return cacheEntryList;
                             }
@@ -139,13 +161,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="bufferPtr">Pointer to buffer</param>
         /// <returns>INTERNET_CACHE_ENTRY_INFO struct or null on error</returns>
-        private static Nullable<PInvoke.INTERNET_CACHE_ENTRY_INFO> GetCacheEntry(IntPtr bufferPtr)
+        private static Nullable<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> GetCacheEntry(IntPtr bufferPtr)
         {
-            Nullable<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntry = null;
+            Nullable<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> cacheEntry = null;
 
             try
             {
-                cacheEntry = (PInvoke.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(PInvoke.INTERNET_CACHE_ENTRY_INFO));
+                cacheEntry = (InternetExplorer.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(InternetExplorer.INTERNET_CACHE_ENTRY_INFO));
             }
             catch (Exception)
             {
@@ -211,7 +233,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
-            uint bytesReturned = PInvoke.GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
+            uint bytesReturned = GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
             if (bytesReturned == 0)
             {
                 Marshal.FreeCoTaskMem(pReturnedString);
@@ -244,7 +266,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
 
-            uint bytesReturned = PInvoke.GetPrivateProfileSection(sectionName, pReturnedString, MAX_BUFFER, filePath);
+            uint bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, MAX_BUFFER, filePath);
 
             if ((bytesReturned == MAX_BUFFER - 2) || (bytesReturned == 0))
             {

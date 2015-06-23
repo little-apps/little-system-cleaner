@@ -33,8 +33,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class InternetExplorer : ScannerBase
     {
-        List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
-        List<PInvoke.INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<PInvoke.INTERNET_CACHE_ENTRY_INFO>();
+        List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<INTERNET_CACHE_ENTRY_INFO>();
+        List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<INTERNET_CACHE_ENTRY_INFO>();
 
         #region Internet Explorer Enums
         
@@ -178,6 +178,37 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
 
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct INTERNET_CACHE_ENTRY_INFO
+        {
+            public UInt32 dwStructSize;
+            public string lpszSourceUrlName;
+            public string lpszLocalFileName;
+            public UInt32 CacheEntryType;
+            public UInt32 dwUseCount;
+            public UInt32 dwHitRate;
+            public UInt32 dwSizeLow;
+            public UInt32 dwSizeHigh;
+            public FILETIME LastModifiedTime;
+            public FILETIME ExpireTime;
+            public FILETIME LastAccessTime;
+            public FILETIME LastSyncTime;
+            public IntPtr lpHeaderInfo;
+            public UInt32 dwHeaderInfoSize;
+            public string lpszFileExtension;
+            public ExemptDeltaOrReserverd dwExemptDeltaOrReserved;
+
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct ExemptDeltaOrReserverd
+        {
+            [FieldOffset(0)]
+            public UInt32 dwReserved;
+            [FieldOffset(0)]
+            public UInt32 dwExemptDelta;
+        }
         #endregion
         #region Internet Explorer Interfaces
         //UrlHistory class
@@ -201,6 +232,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             void AddUrlAndNotify(string pocsUrl, string pocsTitle, int dwFlags, int fWriteHistory, object poctNotify, object punkISFolder);
             void ClearHistory();
         }
+        #endregion
+        #region Internet Explorer Functions
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "DeleteUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool DeleteUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName);
+
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "UnlockUrlCacheEntryFileA", CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName, uint dwReserved);
         #endregion
 
         public InternetExplorer() 
@@ -284,7 +322,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             long folderSize = 0;
 
-            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries("cookie:"))
+            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries("cookie:"))
             {
                 cacheEntriesCookies.Add(cacheEntry);
 
@@ -297,16 +335,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearIECookies()
         {
-            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies)
+            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies)
             {
-                if (!PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                if (!DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
                 {
                     // ERROR_ACCESS_DENIED
                     if (Marshal.GetLastWin32Error() == 5)
                     {
                         // Unlock file and try again
-                        if (PInvoke.UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                            PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
+                        if (UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
+                            DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
                     }
                 }
             }
@@ -337,7 +375,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             long folderSize = 0;
 
-            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries(null))
+            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries(null))
             {
                 cacheEntriesCache.Add(cacheEntry);
 
@@ -352,20 +390,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             const uint COOKIE_CACHE_ENTRY = 0x00100000;
 
-            foreach (PInvoke.INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCache)
+            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCache)
             {
 
                 // Delete entry if its not a cookie
                 if ((cacheEntry.CacheEntryType & COOKIE_CACHE_ENTRY) == 0)
                 {
-                    if (!PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                    if (!DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
                     {
                         // ERROR_ACCESS_DENIED
                         if (Marshal.GetLastWin32Error() == 5)
                         {
                             // Unlock file and try again
-                            if (PInvoke.UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                                PInvoke.DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
+                            if (UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
+                                DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
                         }
                     }
 

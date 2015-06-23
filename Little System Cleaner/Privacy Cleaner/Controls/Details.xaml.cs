@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,39 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
     /// </summary>
     public partial class Details : UserControl
     {
+        #region ShellExecuteEx
+        internal static int SW_SHOW = 5;
+        internal static uint SEE_MASK_INVOKEIDLIST = 12;
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct SHELLEXECUTEINFO
+        {
+            public int cbSize;
+            public uint fMask;
+            public IntPtr hwnd;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpVerb;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpFile;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpParameters;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpDirectory;
+            public int nShow;
+            public IntPtr hInstApp;
+            public IntPtr lpIDList;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpClass;
+            public IntPtr hkeyClass;
+            public uint dwHotKey;
+            public IntPtr hIcon;
+            public IntPtr hProcess;
+        }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        internal static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
+        #endregion
+
         private ObservableCollection<DetailItem> _detailItemCollection = new ObservableCollection<DetailItem>();
         public ObservableCollection<DetailItem> DetailItemCollection
         {
@@ -109,13 +143,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             string path = (this.listView.SelectedItem as DetailItem).Name;
 
-            PInvoke.SHELLEXECUTEINFO info = new PInvoke.SHELLEXECUTEINFO();
+            SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
             info.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(info);
             info.lpVerb = "properties";
             info.lpFile = (string)path.Clone();
-            info.nShow = PInvoke.SW_SHOW;
-            info.fMask = PInvoke.SEE_MASK_INVOKEIDLIST;
-            PInvoke.ShellExecuteEx(ref info);
+            info.nShow = SW_SHOW;
+            info.fMask = SEE_MASK_INVOKEIDLIST;
+            ShellExecuteEx(ref info);
         }
     }
 }

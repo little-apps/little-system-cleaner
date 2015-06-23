@@ -1,4 +1,5 @@
 ﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,7 +51,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 // Delete section if value name is empty
                 if (string.IsNullOrEmpty(valueName))
                 {
-                    if (PInvoke.WritePrivateProfileString(section, null, null, filePath))
+                    if (MiscFunctions.WritePrivateProfileString(section, null, null, filePath))
                         report.WriteLine(string.Format("Erased INI File: {0} Section: {1}", filePath, section));
                     else
                     {
@@ -62,7 +63,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 }
                 else
                 {
-                    if (PInvoke.WritePrivateProfileString(section, valueName, null, filePath))
+                    if (MiscFunctions.WritePrivateProfileString(section, valueName, null, filePath))
                         report.WriteLine(string.Format("Erased INI File: {0} Section: {1} Value Name: {2}", filePath, section, valueName));
                     else
                     {

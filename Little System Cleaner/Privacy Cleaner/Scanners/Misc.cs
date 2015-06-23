@@ -34,6 +34,32 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Misc : ScannerBase
     {
+        #region Constants
+        // No dialog box confirming the deletion of the objects will be displayed.
+        internal const int SHERB_NOCONFIRMATION = 0x00000001;
+        // No dialog box indicating the progress will be displayed.
+        internal const int SHERB_NOPROGRESSUI = 0x00000002;
+        // No sound will be played when the operation is complete.
+        internal const int SHERB_NOSOUND = 0x00000004;
+        #endregion
+
+        #region Structures
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct SHQUERYRBINFO
+        {
+            public int cbSize;
+            public long i64Size;
+            public long i64NumItems;
+        }
+        #endregion
+
+        #region Functions
+        [DllImport("shell32.dll", SetLastError = true)]
+        internal static extern int SHQueryRecycleBin(string pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
+        [DllImport("shell32.dll", SetLastError = true)]
+        internal static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
+        #endregion
+
         public Misc() 
         {
             Name = "Miscellaneous";
@@ -71,16 +97,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanRecycleBin()
         {
-            PInvoke.SHQUERYRBINFO sqrbi = new PInvoke.SHQUERYRBINFO();
-            sqrbi.cbSize = Marshal.SizeOf(typeof(PInvoke.SHQUERYRBINFO));
-            int hr = (int)PInvoke.SHQueryRecycleBin(string.Empty, ref sqrbi);
+            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO();
+            sqrbi.cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO));
+            int hr = (int)SHQueryRecycleBin(string.Empty, ref sqrbi);
             if (sqrbi.i64NumItems > 0)
                 Wizard.StoreCleanDelegate(new CleanDelegate(CleanRecycleBin), "Empty Recycle Bin", sqrbi.i64Size);
         }
 
         private void CleanRecycleBin()
         {
-            int hresult = PInvoke.SHEmptyRecycleBin(IntPtr.Zero, string.Empty, PInvoke.SHERB_NOCONFIRMATION | PInvoke.SHERB_NOSOUND);
+            int hresult = SHEmptyRecycleBin(IntPtr.Zero, string.Empty, SHERB_NOCONFIRMATION | SHERB_NOSOUND);
         }
 
         private void ScanDesktopStartMenuIcons()
