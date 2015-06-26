@@ -78,15 +78,29 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (e.Error != null)
             {
-                MessageBox.Show(this, "Unable to download update.\n" + e.Error.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxResult msgBoxResult;
+                Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(this, "Unable to download update: " + e.Error.Message + "\nWould you like to download it in your browser?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Error); });
+
+                if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
+                    msgBoxResult = (MessageBoxResult)App.Current.Dispatcher.Invoke(showMsgBox);
+                else
+                    msgBoxResult = showMsgBox();
+
+                if (msgBoxResult == MessageBoxResult.Yes)
+                {
+                    var processStartInfoDownloadURL = new ProcessStartInfo(AutoUpdater.DownloadURL);
+
+                    Process.Start(processStartInfoDownloadURL);
+                }
+
                 this.Close();
 
                 return;
             }
 
-            var processStartInfo = new ProcessStartInfo {FileName = _tempPath, UseShellExecute = true};
+            var processStartInfoDownloadedFile = new ProcessStartInfo {FileName = _tempPath, UseShellExecute = true};
 
-            Process.Start(processStartInfo);
+            Process.Start(processStartInfoDownloadedFile);
 
             if (App.Current.Dispatcher.Thread == System.Threading.Thread.CurrentThread) // Check if were on the main thread
             {
