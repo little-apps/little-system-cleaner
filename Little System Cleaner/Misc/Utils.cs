@@ -19,28 +19,30 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using Microsoft.Win32;
-using System.Windows.Media.Imaging;
-using System.Xml;
-using System.Security.Cryptography;
-using System.Security;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using System.Linq;
+using System.Xml;
+using Microsoft.Win32;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Scanners;
+using System.Threading;
+
 
 namespace Little_System_Cleaner.Misc
 {
@@ -56,7 +58,7 @@ namespace Little_System_Cleaner.Misc
 
         internal static string ProductName
         {
-            get { return Application.ProductName; }
+            get { return System.Windows.Forms.Application.ProductName; }
         }
 
         internal static IWebProxy GetProxySettings()
@@ -1103,6 +1105,38 @@ namespace Little_System_Cleaner.Misc
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Displays message box with main window as owner window using thread safe method
+        /// </summary>
+        /// <param name="messageBoxText">Text to display in message box</param>
+        /// <param name="caption">Caption for message box</param>
+        /// <param name="button">Message box button(s)</param>
+        /// <param name="icon">Message box icon</param>
+        /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
+        internal static MessageBoxResult MessageBoxThreadSafe(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            return MessageBoxThreadSafe(App.Current.MainWindow, messageBoxText, caption, button, icon);
+        }
+
+        /// <summary>
+        /// Displays message box using thread safe method
+        /// </summary>
+        /// <param name="owner">Owner window</param>
+        /// <param name="messageBoxText">Text to display in message box</param>
+        /// <param name="caption">Caption for message box</param>
+        /// <param name="button">Message box button(s)</param>
+        /// <param name="icon">Message box icon</param>
+        /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
+        internal static MessageBoxResult MessageBoxThreadSafe(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(owner, messageBoxText, caption, button, icon); });
+
+            if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
+                return (MessageBoxResult)App.Current.Dispatcher.Invoke(showMsgBox);
+            else
+                return showMsgBox();
         }
     }
 }
