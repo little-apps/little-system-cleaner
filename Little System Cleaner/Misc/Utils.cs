@@ -33,17 +33,16 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using System.Xml;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using System.Threading;
-using System.Windows.Threading;
-
 
 namespace Little_System_Cleaner.Misc
 {
@@ -1147,7 +1146,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="caption">Caption for message box</param>
         /// <param name="button">Message box button(s)</param>
         /// <param name="icon">Message box icon</param>
-        /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
+        /// <returns>Returns DispatcherOperation class</returns>
         internal static DispatcherOperation MessageBoxThreadSafeAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
             return MessageBoxThreadSafeAsync(App.Current.MainWindow, messageBoxText, caption, button, icon);
@@ -1161,7 +1160,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="caption">Caption for message box</param>
         /// <param name="button">Message box button(s)</param>
         /// <param name="icon">Message box icon</param>
-        /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
+        /// <returns>Returns DispatcherOperation class</returns>
         internal static DispatcherOperation MessageBoxThreadSafeAsync(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
             Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(owner, messageBoxText, caption, button, icon); });
