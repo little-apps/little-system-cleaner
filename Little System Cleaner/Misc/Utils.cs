@@ -1138,5 +1138,21 @@ namespace Little_System_Cleaner.Misc
             else
                 return showMsgBox();
         }
+
+        /// <summary>
+        /// Displays message box asynchronously using thread safe method
+        /// </summary>
+        /// <param name="owner">Owner window</param>
+        /// <param name="messageBoxText">Text to display in message box</param>
+        /// <param name="caption">Caption for message box</param>
+        /// <param name="button">Message box button(s)</param>
+        /// <param name="icon">Message box icon</param>
+        /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
+        internal static System.Windows.Threading.DispatcherOperation MessageBoxThreadSafeAsync(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(owner, messageBoxText, caption, button, icon); });
+
+            return App.Current.Dispatcher.BeginInvoke(showMsgBox);
+        }
     }
 }
