@@ -255,10 +255,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
                 string message = string.Format("Unable to analyze registry hive: {0}\nThe following error occurred: {1}.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.Message);
 
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                }));
+                Utils.MessageBoxThreadSafe(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -274,10 +271,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
                 string message = string.Format("Unable to perform registry hive analyze on {0}\nError code {1} was returned.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.NativeErrorCode);
 
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                }));
+                Utils.MessageBoxThreadSafe(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -347,10 +341,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             {
                 string message = string.Format("Unable to compact registry hive: {0}\nThe following error occurred: {1}\n\nPress 'Enter' to continue...", this.RegistryHive, ex.Message);
 
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                }));
+                Utils.MessageBoxThreadSafe(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -363,10 +354,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             {
                 string message = string.Format("Unable to perform registry hive compact on {0}\nError code {1} was returned.\n\nPress 'Enter' to continue...", this.RegistryHive, ex.NativeErrorCode);
 
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    MessageBox.Show(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                }));
+                Utils.MessageBoxThreadSafe(window, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }

@@ -78,15 +78,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (e.Error != null)
             {
-                MessageBoxResult msgBoxResult;
-                Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(this, "Unable to download update: " + e.Error.Message + "\nWould you like to download it in your browser?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Error); });
-
-                if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
-                    msgBoxResult = (MessageBoxResult)App.Current.Dispatcher.Invoke(showMsgBox);
-                else
-                    msgBoxResult = showMsgBox();
-
-                if (msgBoxResult == MessageBoxResult.Yes)
+                if (Utils.MessageBoxThreadSafe(this, "Unable to download update: " + e.Error.Message + "\nWould you like to download it in your browser?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                 {
                     var processStartInfoDownloadURL = new ProcessStartInfo(AutoUpdater.DownloadURL);
 
@@ -129,14 +121,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             catch (WebException ex)
             {
-                string message = "Unable to download file.\n" + ex.Message;
-
-                Action showMsgBox = new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error));
-
-                if (Thread.CurrentThread != App.Current.Dispatcher.Thread)
-                    App.Current.Dispatcher.Invoke(showMsgBox);
-                else
-                    showMsgBox();
+                Utils.MessageBoxThreadSafe("Unable to download file.\n" + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return string.Empty;
             }

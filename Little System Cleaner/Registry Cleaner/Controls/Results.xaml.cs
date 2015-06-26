@@ -251,7 +251,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     catch (Win32Exception ex)
                     {
                         string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                        this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                        Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
 
@@ -267,7 +267,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 catch (Exception ex)
                 {
                     string message = string.Format("Unable to create backup file ({0}).\nError: {1}", strBackupFile, ex.Message);
-                    this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                    Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -284,12 +284,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         {
                             string message = string.Format("An error occurred trying to backup registry key ({0}).\nWould you like to remove it (not recommended)?", brk.RegKeyPath);
 
-                            MessageBoxResult msgBoxResult = (MessageBoxResult)this.Dispatcher.Invoke(new Func<MessageBoxResult>(() =>
-                            {
-                                return MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-                            }));
-
-                            if (msgBoxResult != MessageBoxResult.Yes)
+                            if (Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                                 skip = true;
                         }
                         else
@@ -306,7 +301,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                             if (Properties.Settings.Default.registryCleanerOptionsShowErrors)
                             {
                                 string message = string.Format("An error occurred trying to remove registry key {0}", brk.RegKeyPath);
-                                this.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                                Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                             }
                         }
                         else
@@ -348,7 +343,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         catch (Win32Exception ex)
                         {
                             string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                            this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
+                            Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                 }
@@ -387,7 +382,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     else
                     {
                         // Display message box and go back to first control
-                        this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show("Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information)));
+                        Utils.MessageBoxThreadSafeAsync("Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                         if (Properties.Settings.Default.registryCleanerOptionsAutoRescan)
                             this.scanWiz.Rescan();
@@ -431,7 +426,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     {
                         if (this._tree.SelectedNode == null)
                         {
-                            MessageBox.Show(System.Windows.Application.Current.MainWindow, "No registry key is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(App.Current.MainWindow, "No registry key is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
 

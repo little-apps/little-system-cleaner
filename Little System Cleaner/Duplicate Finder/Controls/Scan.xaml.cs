@@ -132,9 +132,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (this.FileList.Count == 0)
                 {
+                    Utils.MessageBoxThreadSafe("No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        MessageBox.Show(App.Current.MainWindow, "No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                     }));
 
@@ -149,9 +150,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByFilename.Count == 0)
                     {
+                        Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
@@ -171,9 +172,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
+                        Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         this.Dispatcher.BeginInvoke(new Action(() =>
                         { 
-                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information); 
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
@@ -193,9 +194,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
+                        Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            MessageBox.Show(App.Current.MainWindow, "No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                         }));
 
@@ -248,9 +249,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (!driveSelected)
                 {
+                    Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                     }));
 
@@ -288,9 +289,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (!driveSelected)
                 {
+                    Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        MessageBox.Show(App.Current.MainWindow, "No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                     }));
 
@@ -334,9 +335,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (!driveSelected)
                 {
+                    Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        MessageBox.Show(App.Current.MainWindow, "No disk drives are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                     }));
 
@@ -365,9 +366,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (!dirSelected)
                 {
+                    Utils.MessageBoxThreadSafe("No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        MessageBox.Show(App.Current.MainWindow, "No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                         Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
                     }));
 

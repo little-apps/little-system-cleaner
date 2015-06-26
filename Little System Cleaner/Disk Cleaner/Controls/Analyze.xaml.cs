@@ -124,8 +124,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
                 else
                 {
-                    this.msgBox("No problem files were detected");
-                    
+                    Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (ThreadAbortException)
@@ -139,17 +138,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
             }
-        }
-
-        private void msgBox(string text)
-        {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => msgBox(text)));
-                return;
-            }
-
-            MessageBox.Show(Window.GetWindow(this), text, System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ScanFiles(DirectoryInfo parentInfo)

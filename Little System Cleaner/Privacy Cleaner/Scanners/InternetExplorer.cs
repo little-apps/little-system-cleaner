@@ -323,12 +323,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (Exception ex)
             {
-                Action showMsgBox = new Action(() => MessageBox.Show(App.Current.MainWindow, "An error occurred trying to clear Internet Explorer history. The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error));
-
-                if (Thread.CurrentThread != App.Current.Dispatcher.Thread)
-                    App.Current.Dispatcher.Invoke(showMsgBox);
-                else
-                    showMsgBox();
+                Utils.MessageBoxThreadSafe("An error occurred trying to clear Internet Explorer history. The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
         }
@@ -372,15 +367,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ClearFormData()
         {
-            MessageBoxResult msgBoxResult;
-            Func<MessageBoxResult> askMsgBox = new Func<MessageBoxResult>(() => MessageBox.Show(App.Current.MainWindow, "This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question));
-
-            if (Thread.CurrentThread != App.Current.Dispatcher.Thread)
-                msgBoxResult = (MessageBoxResult)App.Current.Dispatcher.Invoke(askMsgBox);
-            else
-                msgBoxResult = askMsgBox();
-
-            if (msgBoxResult == MessageBoxResult.OK)
+            if (Utils.MessageBoxThreadSafe("This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
             {
                 Process proc;
 

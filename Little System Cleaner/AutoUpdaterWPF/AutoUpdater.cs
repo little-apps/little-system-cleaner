@@ -208,9 +208,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         // Only display errors if user requested update check
 
                         if (ex is WebException)
-                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                            Utils.MessageBoxThreadSafe("An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         else
-                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                            Utils.MessageBoxThreadSafe("The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 
@@ -246,7 +246,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 string message = string.Format("The following error occurred trying to read update file: {0}", ex.Message);
 
                 Debug.WriteLine(message);
-                MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -309,7 +309,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                             string message = "The following error occurred trying to save update update settings: " + ex.Message;
 
                             Debug.WriteLine(message);
-                            MainDispatcher.BeginInvoke(new Action(() => { MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error); }));
+                            Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                         finally
                         {
@@ -328,7 +328,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             else if (ForceCheck == true)
             {
-                MainDispatcher.BeginInvoke(new Action(() => MessageBox.Show(App.Current.MainWindow, Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information)));
+                Utils.MessageBoxThreadSafe(Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
         }

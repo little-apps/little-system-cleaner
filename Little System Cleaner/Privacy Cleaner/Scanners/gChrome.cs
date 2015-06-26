@@ -111,8 +111,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             // Just in case
             if (string.IsNullOrEmpty(ChromeDefaultDir))
             {
-                App.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(App.Current.MainWindow, "Unable to determine Google Chrome profile directory. Skipping...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error)));
-                
+                Utils.MessageBoxThreadSafe("Unable to determine Google Chrome profile directory. Skipping...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
                 return;
             }
 
