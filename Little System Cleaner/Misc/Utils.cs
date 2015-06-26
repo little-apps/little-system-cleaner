@@ -42,6 +42,7 @@ using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using System.Threading;
+using System.Windows.Threading;
 
 
 namespace Little_System_Cleaner.Misc
@@ -1140,6 +1141,19 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
+        /// Displays message box asynchronously with main window as owner window using thread safe method
+        /// </summary>
+        /// <param name="messageBoxText">Text to display in message box</param>
+        /// <param name="caption">Caption for message box</param>
+        /// <param name="button">Message box button(s)</param>
+        /// <param name="icon">Message box icon</param>
+        /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
+        internal static DispatcherOperation MessageBoxThreadSafeAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            return MessageBoxThreadSafeAsync(App.Current.MainWindow, messageBoxText, caption, button, icon);
+        }
+
+        /// <summary>
         /// Displays message box asynchronously using thread safe method
         /// </summary>
         /// <param name="owner">Owner window</param>
@@ -1148,7 +1162,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="button">Message box button(s)</param>
         /// <param name="icon">Message box icon</param>
         /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
-        internal static System.Windows.Threading.DispatcherOperation MessageBoxThreadSafeAsync(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        internal static DispatcherOperation MessageBoxThreadSafeAsync(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
             Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(owner, messageBoxText, caption, button, icon); });
 
