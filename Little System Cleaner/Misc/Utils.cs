@@ -56,11 +56,17 @@ namespace Little_System_Cleaner.Misc
             get { return Environment.Is64BitOperatingSystem; }
         }
 
+        /// <summary>
+        /// Returns Little System Cleaner
+        /// </summary>
         internal static string ProductName
         {
             get { return System.Windows.Forms.Application.ProductName; }
         }
 
+        /// <summary>
+        /// Returns current version of Little System Cleaner
+        /// </summary>
         internal static Version ProductVersion
         {
             get
@@ -69,6 +75,22 @@ namespace Little_System_Cleaner.Misc
                 AssemblyName name = new AssemblyName(currentApp.FullName);
                 
                 return name.Version;
+            }
+        }
+
+        /// <summary>
+        /// Returns thread safe main window variable
+        /// </summary>
+        internal static Window MainWindowThreadSafe
+        {
+            get
+            {
+                if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
+                {
+                    return (Window)App.Current.Dispatcher.Invoke(new Func<Window>(() => { return Utils.MainWindowThreadSafe; }));
+                }
+
+                return App.Current.MainWindow;
             }
         }
 
@@ -1131,7 +1153,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
         internal static MessageBoxResult MessageBoxThreadSafe(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            return MessageBoxThreadSafe(App.Current.MainWindow, messageBoxText, caption, button, icon);
+            return MessageBoxThreadSafe(Utils.MainWindowThreadSafe, messageBoxText, caption, button, icon);
         }
 
         /// <summary>
@@ -1163,7 +1185,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns DispatcherOperation class</returns>
         internal static DispatcherOperation MessageBoxThreadSafeAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            return MessageBoxThreadSafeAsync(App.Current.MainWindow, messageBoxText, caption, button, icon);
+            return MessageBoxThreadSafeAsync(Utils.MainWindowThreadSafe, messageBoxText, caption, button, icon);
         }
 
         /// <summary>
