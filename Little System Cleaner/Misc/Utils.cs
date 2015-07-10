@@ -1067,7 +1067,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="assembly">The name of the assembly (ie: System.Data.XYZ). This sometimes is (but not always) also the namespace of the assembly.</param>
         /// <param name="ver">What the version of the assembly should be. Set to null for any version (default is null)</param>
-        /// <param name="versionCanBeGreater">If true, the version of the assembly can be greater than the specified version. Otherwise, the version must be the exact same as the assembly.</param>
+        /// <param name="versionCanBeGreater">If true, the version of the assembly can be the same or greater than the specified version. Otherwise, the version must be the exact same as the assembly.</param>
         /// <param name="publicKeyToken">What the public key token of the assembly should be. Set to null for any public key token (default is null). This needs to be 8 bytes.</param>
         /// <returns>True if the assembly is loaded</returns>
         /// <remarks>Please note that if versionCanBeGreater is set to true and publicKeyToken is not null, this function can return false even though the the version of the assembly is greater. This is due to the fact that the public key token is derived from the certificate used to sign the file and this certificate can change over time.</remarks>
@@ -1090,9 +1090,12 @@ namespace Little_System_Cleaner.Misc
                     {
                         int n = asmLoaded.Version.CompareTo(ver);
 
-                        if (versionCanBeGreater && n > 0)
+                        if (n < 0)
+                            // version cannot be less
                             continue;
-                        else if (!versionCanBeGreater && n != 0)
+
+                        if (!versionCanBeGreater && n > 0)
+                            // version cannot be greater
                             continue; 
                     }
 
