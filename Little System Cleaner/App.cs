@@ -33,6 +33,7 @@ using System.Xml;
 using System.Diagnostics;
 using Little_System_Cleaner.Misc;
 using System.Text;
+using System.Reflection;
 
 namespace Little_System_Cleaner
 {
@@ -83,7 +84,7 @@ namespace Little_System_Cleaner
                     
                 }
 
-                if (!Utils.IsAssemblyLoaded("CommonTools", new Version(1, 0), true))
+                if (!Utils.IsAssemblyLoaded("CommonTools", Utils.ProductVersion))
                 {
                     MessageBox.Show("It appears that CommonTools.dll is not loaded, because of this, Little System Cleaner cannot be loaded.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;

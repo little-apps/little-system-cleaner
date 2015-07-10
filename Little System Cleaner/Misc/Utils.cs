@@ -61,6 +61,17 @@ namespace Little_System_Cleaner.Misc
             get { return System.Windows.Forms.Application.ProductName; }
         }
 
+        internal static Version ProductVersion
+        {
+            get
+            {
+                Assembly currentApp = Assembly.GetExecutingAssembly();
+                AssemblyName name = new AssemblyName(currentApp.FullName);
+                
+                return name.Version;
+            }
+        }
+
         internal static IWebProxy GetProxySettings()
         {
             WebProxy webProxy = new WebProxy();
