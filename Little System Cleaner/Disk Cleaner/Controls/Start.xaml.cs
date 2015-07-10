@@ -527,34 +527,46 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonRemExcludeFile_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewFiles.SelectedItems[0] != null)
+            if (this.listViewFiles.SelectedItems.Count == 0)
             {
-                if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
-                {
-                    this._excFilesCollection.Remove(this.listViewFiles.SelectedItems[0] as lviFile);
-                }
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "No file was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+
+            if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+            {
+                this._excFilesCollection.Remove(this.listViewFiles.SelectedItems[0] as lviFile);
             }
         }
 
         private void buttonRemExcludeFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewExcludeFolders.SelectedItems[0] != null)
+            if (this.listViewExcludeFolders.SelectedItems.Count == 0)
             {
-                if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
-                {
-                    this._excFoldersCollection.Remove(this.listViewExcludeFolders.SelectedItems[0] as lviFolder);
-                }
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "No folder was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+
+            if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+            {
+                this._excFoldersCollection.Remove(this.listViewExcludeFolders.SelectedItems[0] as lviFolder);
             }
         }
 
         private void buttonRemIncFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewIncFolders.SelectedItems[0] != null)
+            if (this.listViewIncFolders.SelectedItems.Count == 0)
             {
-                if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
-                {
-                    this._incFoldersCollection.Remove(this.listViewIncFolders.SelectedItems[0] as lviFolder);
-                }
+                System.Windows.MessageBox.Show(App.Current.MainWindow, "No folder was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+
+            if (System.Windows.MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+            {
+                this._incFoldersCollection.Remove(this.listViewIncFolders.SelectedItems[0] as lviFolder);
             }
         }
 
