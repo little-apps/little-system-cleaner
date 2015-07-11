@@ -119,8 +119,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
                 if (Wizard.fileList.Count > 0) {
-                    Analyze.CurrentFile = "View the results by clicking \"Continue\" below.";
-                    this.Dispatcher.Invoke(new Action(() => this.buttonContinue.IsEnabled = true));
+                    this.EnableContinueButton();
                 }
                 else
                 {
@@ -141,6 +140,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
             }
+        }
+
+        private void EnableContinueButton()
+        {
+            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            {
+                this.Dispatcher.Invoke(new Action(this.EnableContinueButton));
+                return;
+            }
+
+            Analyze.CurrentFile = "View the results by clicking \"Continue\" below.";
+            this.buttonContinue.IsEnabled = true;
         }
 
         private void ScanFiles(DirectoryInfo parentInfo)
