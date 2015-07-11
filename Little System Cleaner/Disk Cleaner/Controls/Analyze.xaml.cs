@@ -119,13 +119,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
                 if (Wizard.fileList.Count > 0)
-                {
-                    this.buttonContinue.IsEnabled = true;
-                }
+                    this.Dispatcher.Invoke(new Action(() => { this.buttonContinue.IsEnabled = true; }));
                 else
-                {
                     Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
             }
             catch (ThreadAbortException)
             {

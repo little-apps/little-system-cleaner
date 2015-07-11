@@ -765,5 +765,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     this.scanBase.FilesGroupedByHash.Add(checksum, files);
             }
         }
+
+        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void buttonContinue_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
