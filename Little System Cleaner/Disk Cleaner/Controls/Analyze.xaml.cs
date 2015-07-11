@@ -118,10 +118,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
-                if (Wizard.fileList.Count > 0)
+                if (Wizard.fileList.Count > 0) {
+                    Analyze.CurrentFile = "View the results by clicking \"Continue\" below.";
                     this.Dispatcher.Invoke(new Action(() => { this.buttonContinue.IsEnabled = true; }));
+                }
                 else
+                {
+                    Analyze.CurrentFile = "";
                     Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (ThreadAbortException)
             {
@@ -129,6 +134,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 // No need to change tab
 
                 Thread.ResetAbort();
+
+                Analyze.CurrentFile = "";
             }
             finally
             {
@@ -420,7 +427,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         }
 
         /// <summary>
-        /// Cancels timer and thread. Also sets current file to empty string.
+        /// Cancels timer and thread
         /// </summary>
         public void CancelAnalyze()
         {
@@ -428,8 +435,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (this.threadMain != null)
                 this.threadMain.Abort();
-
-            Analyze.CurrentFile = "";
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
