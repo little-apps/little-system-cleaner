@@ -120,7 +120,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 if (Wizard.fileList.Count > 0) {
                     Analyze.CurrentFile = "View the results by clicking \"Continue\" below.";
-                    this.Dispatcher.Invoke(new Action(() => { this.buttonContinue.IsEnabled = true; }));
+                    this.Dispatcher.Invoke(new Action(() => this.buttonContinue.IsEnabled = true));
                 }
                 else
                 {
