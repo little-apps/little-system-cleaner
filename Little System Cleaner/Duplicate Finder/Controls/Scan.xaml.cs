@@ -372,81 +372,128 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (this.scanBase.Options.ExcludeFolders.Contains(new ExcludeFolder(di.FullName)))
                 return;
 
-            string[] files = Directory.GetFiles(di.FullName);
-
-            if (files.Length > 0)
+            try
             {
-                foreach (string file in files)
+                string[] files = Directory.GetFiles(di.FullName);
+
+                if (files.Length > 0)
                 {
-                    this.CurrentFile = file;
-
-                    if (file.Length > 260)
-                        continue;
-
-                    try
+                    foreach (string file in files)
                     {
-                        FileInfo fi = new FileInfo(file);
+                        this.CurrentFile = file;
 
-                        if (this.scanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
-                            continue;
-
-                        if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                            continue;
-
-                        if (this.IsSizeGreaterThan(fi.Length))
-                            continue;
-
-                        if ((this.scanBase.Options.SkipCompressedFiles.GetValueOrDefault()) && this.IsCompressedFile(fi))
-                            continue;
-
-                        FileEntry fileEntry = new FileEntry(fi, this.scanBase.Options.CompareMusicTags.GetValueOrDefault());
-                        this.FileList.Add(fileEntry);
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-
-                    }
-                    catch (PathTooLongException)
-                    {
-                        // Just in case
-                        Debug.WriteLine("Path ({0}) is too long", file);
-                    }
-                }
-            }
-
-
-            if (this.scanBase.Options.ScanSubDirs.GetValueOrDefault()) // Will stop if false and only include root directory
-            {
-                string[] dirs = Directory.GetDirectories(di.FullName);
-
-                if (dirs.Length > 0)
-                {
-                    foreach (string dir in dirs)
-                    {
-                        this.CurrentFile = dir;
-
-                        if (dir.Length > 248)
+                        if (file.Length > 260)
                             continue;
 
                         try
                         {
-                            DirectoryInfo dirInfo = new DirectoryInfo(dir);
+                            FileInfo fi = new FileInfo(file);
 
-                            if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (dirInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                            if (this.scanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
                                 continue;
 
-                            RecurseDirectory(dirInfo);
+                            if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                                continue;
+
+                            if (this.IsSizeGreaterThan(fi.Length))
+                                continue;
+
+                            if ((this.scanBase.Options.SkipCompressedFiles.GetValueOrDefault()) && this.IsCompressedFile(fi))
+                                continue;
+
+                            FileEntry fileEntry = new FileEntry(fi, this.scanBase.Options.CompareMusicTags.GetValueOrDefault());
+                            this.FileList.Add(fileEntry);
                         }
                         catch (UnauthorizedAccessException)
                         {
 
                         }
-                        catch (PathTooLongException)
+                        catch (System.Security.SecurityException)
                         {
-                            // Just in case
+
                         }
-                        
+                        catch (IOException ex)
+                        {
+                            if (ex is PathTooLongException)
+                            {
+                                // Just in case
+                                Debug.WriteLine("Path ({0}) is too long", file);
+                            }
+                            
+                        }
                     }
+                }
+            }
+            catch (IOException ex)
+            {
+                Debug.WriteLine("The following I/O error occurred reading files: {0}", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following unknown exception occurred reading files: {0}", ex.Message);
+
+#if (DEBUG)
+                throw ex;
+#endif
+            }
+            
+
+            if (this.scanBase.Options.ScanSubDirs.GetValueOrDefault()) // Will stop if false and only include root directory
+            {
+                try
+                {
+                    string[] dirs = Directory.GetDirectories(di.FullName);
+
+                    if (dirs.Length > 0)
+                    {
+                        foreach (string dir in dirs)
+                        {
+                            this.CurrentFile = dir;
+
+                            if (dir.Length > 248)
+                                continue;
+
+                            try
+                            {
+                                DirectoryInfo dirInfo = new DirectoryInfo(dir);
+
+                                if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (dirInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                                    continue;
+
+                                RecurseDirectory(dirInfo);
+                            }
+                            catch (UnauthorizedAccessException ex)
+                            {
+                                Debug.WriteLine("Could not access directories: {0}", ex.Message);
+                            }
+                            catch (System.Security.SecurityException ex)
+                            {
+                                Debug.WriteLine("A security exception error occurred reading directories: {0}", ex.Message);
+                            }
+                            catch (IOException ex)
+                            {
+                                if (ex is PathTooLongException)
+                                {
+                                    // Just in case
+                                    Debug.WriteLine("Path ({0}) is too long", dir);
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine("The following I/O error occurred reading directories: {0}", ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("The following unknown exception occurred reading directories: {0}", ex.Message);
+
+#if (DEBUG)
+                    throw ex;
+#endif
                 }
             }
         }
