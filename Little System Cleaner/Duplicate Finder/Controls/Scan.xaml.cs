@@ -121,21 +121,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void ScanDisk()
         {
+            bool completedSucessfully = false;
+
             try
             {
                 DateTime dtStart = DateTime.Now;
                 this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
                 this.StatusText = "Building list of all files";
 
-                this.BuildFileList(dtStart);
-
-                if (this.FileList.Count == 0)
+                if (!this.BuildFileList(dtStart))
                 {
-                    Utils.MessageBoxThreadSafe("No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.ResetInfo();
+                    this.ResetInfo(completedSucessfully);
                     this.SetLastScanElapsed(dtStart);
-
-                    return;
                 }
 
                 if (this.scanBase.Options.CompareFilename.GetValueOrDefault())
@@ -146,7 +143,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     if (this.scanBase.FilesGroupedByFilename.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.ResetInfo();
+                        this.ResetInfo(completedSucessfully);
                         this.SetLastScanElapsed(dtStart);
 
                         return;
@@ -163,7 +160,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.ResetInfo();
+                        this.ResetInfo(completedSucessfully);
                         this.SetLastScanElapsed(dtStart);
 
                         return;
@@ -180,7 +177,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     if (this.scanBase.FilesGroupedByHash.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.ResetInfo();
+                        this.ResetInfo(completedSucessfully);
                         this.SetLastScanElapsed(dtStart);
 
                         return;
@@ -190,7 +187,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 this.SetLastScanElapsed(dtStart);
-                this.EnableContinueButton();
             }
             catch (ThreadAbortException)
             {
@@ -198,7 +194,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             finally
             {
-                this.ResetInfo();
+                this.ResetInfo(completedSucessfully);
             }
         }
 
@@ -208,22 +204,21 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 this.threadScan.Abort();
         }
 
-        private void EnableContinueButton()
-        {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
-            {
-                this.Dispatcher.Invoke(new Action(this.EnableContinueButton));
-                return;
-            }
-
-            this.StatusText = "View the results by clicking \"Continue\" below.";
-            this.Dispatcher.Invoke(new Action(() => this.buttonContinue.IsEnabled = true));
-        }
-
-        private void ResetInfo()
+        private void ResetInfo(bool success)
         {
             this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
             this.CurrentFile = "";
+
+            if (success) 
+            {
+                this.StatusText = "View the results by clicking \"Continue\" below.";
+                this.Dispatcher.Invoke(new Action(() => this.buttonContinue.IsEnabled = true));
+            }
+            else
+            {
+                this.StatusText = "Click \"Cancel\" to go back to the previous screen.";
+            }
+                
         }
 
         private void SetLastScanElapsed(DateTime dtStart)
@@ -231,7 +226,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
         }
 
-        private void BuildFileList(DateTime dtStart)
+        /// <summary>
+        /// Builds list of files
+        /// </summary>
+        /// <param name="dtStart">Date/time scan started</param>
+        /// <returns>True if file list created. Otherwise, false if no directories or files were located.</returns>
+        private bool BuildFileList(DateTime dtStart)
         {
             if (this.scanBase.Options.AllDrives.GetValueOrDefault())
             {
@@ -252,10 +252,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!driveSelected)
                 {
                     Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.ResetInfo();
-                    this.SetLastScanElapsed(dtStart);
 
-                    return;
+                    return false;
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
@@ -287,10 +285,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!driveSelected)
                 {
                     Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.ResetInfo();
-                    this.SetLastScanElapsed(dtStart);
 
-                    return;
+                    return false;
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
@@ -328,10 +324,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!driveSelected)
                 {
                     Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.ResetInfo();
-                    this.SetLastScanElapsed(dtStart);
 
-                    return;
+                    return false;
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
@@ -354,14 +348,21 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!dirSelected)
                 {
                     Utils.MessageBoxThreadSafe("No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.ResetInfo();
-                    this.SetLastScanElapsed(dtStart);
 
-                    return;
+                    return false;
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
+
+            if (this.FileList.Count == 0)
+            {
+                Utils.MessageBoxThreadSafe("No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                return false;
+            }
+
+            return true;
         }
 
         private void RecurseDirectory(DirectoryInfo di)
