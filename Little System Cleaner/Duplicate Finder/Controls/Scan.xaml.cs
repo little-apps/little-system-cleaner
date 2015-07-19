@@ -187,6 +187,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 this.SetLastScanElapsed(dtStart);
+                completedSucessfully = true;
             }
             catch (ThreadAbortException)
             {
