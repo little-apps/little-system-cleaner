@@ -219,10 +219,31 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             get
             {
-                if (this._fileEntry != null)
+                if (this._fileEntry != null) 
+                {
                     return this.FileEntry.FileName;
+                }
+                else if (this.Children.Count > 0)
+                {
+                    string firstFileName = this.Children.First().FileName;
+
+                    if (this.Children.All(s => s.FileName.ToLower() == firstFileName.ToLower()))
+                    {
+                        return firstFileName;
+                    }
+                    else
+                    {
+                        var groupedByFilenames = this.Children.GroupBy(s => s.FileName.ToLower()).Select(g => g.Key).ToArray<string>();
+
+                        string fileNames = string.Join(", ", groupedByFilenames);
+
+                        return this.ShortenStringForDisplay(fileNames);
+                    }
+                }
                 else
+                {
                     return string.Empty;
+                }
             }
         }
 
@@ -231,9 +252,28 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             get
             {
                 if (this._fileEntry != null)
+                {
                     return Utils.ConvertSizeToString(this.FileEntry.FileSize, false);
-                else
-                    return string.Empty;
+                }
+                else if (this.Children.Count > 0)
+                {
+                    string firstFileSize = this.Children.First().FileSize;
+
+                    if (this.Children.All(s => s.FileSize == firstFileSize)) 
+                    {
+                        return firstFileSize;
+                    }
+                    else
+                    {
+                        var groupedByFileSizes = this.Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray<string>();
+
+                        string fileSizes = string.Join(", ", groupedByFileSizes);
+
+                        return this.ShortenStringForDisplay(fileSizes);
+                    }
+                }
+
+                return string.Empty;
             }
         }
 
@@ -259,8 +299,27 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     return ext;
                 }
+                else if (this.Children.Count > 0)
+                {
+                    string firstFileFormat = this.Children.First().FileFormat;
+
+                    if (this.Children.All(s => s.FileFormat == firstFileFormat)) 
+                    {
+                        return firstFileFormat;
+                    }
+                    else
+                    {
+                        var groupedByFileFormats = this.Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray<string>();
+
+                        string fileFormats = string.Join(", ", groupedByFileFormats);
+
+                        return this.ShortenStringForDisplay(fileFormats);
+                    }
+                }
                 else
+                {
                     return string.Empty;
+                }
             }
         }
 
@@ -271,6 +330,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 if (this._fileEntry != null)
                     return this._fileEntry.FilePath;
                 else
+                    // File paths are always going to be different
                     return string.Empty;
             }
         }
@@ -289,6 +349,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             this._fileEntry = fileEntry;
             this.Parent = parent;
+        }
+
+        private string ShortenStringForDisplay(string str)
+        {
+            int maxLength = 30;
+            string appendText = "...";
+
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+
+            if (str.Length > maxLength)
+                str = str.Substring(0, maxLength - appendText.Length) + appendText;
+
+            return str;
         }
     }
 }
