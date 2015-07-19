@@ -31,7 +31,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="textBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of duplicate files found</TextBlock>
+        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="textBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of duplicate files found. Double click an item to view more info.</TextBlock>
         <Button Name="buttonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5" Click="buttonFix_Click">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/fix-problems.png" Width="16" Height="16" />
