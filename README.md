@@ -72,3 +72,4 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * ~~Add cancel buttons to all scan functions~~
  * Add ability to save search settings
  * Fix animation in registry scan to be animated
+ * Improve organization ability for Duplicate Finder results 
