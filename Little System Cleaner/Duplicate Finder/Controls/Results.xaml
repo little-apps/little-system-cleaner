@@ -44,7 +44,7 @@
                 <TextBlock>Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1" MouseDoubleClick="_tree_MouseDoubleClick">
+        <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1" MouseDoubleClick="_tree_MouseDoubleClick" SelectionMode="Single">
             <tree:TreeList.ContextMenu>
                 <ContextMenu x:Name="contextMenuResults">
                     <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click" />
