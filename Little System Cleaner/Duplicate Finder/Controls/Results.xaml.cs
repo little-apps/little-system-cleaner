@@ -184,10 +184,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private void ShowDetails()
         {
             if (this._tree.SelectedNode == null)
-            {
-                MessageBox.Show(App.Current.MainWindow, "Nothing is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
-            }
 
             Result resultNode = this._tree.SelectedNode.Tag as Result;
 
