@@ -79,6 +79,7 @@ namespace Little_System_Cleaner
         }
 
         System.Timers.Timer timerCheck = new System.Timers.Timer(500);
+        private bool ignoreSetTabControl = false;
 
 		public Main()
 		{
@@ -250,6 +251,13 @@ namespace Little_System_Cleaner
 
         private void comboBoxTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (this.ignoreSetTabControl)
+            {
+                this.ignoreSetTabControl = false;
+
+                return;
+            }
+
             this.setTabControl(this.comboBoxTab.SelectedIndex);
         }
 
@@ -277,6 +285,7 @@ namespace Little_System_Cleaner
             else
             {
                 // Change combobox back
+                this.ignoreSetTabControl = true;
                 this.comboBoxTab.SelectedIndex = this.tabControl.SelectedIndex;
             }
         }
