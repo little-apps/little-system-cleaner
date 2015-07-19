@@ -189,10 +189,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Result resultNode = this._tree.SelectedNode.Tag as Result;
 
             if (resultNode.Children.Count > 0 || resultNode.FileEntry == null)
-            {
-                MessageBox.Show(System.Windows.Application.Current.MainWindow, "Selected row cannot be opened", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
-            }
 
             this.scanBase.ShowFileInfo(resultNode.FileEntry);
         }
