@@ -418,7 +418,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             if (ex is PathTooLongException)
                             {
                                 // Just in case
-                                Debug.WriteLine("Path ({0}) is too long", file);
+                                Debug.WriteLine("Path ({0}) is too long", (object)file);
                             }
                             
                         }
@@ -427,11 +427,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             catch (IOException ex)
             {
-                Debug.WriteLine("The following I/O error occurred reading files: {0}", ex.Message);
+                Debug.WriteLine("The following I/O error occurred reading files: {0}", (object)ex.Message);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following unknown exception occurred reading files: {0}", ex.Message);
+                Debug.WriteLine("The following unknown exception occurred reading files: {0}", (object)ex.Message);
 
 #if (DEBUG)
                 throw ex;
@@ -465,18 +465,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             }
                             catch (UnauthorizedAccessException ex)
                             {
-                                Debug.WriteLine("Could not access directories: {0}", ex.Message);
+                                Debug.WriteLine("Could not access directories: {0}", (object)ex.Message);
                             }
                             catch (System.Security.SecurityException ex)
                             {
-                                Debug.WriteLine("A security exception error occurred reading directories: {0}", ex.Message);
+                                Debug.WriteLine("A security exception error occurred reading directories: {0}", (object)ex.Message);
                             }
                             catch (IOException ex)
                             {
                                 if (ex is PathTooLongException)
                                 {
                                     // Just in case
-                                    Debug.WriteLine("Path ({0}) is too long", dir);
+                                    Debug.WriteLine("Path ({0}) is too long", (object)dir);
                                 }
 
                             }
@@ -486,11 +486,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
                 catch (IOException ex)
                 {
-                    Debug.WriteLine("The following I/O error occurred reading directories: {0}", ex.Message);
+                    Debug.WriteLine("The following I/O error occurred reading directories: {0}", (object)ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following unknown exception occurred reading directories: {0}", ex.Message);
+                    Debug.WriteLine("The following unknown exception occurred reading directories: {0}", (object)ex.Message);
 
 #if (DEBUG)
                     throw ex;
