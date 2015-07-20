@@ -59,10 +59,24 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             this.scanBase = sb;
 
-            this._tree.Model = ResultModel.CreateResultModel(sb);
-            this._tree.ExpandAll();
+            LoadingResults loadingResults = new LoadingResults(this.scanBase, this._tree);
 
-            Utils.AutoResizeColumns(this._tree);
+            bool? windowResult = loadingResults.ShowDialog();
+
+            if (windowResult.GetValueOrDefault(false))
+            {
+                Utils.AutoResizeColumns(this._tree);
+            }
+            else
+            {
+                Utils.MessageBoxThreadSafe("The results could not be prepared. Going back to start screen.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                this.scanBase.MoveFirst();
+            }
+
+            //this._tree.Model = this.scanBase.Results;
+            //this._tree.ExpandAll();
+
+            //Utils.AutoResizeColumns(this._tree);
         }
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)

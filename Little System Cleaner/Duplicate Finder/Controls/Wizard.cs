@@ -17,6 +17,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private Dictionary<string, List<FileEntry>> _filesGroupedByFilename;
         private Dictionary<string, List<FileEntry>> _filesGroupedByHash;
 
+        private ResultModel _results;
+
         public UserOptions Options
         {
             get { return this._options; }
@@ -41,6 +43,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 return this._filesGroupedByHash;
             }
+        }
+
+        public ResultModel Results
+        {
+            get { return this._results; }
+            set { this._results = value; }
         }
 
         public Wizard()

@@ -19,7 +19,7 @@ For more information, take a look at the [Little System Cleaner website](https:/
 
 ### Licensing ###
 
-Little System Cleaner is licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html). It also includes [Extended WPF Toolkit™ Community Edition](https://wpftoolkit.codeplex.com/) which is distributed unmodified and licensed under the [Microsoft Public License](http://www.microsoft.com/en-us/openness/licenses.aspx#MPL).
+Little System Cleaner is licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html). It also includes [Extended WPF Toolkit? Community Edition](https://wpftoolkit.codeplex.com/) which is distributed unmodified and licensed under the [Microsoft Public License](http://www.microsoft.com/en-us/openness/licenses.aspx#MPL).
 
 ### Development ###
 

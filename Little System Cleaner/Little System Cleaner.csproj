@@ -118,6 +118,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Duplicate Finder\Controls\LoadingResults.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Duplicate Finder\Controls\Results.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -276,6 +280,9 @@
     <Compile Include="Disk Cleaner\Helpers\lviFile.cs" />
     <Compile Include="Disk Cleaner\Helpers\lviFolder.cs" />
     <Compile Include="Disk Cleaner\Helpers\ProblemFile.cs" />
+    <Compile Include="Duplicate Finder\Controls\LoadingResults.xaml.cs">
+      <DependentUpon>LoadingResults.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Duplicate Finder\Controls\Results.xaml.cs">
       <DependentUpon>Results.xaml</DependentUpon>
     </Compile>

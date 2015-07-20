@@ -809,6 +809,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
             this.scanBase.MoveNext();
+
+            
         }
     }
 }
