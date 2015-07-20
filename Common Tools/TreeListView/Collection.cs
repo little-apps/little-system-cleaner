@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 
 namespace CommonTools.TreeListView
 {
-	public class ObservableCollectionAdv<T> : ObservableCollection<T>
+    public class ObservableCollectionAdv<T> : AsyncObservableCollection<T>
 	{
 		public void RemoveRange(int index, int count)
 		{

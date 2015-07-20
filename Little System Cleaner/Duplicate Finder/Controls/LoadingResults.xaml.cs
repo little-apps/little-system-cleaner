@@ -48,11 +48,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (!e.Cancelled && e.Error == null)
+            if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
-                this._tree.Model = (ResultModel)e.Result;
-                this._tree.ExpandAll();
-
                 this.DialogResult = true;
             }
             else
@@ -65,8 +62,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = ResultModel.CreateResultModel((Wizard)e.Argument);
-            //this._tree.ExpandAll();
+            this._resultModel = ResultModel.CreateResultModel((Wizard)e.Argument);
+
+            this.Dispatcher.Invoke(new Action(() => this._tree.Model = this._resultModel));
+
+            this._tree.ExpandAll();
+
+            e.Result = true;
         }
 
         private void LoadingResults_Closing(object sender, CancelEventArgs e)

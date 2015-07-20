@@ -356,6 +356,7 @@
     <Compile Include="TagLib\Xmp\XmpNodeType.cs" />
     <Compile Include="TagLib\Xmp\XmpNodeVisitor.cs" />
     <Compile Include="TagLib\Xmp\XmpTag.cs" />
+    <Compile Include="TreeListView\AsyncObservableCollection.cs" />
     <Compile Include="TreeListView\Collection.cs" />
     <Compile Include="TreeListView\Tree\Converters.cs" />
     <Compile Include="TreeListView\Tree\ITreeModel.cs" />
