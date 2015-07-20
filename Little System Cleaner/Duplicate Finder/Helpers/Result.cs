@@ -167,6 +167,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             get { return _children; }
         }
 
+        public bool IsParent
+        {
+            get
+            {
+                return (this.Children.Count > 0);
+            }
+        }
+
         private readonly FileEntry _fileEntry;
         private bool? _bIsChecked = false;
 
@@ -223,7 +231,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 {
                     return this.FileEntry.FileName;
                 }
-                else if (this.Children.Count > 0)
+                else if (this.IsParent)
                 {
                     string firstFileName = this.Children.First().FileName;
 
@@ -255,7 +263,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 {
                     return Utils.ConvertSizeToString(this.FileEntry.FileSize, false);
                 }
-                else if (this.Children.Count > 0)
+                else if (this.IsParent)
                 {
                     string firstFileSize = this.Children.First().FileSize;
 
@@ -299,7 +307,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     return ext;
                 }
-                else if (this.Children.Count > 0)
+                else if (this.IsParent)
                 {
                     string firstFileFormat = this.Children.First().FileFormat;
 
