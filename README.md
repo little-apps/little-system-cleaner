@@ -1,4 +1,4 @@
-![Little System Cleaner](https://www.little-system-cleaner.com/img/logo-black.png)
+﻿![Little System Cleaner](https://www.little-system-cleaner.com/img/logo-black.png)
 
 Little System Cleaner is an all in one system cleaner for Windows computers. Little System Cleaner combines the following tools:
  
@@ -19,7 +19,7 @@ For more information, take a look at the [Little System Cleaner website](https:/
 
 ### Licensing ###
 
-Little System Cleaner is licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html). It also includes [Extended WPF Toolkit? Community Edition](https://wpftoolkit.codeplex.com/) which is distributed unmodified and licensed under the [Microsoft Public License](http://www.microsoft.com/en-us/openness/licenses.aspx#MPL).
+Little System Cleaner is licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html). It also includes [Extended WPF Toolkit™ Community Edition](https://wpftoolkit.codeplex.com/) which is distributed unmodified and licensed under the [Microsoft Public License](http://www.microsoft.com/en-us/openness/licenses.aspx#MPL).
 
 ### Development ###
 
@@ -50,6 +50,18 @@ If you have an issue or an idea for Little System Cleaner, please check out [the
  * Added checks for needed assembly files
  * Addressed GDI+ error when displaying registry cleaner results
  * A few other minor bugs were fixed
+ 
+####Version 0.3#####
+
+ * Fixed installer so SQLite.Interop.dll files are extracted properly
+ * Message boxes are more thread-safe
+ * Added checks so the scanning doesn't begin with invalid selections
+ * Displays an error if a button is pressed with invalid selections
+ * Made improvements to task bar progress bar
+ * The download URL can be opened in the web browser if the file fails to download inside the program
+ * Made improvements to the user interface for duplicate finder
+ * Improved exception handling for duplicate finder scanner
+ * Several other bugs and improvements were made
 
 ### Show Your Support ###
 
