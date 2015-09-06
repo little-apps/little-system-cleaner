@@ -32,7 +32,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <ListView x:Name="listViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.ColumnSpan="2">
+        <ListView x:Name="listViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.Column="0" Grid.ColumnSpan="2">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click"  />

@@ -190,9 +190,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             try
             {
-                Process proc = new Process();
-                proc.StartInfo.FileName = windir + @"\explorer.exe";
-                proc.StartInfo.Arguments = Properties.Settings.Default.optionsBackupDir;
+                Process proc = new Process()
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = windir + @"\explorer.exe",
+                        Arguments = Properties.Settings.Default.optionsBackupDir
+                    }
+                };
+
                 proc.Start();
             }
             catch (Exception ex)

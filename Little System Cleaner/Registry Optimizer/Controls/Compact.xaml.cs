@@ -180,10 +180,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             bool ret;
             IntPtr hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
 
-            if (enable)
-                ret = PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted");
-            else
-                ret = PInvoke.ShutdownBlockReasonDestroy(hWnd);
+            ret = enable ? PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted") : PInvoke.ShutdownBlockReasonDestroy(hWnd);
 
             return ret;
         }

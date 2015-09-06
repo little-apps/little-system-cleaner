@@ -90,10 +90,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public override void MoveFirst(bool autoMove = true)
         {
-            if (!this.HivesLoaded)
-                this.SetCurrentControl(0, autoMove);
-            else
-                this.SetCurrentControl(1, autoMove);
+            this.SetCurrentControl(!this.HivesLoaded ? 0 : 1, autoMove);
         }
     }
 }

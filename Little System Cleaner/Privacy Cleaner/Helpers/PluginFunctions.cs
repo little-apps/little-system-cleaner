@@ -90,8 +90,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         public void DeleteValue(RegistryKey regKey, string searchText)
         {
-            List<string> valueNames = new List<string>();
-
             if (regKey == null)
                 return;
 
@@ -116,11 +114,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return;
 
             // Get value names that match regex
-            foreach (string valueName in regValueNames)
-            {
-                if (Regex.IsMatch(valueName, searchText))
-                    valueNames.Add(valueName);
-            }
+            List<string> valueNames = regValueNames.Where(valueName => Regex.IsMatch(valueName, searchText)).ToList();
 
             if (!RegistryValueNames.ContainsKey(regKey))
                 // Create new entry if regkey doesnt exist
@@ -337,17 +331,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     // Get filename from file path
                     string fileName = Path.GetFileName(filePath);
 
-                    foreach (string regex in regexFiles)
-                    {
-                        if (string.IsNullOrEmpty(regex))
-                            continue;
-
-                        if (Regex.IsMatch(fileName, regex))
-                        {
-                            AddToFiles(filePath);
-                            break;
-                        }
-                    }
+                    if (regexFiles.Where(regex => !string.IsNullOrEmpty(regex)).Any(regex => Regex.IsMatch(fileName, regex)))
+                        AddToFiles(filePath);
                 }
             }
         }
@@ -430,14 +415,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             foreach (string valueName in regValueNames)
             {
-                foreach (string regex in regexValueNames)
-                {
-                    if (Regex.IsMatch(valueName, regex) && (!valueNames.Contains(valueName)))
-                    {
-                        valueNames.Add(valueName);
-                        break;
-                    }
-                }
+                if (regexValueNames.Any(regex => Regex.IsMatch(valueName, regex) && (!valueNames.Contains(valueName))))
+                    valueNames.Add(valueName);
             }
 
             if (recurse)

@@ -181,11 +181,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 string[] neededFilesDirs = new string[] { "Cookies", "History", "Cache" };
                 List<string> fileSysEntries = new List<string>(Directory.EnumerateFileSystemEntries(path));
 
-                foreach (string neededFileDir in neededFilesDirs)
-                {
-                    if (!fileSysEntries.Contains(path + "\\" + neededFileDir))
-                        return false;
-                }
+                if (neededFilesDirs.Any(neededFileDir => !fileSysEntries.Contains(path + "\\" + neededFileDir)))
+                    return false;
             }
             catch (Exception)
             {

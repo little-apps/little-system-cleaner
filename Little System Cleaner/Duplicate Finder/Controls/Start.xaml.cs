@@ -165,14 +165,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return;
                 }
 
-                foreach (IncludeDrive drive in this.scanBase.Options.Drives)
-                {
-                    if (drive.IsChecked.GetValueOrDefault())
-                    {
-                        canContinue = true;
-                        break;
-                    }
-                }
+                canContinue = this.scanBase.Options.Drives.Any(drive => drive.IsChecked.GetValueOrDefault());
 
                 if (!canContinue)
                 {
@@ -186,14 +179,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     canContinue = false;
                 else
                 {
-                    foreach (IncludeFolder dir in this.scanBase.Options.IncFolders)
-                    {
-                        if (dir.IsChecked.GetValueOrDefault())
-                        {
-                            canContinue = true;
-                            break;
-                        }
-                    }
+                    canContinue = this.scanBase.Options.IncFolders.Any(dir => dir.IsChecked.GetValueOrDefault());
                 }
 
                 if (!canContinue)

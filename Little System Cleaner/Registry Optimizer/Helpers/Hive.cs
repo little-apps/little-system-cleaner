@@ -123,10 +123,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         {
             this.strHiveName = HiveName;
 
-            if (File.Exists(HivePath))
-                this.strHivePath = HivePath;
-            else
-                this.strHivePath = HiveManager.ConvertDeviceToMSDOSName(HivePath);
+            this.strHivePath = File.Exists(HivePath) ? HivePath : HiveManager.ConvertDeviceToMSDOSName(HivePath);
 
             try
             {

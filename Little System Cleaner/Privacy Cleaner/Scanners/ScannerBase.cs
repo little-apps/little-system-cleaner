@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Media;
 using CommonTools.WpfAnimatedGif;
 using System.Diagnostics;
+using System.Linq;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Misc;
 
@@ -346,10 +347,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         {
                             string regKeyPath = xmlReader.ReadElementContentAsString();
 
-                            if (!string.IsNullOrWhiteSpace(regKeyPath))
-                                bRet = Utils.RegKeyExists(regKeyPath);
-                            else
-                                bRet = false;
+                            bRet = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
 
                             if (!bRet)
                                 return bRet;
@@ -387,17 +385,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                                     if (valueNames != null)
                                     {
-                                        foreach (string valueName in valueNames)
-                                        {
-                                            if (!string.IsNullOrWhiteSpace(valueName))
-                                            {
-                                                if (Regex.IsMatch(valueName, valueNameRegEx))
-                                                {
-                                                    bRet = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
+                                        if (valueNames.Where(valueName => !string.IsNullOrWhiteSpace(valueName)).Any(valueName => Regex.IsMatch(valueName, valueNameRegEx)))
+                                            bRet = true;
                                     }
                                 }
                             }

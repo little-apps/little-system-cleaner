@@ -12,56 +12,47 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     {
         public class Item
         {
-            private string _versionString;
-            private string _title;
-            private string _changelog;
-            private string _url;
-            private string _fileName;
-
             [XmlElement("version")]
             public string VersionString
             {
-                get { return this._versionString; }
-                set { this._versionString = value; }
+                get;
+                set;
             }
 
             public Version Version
             {
-                get 
+                get
                 {
-                    if (string.IsNullOrEmpty(this._versionString))
-                        return null;
-
-                    return new Version(this._versionString); 
+                    return (!string.IsNullOrEmpty(this.VersionString) ? new Version(this.VersionString) : null);
                 }
             }
 
             [XmlElement("title")]
             public string Title
             {
-                get { return this._title; }
-                set { this._title = value; }
+                get;
+                set;
             }
 
             [XmlElement("changelog")]
             public string ChangeLog
             {
-                get { return this._changelog; }
-                set { this._changelog = value; }
+                get;
+                set;
             }
 
             [XmlElement("url")]
             public string URL
             {
-                get { return this._url; }
-                set { this._url = value; }
+                get;
+                set;
             }
 
             [XmlElement("filename")]
             public string FileName
             {
-                get { return this._fileName; }
-                set { this._fileName = value; }
+                get;
+                set;
             }
         }
 
@@ -70,8 +61,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         [XmlElement("item")]
         public List<Item> Items
         {
-            get { return this._items; }
-            set { this._items = value; }
+            get;
+            set;
         }
 
         public UpdateXML()

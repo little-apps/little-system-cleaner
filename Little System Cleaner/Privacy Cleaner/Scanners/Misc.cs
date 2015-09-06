@@ -97,8 +97,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanRecycleBin()
         {
-            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO();
-            sqrbi.cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO));
+            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO() { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
             int hr = (int)SHQueryRecycleBin(string.Empty, ref sqrbi);
             if (sqrbi.i64NumItems > 0)
                 Wizard.StoreCleanDelegate(new CleanDelegate(CleanRecycleBin), "Empty Recycle Bin", sqrbi.i64Size);

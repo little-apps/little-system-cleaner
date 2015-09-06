@@ -76,13 +76,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         internal static ObservableCollection<HashAlgorithm> CreateList()
         {
-            ObservableCollection<HashAlgorithm> algorithms = new ObservableCollection<HashAlgorithm>();
-
-            algorithms.Add(new HashAlgorithm(Algorithms.CRC32));
-            algorithms.Add(new HashAlgorithm(Algorithms.MD5));
-            algorithms.Add(new HashAlgorithm(Algorithms.SHA1));
-            algorithms.Add(new HashAlgorithm(Algorithms.SHA256));
-            algorithms.Add(new HashAlgorithm(Algorithms.SHA512));
+            ObservableCollection<HashAlgorithm> algorithms = new ObservableCollection<HashAlgorithm>()
+            {
+                new HashAlgorithm(Algorithms.CRC32),
+                new HashAlgorithm(Algorithms.MD5),
+                new HashAlgorithm(Algorithms.SHA1),
+                new HashAlgorithm(Algorithms.SHA256),
+                new HashAlgorithm(Algorithms.SHA512)
+            };
 
             return algorithms;
         }

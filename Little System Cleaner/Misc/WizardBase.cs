@@ -122,7 +122,7 @@ namespace Little_System_Cleaner.Misc
         {
             if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action(() => ChangeCurrentControl()));
+                this.Dispatcher.BeginInvoke(new Action(ChangeCurrentControl));
 
                 return;
             }

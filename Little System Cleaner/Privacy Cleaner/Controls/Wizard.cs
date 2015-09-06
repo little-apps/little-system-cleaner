@@ -185,15 +185,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <param name="filePath">File Path</param>
         internal static bool StoreBadFileList(string desc, string[] filePaths)
         {
-            long fileSize = 0;
-
             // Check for null parameters
             if (filePaths == null || filePaths.Length == 0 || string.IsNullOrEmpty(desc))
                 return false;
 
             // Calculate total file size
-            foreach (string filePath in filePaths)
-                fileSize += MiscFunctions.GetFileSize(filePath);
+            long fileSize = filePaths.Sum(filePath => MiscFunctions.GetFileSize(filePath));
 
             CurrentScanner.Results.Children.Add(new ResultFiles(desc, filePaths, fileSize));
 
@@ -248,11 +245,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (string.IsNullOrEmpty(desc) || regKeys == null || regKeys.Count == 0)
                 return false;
 
-            foreach (KeyValuePair<RegistryKey, string[]> kvp in regKeys)
-            {
-                if (kvp.Key == null || (kvp.Value == null || kvp.Value.Length <= 0))
-                    return false;
-            }
+            if (regKeys.Any(kvp => kvp.Key == null || (kvp.Value == null || kvp.Value.Length <= 0)))
+                return false;
 
             CurrentScanner.Results.Children.Add(new ResultRegKeys(desc, regKeys));
 

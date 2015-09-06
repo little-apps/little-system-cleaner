@@ -363,11 +363,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 }
 
                 byte[] md5Bytes = this.GetMD5Sum(memStream.ToArray());
-                
-                foreach (byte b in md5Bytes)
-                {
-                    md5string += b.ToString("x2");
-                }
+                md5string = md5Bytes.Aggregate(md5string, (current, b) => current + b.ToString("x2"));
             }
 
             this.TagsChecksum = md5string;
@@ -491,10 +487,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                 if (fileNameNoExt.Length > 0)
                 {
-                    foreach (byte b in fileNameNoExt)
-                    {
-                        crc = (crc >> 8) ^ table[b ^ crc & 0xff];
-                    }
+                    crc = fileNameNoExt.Aggregate(crc, (current, b) => (current >> 8) ^ table[b ^ current & 0xff]);
                 }
             }
 
@@ -566,10 +559,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
 
             // Convert to hex
-            foreach (byte b in hashBytes)
-                hash += b.ToString("x2");
-
-            return hash;
+            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>
@@ -616,10 +606,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
 
             // Convert to hex
-            foreach (byte b in hashBytes)
-                hash += b.ToString("x2");
-
-            return hash;
+            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>
@@ -665,10 +652,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
 
             // Convert to hex
-            foreach (byte b in hashBytes)
-                hash += b.ToString("x2");
-
-            return hash;
+            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>
@@ -715,10 +699,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
 
             // Convert to hex
-            foreach (byte b in hashBytes)
-                hash += b.ToString("x2");
-
-            return hash;
+            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>

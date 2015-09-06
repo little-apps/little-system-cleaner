@@ -269,13 +269,16 @@ namespace Little_System_Cleaner
             const int TVIF_TEXT = 0x0001;
             const int MAX_TVITEMTEXT = 512;
 
-            Interop.TVITEM tvi = new Interop.TVITEM();
-            tvi.mask = TVIF_TEXT;
-            tvi.hItem = item;
-            tvi.cchTextMax = MAX_TVITEMTEXT;
             // set address to remote buffer immediately following the tvItem
             Int64 nRemoteBufferPtr = lpRemoteBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
-            tvi.pszText = (IntPtr)(nRemoteBufferPtr);
+
+            Interop.TVITEM tvi = new Interop.TVITEM()
+            {
+                mask = TVIF_TEXT,
+                hItem = item,
+                cchTextMax = MAX_TVITEMTEXT,
+                pszText = (IntPtr)(nRemoteBufferPtr)
+            };
 
             // copy local tvItem to remote buffer
             bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref tvi, Marshal.SizeOf(typeof(Interop.TVITEM)), IntPtr.Zero);
@@ -318,13 +321,14 @@ namespace Little_System_Cleaner
             const int LVIS_FOCUSED = 0x0001;
             const int LVIS_SELECTED = 0x0002;
 
-            Interop.LVITEM lvItem = new Interop.LVITEM();
-            lvItem.mask = LVIF_STATE;
-            lvItem.iItem = item;
-            lvItem.iSubItem = 0;
-
-            lvItem.state = LVIS_FOCUSED | LVIS_SELECTED;
-            lvItem.stateMask = LVIS_FOCUSED | LVIS_SELECTED;
+            Interop.LVITEM lvItem = new Interop.LVITEM()
+            {
+                mask = LVIF_STATE,
+                iItem = item,
+                iSubItem = 0,
+                state = LVIS_FOCUSED | LVIS_SELECTED,
+                stateMask = LVIS_FOCUSED | LVIS_SELECTED
+            };
 
             // copy local lvItem to remote buffer
             bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref lvItem, Marshal.SizeOf(typeof(Interop.LVITEM)), IntPtr.Zero);
@@ -341,14 +345,17 @@ namespace Little_System_Cleaner
             const int LVM_GETITEM = 0x1005;
             const int LVIF_TEXT = 0x0001;
 
-            Interop.LVITEM lvItem = new Interop.LVITEM();
-            lvItem.mask = LVIF_TEXT;
-            lvItem.iItem = item;
-            lvItem.iSubItem = 0;
             // set address to remote buffer immediately following the lvItem 
             Int64 nRemoteBufferPtr = lpRemoteBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
-            lvItem.pszText = (IntPtr)(nRemoteBufferPtr);
-            lvItem.cchTextMax = 50;
+
+            Interop.LVITEM lvItem = new Interop.LVITEM()
+            {
+                mask = LVIF_TEXT,
+                iItem = item,
+                iSubItem = 0,
+                pszText = (IntPtr)(nRemoteBufferPtr),
+                cchTextMax = 50
+            };
 
             // copy local lvItem to remote buffer
             bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref lvItem, Marshal.SizeOf(typeof(Interop.LVITEM)), IntPtr.Zero);

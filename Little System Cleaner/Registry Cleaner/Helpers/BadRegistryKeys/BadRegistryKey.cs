@@ -247,9 +247,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// </summary>
         public BadRegistryKey(BitmapImage icon, string sectionName)
         {
-            this.bMapImg = new Image();
+            this.bMapImg = new Image() { Source = icon };
 
-            this.bMapImg.Source = icon;
             this._strProblem = sectionName;
 
             this._strSectionName = "";
@@ -304,10 +303,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 string message;
 
-                if (!string.IsNullOrEmpty(this.ValueName))
-                    message = string.Format("Unable to delete value name ({0}) from registry key ({1}).\nError: {2}", this.ValueName, this.RegKeyPath, ex.Message);
-                else
-                    message = string.Format("An error occurred deleting registry key ({0}).\nError: {1}", this.RegKeyPath, ex.Message);
+                message = !string.IsNullOrEmpty(this.ValueName) ? string.Format("Unable to delete value name ({0}) from registry key ({1}).\nError: {2}", this.ValueName, this.RegKeyPath, ex.Message) : string.Format("An error occurred deleting registry key ({0}).\nError: {1}", this.RegKeyPath, ex.Message);
 
                 Debug.WriteLine(message);
 

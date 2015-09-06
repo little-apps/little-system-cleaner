@@ -198,7 +198,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         internal void ParseModelChild(SectionModel model)
         {
             if (model.Root.Children[0].Children.Count <= 0)
-                throw new ArgumentException("model must contain children", "model");
+                throw new ArgumentException("model must contain children", nameof(model));
 
             foreach (Little_System_Cleaner.Registry_Cleaner.Helpers.Section child in model.Root.Children[0].Children)
             {
@@ -333,10 +333,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             _badRegKeyArray.Add(new BadRegistryKey(Wizard.currentScannerName, problem, baseKey, subKey, valueName, severity));
 
-            if (!string.IsNullOrEmpty(valueName))
-                Wizard.Report.WriteLine(string.Format("Bad Registry Value Found! Problem: \"{0}\" Path: \"{1}\" Value Name: \"{2}\"", problem, regPath, valueName));
-            else
-                Wizard.Report.WriteLine(string.Format("Bad Registry Key Found! Problem: \"{0}\" Path: \"{1}\"", problem, regPath));
+            Wizard.Report.WriteLine(!string.IsNullOrEmpty(valueName)
+                ? string.Format("Bad Registry Value Found! Problem: \"{0}\" Path: \"{1}\" Value Name: \"{2}\"", problem,
+                    regPath, valueName)
+                : string.Format("Bad Registry Key Found! Problem: \"{0}\" Path: \"{1}\"", problem, regPath));
 
             return true;
         }

@@ -715,10 +715,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                if (!string.IsNullOrEmpty(subKey))
-                    regKey = rootKey.OpenSubKey(subKey);
-                else
-                    regKey = rootKey;
+                regKey = !string.IsNullOrEmpty(subKey) ? rootKey.OpenSubKey(subKey) : rootKey;
 
                 bRet = InprocServerExists(regKey);
             }

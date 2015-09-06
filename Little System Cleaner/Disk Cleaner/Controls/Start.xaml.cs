@@ -434,9 +434,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     string freeSpace = Utils.ConvertSizeToString(driveInfo.TotalFreeSpace);
                     string totalSpace = Utils.ConvertSizeToString(driveInfo.TotalSize);
 
-                    bool isChecked = false;
-                    if (winDir.Contains(driveInfo.Name))
-                        isChecked = true;
+                    bool isChecked = winDir.Contains(driveInfo.Name);
 
                     lviDrive listViewItem = new lviDrive(isChecked, driveInfo.Name, driveInfo.DriveFormat, totalSpace, freeSpace, driveInfo);
 
@@ -445,12 +443,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 if (Properties.Settings.Default.diskCleanerIncludedFolders == null)
                 {
-                    Properties.Settings.Default.diskCleanerIncludedFolders = new System.Collections.Specialized.StringCollection();
-
-                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User));
-                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine));
-                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.Recent));
-                    Properties.Settings.Default.diskCleanerIncludedFolders.Add(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache));
+                    Properties.Settings.Default.diskCleanerIncludedFolders = new System.Collections.Specialized.StringCollection()
+                    {
+                        Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User),
+                        Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine),
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent),
+                        Environment.GetFolderPath(Environment.SpecialFolder.InternetCache)
+                    };
                 }
             }
 
@@ -583,19 +582,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             else if (this.SearchFilterAggressive.GetValueOrDefault())
                 filters = new string[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous" };
 
-            foreach (string mask in this.SearchFilter.Split(';'))
-            {
-                string maskTrimmed = mask.Trim();
+            masks.AddRange(
+                this.SearchFilter.Split(';')
+                    .Select(mask => mask.Trim())
+                    .Where(maskTrimmed => !string.IsNullOrEmpty(maskTrimmed) && !allFilters.Contains(maskTrimmed))
+                );
 
-                if (!string.IsNullOrWhiteSpace(mask) && !allFilters.Contains(maskTrimmed))
-                    masks.Add(maskTrimmed);
-            }
-
-            foreach (string mask in filters)
-            {
-                if (!masks.Contains(mask))
-                    masks.Add(mask);
-            }
+            masks.AddRange(filters.Where(mask => !masks.Contains(mask)));
 
             this.SearchFilter = string.Join("; ", masks);
         }

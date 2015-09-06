@@ -85,10 +85,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             string[] strValueNames = null;
             StartupEntry nodeRoot = new StartupEntry() { SectionName = regKey.Name };
 
-            if (regKey.Name.Contains(Registry.CurrentUser.ToString()))
-                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.current_user);
-            else
-                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.all_users);
+            nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(regKey.Name.Contains(Registry.CurrentUser.ToString()) ? Properties.Resources.current_user : Properties.Resources.all_users);
 
             try
             {
@@ -124,10 +121,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                         StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
 
                         Icon ico = Utils.ExtractIcon(strFile);
-                        if (ico != null)
-                            node.bMapImg = Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap);
-                        else
-                            node.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+                        node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
 
                         nodeRoot.Children.Add(node);
                     }
@@ -155,10 +149,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             string[] strShortcuts = null;
             StartupEntry nodeRoot = new StartupEntry() { SectionName = strFolder };
 
-            if (Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder)
-                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.current_user);
-            else
-                nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.all_users);
+            nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder ? Properties.Resources.current_user : Properties.Resources.all_users);
 
             try
             {
@@ -185,10 +176,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                         StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strShortcutName, Path = strFilePath, Args = strFileArgs };
 
                         Icon ico = Utils.ExtractIcon(strFilePath);
-                        if (ico != null)
-                            node.bMapImg = Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap);
-                        else
-                            node.bMapImg = Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+                        node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
 
                         nodeRoot.Children.Add(node);
                     }

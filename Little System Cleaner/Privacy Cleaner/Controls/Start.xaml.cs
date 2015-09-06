@@ -103,18 +103,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             this.scanBase.Model = this._tree.Model as SectionModel;
 
-            bool foundEnabled = false;
-
-            foreach (ScannerBase n in this.scanBase.Model.RootChildren)
-            {
-                if (n.IsChecked == null || n.IsChecked == true) 
-                { 
-                    foundEnabled = true;
-                    break;
-                }
-            }
-
-            if (!foundEnabled)
+            if (!this.scanBase.Model.RootChildren.Any(n => n.IsChecked == null || n.IsChecked == true))
             {
                 MessageBox.Show(App.Current.MainWindow, "At least one item must be selected in order for privacy issues to be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;

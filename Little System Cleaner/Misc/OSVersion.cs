@@ -143,8 +143,7 @@ namespace Little_System_Cleaner
 
         internal static string GetOSVersion()
         {
-            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-            osVersionInfo.dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX() { dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX)) };
 
             SYSTEM_INFO systemInfo = new SYSTEM_INFO();
             GetSystemInfo(ref systemInfo);

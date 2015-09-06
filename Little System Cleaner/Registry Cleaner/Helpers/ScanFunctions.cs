@@ -202,10 +202,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                         }
                     case RegistryValueKind.Binary:
                         {
-                            string strValue = "";
-
-                            foreach (byte b in (byte[])regKey.GetValue(valueName))
-                                strValue = string.Format("{0} {1:X2}", strValue, b);
+                            string strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("", (current, b) => string.Format("{0} {1:X2}", current, b));
 
                             strRet = string.Copy(strValue);
 
@@ -246,10 +243,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 {
                     bool ret = false;
 
-                    foreach (string subKey in key.GetSubKeyNames())
+                    foreach (RegistryKey subRegKey in key.GetSubKeyNames().Select(subKey => key.OpenSubKey(subKey)))
                     {
-                        RegistryKey subRegKey = key.OpenSubKey(subKey);
-
                         if (subRegKey != null)
                             ret = CanDeleteKey(subRegKey);
                         else
@@ -265,15 +260,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 {
                     System.Security.AccessControl.RegistrySecurity regSecurity = key.GetAccessControl();
 
-                    foreach (System.Security.AccessControl.AuthorizationRule rule in regSecurity.GetAccessRules(true, false, typeof(System.Security.Principal.NTAccount)))
-                    {
-                        if ((System.Security.AccessControl.RegistryRights.Delete & ((System.Security.AccessControl.RegistryAccessRule)(rule)).RegistryRights) != System.Security.AccessControl.RegistryRights.Delete)
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
+                    return regSecurity.GetAccessRules(true, false, typeof (System.Security.Principal.NTAccount)).Cast<AuthorizationRule>().All(rule => (System.Security.AccessControl.RegistryRights.Delete & ((System.Security.AccessControl.RegistryAccessRule) (rule)).RegistryRights) == System.Security.AccessControl.RegistryRights.Delete);
                 }
 
             }

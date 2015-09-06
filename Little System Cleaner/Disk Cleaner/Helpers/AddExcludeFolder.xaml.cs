@@ -53,8 +53,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
             if (AddExcludeFolderDelegate != null)
             {
-                AddExcludeFolderEventArgs eventArgs = new AddExcludeFolderEventArgs();
-                eventArgs.folderPath = this.textBox.Text.Trim();
+                AddExcludeFolderEventArgs eventArgs = new AddExcludeFolderEventArgs() { folderPath = this.textBox.Text.Trim() };
                 AddExcludeFolderDelegate(this, eventArgs);
             }
 

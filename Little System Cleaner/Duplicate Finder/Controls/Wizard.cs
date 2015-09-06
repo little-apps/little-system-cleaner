@@ -26,22 +26,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public Dictionary<string, List<FileEntry>> FilesGroupedByFilename
         {
-            get
-            {
-                if (this._filesGroupedByFilename == null)
-                    this._filesGroupedByFilename = new Dictionary<string, List<FileEntry>>();
-
-                return this._filesGroupedByFilename;
+            get {
+                return this._filesGroupedByFilename ??
+                       (this._filesGroupedByFilename = new Dictionary<string, List<FileEntry>>());
             }
         }
         public Dictionary<string, List<FileEntry>> FilesGroupedByHash
         {
-            get
-            {
-                if (this._filesGroupedByHash == null)
-                    this._filesGroupedByHash = new Dictionary<string, List<FileEntry>>();
-
-                return this._filesGroupedByHash;
+            get {
+                return this._filesGroupedByHash ??
+                       (this._filesGroupedByHash = new Dictionary<string, List<FileEntry>>());
             }
         }
 

@@ -205,12 +205,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                     if (headerClicked.Column != _lastColumnClicked)
                         direction = ListSortDirection.Ascending;
                     else
-                    {
-                        if (_lastDirection == ListSortDirection.Ascending)
-                            direction = ListSortDirection.Descending;
-                        else
-                            direction = ListSortDirection.Ascending;
-                    }
+                        direction = _lastDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
 
                     Sort(headerClicked.Column, direction);
                 }

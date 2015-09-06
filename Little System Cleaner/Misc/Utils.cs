@@ -87,7 +87,7 @@ namespace Little_System_Cleaner.Misc
             {
                 if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    return (Window)App.Current.Dispatcher.Invoke(new Func<Window>(() => { return Utils.MainWindowThreadSafe; }));
+                    return (Window)App.Current.Dispatcher.Invoke(new Func<Window>(() => Utils.MainWindowThreadSafe));
                 }
 
                 return App.Current.MainWindow;
@@ -539,7 +539,7 @@ namespace Little_System_Cleaner.Misc
             filePath = fileArgs = "";
 
             if (string.IsNullOrEmpty(strCmdLine.ToString()))
-                throw new ArgumentNullException("cmdLine");
+                throw new ArgumentNullException(nameof(cmdLine));
 
             fileArgs = Marshal.PtrToStringAuto(PInvoke.PathGetArgs(strCmdLine.ToString()));
 
@@ -675,23 +675,15 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Size of directory in bytes</returns>
         internal static long CalculateDirectorySize(DirectoryInfo directory, bool includeSubdirectories)
         {
-            long totalSize = 0;
-
             // Examine all contained files.
             FileInfo[] files = directory.GetFiles();
-            foreach (FileInfo file in files)
-            {
-                totalSize += file.Length;
-            }
+            long totalSize = files.Sum(file => file.Length);
 
             // Examine all contained directories.
             if (includeSubdirectories)
             {
                 DirectoryInfo[] dirs = directory.GetDirectories();
-                foreach (DirectoryInfo dir in dirs)
-                {
-                    totalSize += CalculateDirectorySize(dir, true);
-                }
+                totalSize += dirs.Sum(dir => CalculateDirectorySize(dir, true));
             }
 
             return totalSize;
@@ -1038,19 +1030,21 @@ namespace Little_System_Cleaner.Misc
         internal static System.Windows.Controls.Image CreateBitmapSourceFromBitmap(System.Drawing.Bitmap bitmap)
         {
             if (bitmap == null)
-                throw new ArgumentNullException("bitmap");
+                throw new ArgumentNullException(nameof(bitmap));
 
             IntPtr hBitmap = bitmap.GetHbitmap();
 
             try
             {
-                System.Windows.Controls.Image bMapImg = new System.Windows.Controls.Image();
-                bMapImg.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                    hBitmap,
-                    IntPtr.Zero,
-                    System.Windows.Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions()
-                );
+                System.Windows.Controls.Image bMapImg = new System.Windows.Controls.Image()
+                {
+                    Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                                hBitmap,
+                                IntPtr.Zero,
+                                System.Windows.Int32Rect.Empty,
+                                BitmapSizeOptions.FromEmptyOptions()
+                            )
+                };
 
                 return bMapImg;
             }
@@ -1107,10 +1101,10 @@ namespace Little_System_Cleaner.Misc
         internal static bool IsAssemblyLoaded(string assembly, Version ver = null, bool versionCanBeGreater = false, byte[] publicKeyToken = null) 
         {
             if (string.IsNullOrWhiteSpace(assembly))
-                throw new ArgumentNullException("assembly", "The assembly name cannot be null or empty");
+                throw new ArgumentNullException(nameof(assembly), "The assembly name cannot be null or empty");
 
             if ((publicKeyToken != null) && publicKeyToken.Length != 8)
-                throw new ArgumentException("The public key token must be 8 bytes long", "publicKeyToken");
+                throw new ArgumentException("The public key token must be 8 bytes long", nameof(publicKeyToken));
 
             // Do not get Assembly from App because this function is called before App is initialized
             Assembly asm = Assembly.GetExecutingAssembly();
@@ -1167,7 +1161,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
         internal static MessageBoxResult MessageBoxThreadSafe(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(owner, messageBoxText, caption, button, icon); });
+            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => MessageBox.Show(owner, messageBoxText, caption, button, icon));
 
             if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
                 return (MessageBoxResult)App.Current.Dispatcher.Invoke(showMsgBox);
@@ -1199,7 +1193,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns DispatcherOperation class</returns>
         internal static DispatcherOperation MessageBoxThreadSafeAsync(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => { return MessageBox.Show(owner, messageBoxText, caption, button, icon); });
+            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => MessageBox.Show(owner, messageBoxText, caption, button, icon));
 
             return App.Current.Dispatcher.BeginInvoke(showMsgBox);
         }

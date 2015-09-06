@@ -51,10 +51,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             SetComboBox(sectionName);
 
-            if (entryName.EndsWith(".lnk"))
-                this.textBoxName.Text = entryName.Remove(entryName.IndexOf(".lnk"));
-            else
-                this.textBoxName.Text = entryName;
+            this.textBoxName.Text = entryName.EndsWith(".lnk") ? entryName.Remove(entryName.IndexOf(".lnk")) : entryName;
             this.textBoxPath.Text = filePath;
             this.textBoxArgs.Text = fileArgs;
 
@@ -227,8 +224,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             ComboBoxItem comboItem = new ComboBoxItem();
 
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
+            StackPanel stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
 
             Image bMapImg = Utils.CreateBitmapSourceFromBitmap(bitMap);
 
@@ -237,8 +233,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             
             stackPanel.Children.Add(bMapImg);
 
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = startupPath;
+            TextBlock textBlock = new TextBlock() { Text = startupPath };
 
             stackPanel.Children.Add(textBlock);
 
@@ -283,10 +278,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             {
                 try
                 {
-                    if (this.comboBox1.SelectedIndex == 0)
-                        filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP), this.textBoxName.Text + ".lnk");
-                    else
-                        filePath = System.IO.Path.Combine(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), this.textBoxName.Text + ".lnk");
+                    filePath = System.IO.Path.Combine(this.comboBox1.SelectedIndex == 0 ? Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP) : Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), this.textBoxName.Text + ".lnk");
 
                     string fileDir = Path.GetDirectoryName(filePath);
                     if (!Directory.Exists(fileDir))
@@ -507,10 +499,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void BrowseFile()
         {
-            OpenFileDialog openFileDlg = new OpenFileDialog();
-
-            openFileDlg.Multiselect = false;
-
+            OpenFileDialog openFileDlg = new OpenFileDialog() { Multiselect = false };
+            
             if (!string.IsNullOrEmpty(this.textBoxPath.Text))
             {
                 openFileDlg.InitialDirectory = Path.GetDirectoryName(this.textBoxPath.Text);

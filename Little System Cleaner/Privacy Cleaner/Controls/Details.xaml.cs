@@ -119,9 +119,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                startInfo.ErrorDialog = true;
-                startInfo.FileName = path;
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo()
+                {
+                    ErrorDialog = true,
+                    FileName = path
+                };
+
                 System.Diagnostics.Process.Start(startInfo);
             }
         }

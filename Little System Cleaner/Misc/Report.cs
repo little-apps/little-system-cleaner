@@ -112,8 +112,11 @@ namespace Little_System_Cleaner
 
                         if (displayFile)
                         {
-                            ProcessStartInfo startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName);
-                            startInfo.ErrorDialog = true;
+                            ProcessStartInfo startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
+                            {
+                                ErrorDialog = true
+                            };
+
                             Process.Start(startInfo);
                         }
 

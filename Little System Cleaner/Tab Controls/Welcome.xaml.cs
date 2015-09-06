@@ -74,10 +74,7 @@ namespace Little_System_Cleaner.Controls
             MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
             RegistryKey regKey = null;
 
-            if (Properties.Settings.Default.lastScanDate != 0)
-                this.lastDateTime.Text = DateTime.FromBinary(Properties.Settings.Default.lastScanDate).ToString();
-            else
-                this.lastDateTime.Text = "Unknown";
+            this.lastDateTime.Text = Properties.Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Properties.Settings.Default.lastScanDate).ToString() : "Unknown";
             this.errorsFound.Text = string.Format("{0} errors found", Properties.Settings.Default.lastScanErrors);
             this.errorsRepaired.Text = string.Format("{0} errors fixed", Properties.Settings.Default.lastScanErrorsFixed);
             if (Properties.Settings.Default.lastScanElapsed != 0)
@@ -116,10 +113,7 @@ namespace Little_System_Cleaner.Controls
                     regKey.Close();
             }
 
-            if (GlobalMemoryStatusEx(memStatus))
-                this.totalRAM.Text = string.Format("{0} total memory", Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys)));
-            else
-                this.totalRAM.Text = "Unknown";
+            this.totalRAM.Text = GlobalMemoryStatusEx(memStatus) ? string.Format("{0} total memory", Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))) : "Unknown";
 
             this.osVersion.Text = OSVersion.GetOSVersion();
         }

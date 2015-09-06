@@ -167,7 +167,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             return;
         }
 
-        private Nullable<int> ConvertToNullableInt32(object o)
+        private int? ConvertToNullableInt32(object o)
         {
             if (o == null)
                 return null;
@@ -418,7 +418,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         #region IComparable members
         public int CompareTo(ProgramInfo other)
         {
-            return (_displayName == null) ? 0 : _displayName.CompareTo(other._displayName);
+            return _displayName?.CompareTo(other._displayName) ?? 0;
         }
 
         public bool Equals(ProgramInfo other)

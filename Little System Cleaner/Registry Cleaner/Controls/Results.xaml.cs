@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.ComponentModel;
+using System.Linq;
 using Little_System_Cleaner.Misc;
 using System.Threading;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
@@ -107,12 +108,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// </summary>
         public BitmapSource bMapSrcFinishedScanning
         {
-            get
-            {
-                if (this._bMapSrcFinishedScanning == null)
-                    this._bMapSrcFinishedScanning = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-
-                return this._bMapSrcFinishedScanning;
+            get {
+                return this._bMapSrcFinishedScanning ??
+                       (this._bMapSrcFinishedScanning =
+                           System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                               Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+                               System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions()));
             }
         }
 
@@ -156,33 +157,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private List<BadRegistryKey> GetSelectedRegKeys()
         {
-            List<BadRegistryKey> badRegKeyArr = new List<BadRegistryKey>();
-
-            foreach (BadRegistryKey badRegKeyRoot in (this._tree.Model as ResultModel).Root.Children)
-            {
-                foreach (BadRegistryKey child in badRegKeyRoot.Children)
-                {
-                    if ((child.IsChecked.HasValue) && child.IsChecked.Value)
-                    {
-                        badRegKeyArr.Add(child);
-                    }
-                }
-            }
-
-            return badRegKeyArr;
+            return (this._tree.Model as ResultModel).Root.Children
+                .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
+                .Where(child => (child.IsChecked.HasValue) && child.IsChecked.Value)
+                .ToList();
         }
 
-        private void SetCheckedItems(Nullable<bool> isChecked)
+        private void SetCheckedItems(bool? isChecked)
         {
-            foreach (BadRegistryKey badRegKeyRoot in (this._tree.Model as ResultModel).Root.Children)
+            foreach (BadRegistryKey child in (this._tree.Model as ResultModel).Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children))
             {
-                foreach (BadRegistryKey child in badRegKeyRoot.Children)
-                {
-                    if (!isChecked.HasValue)
-                        child.IsChecked = !child.IsChecked;
-                    else
-                        child.IsChecked = isChecked.Value;
-                }
+                if (!isChecked.HasValue)
+                    child.IsChecked = !child.IsChecked;
+                else
+                    child.IsChecked = isChecked.Value;
             }
 
             return;
@@ -314,8 +302,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     this.Dispatcher.Invoke(new Action(() =>
                     {
                         // Set icon to check mark
-                        brk.bMapImg = new Image();
-                        brk.bMapImg.Source = this.bMapSrcFinishedScanning;
+                        brk.bMapImg = new Image() { Source = this.bMapSrcFinishedScanning };
 
                         this._tree.Items.Refresh();
 

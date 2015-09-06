@@ -379,35 +379,23 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private bool FolderIsIncluded(string dirPath)
         {
-            foreach (string includeDir in Properties.Settings.Default.diskCleanerIncludedFolders)
-            {
-                if (string.Compare(includeDir, dirPath) == 0 || Utils.CompareWildcard(dirPath, includeDir))
-                    return true;
-            }
+            var includeDirsList = Properties.Settings.Default.diskCleanerIncludedFolders.Cast<string>();
 
-            return false;
+            return (includeDirsList.Any(includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0));
         }
 
         private bool FolderIsExcluded(string dirPath)
         {
-            foreach (string excludeDir in Properties.Settings.Default.diskCleanerExcludedDirs)
-            {
-                if (Utils.CompareWildcard(dirPath, excludeDir))
-                    return true;
-            }
+            var excludeDirsList = Properties.Settings.Default.diskCleanerExcludedDirs.Cast<string>();
 
-            return false;
+            return (excludeDirsList.Any(excludeDir => Utils.CompareWildcard(dirPath, excludeDir)));
         }
 
         private bool FileTypeIsExcluded(string fileName)
         {
-            foreach (string excludeFileType in Properties.Settings.Default.diskCleanerExcludedFileTypes)
-            {
-                if (Utils.CompareWildcard(fileName, excludeFileType))
-                    return true;
-            }
+            var excludeFileTypesList = Properties.Settings.Default.diskCleanerExcludedFileTypes.Cast<string>();
 
-            return false;
+            return (excludeFileTypesList.Any(excludeFileType => Utils.CompareWildcard(fileName, excludeFileType)));
         }
 
         /// <summary>
@@ -424,17 +412,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             if (Masks == "*")
                 return true;
 
-            foreach (string mask in Masks.Split(';'))
-            {
-                string maskTrimmed = mask.Trim();
+            var masksListTrimmed = Masks.Split(';').Select(s => s.Trim()).Where(maskTrimmed => !string.IsNullOrEmpty(maskTrimmed));
 
-                if (!string.IsNullOrEmpty(maskTrimmed))
-                    if (Utils.CompareWildcard(WildString, maskTrimmed, IgnoreCase))
-                        return true;
-
-            }
-
-            return false;
+            return masksListTrimmed.Any(maskTrimmed => Utils.CompareWildcard(WildString, maskTrimmed, IgnoreCase));
         }
 
         /// <summary>

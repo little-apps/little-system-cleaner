@@ -37,7 +37,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         public int Add(BadRegistryKey BadRegKey)
         {
             if (BadRegKey == null)
-                throw new ArgumentNullException("BadRegKey");
+                throw new ArgumentNullException(nameof(BadRegKey));
 
             int index; 
 
@@ -64,7 +64,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         public void Insert(int index, BadRegistryKey BadRegKey)
         {
             if (BadRegKey == null)
-                throw new ArgumentNullException("BadRegKey");
+                throw new ArgumentNullException(nameof(BadRegKey));
 
             lock (_lockObj)
             {
@@ -75,7 +75,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         public void Remove(BadRegistryKey BadRegKey)
         {
             if (BadRegKey == null)
-                throw new ArgumentNullException("BadRegKey");
+                throw new ArgumentNullException(nameof(BadRegKey));
 
             lock (_lockObj)
             {
@@ -117,11 +117,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             lock (_lockObj)
             {
-                foreach (BadRegistryKey badRegKey in (ArrayList)this.InnerList.Clone())
-                {
-                    if (badRegKey.SectionName == sectionName)
-                        count++;
-                }
+                count += ((ArrayList) this.InnerList.Clone()).Cast<BadRegistryKey>().Count(badRegKey => badRegKey.SectionName == sectionName);
             }
 
             return count;

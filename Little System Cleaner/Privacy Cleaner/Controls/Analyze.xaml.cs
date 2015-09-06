@@ -74,13 +74,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             {
                 string currentSection = (this.CurrentListViewItem.Parent != null ? this.CurrentListViewItem.Parent.Section : this.CurrentListViewItem.Section);
 
-                foreach (ResultNode n in Wizard.ResultArray)
-                {
-                    if (currentSection == n.Section)
-                        return n.Children.Count;
-                }
-
-                return 0;
+                return Wizard.ResultArray.Where(n => currentSection == n.Section).Select(n => n.Children.Count).FirstOrDefault();
             }
         }
 
@@ -128,19 +122,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void SetProgressBar()
         {
-            int max = 0;
-
-            foreach (ScannerBase n in this.SectionsCollection)
-            {
-                if (n.IsChecked.GetValueOrDefault() == false)
-                    continue;
-
-                foreach (ScannerBase child in n.Children)
-                {
-                    if (child.IsChecked.GetValueOrDefault() != false)
-                        max++;
-                }
-            }
+            int max = this.SectionsCollection.Where(n => n.IsChecked.GetValueOrDefault() != false).SelectMany(n => n.Children).Count(child => child.IsChecked.GetValueOrDefault() != false);
 
             // Set task bar progress bar
             Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;

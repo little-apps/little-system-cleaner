@@ -81,19 +81,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)
         {
-            List<FileEntry> files = new List<FileEntry>();
+            //List<FileEntry> files = (from resParent in (this._tree.Model as ResultModel).Root.Children where resParent.Children.Count > 0 from resChild in resParent.Children where resChild.IsChecked.GetValueOrDefault() select resChild.FileEntry).ToList();
 
-            foreach (Result resParent in (this._tree.Model as ResultModel).Root.Children)
-            {
-                if (resParent.Children.Count > 0)
-                {
-                    foreach (Result resChild in resParent.Children)
-                    {
-                        if (resChild.IsChecked.GetValueOrDefault())
-                            files.Add(resChild.FileEntry);
-                    }
-                }
-            }
+            List<FileEntry> files = (this._tree.Model as ResultModel).Root.Children.Where(resParent => resParent.Children.Count > 0)
+                .SelectMany(resParent => resParent.Children)
+                .Where(resChild => resChild.IsChecked.GetValueOrDefault())
+                .Select(resChild => resChild.FileEntry)
+                .ToList();
 
             if (files.Count == 0)
             {
@@ -229,7 +223,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             this.ShowDetails();
         }
 
-        private void SetCheckedItems(Nullable<bool> isChecked)
+        private void SetCheckedItems(bool? isChecked)
         {
             foreach (Result root in (this._tree.Model as ResultModel).Root.Children)
             {

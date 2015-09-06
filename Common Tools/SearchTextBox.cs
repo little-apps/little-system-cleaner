@@ -102,13 +102,12 @@ namespace CommonTools
                 new FrameworkPropertyMetadata(typeof(SearchTextBox)));
         }
 
-        private DispatcherTimer searchEventDelayTimer;
+        private readonly DispatcherTimer searchEventDelayTimer;
 
         public SearchTextBox()
             : base()
         {
-            searchEventDelayTimer = new DispatcherTimer();
-            searchEventDelayTimer.Interval = SearchEventTimeDelay.TimeSpan;
+            searchEventDelayTimer = new DispatcherTimer() { Interval = SearchEventTimeDelay.TimeSpan };
             searchEventDelayTimer.Tick += new EventHandler(OnSeachEventDelayTimerTick);
         }
 

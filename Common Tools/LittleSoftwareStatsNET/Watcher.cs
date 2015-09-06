@@ -144,7 +144,7 @@ namespace LittleSoftwareStats
 
             try
             {
-                string data = this._cache.GetPostData(this._array);
+                string data = this._cache.GetPostData(this._array); 
 
                 Utils.SendPostData(data);
                 this._cache.Delete();

@@ -53,8 +53,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
             if (AddIncFolder != null)
             {
-                AddIncFolderEventArgs eventArgs = new AddIncFolderEventArgs();
-                eventArgs.folderPath = this.textBox.Text.Trim();
+                AddIncFolderEventArgs eventArgs = new AddIncFolderEventArgs() { folderPath = this.textBox.Text.Trim() };
                 AddIncFolder(this, eventArgs);
             }
 

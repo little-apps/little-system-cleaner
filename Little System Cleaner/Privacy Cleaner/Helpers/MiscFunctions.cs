@@ -161,9 +161,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// </summary>
         /// <param name="bufferPtr">Pointer to buffer</param>
         /// <returns>INTERNET_CACHE_ENTRY_INFO struct or null on error</returns>
-        private static Nullable<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> GetCacheEntry(IntPtr bufferPtr)
+        private static InternetExplorer.INTERNET_CACHE_ENTRY_INFO? GetCacheEntry(IntPtr bufferPtr)
         {
-            Nullable<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> cacheEntry = null;
+            InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry = null;
 
             try
             {
@@ -184,13 +184,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// <returns>True if the process is running</returns>
         internal static bool IsProcessRunning(string procName)
         {
-            foreach (Process proc in Process.GetProcessesByName(procName))
-            {
-                if (!proc.HasExited)
-                    return true;
-            }
-
-            return false;
+            return Process.GetProcessesByName(procName).Any(proc => !proc.HasExited);
         }
 
         internal static string ExpandVars(string p)
@@ -323,12 +317,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                foreach (string filePath in Directory.GetFiles(folderPath, "*", (includeSubDirs) ? (System.IO.SearchOption.AllDirectories) : (System.IO.SearchOption.TopDirectoryOnly)))
-                {
-                    long fileSize = GetFileSize(filePath);
-                    if (fileSize != 0)
-                        totalSize += fileSize;
-                }
+                totalSize += Directory.GetFiles(folderPath, "*", (includeSubDirs) ? (System.IO.SearchOption.AllDirectories) : (System.IO.SearchOption.TopDirectoryOnly)).Select(filePath => GetFileSize(filePath)).Where(fileSize => fileSize != 0).Sum();
             }
             catch (Exception)
             {

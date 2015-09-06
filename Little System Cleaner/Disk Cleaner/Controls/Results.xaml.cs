@@ -75,9 +75,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 FileInfo fileInfo = (this.listViewFiles.SelectedItem as ProblemFile).FileInfo;
 
                 // Get icon
-                Icon fileIcon = System.Drawing.Icon.ExtractAssociatedIcon(fileInfo.FullName);
-                if (fileIcon == null)
-                    fileIcon = SystemIcons.Application;
+                var fileIcon = System.Drawing.Icon.ExtractAssociatedIcon(fileInfo.FullName) ?? SystemIcons.Application;
 
                 this.Icon.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(fileIcon.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
@@ -135,15 +133,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)
         {
-            int uncheckedFiles = 0;
-
-            foreach (ProblemFile lvi in this.ProblemsCollection)
-            {
-                if (!lvi.Checked.GetValueOrDefault())
-                {
-                    uncheckedFiles++;
-                }
-            }
+            int uncheckedFiles = this.ProblemsCollection.Count(lvi => !lvi.Checked.GetValueOrDefault());
 
             if (uncheckedFiles == this.ProblemsCollection.Count)
             {
@@ -240,10 +230,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void SendFileToRecycleBin(string filePath)
         {
-            PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT();
-            shf.wFunc = PInvoke.FO_DELETE;
-            shf.fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION;
-            shf.pFrom = filePath;
+            PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT() { wFunc = PInvoke.FO_DELETE, fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION, pFrom = filePath };
             PInvoke.SHFileOperation(ref shf);
         }
     }

@@ -124,14 +124,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             if (Wizard.RegistryHives.Count == 0)
                 return 0;
 
-            long size = 0;
-
-            foreach (Hive h in Wizard.RegistryHives)
-            {
-                size += h.OldHiveSize;
-            }
-
-            return size;
+            return Wizard.RegistryHives.Sum(h => h.OldHiveSize);
         }
 
         /// <summary>
@@ -146,14 +139,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             if (Wizard.RegistryHives.Count == 0)
                 return 0;
 
-            long size = 0;
-
-            foreach (Hive h in Wizard.RegistryHives)
-            {
-                size += h.NewHiveSize;
-            }
-
-            return size;
+            return Wizard.RegistryHives.Sum(h => h.NewHiveSize);
         }
     }
 
