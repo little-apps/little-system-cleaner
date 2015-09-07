@@ -36,7 +36,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
     {
         private static object LockObj = new object();
         internal static ScannerBase CurrentScanner;
-        private static int ProblemsFound = 0;
         internal static bool SQLiteLoaded = true;
 
         /// <summary>
@@ -182,7 +181,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <summary>
         /// Gets the size of the files and stores the files in the result array
         /// </summary>
-        /// <param name="filePath">File Path</param>
+        /// <param name="desc">Description of bad files</param>
+        /// <param name="filePaths">File Paths</param>
         internal static bool StoreBadFileList(string desc, string[] filePaths)
         {
             // Check for null parameters
@@ -200,7 +200,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <summary>
         /// Stores the folder paths in the result array
         /// </summary>
-        /// <param name="filePath">File Path</param>
+        /// <param name="desc">Description of bad files</param>
+        /// <param name="folderPaths">Folder Paths</param>
         internal static bool StoreBadFolderList(string desc, Dictionary<string, bool> folderPaths)
         {
             // Check for null parameters
@@ -215,7 +216,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// <summary>
         /// Stores a bad file path in the result array
         /// </summary>
-        /// <param name="filePath">File Path</param>
+        /// <param name="desc">Description of bad files</param>
+        /// <param name="filePaths">File Paths</param>
         /// <param name="fileSize">File Size</param>
         [Obsolete]
         internal static bool StoreBadFileList(string desc, string[] filePaths, long fileSize)

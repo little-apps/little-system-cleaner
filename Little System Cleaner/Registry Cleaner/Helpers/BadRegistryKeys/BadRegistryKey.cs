@@ -217,8 +217,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <summary>
         /// Constructor for new bad registry key
         /// </summary>
+        /// <param name="sectionName">Section name</param>
         /// <param name="problem">Reason registry key is invalid</param>
-        /// <param name="regPath">Path to registry key (including registry hive)</param>
+        /// <param name="baseKey">Registry hive</param>
+        /// <param name="subKey">Path to registry key (excluding registry hive)</param>
         /// <param name="valueName">Value Name (can be null)</param> 
         /// <param name="severity">The severity (between 1-5) of the problem</param>
         public BadRegistryKey(string sectionName, string problem, string baseKey, string subKey, string valueName, int severity)

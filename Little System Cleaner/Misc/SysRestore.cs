@@ -132,7 +132,7 @@ namespace Little_System_Cleaner
         /// <param name="strDescription">The description of the restore</param>
         /// <param name="lSeqNum">Returns the sequence number</param>
         /// <exception cref="System.ComponentModel.Win32Exception">Thrown when STATEMGRSTATUS.nStatus doesn't equal 0 (ERROR_SUCCESS)</exception>
-        /// <seealso cref="Use EndRestore() or CancelRestore() to end the system restore"/>
+        /// <seealso cref="Use SysRestore.EndRestore or SysRestore.CancelRestore to end the system restore"/>
         internal static void StartRestore(string strDescription, out long lSeqNum)
         {
             RestorePointInfo rpInfo = new RestorePointInfo();

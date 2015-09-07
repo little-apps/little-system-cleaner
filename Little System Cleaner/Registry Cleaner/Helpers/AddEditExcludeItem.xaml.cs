@@ -65,7 +65,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         private string _addEditText;
         private string _rootKey;
         private string _subKey;
-        private string _regPath;
         private string _filePath;
         private string _folderPath;
 

@@ -61,7 +61,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         int currentListViewParentIndex = -1;
         int currentListViewIndex = -1;
         Thread threadScan;
-        private ObservableCollection<ScannerBase> _sectionsCollection;
 
         public ScannerBase CurrentListViewItem
         {

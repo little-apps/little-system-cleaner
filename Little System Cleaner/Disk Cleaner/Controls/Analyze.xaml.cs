@@ -402,7 +402,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// Compare multiple wildcards to string
         /// </summary>
         /// <param name="WildString">String to compare</param>
-        /// <param name="Mask">Wildcard masks seperated by a semicolon (;)</param>
+        /// <param name="Masks">Wildcard masks seperated by a semicolon (;)</param>
+        /// <param name="IgnoreCase">Ignore case for comparison (default is true)</param>
         /// <returns>True if match found</returns>
         private bool CompareWildcards(string WildString, string Masks, bool IgnoreCase = true)
         {

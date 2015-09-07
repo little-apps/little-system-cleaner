@@ -239,7 +239,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Parses the registry key path and sees if exists
         /// </summary>
-        /// <param name="InPath">The registry path (including hive)</param>
+        /// <param name="inPath">The registry path (including hive)</param>
         /// <returns>True if it exists</returns>
         internal static bool RegKeyExists(string inPath)
         {
@@ -1060,6 +1060,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="WildString">String to compare</param>
         /// <param name="Mask">Wildcard mask (ex: *.jpg)</param>
+        /// <param name="IgnoreCase">Ignore case for comparison (default is true)</param>
         /// <returns>True if match found</returns>
         internal static bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
         {
