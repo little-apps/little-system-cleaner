@@ -16,13 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Management;
 using System.Net.NetworkInformation;
 
 namespace LittleSoftwareStats.MachineIdentifiers
 {
-    public class NetworkAdapterIdentifier : MachineIdentifierBase, IMachineIdentifier
+    public class NetworkAdapterIdentifier : MachineIdentifierBase
     {
         protected override byte[] GetIdentifierHash()
         {
@@ -43,8 +41,12 @@ namespace LittleSoftwareStats.MachineIdentifiers
                 }
 
             }
-            catch { }
-            return base.ComputeHash(identifier);
+            catch
+            {
+                // ignored
+            }
+
+            return ComputeHash(identifier);
         }
     }
 }

@@ -16,36 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LittleSoftwareStats.Hardware
 {
-    internal class MacOSXHardware : UnixHardware
+    internal class MacOsxHardware : UnixHardware
     {
-        public MacOSXHardware()
+        public override string CpuName 
         {
-        }
-
-        public override string CPUName 
-        {
-            get { 
+            get {
                 try
                 {
                     Regex regex = new Regex(@"Processor Name\s*:\\s*(?<processor>[\w\s\d\.]+)");
                     MatchCollection matches = regex.Matches(Utils.SystemProfilerCommandOutput);
                     return matches[0].Groups["processor"].Value;
                 }
-                catch { }
-
-                return "Generic"; 
+                catch
+                {
+                    return "Generic";
+                }
             }
         }
 
-        public override int CPUArchitecture
+        public override int CpuArchitecture
         {
             get
             {
@@ -57,7 +50,7 @@ namespace LittleSoftwareStats.Hardware
             }
         }
 
-        public override int CPUCores
+        public override int CpuCores
         {
             get 
             {
@@ -67,12 +60,9 @@ namespace LittleSoftwareStats.Hardware
             }
         }
 
-        public override string CPUBrand 
-        {
-            get { return "GenuineIntel"; }
-        }
+        public override string CpuBrand => "GenuineIntel";
 
-        public override double CPUFrequency 
+        public override double CpuFrequency 
         {
             get
             {

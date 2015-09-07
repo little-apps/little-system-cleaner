@@ -17,11 +17,9 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using LittleSoftwareStats.Hardware;
+using Microsoft.Win32;
 
 namespace LittleSoftwareStats.OperatingSystem
 {
@@ -82,35 +80,15 @@ namespace LittleSoftwareStats.OperatingSystem
 #endregion
 
         Hardware.Hardware _hardware;
-        public override Hardware.Hardware Hardware
-        {
-            get
-            {
-                if (_hardware == null)
-                    _hardware = new Hardware.WindowsHardware();
-                return _hardware;
-            }
-        }
-        
-        readonly Version _frameworkVersion;
-        public override Version FrameworkVersion
-        {
-            get { return this._frameworkVersion; }
-        }
+        public override Hardware.Hardware Hardware => _hardware ?? (_hardware = new WindowsHardware());
 
-        readonly int _frameworkSP;
-        public override int FrameworkSP
-        {
-            get { return this._frameworkSP; }
-        }
+        public override Version FrameworkVersion { get; }
 
-        readonly Version _javaVersion;
-        public override Version JavaVersion
-        {
-            get { return this._javaVersion; }
-        }
+        public override int FrameworkSP { get; }
 
-        public override int Architecture
+        public override Version JavaVersion { get; }
+
+        public override sealed int Architecture
         {
             get
             {
@@ -123,8 +101,6 @@ namespace LittleSoftwareStats.OperatingSystem
                     case "amd64":
                     case "ia64":
                         return 64;
-                    default:
-                        break;
                 }
 
                 // Just use IntPtr size
@@ -134,25 +110,19 @@ namespace LittleSoftwareStats.OperatingSystem
         }
 
         private string _version;
-        public override string Version
-        {
-            get { return this._version; }
-        }
+        public override string Version => _version;
 
         private int _servicePack;
-        public override int ServicePack
-        {
-            get { return this._servicePack; }
-        }
+        public override int ServicePack => _servicePack;
 
         public WindowsOperatingSystem()
         {
             // Get OS Info
-            GetOSInfo();
+            GetOsInfo();
 
             // Get .NET Framework version + SP
-            this._frameworkVersion = new Version(); // 0.0
-            this._frameworkSP = 0;
+            FrameworkVersion = new Version(); // 0.0
+            FrameworkSP = 0;
 
             try
             {
@@ -162,65 +132,70 @@ namespace LittleSoftwareStats.OperatingSystem
                 {
                     if (regNet.OpenSubKey("v4") != null)
                     {
-                        this._frameworkVersion = new Version(4, 0);
+                        FrameworkVersion = new Version(4, 0);
                     }
                     else if (regNet.OpenSubKey("v3.5") != null)
                     {
-                        this._frameworkVersion = new Version(3, 5);
-                        this._frameworkSP = (int)regNet.GetValue("SP", 0);
+                        FrameworkVersion = new Version(3, 5);
+                        FrameworkSP = (int)regNet.GetValue("SP", 0);
                     }
                     else if (regNet.OpenSubKey("v3.0") != null)
                     {
-                        this._frameworkVersion = new Version(3, 0);
-                        this._frameworkSP = (int)regNet.GetValue("SP", 0);
+                        FrameworkVersion = new Version(3, 0);
+                        FrameworkSP = (int)regNet.GetValue("SP", 0);
                     }
                     else if (regNet.OpenSubKey("v2.0.50727") != null)
                     {
-                        this._frameworkVersion = new Version(2, 0, 50727);
-                        this._frameworkSP = (int)regNet.GetValue("SP", 0);
+                        FrameworkVersion = new Version(2, 0, 50727);
+                        FrameworkSP = (int)regNet.GetValue("SP", 0);
                     }
                     else if (regNet.OpenSubKey("v1.1.4322") != null)
                     {
-                        this._frameworkVersion = new Version(1, 1, 4322);
-                        this._frameworkSP = (int)regNet.GetValue("SP", 0);
+                        FrameworkVersion = new Version(1, 1, 4322);
+                        FrameworkSP = (int)regNet.GetValue("SP", 0);
                     }
                     else if (regNet.OpenSubKey("v1.0") != null)
                     {
-                        this._frameworkVersion = new Version(1, 0);
-                        this._frameworkSP = (int)regNet.GetValue("SP", 0);
+                        FrameworkVersion = new Version(1, 0);
+                        FrameworkSP = (int)regNet.GetValue("SP", 0);
                     }
 
                     regNet.Close();
                 }
             }
-            catch { }
-            
+            catch
+            {
+                // ignored
+            }
+
             // Get Java version
-            this._javaVersion = new Version();
+            JavaVersion = new Version();
 
             try
             {
                 string javaVersion;
 
-                if (this.Architecture == 32)
+                if (Architecture == 32)
                     javaVersion = (string)Utils.GetRegistryValue(Registry.LocalMachine, @"Software\JavaSoft\Java Runtime Environment", "CurrentVersion", "");
                 else
                     javaVersion = (string)Utils.GetRegistryValue(Registry.LocalMachine, @"Software\Wow6432Node\JavaSoft\Java Runtime Environment", "CurrentVersion", "");
 
-                this._javaVersion = new Version(javaVersion);
+                JavaVersion = new Version(javaVersion);
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
-        private void GetOSInfo()
+        private void GetOsInfo()
         {
-            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-            osVersionInfo.dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX { dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX)) };
 
             if (!GetVersionEx(ref osVersionInfo))
             {
-                this._version = "Unknown";
-                this._servicePack = 0;
+                _version = "Unknown";
+                _servicePack = 0;
                 return;
             }
 
@@ -316,21 +291,6 @@ namespace LittleSoftwareStats.OperatingSystem
 										case 3:
                                             osName += osVersionInfo.wProductType == VER_NT_WORKSTATION ? "Windows 8.1" : "Windows Server 2012 R2";
                                             break;
-                                        case 4:
-                                            // Windows 10 was originally v6.4 
-                                            osName += "Windows 10 (Technical Preview)";
-                                            break;
-                                    }
-                                }
-                                break;
-                            case 10:
-                                {
-                                    switch (osVersionInfo.dwMinorVersion)
-                                    {
-                                        case 0:
-                                            // TODO: May need updating when next version of Windows Server announced
-                                            osName += "Windows 10";
-                                            break;
                                     }
                                 }
                                 break;
@@ -339,10 +299,8 @@ namespace LittleSoftwareStats.OperatingSystem
                     break;
             }
 
-            this._version = osName;
-            this._servicePack = osVersionInfo.wServicePackMajor;
-
-            return;
+            _version = osName;
+            _servicePack = osVersionInfo.wServicePackMajor;
         }
     } 
 }

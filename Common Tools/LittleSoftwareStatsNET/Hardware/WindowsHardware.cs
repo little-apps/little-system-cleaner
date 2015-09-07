@@ -17,14 +17,11 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using Microsoft.Win32;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Management;
+using Microsoft.Win32;
 
 namespace LittleSoftwareStats.Hardware
 {
@@ -46,7 +43,7 @@ namespace LittleSoftwareStats.Hardware
 
             public MEMORYSTATUSEX()
             {
-                this.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+                dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
             }
         }
 
@@ -55,62 +52,29 @@ namespace LittleSoftwareStats.Hardware
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 #endregion
-        readonly string _cpuBrand = "";
-        public override string CPUBrand
-        {
-            get { return this._cpuBrand; }
-        }
+
+        public override string CpuBrand { get; } = "";
 
         readonly string _cpuName = "";
-        public override string CPUName
-        {
-            get { return this._cpuName; }
-        }
+        public override string CpuName => _cpuName;
 
-        readonly int _cpuArch;
-        public override int CPUArchitecture
-        {
-            get { return this._cpuArch; }
-        }
-        
-        public override int CPUCores
-        {
-            get { return Environment.ProcessorCount; }
-        }
+        public override int CpuArchitecture { get; }
 
-        public override double CPUFrequency
-        {
-            get { return Convert.ToDouble(Utils.GetRegistryValue(Registry.LocalMachine, @"HARDWARE\DESCRIPTION\System\CentralProcessor\0", "~MHz", 0)); }
-        }
+        public override int CpuCores => Environment.ProcessorCount;
 
-        readonly long _diskFree = 0;
-        public override long DiskFree
-        {
-            get { return this._diskFree; }
-        }
+        public override double CpuFrequency => Convert.ToDouble(Utils.GetRegistryValue(Registry.LocalMachine, @"HARDWARE\DESCRIPTION\System\CentralProcessor\0", "~MHz", 0));
 
-        readonly long _diskTotal = 0;
-        public override long DiskTotal
-        {
-            get { return this._diskTotal; }
-        }
+        readonly long _diskFree;
+        public override long DiskFree => _diskFree;
 
-        readonly double _memoryFree = 0;
-        public override double MemoryFree
-        {
-            get { return this._memoryFree; }
-        }
+        readonly long _diskTotal;
+        public override long DiskTotal => _diskTotal;
 
-        readonly double _memoryTotal = 0;
-        public override double MemoryTotal
-        {
-            get { return this._memoryTotal; }
-        }
+        public override double MemoryFree { get; }
 
-        public override string ScreenResolution
-        {
-            get { return Screen.PrimaryScreen.Bounds.Width + "x" + Screen.PrimaryScreen.Bounds.Height; }
-        }
+        public override double MemoryTotal { get; }
+
+        public override string ScreenResolution => Screen.PrimaryScreen.Bounds.Width + "x" + Screen.PrimaryScreen.Bounds.Height;
 
         public WindowsHardware()
         {
@@ -119,8 +83,8 @@ namespace LittleSoftwareStats.Hardware
             if (GlobalMemoryStatusEx(memStatus))
             {
                 // Convert from bytes -> megabytes
-                this._memoryTotal = memStatus.ullTotalPhys / 1024 / 1024;
-                this._memoryFree = memStatus.ullAvailPhys / 1024 / 1024;
+                MemoryTotal = memStatus.ullTotalPhys / 1024 / 1024;
+                MemoryFree = memStatus.ullAvailPhys / 1024 / 1024;
             }
 
             // Get disk space
@@ -128,51 +92,52 @@ namespace LittleSoftwareStats.Hardware
             {
                 if (di.IsReady && di.DriveType == DriveType.Fixed)
                 {
-                    this._diskFree += di.TotalFreeSpace / 1024 / 1024;
-                    this._diskTotal += di.TotalSize / 1024 / 1024;
+                    _diskFree += di.TotalFreeSpace / 1024 / 1024;
+                    _diskTotal += di.TotalSize / 1024 / 1024;
                 }
             }
 
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name, Manufacturer, Architecture FROM Win32_Processor");
 
-            foreach (ManagementObject sysItem in searcher.Get())
+            foreach (var o in searcher.Get())
             {
+                var sysItem = (ManagementObject) o;
                 try
                 {
-                    this._cpuName = sysItem["Name"].ToString();
+                    _cpuName = sysItem["Name"].ToString();
 
-                    if (!string.IsNullOrEmpty(this._cpuName))
+                    if (!string.IsNullOrEmpty(_cpuName))
                     {
-                        this._cpuName = this._cpuName.Replace("(TM)", "");
-                        this._cpuName = this._cpuName.Replace("(R)", "");
-                        this._cpuName = this._cpuName.Replace(" ", "");
+                        _cpuName = _cpuName.Replace("(TM)", "");
+                        _cpuName = _cpuName.Replace("(R)", "");
+                        _cpuName = _cpuName.Replace(" ", "");
                     }
                 }
                 catch
                 {
-                    this._cpuName = "Unknown";
+                    _cpuName = "Unknown";
                 }
 
                 try
                 {
-                    this._cpuBrand = sysItem["Manufacturer"].ToString();
+                    CpuBrand = sysItem["Manufacturer"].ToString();
                 }
                 catch
                 {
-                    this._cpuBrand = "Unknown";
+                    CpuBrand = "Unknown";
                 }
 
                 try
                 {
                     int arch = Convert.ToInt32(sysItem["Architecture"].ToString());
                     if (arch == 6 || arch == 9)
-                        this._cpuArch = 64;
+                        CpuArchitecture = 64;
                     else
-                        this._cpuArch = 32;
+                        CpuArchitecture = 32;
                 }
                 catch
                 {
-                    this._cpuArch = 32;
+                    CpuArchitecture = 32;
                 }
             }
         }

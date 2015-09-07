@@ -17,9 +17,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace LittleSoftwareStats.OperatingSystem
@@ -57,7 +54,7 @@ namespace LittleSoftwareStats.OperatingSystem
             if (Environment.OSVersion.Platform == PlatformID.Unix)
                 return new UnixOperatingSystem();
             else if (Environment.OSVersion.Platform == PlatformID.MacOSX)
-                return new MacOSXOperatingSystem();
+                return new MacOsxOperatingSystem();
             else
                 return new WindowsOperatingSystem();
         }

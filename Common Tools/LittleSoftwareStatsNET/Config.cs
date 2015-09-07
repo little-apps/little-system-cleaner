@@ -17,9 +17,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LittleSoftwareStats
 {
@@ -31,7 +28,7 @@ namespace LittleSoftwareStats
         {
             get
             {
-                UriBuilder uri = new UriBuilder((Config.ApiSecure) ? ("https") : ("http"), Config.ApiHost, Config.ApiPort, Config.ApiPath, Config.ApiQuery);
+                UriBuilder uri = new UriBuilder((ApiSecure) ? ("https") : ("http"), ApiHost, ApiPort, ApiPath, ApiQuery);
                 return uri.ToString();
             }
         }

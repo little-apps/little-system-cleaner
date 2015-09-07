@@ -17,19 +17,14 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Win32;
-using System.Threading;
 using LittleSoftwareStats.MachineIdentifiers;
 
 namespace LittleSoftwareStats
 {
     public class Watcher
     {
-        private Events _array = new Events();
-        private Cache _cache = new Cache();
+        private readonly Events _array = new Events();
+        private readonly Cache _cache = new Cache();
 
         private IMachineIdentifierProvider _identifierService;
         private string _uniqueId;
@@ -37,14 +32,14 @@ namespace LittleSoftwareStats
         {
             get
             {
-                if (string.IsNullOrEmpty(this._uniqueId))
+                if (string.IsNullOrEmpty(_uniqueId))
                 {
-                    this._identifierService = new MachineIdentifierProvider(new IMachineIdentifier[] { new MachineNameIdentifier(), new NetworkAdapterIdentifier(), new VolumeInfoIdentifier() });
+                    _identifierService = new MachineIdentifierProvider(new IMachineIdentifier[] { new MachineNameIdentifier(), new NetworkAdapterIdentifier(), new VolumeInfoIdentifier() });
 
-                    this._uniqueId = this._identifierService.MachineHash;
+                    _uniqueId = _identifierService.MachineHash;
                 }
 
-                return this._uniqueId;
+                return _uniqueId;
             }
         }
 
@@ -53,37 +48,26 @@ namespace LittleSoftwareStats
         {
             get
             {
-                if (!string.IsNullOrEmpty(this._sessionId))
+                if (!string.IsNullOrEmpty(_sessionId))
                 {
-                    return this._sessionId;
-                } 
-                else
-                {
-                    this._sessionId = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
-                    return this._sessionId;
+                    return _sessionId;
                 }
+                _sessionId = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+                return _sessionId;
             }
         }
 
-        protected int _flowNumber = 0;
+        protected int _flowNumber;
         protected int FlowNumber
         {
             get
             {
-                this._flowNumber = this._flowNumber + 1;
-                return this._flowNumber;
+                _flowNumber = _flowNumber + 1;
+                return _flowNumber;
             }
         }
 
-        private bool _started = false;
-        public bool Started
-        {
-            get { return this._started; }
-        }
-
-        public Watcher()
-        {
-        }
+        public bool Started { get; private set; }
 
         /// <summary>
         /// Starts tracking software
@@ -92,10 +76,10 @@ namespace LittleSoftwareStats
         /// <param name="appId">Application ID</param>
         /// <param name="appVer">Application Version</param>
         public void Start(string appId, string appVer) {
-            if (this.Started || !Config.Enabled)
+            if (Started || !Config.Enabled)
                 return;
 
-            Event e = new Event("strApp", this.SessionId);
+            Event e = new Event("strApp", SessionId);
 
             Config.AppId = appId;
             Config.AppVer = appVer;
@@ -104,7 +88,7 @@ namespace LittleSoftwareStats
             OperatingSystem.OperatingSystem osInfo = OperatingSystem.OperatingSystem.GetOperatingSystemInfo();
             Hardware.Hardware hwInfo = osInfo.Hardware;
 
-            e.Add("ID", this.UniqueId);
+            e.Add("ID", UniqueId);
             e.Add("aid", appId);
             e.Add("aver", appVer);
 
@@ -117,19 +101,19 @@ namespace LittleSoftwareStats
             e.Add("oslng", osInfo.Lcid);
             e.Add("osscn", hwInfo.ScreenResolution);
 
-            e.Add("cnm", hwInfo.CPUName);
-            e.Add("car", hwInfo.CPUArchitecture);
-            e.Add("cbr", hwInfo.CPUBrand);
-            e.Add("cfr", hwInfo.CPUFrequency);
-            e.Add("ccr", hwInfo.CPUCores);
+            e.Add("cnm", hwInfo.CpuName);
+            e.Add("car", hwInfo.CpuArchitecture);
+            e.Add("cbr", hwInfo.CpuBrand);
+            e.Add("cfr", hwInfo.CpuFrequency);
+            e.Add("ccr", hwInfo.CpuCores);
             e.Add("mtt", hwInfo.MemoryTotal);
             e.Add("mfr", hwInfo.MemoryFree);
             e.Add("dtt", hwInfo.DiskTotal);
             e.Add("dfr", hwInfo.DiskFree);
 
-            this._array.Add(e);
+            _array.Add(e);
 
-            this._started = true;
+            Started = true;
         }
 
         /// <summary>
@@ -137,26 +121,26 @@ namespace LittleSoftwareStats
         /// </summary>
         public void Stop()
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            this._array.Add(new Event("stApp", this.SessionId));
+            _array.Add(new Event("stApp", SessionId));
 
             try
             {
-                string data = this._cache.GetPostData(this._array); 
+                string data = _cache.GetPostData(_array);
 
                 Utils.SendPostData(data);
-                this._cache.Delete();
+                _cache.Delete();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
 
-                this._cache.SaveCacheToFile(this._array);
+                _cache.SaveCacheToFile(_array);
             }
 
-            this._started = false;
+            Started = false;
         }
 
         /// <summary>
@@ -166,15 +150,13 @@ namespace LittleSoftwareStats
         /// <param name="eventName">Event name</param>
         public void Event(string categoryName, string eventName)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("ev", this.SessionId, this.FlowNumber);
+            Event e = new Event("ev", SessionId, FlowNumber) {{"ca", categoryName}, {"nm", eventName}};
 
-            e.Add("ca", categoryName);
-            e.Add("nm", eventName);
 
-            this._array.Add(e);
+            _array.Add(e);
         }
 
         /// <summary>
@@ -185,16 +167,18 @@ namespace LittleSoftwareStats
         /// <param name="eventValue">Event Value</param>
         public void EventValue(string categoryName, string eventName, string eventValue)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("evV", this.SessionId, this.FlowNumber);
+            Event e = new Event("evV", SessionId, FlowNumber)
+            {
+                {"ca", categoryName},
+                {"nm", eventName},
+                {"vl", eventValue}
+            };
 
-            e.Add("ca", categoryName);
-            e.Add("nm", eventName);
-            e.Add("vl", eventValue);
 
-            this._array.Add(e);
+            _array.Add(e);
         }
 
         /// <summary>
@@ -206,17 +190,18 @@ namespace LittleSoftwareStats
         /// <param name="eventCompleted">Did the event complete?</param>
         public void EventPeriod(string categoryName, string eventName, int eventDuration, bool eventCompleted)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("evP", this.SessionId, this.FlowNumber);
-
-            e.Add("ca", categoryName);
-            e.Add("nm", eventName);
-            e.Add("tm", eventDuration);
-            e.Add("ec", (eventCompleted) ? (1) : (0));
-
-            this._array.Add(e);
+            Event e = new Event("evP", SessionId, FlowNumber)
+            {
+                {"ca", categoryName},
+                {"nm", eventName},
+                {"tm", eventDuration},
+                {"ec", (eventCompleted) ? (1) : (0)}
+            };
+            
+            _array.Add(e);
         }
 
         /// <summary>
@@ -225,14 +210,12 @@ namespace LittleSoftwareStats
         /// <param name="logMessage">Message to log</param>
         public void Log(string logMessage)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("lg", this.SessionId, this.FlowNumber);
-
-            e.Add("ms", logMessage);
-
-            this._array.Add(e);
+            Event e = new Event("lg", SessionId, FlowNumber) {{"ms", logMessage}};
+            
+            _array.Add(e);
         }
 
         public enum Licenses { Free, Trial, Registered, Demo, Cracked };
@@ -243,13 +226,11 @@ namespace LittleSoftwareStats
         /// <param name="l">License type (Free, Trial, Registered, Demo, Cracked)</param>
         public void License(Licenses l)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("ctD", this.SessionId, this.FlowNumber);
-
-            e.Add("nm", "License");
-
+            Event e = new Event("ctD", SessionId, FlowNumber) {{"nm", "License"}};
+            
             string licenseType = "";
             switch (l)
             {
@@ -282,7 +263,7 @@ namespace LittleSoftwareStats
 
             e.Add("vl", licenseType);
 
-            this._array.Add(e);
+            _array.Add(e);
         }
 
         /// <summary>
@@ -292,15 +273,12 @@ namespace LittleSoftwareStats
         /// <param name="dataValue">Value</param>
         public void CustomData(string dataName, string dataValue)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("ctD", this.SessionId, this.FlowNumber);
-
-            e.Add("nm", dataName);
-            e.Add("vl", dataValue);
-
-            this._array.Add(e);
+            Event e = new Event("ctD", SessionId, FlowNumber) {{"nm", dataName}, {"vl", dataValue}};
+            
+            _array.Add(e);
         }
 
         /// <summary>
@@ -309,17 +287,18 @@ namespace LittleSoftwareStats
         /// <param name="ex">Exception</param>
         public void Exception(Exception ex)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("exC", this.SessionId, this.FlowNumber);
-
-            e.Add("msg", ex.Message);
-            e.Add("stk", ex.StackTrace);
-            e.Add("src", ex.Source);
-            e.Add("tgs", ex.TargetSite);
-
-            this._array.Add(e);
+            Event e = new Event("exC", SessionId, FlowNumber)
+            {
+                {"msg", ex.Message},
+                {"stk", ex.StackTrace},
+                {"src", ex.Source},
+                {"tgs", ex.TargetSite}
+            };
+            
+            _array.Add(e);
         }
 
         /// <summary>
@@ -331,17 +310,18 @@ namespace LittleSoftwareStats
         /// <param name="targetSite">Target Site</param>
         public void Exception(string exceptionMsg, string stackTrace, string exceptionSrc, string targetSite)
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("exC", this.SessionId, this.FlowNumber);
-
-            e.Add("msg", exceptionMsg);
-            e.Add("stk", stackTrace);
-            e.Add("src", exceptionSrc);
-            e.Add("tgs", targetSite);
-
-            this._array.Add(e);
+            Event e = new Event("exC", SessionId, FlowNumber)
+            {
+                {"msg", exceptionMsg},
+                {"stk", stackTrace},
+                {"src", exceptionSrc},
+                {"tgs", targetSite}
+            };
+            
+            _array.Add(e);
         }
 
         /// <summary>
@@ -349,16 +329,17 @@ namespace LittleSoftwareStats
         /// </summary>
         public void Install()
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("ist", this.SessionId, this.FlowNumber);
-
-            e.Add("ID", this.UniqueId);
-            e.Add("aid", Config.AppId);
-            e.Add("aver", Config.AppVer);
-
-            this._array.Add(e);
+            Event e = new Event("ist", SessionId, FlowNumber)
+            {
+                {"ID", UniqueId},
+                {"aid", Config.AppId},
+                {"aver", Config.AppVer}
+            };
+            
+            _array.Add(e);
         }
 
         /// <summary>
@@ -366,15 +347,12 @@ namespace LittleSoftwareStats
         /// </summary>
         public void Uninstall()
         {
-            if (!this.Started)
+            if (!Started)
                 return;
 
-            Event e = new Event("ust", this.SessionId, this.FlowNumber);
-
-            e.Add("aid", Config.AppId);
-            e.Add("aver", Config.AppVer);
-
-            this._array.Add(e);
+            Event e = new Event("ust", SessionId, FlowNumber) {{"aid", Config.AppId}, {"aver", Config.AppVer}};
+            
+            _array.Add(e);
         }
     }
 }

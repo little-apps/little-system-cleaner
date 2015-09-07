@@ -22,10 +22,10 @@ using System.Runtime.InteropServices;
 
 namespace LittleSoftwareStats.MachineIdentifiers
 {
-    public class VolumeInfoIdentifier : MachineIdentifierBase, IMachineIdentifier
+    public class VolumeInfoIdentifier : MachineIdentifierBase
     {
         [DllImport("kernel32.dll")]
-        private static extern long GetVolumeInformation(string PathName, StringBuilder VolumeNameBuffer, UInt32 VolumeNameSize, ref UInt32 VolumeSerialNumber, ref UInt32 MaximumComponentLength, ref UInt32 FileSystemFlags, StringBuilder FileSystemNameBuffer, UInt32 FileSystemNameSize);
+        private static extern long GetVolumeInformation(string pathName, StringBuilder volumeNameBuffer, UInt32 volumeNameSize, ref UInt32 volumeSerialNumber, ref UInt32 maximumComponentLength, ref UInt32 fileSystemFlags, StringBuilder fileSystemNameBuffer, UInt32 fileSystemNameSize);
 
         protected override byte[] GetIdentifierHash()
         {
@@ -37,16 +37,19 @@ namespace LittleSoftwareStats.MachineIdentifiers
                 {
                     uint serNum = 0;
                     uint maxCompLen = 0;
-                    StringBuilder VolLabel = new StringBuilder(256);
-                    UInt32 VolFlags = new UInt32();
-                    StringBuilder FSName = new StringBuilder(256);
-                    GetVolumeInformation(null, VolLabel, (UInt32)VolLabel.Capacity, ref serNum, ref maxCompLen, ref VolFlags, FSName, (UInt32)FSName.Capacity);
+                    StringBuilder volLabel = new StringBuilder(256);
+                    UInt32 volFlags = new UInt32();
+                    StringBuilder fsName = new StringBuilder(256);
+                    GetVolumeInformation(null, volLabel, (UInt32)volLabel.Capacity, ref serNum, ref maxCompLen, ref volFlags, fsName, (UInt32)fsName.Capacity);
                     identifier = serNum.ToString();
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
             
-            return base.ComputeHash(identifier);
+            return ComputeHash(identifier);
         }
     }
 }

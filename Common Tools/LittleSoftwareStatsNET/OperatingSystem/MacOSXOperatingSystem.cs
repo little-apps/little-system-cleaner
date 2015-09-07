@@ -16,25 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LittleSoftwareStats.OperatingSystem
 {
-    internal class MacOSXOperatingSystem : UnixOperatingSystem
+    internal class MacOsxOperatingSystem : UnixOperatingSystem
     {
-        public MacOSXOperatingSystem()
-        {
-
-        }
-
-        public override int Architecture
-        {
-            get { return 64; }
-        }
+        public override int Architecture => 64;
 
         public override string Version
         {
@@ -47,15 +35,6 @@ namespace LittleSoftwareStats.OperatingSystem
         }
 
         Hardware.Hardware _hardware;
-        public override Hardware.Hardware Hardware
-        {
-            get
-            {
-                if (_hardware == null)
-                    _hardware = new Hardware.MacOSXHardware();
-                return _hardware;
-            }
-        }
-
+        public override Hardware.Hardware Hardware => _hardware ?? (_hardware = new Hardware.MacOsxHardware());
     }
 }

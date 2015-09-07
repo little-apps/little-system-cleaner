@@ -17,8 +17,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -35,13 +33,18 @@ namespace LittleSoftwareStats
     {
         public static string GetCommandExecutionOutput(string command, string arguments)
         {
-            var proc = new Process();
+            var proc = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    UseShellExecute = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    FileName = command,
+                    Arguments = arguments
+                }
+            };
 
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.RedirectStandardError = true;
-            proc.StartInfo.FileName = command;
-            proc.StartInfo.Arguments = arguments;
             proc.Start();
 
             string output = proc.StandardOutput.ReadToEnd();
@@ -65,25 +68,24 @@ namespace LittleSoftwareStats
             {
                 if (regKey != null)
                 {
-                    if (defaultValue != null)
-                        value = regKey.GetValue(valueName, defaultValue);
-                    else
-                        value = regKey.GetValue(valueName);
+                    value = defaultValue != null ? regKey.GetValue(valueName, defaultValue) : regKey.GetValue(valueName);
                 }
             }
 
             return value;
         }
 
-        public static string SerializeAsXML(Events events)
+        public static string SerializeAsXml(Events events)
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.OmitXmlDeclaration = true;
-            settings.ConformanceLevel = ConformanceLevel.Fragment;
-            settings.CloseOutput = false;
+            XmlWriterSettings settings = new XmlWriterSettings()
+            {
+                OmitXmlDeclaration = true,
+                ConformanceLevel = ConformanceLevel.Fragment,
+                CloseOutput = false
+            };
 
             StringBuilder sb = new StringBuilder();
-            XmlWriter xmlWriter = XmlTextWriter.Create(sb, settings);
+            XmlWriter xmlWriter = XmlWriter.Create(sb, settings);
 
             xmlWriter.WriteStartElement("Events");
 
@@ -115,7 +117,7 @@ namespace LittleSoftwareStats
             return sb.ToString();
         }
 
-        public static string SerializeAsJSON(Events events)
+        public static string SerializeAsJson(Events events)
         {
             StringBuilder sb = new StringBuilder();
             int i = 0;
@@ -140,9 +142,9 @@ namespace LittleSoftwareStats
                     else if (value is string)
                         sb.Append("\"" + value + "\"");
                     else if (value is Version)
-                        sb.Append("\"" + value.ToString() + "\"");
+                        sb.Append("\"" + value + "\"");
                     else
-                        sb.Append("\"" + value.ToString() + "\"");
+                        sb.Append("\"" + value + "\"");
 
                     if (j++ < e.Count - 1)
                         sb.Append(',');
@@ -168,8 +170,8 @@ namespace LittleSoftwareStats
         {
             try
             {
-                byte[] toEncodeAsBytes = System.Text.Encoding.Unicode.GetBytes(toEncode);
-                string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
+                byte[] toEncodeAsBytes = Encoding.Unicode.GetBytes(toEncode);
+                string returnValue = Convert.ToBase64String(toEncodeAsBytes);
                 return returnValue;
             }
             catch
@@ -188,8 +190,8 @@ namespace LittleSoftwareStats
         {
             try
             {
-                byte[] encodedDataAsBytes = System.Convert.FromBase64String(encodedData);
-                string returnValue = System.Text.Encoding.Unicode.GetString(encodedDataAsBytes);
+                byte[] encodedDataAsBytes = Convert.FromBase64String(encodedData);
+                string returnValue = Encoding.Unicode.GetString(encodedDataAsBytes);
                 return returnValue;
             }
             catch
@@ -218,8 +220,6 @@ namespace LittleSoftwareStats
             request.Method = "POST";
             request.Timeout = Config.ApiTimeout;
 
-            Stream dataStream;
-
 #if DEBUG
             Console.WriteLine(postData);
 #endif
@@ -233,6 +233,8 @@ namespace LittleSoftwareStats
             try
             {
                 // Send the request
+                Stream dataStream;
+
                 using (dataStream = request.GetRequestStream())
                 {
                     dataStream.Write(byteArray, 0, byteArray.Length);
@@ -253,19 +255,19 @@ namespace LittleSoftwareStats
             }
             catch (WebException ex)
             {
-                Console.WriteLine("Error: " + ex.ToString());
+                Console.WriteLine("Error: " + ex);
             }
         }
 
 #region MacOSX Functions
-        private static string _system_profiler;
+        private static string _systemProfiler;
         public static string SystemProfilerCommandOutput
         {
             get
             {
-                if (string.IsNullOrEmpty(_system_profiler))
-                    _system_profiler = Utils.GetCommandExecutionOutput("system_profiler", "");
-                return _system_profiler;
+                if (string.IsNullOrEmpty(_systemProfiler))
+                    _systemProfiler = GetCommandExecutionOutput("system_profiler", "");
+                return _systemProfiler;
             }
         }
 

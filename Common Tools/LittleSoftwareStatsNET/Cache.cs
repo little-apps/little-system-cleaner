@@ -17,23 +17,13 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace LittleSoftwareStats
 {
     public class Cache
     {
-        private string FileName
-        {
-            get { return string.Format(@"{0}\{1}.{2}", Path.GetTempPath(), Config.AppId, Config.ApiFormat); }
-        }
-
-        public Cache()
-        {
-        }
+        private string FileName => $@"{Path.GetTempPath()}\{Config.AppId}.{Config.ApiFormat}";
 
         internal string GetCacheData()
         {
@@ -49,13 +39,9 @@ namespace LittleSoftwareStats
         internal string GetPostData(Events events)
         {
             string cachedData = GetCacheData();
-            string data = "";
             string output = "";
 
-            if (Config.ApiFormat == "json")
-                data = Utils.SerializeAsJSON(events);
-            else
-                data = Utils.SerializeAsXML(events);
+            var data = Config.ApiFormat == "json" ? Utils.SerializeAsJson(events) : Utils.SerializeAsXml(events);
 
             if (string.IsNullOrEmpty(cachedData))
             {
@@ -93,12 +79,7 @@ namespace LittleSoftwareStats
 
         internal void SaveCacheToFile(Events events)
         {
-            string data = "";
-
-            if (Config.ApiFormat == "json")
-                data = Utils.SerializeAsJSON(events);
-            else
-                data = Utils.SerializeAsXML(events);
+            var data = Config.ApiFormat == "json" ? Utils.SerializeAsJson(events) : Utils.SerializeAsXml(events);
 
             data += "\n" + GetCacheData();
 

@@ -17,98 +17,77 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
+using LittleSoftwareStats.Hardware;
 
 namespace LittleSoftwareStats.OperatingSystem
 {
     internal class UnixOperatingSystem : OperatingSystem
     {
-        public UnixOperatingSystem()
-        {
-        }
-
         Hardware.Hardware _hardware;
-        public override Hardware.Hardware Hardware
-        {
-            get
-            {
-                if (_hardware == null)
-                    _hardware = new Hardware.UnixHardware();
-                return _hardware;
-            }
-        }
+        public override Hardware.Hardware Hardware => _hardware ?? (_hardware = new UnixHardware());
 
-        public override string Version
-        {
-            get { return Utils.GetCommandExecutionOutput("uname", "-rs"); }
-        }
+        public override string Version => Utils.GetCommandExecutionOutput("uname", "-rs");
 
-        public override int ServicePack
-        {
-            get { return 0; }
-        }
+        public override int ServicePack => 0;
 
         private Version _frameworkVersion;
         public override Version FrameworkVersion
         {
             get
             {
-                if (this._frameworkVersion == null)
+                if (_frameworkVersion == null)
                 {
                     try
                     {
                         Type type = Type.GetType("Mono.Runtime");
-                        if (type != null)
+                        
+                        MethodInfo invokeGetDisplayName = type?.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+                        if (invokeGetDisplayName != null)
                         {
-                            MethodInfo invokeGetDisplayName = type.GetMethod("GetDisplayName", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                            if (invokeGetDisplayName != null)
-                            {
-                                string displayName = invokeGetDisplayName.Invoke(null, null) as string;
-                                this._frameworkVersion = new Version(displayName.Substring(0, displayName.IndexOf(" ")));
-                            }
+                            string displayName = invokeGetDisplayName.Invoke(null, null) as string;
+                            if (displayName != null)
+                                _frameworkVersion = new Version(displayName.Substring(0, displayName.IndexOf(" ")));
                         }
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
 
-                    if (this._frameworkVersion == null)
+                    if (_frameworkVersion == null)
                     {
                         // Just use CLR version
-                        this._frameworkVersion = new Version(Environment.Version.Major, Environment.Version.Minor);
+                        _frameworkVersion = new Version(Environment.Version.Major, Environment.Version.Minor);
                     }
                 }
 
-                return this._frameworkVersion;
+                return _frameworkVersion;
             }
         }
 
-        public override int FrameworkSP
-        {
-            get { return 0; }
-        }
+        public override int FrameworkSP => 0;
 
         private Version _javaVersion;
         public override Version JavaVersion
         {
             get
             {
-                if (this._javaVersion == null)
+                if (_javaVersion != null)
+                    return _javaVersion;
+
+                try
                 {
-                    try
-                    {
-                        string[] j = Utils.GetCommandExecutionOutput("java", "-version 2>&1").Split('\n');
-                        j = j[0].Split('"');
-                        this._javaVersion = new Version(j[1]);
-                    }
-                    catch
-                    {
-                        this._javaVersion = new Version();
-                    }
+                    string[] j = Utils.GetCommandExecutionOutput("java", "-version 2>&1").Split('\n');
+                    j = j[0].Split('"');
+                    _javaVersion = new Version(j[1]);
+                }
+                catch
+                {
+                    _javaVersion = new Version();
                 }
 
-                return this._javaVersion;
+                return _javaVersion;
             }
         }
 
@@ -122,7 +101,10 @@ namespace LittleSoftwareStats.OperatingSystem
                     if (arch.Contains("64") || arch.Contains("686"))
                         return 64;
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
 
                 return 32;
             }

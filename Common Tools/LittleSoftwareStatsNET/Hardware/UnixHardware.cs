@@ -17,10 +17,7 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -28,11 +25,7 @@ namespace LittleSoftwareStats.Hardware
 {
     internal class UnixHardware : Hardware
     {
-        public UnixHardware()
-        {
-        }
-
-        public override string CPUName
+        public override string CpuName
         {
             get
             {
@@ -43,13 +36,14 @@ namespace LittleSoftwareStats.Hardware
                     MatchCollection matches = regex.Matches(output);
                     return matches[0].Groups["ModelName"].Value;
                 }
-                catch { }
-
-                return "Unknown";
+                catch
+                {
+                    return "Unknown";
+                }
             }
         }
 
-        public override string CPUBrand
+        public override string CpuBrand
         {
             get
             {
@@ -60,13 +54,14 @@ namespace LittleSoftwareStats.Hardware
                     MatchCollection matches = regex.Matches(output);
                     return matches[0].Groups[1].Value;
                 }
-                catch { }
-
-                return "Unknown";
+                catch
+                {
+                    return "Unknown";
+                }
             }
         }
 
-        public override double CPUFrequency
+        public override double CpuFrequency
         {
             get
             {
@@ -76,15 +71,16 @@ namespace LittleSoftwareStats.Hardware
                     Regex regex = new Regex(@"(?:bogomips\s+:\s*)(?<bogomips>\w*)");
                     MatchCollection matches = regex.Matches(output);
                     int bogomips = int.Parse(matches[0].Groups[1].Value);
-                    return bogomips / CPUCores;
+                    return bogomips/CpuCores;
                 }
-                catch { }
-
-                return 0;
+                catch
+                {
+                    return 0;
+                }
             }
         }
 
-        public override int CPUArchitecture
+        public override int CpuArchitecture
         {
             get
             {
@@ -97,13 +93,16 @@ namespace LittleSoftwareStats.Hardware
                     if (flags.Contains(" lm"))
                         return 64;
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
 
                 return 32;
             }
         }
 
-        public override int CPUCores
+        public override int CpuCores
         {
             get
             {
@@ -114,10 +113,11 @@ namespace LittleSoftwareStats.Hardware
                     MatchCollection matches = regex.Matches(output);
                     return Int32.Parse(matches[0].Groups[1].Value);
                 }
-                catch { }
-
-                // There has to be at least 1 core, cause how would we be able reach this ???
-                return 1;
+                catch
+                {
+                    // There has to be at least 1 core, cause how would we be able reach this ???
+                    return 1;
+                }
             }
         }
 
@@ -132,11 +132,12 @@ namespace LittleSoftwareStats.Hardware
                     MatchCollection matches = regex.Matches(output);
 
                     // Convert from KB -> MB
-                    return double.Parse(matches[0].Groups[1].Value) / 1024;
+                    return double.Parse(matches[0].Groups[1].Value)/1024;
                 }
-                catch { }
-
-                return 0;
+                catch
+                {
+                    return 0;
+                }
             }
         }
 
@@ -151,10 +152,12 @@ namespace LittleSoftwareStats.Hardware
                     MatchCollection matches = regex.Matches(output);
 
                     // Convert from KB -> MB
-                    return double.Parse(matches[0].Groups[1].Value) / 1024;
+                    return double.Parse(matches[0].Groups[1].Value)/1024;
                 }
-                catch { }
-                return 0;
+                catch
+                {
+                    return 0;
+                }
             }
         }
 
@@ -168,16 +171,15 @@ namespace LittleSoftwareStats.Hardware
                     Regex regex = new Regex(@"^/[\w/]*\s*(?<total>\d+)\s*(?<used>\d+)\s*(?<available>\d+)");
                     MatchCollection matches = regex.Matches(output);
 
-                    long total = 0;
-                    foreach (Match match in matches)
-                        total += long.Parse(match.Groups["total"].Value);
+                    long total = matches.Cast<Match>().Sum(match => long.Parse(match.Groups["total"].Value));
 
                     // Convert from KB -> MB
-                    return total / 1024;
+                    return total/1024;
                 }
-                catch { }
-
-                return -1;
+                catch
+                {
+                    return -1;
+                }
             }
         }
 
@@ -191,16 +193,15 @@ namespace LittleSoftwareStats.Hardware
                     Regex regex = new Regex(@"^/[\w/]*\s*(?<total>\d+)\s*(?<used>\d+)\s*(?<available>\d+)");
                     MatchCollection matches = regex.Matches(output);
 
-                    long total = 0;
-                    foreach (Match match in matches)
-                        total += long.Parse(match.Groups["available"].Value);
+                    long total = matches.Cast<Match>().Sum(match => long.Parse(match.Groups["available"].Value));
 
                     // Convert from KB -> MB
-                    return total / 1024;
+                    return total/1024;
                 }
-                catch { }
-
-                return 0;
+                catch
+                {
+                    return 0;
+                }
             }
         }
 
@@ -214,9 +215,10 @@ namespace LittleSoftwareStats.Hardware
                     int deskWidth = Screen.PrimaryScreen.Bounds.Width;
                     return deskWidth + "x" + deskHeight;
                 }
-                catch { }
-
-                return "800x600";
+                catch
+                {
+                    return "800x600";
+                }
             }
         } 
     }
