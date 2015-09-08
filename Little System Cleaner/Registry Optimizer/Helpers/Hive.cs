@@ -58,8 +58,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         public string CurrentSize => Utils.ConvertSizeToString(_lOldHiveSize);
 
         public string CompactSize => Utils.ConvertSizeToString(_lNewHiveSize);
-
-        public Image Image { get; private set; }
         #endregion
 
         public bool bAnaylzed, bCompacted;
@@ -86,12 +84,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// </summary>
         /// <param name="hiveName">Name of Hive (\REGISTRY\USER\...)</param>
         /// <param name="hivePath">Path to Hive (\Device\HarddiskVolumeX\Windows\System32\config\... or C:\Windows\System32\config\...)</param>
-        /// <param name="image">Registry icon</param>
-        public Hive(string hiveName, string hivePath, Image image)
+        public Hive(string hiveName, string hivePath)
         {
             _strHiveName = hiveName;
-            Image = image;
-
             _strHivePath = File.Exists(hivePath) ? hivePath : HiveManager.ConvertDeviceToMsdosName(hivePath);
 
             try
