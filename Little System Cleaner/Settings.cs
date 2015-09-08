@@ -22,14 +22,14 @@ namespace Little_System_Cleaner.Properties {
         {
             get
             {
-                if (((ObservableCollection<ExcludeItem>)(this["arrayExcludeList"])) == null)
-                    ((this["arrayExcludeList"])) = new ObservableCollection<ExcludeItem>();
+                if (((ObservableCollection<ExcludeItem>)(this["ArrayExcludeList"])) == null)
+                    ((this["ArrayExcludeList"])) = new ObservableCollection<ExcludeItem>();
 
-                return ((ObservableCollection<ExcludeItem>)(this["arrayExcludeList"]));
+                return ((ObservableCollection<ExcludeItem>)(this["ArrayExcludeList"]));
             }
             set
             {
-                this["arrayExcludeList"] = value;
+                this["ArrayExcludeList"] = value;
             }
         }
 
@@ -39,15 +39,15 @@ namespace Little_System_Cleaner.Properties {
         {
             get
             {
-                if (string.IsNullOrEmpty(this["strProgramSettingsDir"] as string))
-                    this["strProgramSettingsDir"] = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)}\\Little System Cleaner";
+                if (string.IsNullOrEmpty(this["ProgramSettingsDir"] as string))
+                    this["ProgramSettingsDir"] = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)}\\Little System Cleaner";
 
-                if (!Directory.Exists((string) this["strProgramSettingsDir"]))
-                    Directory.CreateDirectory((string) this["strProgramSettingsDir"]);
+                if (!Directory.Exists((string) this["ProgramSettingsDir"]))
+                    Directory.CreateDirectory((string) this["ProgramSettingsDir"]);
 
-                return this["strProgramSettingsDir"] as string;
+                return this["ProgramSettingsDir"] as string;
             }
-            set { this["strProgramSettingsDir"] = value; }
+            set { this["ProgramSettingsDir"] = value; }
         }
 
         [UserScopedSetting]
@@ -56,15 +56,15 @@ namespace Little_System_Cleaner.Properties {
         {
             get
             {
-                if (string.IsNullOrEmpty(this["optionsBackupDir"] as string))
-                    this["optionsBackupDir"] = $"{ProgramSettingsDir}\\Backups";
+                if (string.IsNullOrEmpty(this["OptionsBackupDir"] as string))
+                    this["OptionsBackupDir"] = $"{ProgramSettingsDir}\\Backups";
 
-                if (!Directory.Exists((string) this["optionsBackupDir"]))
-                    Directory.CreateDirectory((string) this["optionsBackupDir"]);
+                if (!Directory.Exists((string) this["OptionsBackupDir"]))
+                    Directory.CreateDirectory((string) this["OptionsBackupDir"]);
 
-                return (string) this["optionsBackupDir"]; ;
+                return (string) this["OptionsBackupDir"];
             }
-            set { this["optionsBackupDir"] = value; }
+            set { this["OptionsBackupDir"] = value; }
         }
 
         [UserScopedSetting]
@@ -73,15 +73,15 @@ namespace Little_System_Cleaner.Properties {
         {
             get
             {
-                if (string.IsNullOrEmpty(this["optionsLogDir"] as string))
-                    this["optionsLogDir"] = $"{ProgramSettingsDir}\\Logs";
+                if (string.IsNullOrEmpty(this["OptionsLogDir"] as string))
+                    this["OptionsLogDir"] = $"{ProgramSettingsDir}\\Logs";
 
-                if (!Directory.Exists((string) this["optionsLogDir"]))
-                    Directory.CreateDirectory((string) this["optionsLogDir"]);
+                if (!Directory.Exists((string) this["OptionsLogDir"]))
+                    Directory.CreateDirectory((string) this["OptionsLogDir"]);
 
-                return this["optionsLogDir"] as string;
+                return this["OptionsLogDir"] as string;
             }
-            set { this["optionsLogDir"] = value; }
+            set { this["OptionsLogDir"] = value; }
         }
 
         [UserScopedSetting]
