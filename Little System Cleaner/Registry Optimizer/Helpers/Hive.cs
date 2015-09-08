@@ -60,7 +60,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         public string CompactSize => Utils.ConvertSizeToString(_lNewHiveSize);
         #endregion
 
-        public bool bAnaylzed, bCompacted;
+        public bool anaylzed, compacted;
 
         private int _hKey;
         private bool _disposed;
@@ -168,7 +168,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             _lNewHiveSize = 0;
 
             // Reset analyzed
-            bAnaylzed = false;
+            anaylzed = false;
         }
 
         private void OpenHKey()
@@ -201,7 +201,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// </summary>
         public void AnalyzeHive(Window window)
         {
-            if (bAnaylzed)
+            if (anaylzed)
                 // Reset previous analyze info
                 Reset();
 
@@ -280,7 +280,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             _lNewHiveSize = (uint)GetFileSize(_strNewHivePath);
 
             if (File.Exists(_strNewHivePath))
-                bAnaylzed = true;
+                anaylzed = true;
 
             // End Critical Region
             Thread.EndCriticalRegion();
@@ -323,7 +323,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <exception cref="System.Exception">This exception will be thrown if the registry cannot be compacted. Further information is included in the description of the exception.</exception>
         private void CanCompact()
         {
-            if (!bAnaylzed)
+            if (!anaylzed)
             {
                 throw new Exception("The registry hive must be analyzed before it can be compacted.");
             }
@@ -345,7 +345,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             {
                 throw new Exception($"The compacted version of the registry hive ({_strHiveName}) was not created or was deleted from {_strNewHivePath}.");
             }
-            else if (bCompacted)
+            else if (compacted)
             {
                 throw new Exception($"The registry hive ({_strHiveName}) has already been compacted.");
             }
@@ -375,7 +375,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             // End Critical Region
             Thread.EndCriticalRegion();
 
-            bCompacted = true;
+            compacted = true;
         }
 
         /// <summary>
