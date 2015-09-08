@@ -17,12 +17,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         public string Errors { get; set; }
 
         public Image Image { get; private set; }
-        public Uri bMapImg { get; private set; }
 
-        public lviScanner(string section, Uri bMapImg)
+        public lviScanner(string section)
         {
-            this.bMapImg = bMapImg;
-
             Section = section;
             Status = "Queued";
             Errors = "0 Errors";
