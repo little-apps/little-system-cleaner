@@ -1,83 +1,71 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Duplicate_Finder.Helpers;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     /// <summary>
     /// Interaction logic for LoadingResults.xaml
     /// </summary>
-    public partial class LoadingResults : Window
+    public partial class LoadingResults
     {
-        private BackgroundWorker backgroundWorker = new BackgroundWorker();
-        private Wizard _scanBase;
-        private CommonTools.TreeListView.Tree.TreeList _tree;
-        private ResultModel _resultModel = null;
+        private readonly BackgroundWorker _backgroundWorker = new BackgroundWorker();
+        private readonly Wizard _scanBase;
+        private readonly TreeList _tree;
+        private ResultModel _resultModel;
 
-        public ResultModel Model
-        {
-            get { return this._resultModel; }
-        }
+        public ResultModel Model => _resultModel;
 
-        public LoadingResults(Wizard scanBase, CommonTools.TreeListView.Tree.TreeList treeListView)
+        public LoadingResults(Wizard scanBase, TreeList treeListView)
         {
             InitializeComponent();
 
-            this._scanBase = scanBase;
-            this._tree = treeListView;
+            _scanBase = scanBase;
+            _tree = treeListView;
         }
 
         private void LoadingResults_Loaded(object sender, RoutedEventArgs e)
         {
-            this.backgroundWorker.DoWork += backgroundWorker_DoWork;
-            this.backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
+            _backgroundWorker.DoWork += backgroundWorker_DoWork;
+            _backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
 
-            this.backgroundWorker.RunWorkerAsync(this._scanBase);
+            _backgroundWorker.RunWorkerAsync(_scanBase);
         }
 
         void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
-                this.DialogResult = true;
+                DialogResult = true;
             }
             else
             {
-                this.DialogResult = false;
+                DialogResult = false;
             }
 
-            this.Close();
+            Close();
         }
 
         void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            this._resultModel = ResultModel.CreateResultModel((Wizard)e.Argument);
+            _resultModel = ResultModel.CreateResultModel((Wizard)e.Argument);
 
-            this.Dispatcher.Invoke(new Action(() => this._tree.Model = this._resultModel));
+            Dispatcher.Invoke(new Action(() => _tree.Model = _resultModel));
 
-            this._tree.ExpandAll();
+            _tree.ExpandAll();
 
             e.Result = true;
         }
 
         private void LoadingResults_Closing(object sender, CancelEventArgs e)
         {
-            if (this.backgroundWorker.IsBusy && !this.backgroundWorker.CancellationPending)
+            if (_backgroundWorker.IsBusy && !_backgroundWorker.CancellationPending)
             {
-                this.backgroundWorker.CancelAsync();
+                _backgroundWorker.CancelAsync();
 
-                this.DialogResult = false;
+                DialogResult = false;
             }
         }
 

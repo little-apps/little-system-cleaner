@@ -16,27 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
+using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {
-        private static object LockObj = new object();
+        private static readonly object LockObj = new object();
         internal static ScannerBase CurrentScanner;
-        internal static bool SQLiteLoaded = true;
+        internal static bool SqLiteLoaded = true;
 
         /// <summary>
         /// Gets/Sets the current file or registry key being scanned
@@ -54,7 +52,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             set;
         }
 
-        private static ObservableCollection<ResultNode> _resultArray = new ObservableCollection<ResultNode>();
+        private static readonly ObservableCollection<ResultNode> _resultArray = new ObservableCollection<ResultNode>();
 
         internal static ObservableCollection<ResultNode> ResultArray
         {
@@ -79,52 +77,44 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         public Wizard()
         {
-            this.Controls.Add(typeof(Start));
-            this.Controls.Add(typeof(Analyze));
-            this.Controls.Add(typeof(Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Analyze));
+            Controls.Add(typeof(Results));
         }
 
         public override void OnLoaded()
         {
-            this.SetCurrentControl(0);
+            SetCurrentControl(0);
         }
 
         public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.CurrentControl is Analyze)
+            var analyze = CurrentControl as Analyze;
+            if (analyze != null)
             {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
-                    (this.CurrentControl as Analyze).AbortScanThread();
-                    Wizard.ResultArray.Clear();
+                    analyze.AbortScanThread();
+                    ResultArray.Clear();
 
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
 
-            if (this.CurrentControl is Results)
-            {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+            if (!(CurrentControl is Results))
+                return true;
 
-                if (exit)
-                {
-                    Wizard.ResultArray.Clear();
+            exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            if (!exit)
+                return false;
+
+            ResultArray.Clear();
 
             return true;
         }
@@ -132,23 +122,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         public void ShowDetails(ResultNode resultNode)
         {
             // Store current control
-            this.StoredResults = this.CurrentControl as Results;
+            StoredResults = CurrentControl as Results;
 
             Details ctrlDetails = new Details(this, resultNode);
-            this.Content = ctrlDetails;
+            Content = ctrlDetails;
         }
 
         public void HideDetails()
         {
-            if (this.StoredResults == null)
+            if (StoredResults == null)
             {
-                MessageBox.Show(App.Current.MainWindow, "An error occurred going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                this.MoveFirst();
+                MessageBox.Show(Application.Current.MainWindow, "An error occurred going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MoveFirst();
 
                 return;
             }
 
-            this.Content = this.StoredResults;
+            Content = StoredResults;
         }
 
         /// <summary>
@@ -157,7 +147,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         public override void MoveFirst(bool autoMove = true)
         {
             // Clear results before going back
-            Wizard.ResultArray.Clear();
+            ResultArray.Clear();
 
             base.MoveFirst(autoMove);
         }
@@ -271,22 +261,22 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             return true;
         }
 
-        internal static bool StoreINIKeys(string desc, INIInfo[] iniInfo)
+        internal static bool StoreIniKeys(string desc, IniInfo[] iniInfo)
         {
             if (string.IsNullOrEmpty(desc) || iniInfo == null)
                 return false;
 
-            CurrentScanner.Results.Children.Add(new ResultINI(desc, iniInfo));
+            CurrentScanner.Results.Children.Add(new ResultIni(desc, iniInfo));
 
             return true;
         }
 
-        internal static bool StoreXML(string desc, Dictionary<string, List<string>> xmlPaths)
+        internal static bool StoreXml(string desc, Dictionary<string, List<string>> xmlPaths)
         {
             if (string.IsNullOrEmpty(desc) || xmlPaths == null || xmlPaths.Count == 0)
                 return false;
 
-            CurrentScanner.Results.Children.Add(new ResultXML(desc, xmlPaths));
+            CurrentScanner.Results.Children.Add(new ResultXml(desc, xmlPaths));
 
             return true;
         }

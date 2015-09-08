@@ -16,14 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Xml;
-using Microsoft.Win32;
-
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Plugins : ScannerBase
@@ -37,7 +29,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 string name, desc;
 
                 if (PluginIsValid(filePath, out name, out desc))
-                    this.Children.Add(new Plugins(this, name, desc, filePath));
+                    Children.Add(new Plugins(this, name, desc, filePath));
             }
         }
 
@@ -56,11 +48,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public override void Scan(ScannerBase child)
         {
-            if (child is Plugins)
-            {
-                if (!string.IsNullOrEmpty(child.Name) && !string.IsNullOrEmpty(child.PluginPath))
-                    ScanPlugin(child.Name, child.PluginPath);
-            }
+            if (!(child is Plugins))
+                return;
+
+            if (!string.IsNullOrEmpty(child.Name) && !string.IsNullOrEmpty(child.PluginPath))
+                ScanPlugin(child.Name, child.PluginPath);
         }
     }
 }

@@ -16,13 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using Microsoft.Win32;
-
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Applications : ScannerBase
@@ -51,13 +44,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Name = header;
         }
 
-        public void Scan(ScannerBase child)
+        public override void Scan(ScannerBase child)
         {
-            if (!this.Children.Contains(child))
-                return;
+            //if (!Children.Contains(child))
+            //    return;
 
-            if (!child.IsChecked.GetValueOrDefault())
-                return;
+            //if (!child.IsChecked.GetValueOrDefault())
+            //    return;
         }
     }
 }

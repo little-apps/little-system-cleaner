@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -9,31 +8,16 @@ namespace Little_System_Cleaner.Misc
 {
     public abstract class WizardBase : UserControl
     {
-        private List<Type> _controls = new List<Type>();
-        private int _currentControlIndex = 0;
+        private int _currentControlIndex;
 
-        public List<Type> Controls
-        {
-            get { return this._controls; }
-        }
+        public List<Type> Controls { get; } = new List<Type>();
 
-        public UserControl CurrentControl
-        {
-            get { return (UserControl)this.Content; }
-        }
+        public UserControl CurrentControl => (UserControl)Content;
 
         /// <summary>
         /// This value is readonly and can only be manipulated with SetCurrentControl()
         /// </summary>
-        public int CurrentControlIndex
-        {
-            get { return this._currentControlIndex; }
-        }
-
-        public WizardBase()
-        {
-            
-        }
+        public int CurrentControlIndex => _currentControlIndex;
 
         /// <summary>
         /// This function is called when the wizard is loaded
@@ -54,7 +38,7 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MoveFirst(bool autoMove = true)
         {
-            this.SetCurrentControl(0, autoMove);
+            SetCurrentControl(0, autoMove);
         }
 
         /// <summary>
@@ -64,9 +48,9 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MovePrev(bool autoMove = true)
         {
-            int prevControl = this.CurrentControlIndex - 1;
+            int prevControl = CurrentControlIndex - 1;
 
-            this.SetCurrentControl(prevControl, autoMove);
+            SetCurrentControl(prevControl, autoMove);
         }
 
         /// <summary>
@@ -76,9 +60,9 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MoveNext(bool autoMove = true)
         {
-            int nextControl = this.CurrentControlIndex + 1;
+            int nextControl = CurrentControlIndex + 1;
 
-            this.SetCurrentControl(nextControl, autoMove);
+            SetCurrentControl(nextControl, autoMove);
         }
 
         /// <summary>
@@ -88,9 +72,9 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MoveLast(bool autoMove = true)
         {
-            int lastControl = this.Controls.Count;
+            int lastControl = Controls.Count;
 
-            this.SetCurrentControl(lastControl, autoMove);
+            SetCurrentControl(lastControl, autoMove);
         }
         
         /// <summary>
@@ -102,16 +86,16 @@ namespace Little_System_Cleaner.Misc
         /// <remarks>This function can only be called from within the class that inherits this one</remarks>
         protected void SetCurrentControl(int index, bool autoMove = true)
         {
-            if (this.Controls.Count == 0)
-                throw new IndexOutOfRangeException(string.Format("There are no controls and therefore #{0} doesn't exist in the controls", index));
+            if (Controls.Count == 0)
+                throw new IndexOutOfRangeException($"There are no controls and therefore #{index} doesn't exist in the controls");
 
-            if (index < 0 || index > this.Controls.Count)
-                throw new IndexOutOfRangeException(string.Format("There is no control with #{0}", index));
+            if (index < 0 || index > Controls.Count)
+                throw new IndexOutOfRangeException($"There is no control with #{index}");
 
-            this._currentControlIndex = index;
+            _currentControlIndex = index;
 
             if (autoMove)
-                this.ChangeCurrentControl();
+                ChangeCurrentControl();
         }
 
         /// <summary>
@@ -120,17 +104,16 @@ namespace Little_System_Cleaner.Misc
         /// <remarks>This function can only be called from within the class that inherits this one</remarks>
         protected void ChangeCurrentControl()
         {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action(ChangeCurrentControl));
+                Dispatcher.BeginInvoke(new Action(ChangeCurrentControl));
 
                 return;
             }
 
-            if (this.CurrentControl != null)
-                this.CurrentControl.RaiseEvent(new RoutedEventArgs(UserControl.UnloadedEvent, this.CurrentControl));
+            CurrentControl?.RaiseEvent(new RoutedEventArgs(UnloadedEvent, CurrentControl));
 
-            this.Content = Activator.CreateInstance(this.Controls[this.CurrentControlIndex], this);
+            Content = Activator.CreateInstance(Controls[CurrentControlIndex], this);
         }
     }
 }

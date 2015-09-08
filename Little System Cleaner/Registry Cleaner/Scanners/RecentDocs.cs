@@ -17,31 +17,25 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class RecentDocs : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.RecentDocs; }
-        }
+        public override string ScannerName => Strings.RecentDocs;
 
         internal static void Scan()
         {
             try
             {
-                ScanMUICache();
+                ScanMuiCache();
                 ScanExplorerDocs();
             }
             catch (ThreadAbortException)
@@ -53,7 +47,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Checks MUI Cache for invalid file references (XP Only)
         /// </summary>
-        private static void ScanMUICache()
+        private static void ScanMuiCache()
         {
             try
             {
@@ -62,16 +56,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    foreach (string valueName in regKey.GetValueNames())
+                    foreach (string valueName in from valueName in regKey.GetValueNames() where !string.IsNullOrWhiteSpace(valueName) where !valueName.StartsWith("@") && valueName != "LangID" where !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName) select valueName)
                     {
-                        if (string.IsNullOrWhiteSpace(valueName))
-                            continue;
-
-                        if (valueName.StartsWith("@") || valueName == "LangID")
-                            continue;
-
-                        if (!Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName))
-                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
                     }
                 }
             }
@@ -95,16 +82,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     Wizard.Report.WriteLine("Cleaning invalid references in " + regKey.Name);
 
-                    EnumMRUList(regKey);
+                    EnumMruList(regKey);
 
-                    foreach (string strSubKey in regKey.GetSubKeyNames())
+                    foreach (RegistryKey subKey in regKey.GetSubKeyNames().Select(strSubKey => regKey.OpenSubKey(strSubKey)).Where(subKey => subKey != null))
                     {
-                        RegistryKey subKey = regKey.OpenSubKey(strSubKey);
-
-                        if (subKey == null)
-                            continue;
-
-                        EnumMRUList(subKey);
+                        EnumMruList(subKey);
                     }
                 }
             }
@@ -114,12 +96,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
         }
 
-        private static void EnumMRUList(RegistryKey regKey)
+        private static void EnumMruList(RegistryKey regKey)
         {
             foreach (string strValueName in regKey.GetValueNames())
             {
-                string filePath = "", fileArgs = "";
-                object value;
+                string filePath = "", fileArgs;
 
                 // Skip if value name is null/empty
                 if (string.IsNullOrWhiteSpace(strValueName))
@@ -129,10 +110,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 if (!Regex.IsMatch(strValueName, "[0-9]"))
                     continue;
 
-                value = regKey.GetValue(strValueName);
+                var value = regKey.GetValue(strValueName);
 
                 string fileName = ExtractUnicodeStringFromBinary(value);
-                string shortcutPath = string.Format("{0}\\{1}.lnk", Environment.GetFolderPath(Environment.SpecialFolder.Recent), fileName);
+                string shortcutPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Recent)}\\{fileName}.lnk";
 
                 // See if file exists in Recent Docs folder
                 if (!string.IsNullOrEmpty(fileName))
@@ -146,7 +127,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (!Wizard.IsOnIgnoreList(shortcutPath) && !Wizard.IsOnIgnoreList(filePath))
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
-                        continue;
                     }
                 }
             }
@@ -158,23 +138,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <param name="keyObj">Value from registry key</param>
         private static string ExtractUnicodeStringFromBinary(object keyObj)
         {
-            string Value = keyObj.ToString();    //get object value 
-            string strType = keyObj.GetType().Name;  //get object type
+            string value = keyObj.ToString();    //get object value 
+            string type = keyObj.GetType().Name;  //get object type
 
-            if (strType == "Byte[]")
+            if (type == "Byte[]")
             {
-                Value = "";
-                byte[] Bytes = (byte[])keyObj;
+                value = "";
+                byte[] bytes = (byte[])keyObj;
                 //this seems crude but cannot find a way to 'cast' a Unicode string to byte[]
                 //even in case where we know the beginning format is Unicode
                 //so do it the hard way
 
-                char[] chars = Encoding.Unicode.GetChars(Bytes);
+                char[] chars = Encoding.Unicode.GetChars(bytes);
                 foreach (char bt in chars)
                 {
                     if (bt != 0)
                     {
-                        Value = Value + bt; //construct string one at a time
+                        value = value + bt; //construct string one at a time
                     }
                     else
                     {
@@ -182,7 +162,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                 }
             }
-            return Value;
+            return value;
         }
     }
 }

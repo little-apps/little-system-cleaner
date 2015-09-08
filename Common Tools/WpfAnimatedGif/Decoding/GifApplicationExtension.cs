@@ -18,10 +18,7 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind
-        {
-            get { return GifBlockKind.SpecialPurpose; }
-        }
+        internal override GifBlockKind Kind => GifBlockKind.SpecialPurpose;
 
         internal static GifApplicationExtension ReadApplication(Stream stream)
         {

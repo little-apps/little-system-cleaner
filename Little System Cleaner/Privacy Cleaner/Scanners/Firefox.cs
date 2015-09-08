@@ -18,18 +18,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Runtime.InteropServices;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows;
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Little_System_Cleaner.Misc;
-using System.Windows;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -41,13 +39,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         public Firefox() 
         {
             Name = "Mozilla Firefox";
-            Icon = Properties.Resources.Firefox;
+            Icon = Resources.Firefox;
 
-            this.Children.Add(new Firefox(this, "Internet History"));
-            this.Children.Add(new Firefox(this, "Cookies"));
-            this.Children.Add(new Firefox(this, "Internet Cache"));
-            this.Children.Add(new Firefox(this, "Saved Form Information"));
-            this.Children.Add(new Firefox(this, "Download History"));
+            Children.Add(new Firefox(this, "Internet History"));
+            Children.Add(new Firefox(this, "Cookies"));
+            Children.Add(new Firefox(this, "Internet Cache"));
+            Children.Add(new Firefox(this, "Saved Form Information"));
+            Children.Add(new Firefox(this, "Download History"));
         }
 
         public Firefox(ScannerBase parent, string header)
@@ -63,21 +61,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         internal static bool IsInstalled()
         {
             // Get install dir
-            string firefoxExe = string.Format(@"{0}\Mozilla Firefox\firefox.exe", ((Utils.Is64BitOS)?(Environment.GetEnvironmentVariable("ProgramFiles(x86)")):(Environment.GetEnvironmentVariable("ProgramFiles"))));
+            string firefoxExe =
+                $@"{
+                    ((Utils.Is64BitOs)
+                        ? (Environment.GetEnvironmentVariable("ProgramFiles(x86)"))
+                        : (Environment.GetEnvironmentVariable("ProgramFiles")))}\Mozilla Firefox\firefox.exe";
             return File.Exists(firefoxExe);
         }
 
         
-        public override string ProcessName
-        {
-            get
-            {
-                return "firefox";
-            }
-        }
+        public override string ProcessName => "firefox";
 
         public override void Scan(ScannerBase child) {
-            if (!this.Children.Contains(child))
+            if (!Children.Contains(child))
                 return;
 
             if (!child.IsChecked.GetValueOrDefault())
@@ -115,19 +111,21 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         }
         
 
-        private string[] _firefoxProfilePaths = null;
+        private string[] _firefoxProfilePaths;
         public string[] FirefoxProfilePaths
         {
             get {
                 if (_firefoxProfilePaths == null)
                 {
-                    string firefoxProfilesFile = string.Format(@"{0}\Mozilla\Firefox\profiles.ini", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+                    string firefoxProfilesFile =
+                        $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                            }\Mozilla\Firefox\profiles.ini";
                     List<string> profilePaths = new List<string>();
 
                     int i = 0;
                     while (true)
                     {
-                        string sectionName = string.Format("Profile{0}", i);
+                        string sectionName = $"Profile{i}";
                         StringBuilder retVal = new StringBuilder(65536);
 
                         GetPrivateProfileString(sectionName, "Path", null, retVal, retVal.Capacity, firefoxProfilesFile);
@@ -135,32 +133,32 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         if (retVal.Length <= 0)
                             break;
 
-                        profilePaths.Add(string.Format(@"{0}\Mozilla\Firefox\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), retVal.ToString()));
+                        profilePaths.Add(
+                            $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Mozilla\Firefox\{
+                                retVal}");
 
                         i++;
                     }
 
-                    this._firefoxProfilePaths = profilePaths.ToArray();
+                    _firefoxProfilePaths = profilePaths.ToArray();
                 }
 
-                return this._firefoxProfilePaths;
+                return _firefoxProfilePaths;
             }
             
         }
 
         private void ScanInternetHistory()
         {
-            if (!Wizard.SQLiteLoaded)
+            if (!Wizard.SqLiteLoaded)
                 return;
 
             // Firefox 2 and below
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string historyFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\history.dat"))
             {
-                string historyFile = string.Format(@"{0}\history.dat", firefoxProfilePath);
-
                 Wizard.CurrentFile = historyFile;
 
                 if (File.Exists(historyFile))
@@ -174,21 +172,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             if (fileList.Count > 0)
                 Wizard.StoreBadFileList("Firefox v2 Internet History", fileList.ToArray(), nTotalSize);
 
-            Wizard.StoreCleanDelegate(new CleanDelegate(CleanInternetHistory), "Clear Internet History", 0);
+            Wizard.StoreCleanDelegate(CleanInternetHistory, "Clear Internet History", 0);
         }
 
-        private void CleanInternetHistory() {
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+        private void CleanInternetHistory()
+        {
+            foreach (string historyFile in FirefoxProfilePaths.Select(firefoxProfilePath =>
+                $@"{firefoxProfilePath}\places.sqlite").Where(File.Exists))
             {
-                // Firefox 3
-                string historyFile = string.Format(@"{0}\places.sqlite", firefoxProfilePath);
-
-                if (!File.Exists(historyFile))
-                    continue;
-
                 try
                 {
-                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", historyFile)))
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection($"Data Source={historyFile};Version=3;"))
                     {
                         sqliteConn.Open();
 
@@ -207,25 +201,22 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 }
                 catch (SQLiteException ex)
                 {
-                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the internet history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
+                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to clear the internet history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         private void ScanCookies()
         {
-            if (!Wizard.SQLiteLoaded)
+            if (!Wizard.SqLiteLoaded)
                 return;
 
             // Firefox 2 and below
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string cookiesFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\cookies.txt"))
             {
-                string cookiesFile = string.Format(@"{0}\cookies.txt", firefoxProfilePath);
-
                 Wizard.CurrentFile = cookiesFile;
 
                 if (File.Exists(cookiesFile))
@@ -239,22 +230,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             if (fileList.Count > 0)
                 Wizard.StoreBadFileList("Firefox v2 Cookies", fileList.ToArray(), nTotalSize);
 
-            Wizard.StoreCleanDelegate(new CleanDelegate(CleanCookies), "Cookies", 0);
+            Wizard.StoreCleanDelegate(CleanCookies, "Cookies", 0);
         }
 
         private void CleanCookies()
         {
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string cookiesFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\cookies.sqlite").Where(File.Exists))
             {
-                // Firefox 3
-                string cookiesFile = string.Format(@"{0}\cookies.sqlite", firefoxProfilePath);
-
-                if (!File.Exists(cookiesFile))
-                    continue;
-
                 try
                 {
-                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", cookiesFile)))
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection($"Data Source={cookiesFile};Version=3;"))
                     {
                         sqliteConn.Open();
 
@@ -267,35 +252,26 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 }
                 catch (SQLiteException ex)
                 {
-                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the cookies in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
+                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to clear the cookies in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                
             }
         }
 
         private void ScanCache()
         {
-            string profilesDir = string.Format(@"{0}\Mozilla\Firefox\Profiles", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            string profilesDir =
+                $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Mozilla\Firefox\Profiles";
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
             if (Directory.Exists(profilesDir))
             {
-                foreach (string dir in Directory.GetDirectories(profilesDir, "*.default"))
+                foreach (string fileCache in Directory.GetDirectories(profilesDir, "*.default").Select(dir => $@"{dir}\Cache").Where(Directory.Exists).SelectMany(Directory.GetFiles))
                 {
-                    string dirCache = string.Format(@"{0}\Cache", dir);
+                    Wizard.CurrentFile = fileCache;
 
-                    if (Directory.Exists(dirCache))
-                    {
-                        foreach (string fileCache in Directory.GetFiles(dirCache))
-                        {
-                            Wizard.CurrentFile = fileCache;
-
-                            fileList.Add(fileCache);
-                            nTotalSize += MiscFunctions.GetFileSize(fileCache);
-                        }
-                    }
+                    fileList.Add(fileCache);
+                    nTotalSize += MiscFunctions.GetFileSize(fileCache);
                 }
             }
 
@@ -305,45 +281,39 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanFormHistory()
         {
-            if (!Wizard.SQLiteLoaded)
+            if (!Wizard.SqLiteLoaded)
                 return;
 
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string formHistoryFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\formhistory.dat"))
             {
-                string formHistoryFile = string.Format(@"{0}\formhistory.dat", firefoxProfilePath);
-
                 Wizard.CurrentFile = formHistoryFile;
 
-                if (File.Exists(formHistoryFile))
-                    if (MiscFunctions.IsFileValid(formHistoryFile))
-                    {
-                        fileList.Add(formHistoryFile);
-                        nTotalSize += MiscFunctions.GetFileSize(formHistoryFile);
-                    }
+                if (!File.Exists(formHistoryFile))
+                    continue;
+
+                if (!MiscFunctions.IsFileValid(formHistoryFile))
+                    continue;
+
+                fileList.Add(formHistoryFile);
+                nTotalSize += MiscFunctions.GetFileSize(formHistoryFile);
             }
 
             if (fileList.Count > 0)
                 Wizard.StoreBadFileList("Firefox v2 Form History", fileList.ToArray(), nTotalSize);
 
-            Wizard.StoreCleanDelegate(new CleanDelegate(CleanFormHistory), "Clear Form History", 0);
+            Wizard.StoreCleanDelegate(CleanFormHistory, "Clear Form History", 0);
         }
 
         private void CleanFormHistory()
         {
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string formHistoryFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\formhistory.sqlite").Where(File.Exists))
             {
-                // Firefox 3
-                string formHistoryFile = string.Format(@"{0}\formhistory.sqlite", firefoxProfilePath);
-
-                if (!File.Exists(formHistoryFile))
-                    continue;
-
                 try
                 {
-                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", formHistoryFile)))
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection($"Data Source={formHistoryFile};Version=3;"))
                     {
                         sqliteConn.Open();
 
@@ -356,54 +326,47 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 }
                 catch (SQLiteException ex)
                 {
-                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the form history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
+                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to clear the form history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         private void ScanDownloadHistory()
         {
-            if (!Wizard.SQLiteLoaded)
+            if (!Wizard.SqLiteLoaded)
                 return;
 
             // Firefox 2 and below
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string downloadsFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\downloads.rdf"))
             {
-                string downloadsFile = string.Format(@"{0}\downloads.rdf", firefoxProfilePath);
-
                 Wizard.CurrentFile = downloadsFile;
 
-                if (File.Exists(downloadsFile))
-                    if (MiscFunctions.IsFileValid(downloadsFile))
-                    {
-                        fileList.Add(downloadsFile);
-                        nTotalSize += MiscFunctions.GetFileSize(downloadsFile);
-                    }
+                if (!File.Exists(downloadsFile))
+                    continue;
+
+                if (!MiscFunctions.IsFileValid(downloadsFile))
+                    continue;
+
+                fileList.Add(downloadsFile);
+                nTotalSize += MiscFunctions.GetFileSize(downloadsFile);
             }
 
             if (fileList.Count > 0)
                 Wizard.StoreBadFileList("Firefox v2 Download History", fileList.ToArray(), nTotalSize);
 
-            Wizard.StoreCleanDelegate(new CleanDelegate(CleanDownloadHistory), "Clear Download History", 0);
+            Wizard.StoreCleanDelegate(CleanDownloadHistory, "Clear Download History", 0);
         }
 
         private void CleanDownloadHistory()
         {
-            foreach (string firefoxProfilePath in this.FirefoxProfilePaths)
+            foreach (string downloadsFile in FirefoxProfilePaths.Select(firefoxProfilePath => $@"{firefoxProfilePath}\downloads.sqlite").Where(File.Exists))
             {
-                // Firefox 3
-                string downloadsFile = string.Format(@"{0}\downloads.sqlite", firefoxProfilePath);
-
-                if (!File.Exists(downloadsFile))
-                    continue;
-
                 try
                 {
-                    using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;", downloadsFile)))
+                    using (SQLiteConnection sqliteConn = new SQLiteConnection($"Data Source={downloadsFile};Version=3;"))
                     {
                         sqliteConn.Open();
 
@@ -416,10 +379,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 }
                 catch (SQLiteException ex)
                 {
-                    MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear the download history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    continue;
+                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to clear the download history in Mozilla Firefox: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                
             }
         }
     }

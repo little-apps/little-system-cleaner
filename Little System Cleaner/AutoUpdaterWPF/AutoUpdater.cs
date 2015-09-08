@@ -1,16 +1,13 @@
 ﻿using Little_System_Cleaner.Misc;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -33,9 +30,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     {
         internal static String DialogTitle;
 
-        internal static String ChangeLogURL;
+        internal static String ChangeLogUrl;
 
-        internal static String DownloadURL;
+        internal static String DownloadUrl;
 
         internal static string LocalFileName;
 
@@ -59,7 +56,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// URL of the xml file that contains information about latest version of the application.
         /// </summary>
         /// 
-        internal static String AppCastURL;
+        internal static String AppCastUrl;
 
         /// <summary>
         /// Opens the download url in default browser if true. Very usefull if you have portable application.
@@ -92,7 +89,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
         internal static void Start(bool forceUpdate = false)
         {
-            Start(AppCastURL, forceUpdate);
+            Start(AppCastUrl, forceUpdate);
         }
 
         /// <summary>
@@ -104,11 +101,11 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (BackgroundWorkerRunning)
             {
-                MessageBox.Show(App.Current.MainWindow, "An update check is already in progress.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "An update check is already in progress.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            AppCastURL = appCast;
+            AppCastUrl = appCast;
             ForceCheck = forceUpdate;
 
             CultureInfo ci = Thread.CurrentThread.CurrentUICulture;
@@ -143,7 +140,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             AppTitle = titleAttribute != null ? titleAttribute.Title : mainAssembly.GetName().Name;
             var appCompany = companyAttribute != null ? companyAttribute.Company : "";
 
-            RegistryLocation = !string.IsNullOrEmpty(appCompany) ? string.Format(@"Software\{0}\{1}\AutoUpdater", appCompany, AppTitle) : string.Format(@"Software\{0}\AutoUpdater", AppTitle);
+            RegistryLocation = !string.IsNullOrEmpty(appCompany) ? $@"Software\{appCompany}\{AppTitle}\AutoUpdater" : $@"Software\{AppTitle}\AutoUpdater";
 
             RegistryKey updateKey = null;
             object skip = null;
@@ -167,10 +164,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             finally
             {
-                if (updateKey != null)
-                    updateKey.Close();
+                updateKey?.Close();
             }
-            
+
 
             if (ForceCheck == false && remindLaterTime != null)
             {
@@ -189,7 +185,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             var fileVersionAttribute = (AssemblyFileVersionAttribute)GetAttribute(mainAssembly, typeof(AssemblyFileVersionAttribute));
             InstalledVersion = new Version(fileVersionAttribute.Version);
 
-            WebRequest webRequest = WebRequest.Create(AppCastURL);
+            WebRequest webRequest = WebRequest.Create(AppCastUrl);
             webRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
             webRequest.Proxy = Utils.GetProxySettings();
 
@@ -217,7 +213,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 return;
             }
 
-            UpdateXML updateXml = new UpdateXML();
+            UpdateXml updateXml;
 
             Stream appCastStream = null;
             XmlTextReader reader = null;
@@ -229,21 +225,18 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 if (appCastStream == null)
                     throw new Exception("Response stream from update server was null.");
 
-                XmlSerializer serializer = new XmlSerializer(typeof(UpdateXML));
+                XmlSerializer serializer = new XmlSerializer(typeof(UpdateXml));
 
                 reader = new XmlTextReader(appCastStream);
-
-                if (reader == null)
-                    throw new NullReferenceException("XmlTextReader is null");
                 
                 if (serializer.CanDeserialize(reader))
-                    updateXml = (UpdateXML)serializer.Deserialize(reader);
+                    updateXml = (UpdateXml)serializer.Deserialize(reader);
                 else
                     throw new Exception("Update file is in the wrong format.");
             }
             catch (Exception ex)
             {
-                string message = string.Format("The following error occurred trying to read update file: {0}", ex.Message);
+                string message = $"The following error occurred trying to read update file: {ex.Message}";
 
                 Debug.WriteLine(message);
                 Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -252,17 +245,14 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             finally
             {
-                if (reader != null)
-                    reader.Close();
+                reader.Close();
 
-                if (appCastStream != null)
-                    appCastStream.Close();
+                appCastStream?.Close();
 
-                if (webResponse != null)
-                    webResponse.Close();
+                webResponse?.Close();
             }
 
-            foreach (UpdateXML.Item item in updateXml.Items)
+            foreach (UpdateXml.Item item in updateXml.Items)
             {
                 if (item.Version != null)
                 {
@@ -275,8 +265,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     continue;
 
                 DialogTitle = item.Title;
-                ChangeLogURL = item.ChangeLog;
-                DownloadURL = item.URL;
+                ChangeLogUrl = item.ChangeLog;
+                DownloadUrl = item.Url;
                 LocalFileName = item.FileName;
             }
             
@@ -313,11 +303,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         }
                         finally
                         {
-                            if (updateKeyWrite != null)
-                                updateKeyWrite.Close();
+                            updateKeyWrite?.Close();
                         }
-
-                            
                     }
                 }
 
@@ -326,7 +313,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
             }
-            else if (ForceCheck == true)
+            else if (ForceCheck)
             {
                 Utils.MessageBoxThreadSafe(Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -336,7 +323,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         private static void ShowUI()
         {
             var updateForm = new Update();
-            CultureInfo ci = Thread.CurrentThread.CurrentUICulture;
 
             updateForm.ShowDialog();
 

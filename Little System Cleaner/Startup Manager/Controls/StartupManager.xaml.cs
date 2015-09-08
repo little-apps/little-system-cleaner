@@ -17,22 +17,13 @@
 */
 
 using System;
-using System.IO;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using Microsoft.Win32;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Media.Imaging;
-using System.Drawing;
 using System.Diagnostics;
-using Little_System_Cleaner.Startup_Manager.Helpers;
+using System.IO;
+using System.Threading;
+using System.Windows;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Startup_Manager.Helpers;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {
@@ -40,7 +31,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
     {
 		public StartupManager()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 
         public void OnLoaded()
@@ -50,7 +41,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         public bool OnUnloaded(bool forceExit)
         {
-            this._tree.Model = null;
+            _tree.Model = null;
 
             return true;
         }
@@ -60,12 +51,12 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
         /// </summary>
         private void LoadStartupFiles()
         {
-            this._tree.Model = StartupMgrModel.CreateStarupMgrModel();
+            _tree.Model = StartupMgrModel.CreateStarupMgrModel();
 
             // Expands treeview
-            this._tree.UpdateLayout();
-            this._tree.ExpandAll();
-            this._tree.AutoResizeColumns();
+            _tree.UpdateLayout();
+            _tree.ExpandAll();
+            _tree.AutoResizeColumns();
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
@@ -78,20 +69,20 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             Main.Watcher.Event("Startup Manager", "Add");
 
             AddEditEntry addEditEntryWnd = new AddEditEntry();
-            if (addEditEntryWnd.ShowDialog().GetValueOrDefault() == true)
+            if (addEditEntryWnd.ShowDialog().GetValueOrDefault())
                 // Refresh treelistview
                 LoadStartupFiles();
         }
 
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNode == null)
+            if (_tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry selectedItem = this._tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry selectedItem = _tree.SelectedNode.Tag as StartupEntry;
 
             // If root node -> display msg box and exit
             if (selectedItem.Children.Count > 0)
@@ -104,27 +95,27 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
             AddEditEntry addEditEntryWnd = new AddEditEntry(selectedItem.Parent.SectionName, selectedItem.SectionName, selectedItem.Path, selectedItem.Args, selectedItem.RegKey);
 
-            if (addEditEntryWnd.ShowDialog().GetValueOrDefault() == true)
+            if (addEditEntryWnd.ShowDialog().GetValueOrDefault())
                 // Refresh treelistview
                 LoadStartupFiles();
         }
 
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNode == null)
+            if (_tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry node = _tree.SelectedNode.Tag as StartupEntry;
 
             if (node.IsLeaf)
             {
                 if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove the selected entry from startup?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     bool bFailed = false;
-                    string sectionName = (node.Parent as StartupEntry).SectionName;
+                    string sectionName = node.Parent.SectionName;
 
                     Main.Watcher.Event("Startup Manager", "Delete Single Entry");
 
@@ -153,8 +144,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
                         try
                         {
-                            if (rk != null)
-                                rk.DeleteValue(node.SectionName);
+                            rk?.DeleteValue(node.SectionName);
                         }
                         catch (Exception ex)
                         {
@@ -162,7 +152,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                             bFailed = true;
                         }
 
-                        rk.Close();
+                        rk?.Close();
                     }
 
                     if (!bFailed)
@@ -204,7 +194,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                         {
                             if (rk == null)
                             {
-                                string message = string.Format("Unable to open registry key ({0}) to delete all entries.", sectionName);
+                                string message = $"Unable to open registry key ({sectionName}) to delete all entries.";
                                 MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                                 bFailed = true;
                             }
@@ -241,13 +231,13 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonView_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNode == null)
+            if (_tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry node = _tree.SelectedNode.Tag as StartupEntry;
 
             if (!node.IsLeaf)
                 return;
@@ -264,9 +254,9 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 }
                 catch (Exception ex)
                 {
-                    string message = string.Format("Unable to open startup folder.\nThe following error occurred: {0}", ex.Message);
+                    string message = $"Unable to open startup folder.\nThe following error occurred: {ex.Message}";
 
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -279,9 +269,9 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 }
                 catch (Exception ex)
                 {
-                    string message = string.Format("Unable to open registry key in RegEdit.\nThe following error occurred: {0}", ex.Message);
+                    string message = $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
 
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
@@ -289,48 +279,48 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonRun_Click(object sender, RoutedEventArgs e)
         {
-            if (this._tree.SelectedNode == null)
+            if (_tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = this._tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry node = _tree.SelectedNode.Tag as StartupEntry;
 
             if (!node.IsLeaf)
                 return;
 
-            if (MessageBox.Show("Are you sure you want to run this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Are you sure you want to run this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
+            Main.Watcher.Event("Startup Manager", "Run");
+
+            string message;
+
+            try
             {
-                Main.Watcher.Event("Startup Manager", "Run");
+                Process proc = Process.Start(node.Path, node.Args);
 
-                string message;
+                // Wait 1 sec
+                Thread.Sleep(1000);
 
-                try
-                {
-                    Process proc = Process.Start(node.Path, node.Args);
+                if (proc.HasExited)
+                    message = $"The program was started with ID {proc.Id} but then exited with exit code {proc.ExitCode}";
+                else if (proc.MainWindowHandle == IntPtr.Zero)
+                    message = $"The program was started with ID {proc.Id} but it does not appear to have a graphical interface";
+                else
+                    message = $"Successfully started program with ID {proc.Id}";
 
-                    // Wait 1 sec
-                    System.Threading.Thread.Sleep(1000);
+                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                if (ex is FileNotFoundException)
+                    message = "The file (" + ((FileNotFoundException) ex).FileName + ") could not be found. This could mean the startup entry is erroneous.";
+                else
+                    message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
 
-                    if (proc.HasExited)
-                        message = string.Format("The program was started with ID {0} but then exited with exit code {1}", proc.Id, proc.ExitCode);
-                    else if (proc.MainWindowHandle == IntPtr.Zero)
-                        message = string.Format("The program was started with ID {0} but it does not appear to have a graphical interface", proc.Id);
-                    else
-                        message = string.Format("Successfully started program with ID {0}", proc.Id);
-
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    if (ex is FileNotFoundException)
-                        message = "The file (" + (ex as FileNotFoundException).FileName + ") could not be found. This could mean the startup entry is erroneous.";
-                    else
-                        message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
-
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }   
 	}

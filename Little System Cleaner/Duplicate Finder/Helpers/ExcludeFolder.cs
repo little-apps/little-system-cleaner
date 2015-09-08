@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -15,14 +12,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
         private string _folderPath;
-        private bool _readOnly;
 
         public string FolderPath
         {
@@ -34,41 +29,37 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        public bool ReadOnly
-        {
-            get { return this._readOnly; }
-            set { this._readOnly = value; }
-        }
+        public bool ReadOnly { get; set; }
 
         public ExcludeFolder(string folderPath, bool readOnly = false) 
         {
-            this.FolderPath = folderPath;
-            this.ReadOnly = readOnly;
+            FolderPath = folderPath;
+            ReadOnly = readOnly;
         }
 
         public bool Equals(ExcludeFolder other)
         {
-            return (other != null && this.FolderPath == other.FolderPath);
+            return (other != null && FolderPath == other.FolderPath);
         }
 
         public bool Equals(string other)
         {
-            return (!string.IsNullOrEmpty(other) && this.FolderPath == other);
+            return (!string.IsNullOrEmpty(other) && FolderPath == other);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is ExcludeFolder)
-                return Equals(obj as ExcludeFolder);
-            else if (obj is string)
-                return Equals(obj as string);
-            else
-                return false;
+            var a = obj as ExcludeFolder;
+            if (a != null)
+                return Equals(a);
+
+            var s = obj as string;
+            return s != null && Equals(s);
         }
 
         public override int GetHashCode()
         {
-            return this.FolderPath.GetHashCode();
+            return FolderPath.GetHashCode();
         }
 
         [Obsolete]

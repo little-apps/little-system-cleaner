@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -59,13 +57,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             HKEY_PERFORMANCE_TEXT = 0x80000050,
             HKEY_PERFORMANCE_NLSTEXT = 0x80000060,
             HKEY_CURRENT_CONFIG = 0x80000005,
-        }
-
-        private enum REGFORMAT : int
-        {
-            REG_STANDARD_FORMAT = 1,
-            REG_LATEST_FORMAT = 2,
-            REG_NO_COMPRESSION = 4,
         }
     }
 }

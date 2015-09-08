@@ -16,15 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
+using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -36,18 +31,18 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public bool HivesLoaded = false;
 
-        public Wizard() : base()
+        public Wizard()
         {
-            this.Controls.Add(typeof(LoadHives));
-            this.Controls.Add(typeof(Main));
-            this.Controls.Add(typeof(AnalyzeResults));
+            Controls.Add(typeof(LoadHives));
+            Controls.Add(typeof(Main));
+            Controls.Add(typeof(AnalyzeResults));
 
             IsBusy = false;
         }
 
         public override void OnLoaded()
         {
-            this.MoveFirst();
+            MoveFirst();
         }
 
         public override bool OnUnloaded(bool forceExit)
@@ -55,33 +50,28 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             if (!HivesLoaded)
             {
                 // Registry hives not completely loaded, unload them
-                Wizard.RegistryHives.Clear();
+                RegistryHives.Clear();
             }
 
-            if (Wizard.IsBusy)
+            if (IsBusy)
             {
                 MessageBox.Show(Application.Current.MainWindow, "The Windows Registry is currently being analyzed/compacted. The operation cannot be completed at the moment.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
-            bool exit;
-
-            if (this.CurrentControl is AnalyzeResults)
+            if (CurrentControl is AnalyzeResults)
             {
-                exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                var exit = (forceExit || MessageBox.Show(Application.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
                 if (exit)
                 {
-                    foreach (Hive h in Wizard.RegistryHives) {
+                    foreach (Hive h in RegistryHives) {
                         h.Reset();
                     }
 
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;
@@ -90,7 +80,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public override void MoveFirst(bool autoMove = true)
         {
-            this.SetCurrentControl(!this.HivesLoaded ? 0 : 1, autoMove);
+            SetCurrentControl(!HivesLoaded ? 0 : 1, autoMove);
         }
     }
 }

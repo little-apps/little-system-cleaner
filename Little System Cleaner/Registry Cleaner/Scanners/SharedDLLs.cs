@@ -16,25 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class SharedDLLs : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.SharedDLLs; }
-        }
+        public override string ScannerName => Strings.SharedDLLs;
 
         /// <summary>
         /// Scan for missing links to DLLS
@@ -51,11 +43,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 Wizard.Report.WriteLine("Scanning for missing shared DLLs");
 
                 // Validate Each DLL from the value names
-                foreach (string strFilePath in regKey.GetValueNames())
+                foreach (string strFilePath in regKey.GetValueNames().Where(strFilePath => !string.IsNullOrWhiteSpace(strFilePath)).Where(strFilePath => !Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath)))
                 {
-                    if (!string.IsNullOrWhiteSpace(strFilePath))
-                        if (!Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
-                            Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
                 }
 
                 regKey.Close();

@@ -1,10 +1,10 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using Little_System_Cleaner.Misc;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
@@ -16,22 +16,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
         #endregion
 
         #region Properties
-        private readonly ObservableCollection<ResultNode> _children = new ObservableCollection<ResultNode>();
-        public ObservableCollection<ResultNode> Children
-        {
-            get { return _children; }
-        }
+
+        public ObservableCollection<ResultNode> Children { get; } = new ObservableCollection<ResultNode>();
 
         private bool? _bIsChecked = true;
 
@@ -44,20 +40,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             _bIsChecked = value;
 
             if (updateChildren && _bIsChecked.HasValue)
-                this.Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
 
-            if (updateParent && Parent != null)
-                Parent.VerifyCheckState();
+            if (updateParent)
+                Parent?.VerifyCheckState();
 
-            this.OnPropertyChanged("IsChecked");
+            OnPropertyChanged("IsChecked");
         }
 
         void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < this.Children.Count; ++i)
+            for (int i = 0; i < Children.Count; ++i)
             {
-                bool? current = this.Children[i].IsChecked;
+                bool? current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -68,14 +64,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     break;
                 }
             }
-            this.SetIsChecked(state, false, true);
+            SetIsChecked(state, false, true);
         }
         #endregion
 
         public bool? IsChecked
         {
             get { return _bIsChecked; }
-            set { this.SetIsChecked(value, true, true); }
+            set { SetIsChecked(value, true, true); }
         }
 
         public ResultNode Parent { get; set; }
@@ -109,7 +105,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <summary>
         /// Gets/Sets information for INI
         /// </summary>
-        public INIInfo[] iniInfoList
+        public IniInfo[] IniInfoList
         {
             get;
             set;
@@ -118,7 +114,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <summary>
         /// Gets/Sets information for XML
         /// </summary>
-        public Dictionary<string, List<string>> XMLPaths
+        public Dictionary<string, List<string>> XmlPaths
         {
             get;
             set;
@@ -182,12 +178,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         {
             get
             {
-                if (!string.IsNullOrEmpty(this.Section))
-                    return this.Section;
-                else if (!string.IsNullOrEmpty(this.Description))
-                    return this.Description;
-                else
-                    return string.Empty;
+                if (!string.IsNullOrEmpty(Section))
+                    return Section;
+                if (!string.IsNullOrEmpty(Description))
+                    return Description;
+                return string.Empty;
             }
         }
         #endregion
@@ -198,10 +193,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         {
             if (Parent != null)
                 return string.Copy(Description);
-            else if (!string.IsNullOrEmpty(Section))
-                return string.Copy(Section);
-            else
-                return string.Empty;
+
+            return !string.IsNullOrEmpty(Section) ? string.Copy(Section) : string.Empty;
         }
     }
 }

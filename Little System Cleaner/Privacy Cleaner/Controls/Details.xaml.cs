@@ -1,28 +1,21 @@
-﻿using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     /// <summary>
     /// Interaction logic for Details.xaml
     /// </summary>
-    public partial class Details : UserControl
+    public partial class Details
     {
         #region ShellExecuteEx
         internal static int SW_SHOW = 5;
@@ -57,13 +50,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         internal static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
         #endregion
 
-        private ObservableCollection<DetailItem> _detailItemCollection = new ObservableCollection<DetailItem>();
-        public ObservableCollection<DetailItem> DetailItemCollection
-        {
-            get { return _detailItemCollection; }
-        }
+        public ObservableCollection<DetailItem> DetailItemCollection { get; } = new ObservableCollection<DetailItem>();
 
-        private Wizard _scanBase;
+        private readonly Wizard _scanBase;
 
         public Details(Wizard scanBase, ResultNode resultNode)
         {
@@ -72,16 +61,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (resultNode == null)
                 throw new ObjectDisposedException("resultNode");
 
-            this._scanBase = scanBase;
+            _scanBase = scanBase;
 
             if (resultNode.FilePaths != null)
             {
                 foreach (string filePath in resultNode.FilePaths)
                 {
-                    string fileSize = Little_System_Cleaner.Misc.Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath));
+                    string fileSize = Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath));
                     string lastAccessDate = Directory.GetLastAccessTime(filePath).ToString();
 
-                    this.DetailItemCollection.Add(new DetailItem() { Name = filePath, Size = fileSize, AccessDate = lastAccessDate });
+                    DetailItemCollection.Add(new DetailItem { Name = filePath, Size = fileSize, AccessDate = lastAccessDate });
                 }
             }
 
@@ -92,62 +81,68 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     string folderPath = kvp.Key;
                     //SearchOption recurse = ((kvp.Value)?(SearchOption.AllDirectories):(SearchOption.TopDirectoryOnly));
 
-                    string folderSize = Little_System_Cleaner.Misc.Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false));
+                    string folderSize = Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false));
                     string lastAccessDate = Directory.GetLastAccessTime(folderPath).ToString();
 
-                    this.DetailItemCollection.Add(new DetailItem() { Name = folderPath, Size = folderSize, AccessDate = lastAccessDate });
+                    DetailItemCollection.Add(new DetailItem { Name = folderPath, Size = folderSize, AccessDate = lastAccessDate });
                 }
             }
 
-            Little_System_Cleaner.Misc.Utils.AutoResizeColumns(this.listView);
+            Utils.AutoResizeColumns(listView);
         }
 
         private void btnGoBack_Click(object sender, RoutedEventArgs e)
         {
-            this._scanBase.HideDetails();
+            _scanBase.HideDetails();
         }
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listView.SelectedItem == null)
+            var detailItem = listView.SelectedItem as DetailItem;
+            if (detailItem == null)
                 return;
 
-            string path = (this.listView.SelectedItem as DetailItem).Name;
+            string path = detailItem.Name;
 
             if (!File.Exists(path))
                 return;
 
-            if (MessageBox.Show(App.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo()
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     ErrorDialog = true,
                     FileName = path
                 };
 
-                System.Diagnostics.Process.Start(startInfo);
+                Process.Start(startInfo);
             }
         }
 
         private void btnLocate_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listView.SelectedItem == null)
+            if (listView.SelectedItem == null)
                 return;
 
-            string path = (this.listView.SelectedItem as DetailItem).Name;
+            var detailItem = listView.SelectedItem as DetailItem;
+            if (detailItem == null)
+                return;
 
-            System.Diagnostics.Process.Start("explorer", Path.GetDirectoryName(path));
+            string path = detailItem.Name;
+
+            Process.Start("explorer", Path.GetDirectoryName(path));
         }
 
         private void btnViewProperties_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listView.SelectedItem == null)
+            var detailItem = listView.SelectedItem as DetailItem;
+            if (detailItem == null)
                 return;
 
-            string path = (this.listView.SelectedItem as DetailItem).Name;
+            string path = detailItem.Name;
 
             SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
-            info.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(info);
+            info.cbSize = Marshal.SizeOf(info);
             info.lpVerb = "properties";
             info.lpFile = (string)path.Clone();
             info.nShow = SW_SHOW;

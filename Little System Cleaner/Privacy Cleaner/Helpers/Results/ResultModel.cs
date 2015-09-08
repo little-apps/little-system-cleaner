@@ -1,15 +1,11 @@
 ﻿using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
     public class ResultModel : ITreeModel
     {
-        public ResultNode Root { get; private set; }
+        public ResultNode Root { get; }
 
         internal static ResultModel CreateResultModel()
         {

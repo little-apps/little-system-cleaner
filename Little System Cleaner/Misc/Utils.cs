@@ -17,32 +17,29 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Shell;
 using System.Windows.Threading;
-using System.Xml;
+using Little_System_Cleaner.Properties;
 using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Little_System_Cleaner.Registry_Cleaner.Scanners;
+using Application = System.Windows.Forms.Application;
+using Image = System.Windows.Controls.Image;
 
 namespace Little_System_Cleaner.Misc
 {
@@ -51,18 +48,12 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Returns true if the OS is 64 bit
         /// </summary>
-        internal static bool Is64BitOS
-        {
-            get { return Environment.Is64BitOperatingSystem; }
-        }
+        internal static bool Is64BitOs => Environment.Is64BitOperatingSystem;
 
         /// <summary>
         /// Returns Little System Cleaner
         /// </summary>
-        internal static string ProductName
-        {
-            get { return System.Windows.Forms.Application.ProductName; }
-        }
+        internal static string ProductName => Application.ProductName;
 
         /// <summary>
         /// Returns current version of Little System Cleaner
@@ -85,12 +76,12 @@ namespace Little_System_Cleaner.Misc
         {
             get
             {
-                if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
+                if (System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    return (Window)App.Current.Dispatcher.Invoke(new Func<Window>(() => Utils.MainWindowThreadSafe));
+                    return (Window)System.Windows.Application.Current.Dispatcher.Invoke(new Func<Window>(() => MainWindowThreadSafe));
                 }
 
-                return App.Current.MainWindow;
+                return System.Windows.Application.Current.MainWindow;
             }
         }
 
@@ -98,30 +89,29 @@ namespace Little_System_Cleaner.Misc
         {
             WebProxy webProxy = new WebProxy();
 
-            if (Properties.Settings.Default.optionsUseProxy == 0)
-                return webProxy;
-            else if (Properties.Settings.Default.optionsUseProxy == 1)
-                return WebRequest.DefaultWebProxy;
-            else {
-                if (!string.IsNullOrEmpty(Properties.Settings.Default.optionsProxyHost) && (Properties.Settings.Default.optionsProxyPort > 0 && Properties.Settings.Default.optionsProxyPort < 65535))
-                {
-                    webProxy.Address = new Uri("http://" + Properties.Settings.Default.optionsProxyHost + ":" + Properties.Settings.Default.optionsProxyPort);
-                    webProxy.BypassProxyOnLocal = false;
-
-                    if (Properties.Settings.Default.optionsProxyAuthenticate)
+            switch (Settings.Default.optionsUseProxy)
+            {
+                case 0:
+                    return webProxy;
+                case 1:
+                    return WebRequest.DefaultWebProxy;
+                default:
+                    if (!string.IsNullOrEmpty(Settings.Default.optionsProxyHost) && (Settings.Default.optionsProxyPort > 0 && Settings.Default.optionsProxyPort < 65535))
                     {
-                        using (SecureString strPass = Utils.DecryptString(Properties.Settings.Default.optionsProxyPassword))
-                        {
-                            webProxy.Credentials = new NetworkCredential(Properties.Settings.Default.optionsProxyUser, strPass);
-                        }
-                    }
+                        webProxy.Address = new Uri("http://" + Settings.Default.optionsProxyHost + ":" + Settings.Default.optionsProxyPort);
+                        webProxy.BypassProxyOnLocal = false;
 
+                        if (!Settings.Default.optionsProxyAuthenticate)
+                            return webProxy;
+
+                        using (SecureString strPass = DecryptString(Settings.Default.optionsProxyPassword))
+                        {
+                            webProxy.Credentials = new NetworkCredential(Settings.Default.optionsProxyUser, strPass);
+                        }
+
+                        return webProxy;
+                    }
                     return webProxy;
-                }
-                else
-                {
-                    return webProxy;
-                }
             }
         }
 
@@ -132,48 +122,51 @@ namespace Little_System_Cleaner.Misc
             {
                 string machineName = Environment.MachineName;
 
-                string macID = "NOTFOUND";
+                string macId = "NOTFOUND";
                 try
                 {
                     NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
 
-                    if (nics != null && nics.Length > 0)
+                    if (nics.Length > 0)
                     {
                         foreach (NetworkInterface nic in nics)
                         {
                             if (nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
                             {
-                                macID = nic.GetPhysicalAddress().ToString();
+                                macId = nic.GetPhysicalAddress().ToString();
                                 break;
                             }
                         }
                     }
 
                 }
-                catch 
+                catch
                 {
+                    // ignored
                 }
 
                 string hardDriveSerialNo = "";
-                System.Management.ManagementClass mc = new System.Management.ManagementClass("Win32_DiskDrive");
-                foreach (System.Management.ManagementObject mo in mc.GetInstances())
+                ManagementClass mc = new ManagementClass("Win32_DiskDrive");
+                foreach (var o in mc.GetInstances())
                 {
+                    if (!string.IsNullOrEmpty(hardDriveSerialNo))
+                        break;
+
                     // Only get the first one
-                    if (hardDriveSerialNo == "")
+                    try
                     {
-                        try
-                        {
-                            hardDriveSerialNo = mo["SerialNumber"].ToString();
-                            break;
-                        }
-                        catch
-                        {
-                        }
+                        var mo = (ManagementObject)o;
+
+                        hardDriveSerialNo = mo["SerialNumber"].ToString();
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
 
                 MD5 md5 = new MD5CryptoServiceProvider();
-                return md5.ComputeHash(Encoding.ASCII.GetBytes(machineName + macID + hardDriveSerialNo));
+                return md5.ComputeHash(Encoding.ASCII.GetBytes(machineName + macId + hardDriveSerialNo));
             }
         }
 
@@ -184,7 +177,7 @@ namespace Little_System_Cleaner.Misc
 
             byte[] encryptedData = ProtectedData.Protect(
                 Encoding.Unicode.GetBytes(ToInsecureString(input)),
-                Utils.GetMachineHash,
+                GetMachineHash,
                 DataProtectionScope.CurrentUser);
             return Convert.ToBase64String(encryptedData);
         }
@@ -198,7 +191,7 @@ namespace Little_System_Cleaner.Misc
             {
                 byte[] decryptedData = ProtectedData.Unprotect(
                     Convert.FromBase64String(encryptedData),
-                    Utils.GetMachineHash,
+                    GetMachineHash,
                     DataProtectionScope.CurrentUser);
                 return ToSecureString(Encoding.Unicode.GetString(decryptedData));
             }
@@ -221,8 +214,10 @@ namespace Little_System_Cleaner.Misc
 
         internal static string ToInsecureString(SecureString input)
         {
-            string returnValue = string.Empty;
+            string returnValue;
+
             IntPtr ptr = Marshal.SecureStringToBSTR(input);
+
             try
             {
                 returnValue = Marshal.PtrToStringBSTR(ptr);
@@ -231,6 +226,7 @@ namespace Little_System_Cleaner.Misc
             {
                 Marshal.ZeroFreeBSTR(ptr);
             }
+
             return returnValue;
         }
         #endregion
@@ -274,7 +270,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Registry Key class</returns>
         internal static RegistryKey RegOpenKey(string regPath, bool openReadOnly = true, bool throwOnError = false)
         {
-            string mainKey = "", subKey = "";
+            string mainKey, subKey;
 
             ParseRegKeyPath(regPath, out mainKey, out subKey, throwOnError);
 
@@ -284,32 +280,32 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Returns RegistryKey from specified hive and subkey
         /// </summary>
-        /// <param name="MainKey">The hive (begins with HKEY)</param>
-        /// <param name="SubKey">The sub key (cannot be null or whitespace)</param>
+        /// <param name="mainKey">The hive (begins with HKEY)</param>
+        /// <param name="subKey">The sub key (cannot be null or whitespace)</param>
         /// <param name="openReadOnly">If true, opens the key with read-only access (default: true)</param>
         /// <param name="throwOnError">If true, throws an excpetion when an error occurs</param>
         /// <returns>RegistryKey or null if error occurred</returns>
-        internal static RegistryKey RegOpenKey(string MainKey, string SubKey, bool openReadOnly = true, bool throwOnError = false)
+        internal static RegistryKey RegOpenKey(string mainKey, string subKey, bool openReadOnly = true, bool throwOnError = false)
         {
-            RegistryKey reg = null;
+            RegistryKey reg;
 
             try
             {
-                if (MainKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
+                if (mainKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
                     reg = Registry.ClassesRoot;
-                else if (MainKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
+                else if (mainKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
                     reg = Registry.CurrentUser;
-                else if (MainKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
+                else if (mainKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
                     reg = Registry.LocalMachine;
-                else if (MainKey.ToUpper().CompareTo("HKEY_USERS") == 0)
+                else if (mainKey.ToUpper().CompareTo("HKEY_USERS") == 0)
                     reg = Registry.Users;
-                else if (MainKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
+                else if (mainKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
                     reg = Registry.CurrentConfig;
                 else
                 {
                     if (throwOnError)
                     {
-                        string message = string.Format("Unable to parse registry key.\nMain key: {0}\nSub Key: {1}", MainKey, SubKey);
+                        string message = $"Unable to parse registry key.\nMain key: {mainKey}\nSub Key: {subKey}";
                         throw new Exception(message);
                     }
 
@@ -317,15 +313,15 @@ namespace Little_System_Cleaner.Misc
                 }
                     
 
-                if (!string.IsNullOrWhiteSpace(SubKey))
-                    reg = reg.OpenSubKey(SubKey, (!openReadOnly));
+                if (!string.IsNullOrWhiteSpace(subKey))
+                    reg = reg.OpenSubKey(subKey, (!openReadOnly));
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred trying to open " + MainKey.ToUpper() + "/" + SubKey + ": " + ex.Message);
+                Debug.WriteLine("The following error occurred trying to open " + mainKey.ToUpper() + "/" + subKey + ": " + ex.Message);
 
                 if (throwOnError)
-                    throw ex;
+                    throw;
 
                 return null;
             }
@@ -365,17 +361,17 @@ namespace Little_System_Cleaner.Misc
                 {
                     if (throwOnError)
                     {
-                        string message = string.Format("Unable to parse registry key ({0})", inPath);
+                        string message = $"Unable to parse registry key ({inPath})";
                         throw new Exception(message);
                     }
 
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (throwOnError)
-                    throw ex;
+                    throw;
 
                 return false;
             }
@@ -403,7 +399,7 @@ namespace Little_System_Cleaner.Misc
             {
                 DriveType dt = PInvoke.GetDriveType(sb.ToString());
 
-                if (Properties.Settings.Default.registryCleanerOptionsRemMedia)
+                if (Settings.Default.registryCleanerOptionsRemMedia)
                 {
                     // Just return true if its on a removable media
                     if (dt == DriveType.Removable ||
@@ -425,14 +421,14 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Extracts the large or small icon
         /// </summary>
-        /// <param name="Path">Path to icon</param>
+        /// <param name="path">Path to icon</param>
         /// <returns>Large or small icon or null</returns>
-        internal static Icon ExtractIcon(string Path)
+        internal static Icon ExtractIcon(string path)
         {
             IntPtr largeIcon = IntPtr.Zero;
             IntPtr smallIcon = IntPtr.Zero;
 
-            string strPath = Utils.UnqouteSpaces(Path);
+            string strPath = UnqouteSpaces(path);
 
             PInvoke.ExtractIconExA(strPath, 0, ref largeIcon, ref smallIcon, 1);
 
@@ -495,20 +491,20 @@ namespace Little_System_Cleaner.Misc
             string strFileName = string.Copy(filePath.Trim().ToLower());
 
             // Remove quotes
-            strFileName = Utils.UnqouteSpaces(strFileName);
+            strFileName = UnqouteSpaces(strFileName);
 
             // Remove environment variables
             strFileName = Environment.ExpandEnvironmentVariables(strFileName);
 
             // Check for illegal characters
-            if (Utils.FindAnyIllegalChars(strFileName))
+            if (FindAnyIllegalChars(strFileName))
                 return false;
 
             // Check Drive Type
-            Utils.VDTReturn ret = Utils.ValidDriveType(strFileName);
-            if (ret == Utils.VDTReturn.InvalidDrive)
+            VDTReturn ret = ValidDriveType(strFileName);
+            if (ret == VDTReturn.InvalidDrive)
                 return false;
-            else if (ret == Utils.VDTReturn.SkipCheck)
+            if (ret == VDTReturn.SkipCheck)
                 return true;
 
             // Now see if file exists
@@ -518,7 +514,7 @@ namespace Little_System_Cleaner.Misc
             if (PInvoke.PathFileExists(strFileName))
                 return true;
 
-            if (Utils.SearchPath(strFileName))
+            if (SearchPath(strFileName))
                 return true;
 
             return false;
@@ -573,7 +569,7 @@ namespace Little_System_Cleaner.Misc
                 throw new ArgumentNullException(cmdLine);
 
             // Remove Quotes
-            strCmdLine = Utils.UnqouteSpaces(strCmdLine);
+            strCmdLine = UnqouteSpaces(strCmdLine);
 
             // Expand variables
             strCmdLine = Environment.ExpandEnvironmentVariables(strCmdLine);
@@ -581,12 +577,12 @@ namespace Little_System_Cleaner.Misc
             // Try to see file exists by combining parts
             StringBuilder strFileFullPath = new StringBuilder(260);
             int nPos = 0;
-            foreach (char ch in strCmdLine.ToCharArray())
+            foreach (char ch in strCmdLine)
             {
                 strFileFullPath = strFileFullPath.Append(ch);
                 nPos++;
 
-                if (Utils.FindAnyIllegalChars(strFileFullPath.ToString()))
+                if (FindAnyIllegalChars(strFileFullPath.ToString()))
                     break;
 
                 // See if part exists
@@ -623,39 +619,39 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Converts the size in bytes to a formatted string
         /// </summary>
-        /// <param name="Length">Size in bytes</param>
+        /// <param name="length">Size in bytes</param>
         /// <param name="shortFormat">If true, displays units in short form (ie: Bytes becomes B)</param>
         /// <returns>Formatted String</returns>
-        internal static string ConvertSizeToString(long Length, bool shortFormat = true)
+        internal static string ConvertSizeToString(long length, bool shortFormat = true)
         {
-            if (Length < 0)
+            if (length < 0)
                 return "";
 
             float nSize;
-            string strSizeFmt, strUnit = "";
+            string strSizeFmt, strUnit;
 
-            if (Length < 1000)             // 1KB
+            if (length < 1000)             // 1KB
             {
-                nSize = Length;
+                nSize = length;
                 strUnit = (shortFormat ? " B" : " Bytes");
             }
-            else if (Length < 1000000)     // 1MB
+            else if (length < 1000000)     // 1MB
             {
-                nSize = Length / (float)0x400;
+                nSize = length / (float)0x400;
                 strUnit = (shortFormat ? " KB" : " Kilobytes");
             }
-            else if (Length < 1000000000)   // 1GB
+            else if (length < 1000000000)   // 1GB
             {
-                nSize = Length / (float)0x100000;
+                nSize = length / (float)0x100000;
                 strUnit = (shortFormat ? " MB" : " Megabytes");
             }
             else
             {
-                nSize = Length / (float)0x40000000;
+                nSize = length / (float)0x40000000;
                 strUnit = (shortFormat ? " GB" : " Gigabytes");
             }
 
-            if (nSize == (int)nSize)
+            if ((nSize - nSize) == 0.00F)
                 strSizeFmt = nSize.ToString("0");
             else if (nSize < 10)
                 strSizeFmt = nSize.ToString("0.00");
@@ -693,13 +689,13 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Returns special folder path specified by CSIDL
         /// </summary>
-        /// <param name="CSIDL">CSIDL</param>
+        /// <param name="csidl">CSIDL</param>
         /// <returns>Special folder path</returns>
-        internal static string GetSpecialFolderPath(int CSIDL)
+        internal static string GetSpecialFolderPath(int csidl)
         {
             StringBuilder path = new StringBuilder(260);
 
-            if (PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, CSIDL, false))
+            if (PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, csidl, false))
                 return string.Copy(path.ToString());
 
             return "";
@@ -707,7 +703,7 @@ namespace Little_System_Cleaner.Misc
 
         internal static bool SearchPath(string fileName)
         {
-            string retPath = "";
+            string retPath;
 
             return SearchPath(fileName, null, out retPath);
         }
@@ -717,25 +713,25 @@ namespace Little_System_Cleaner.Misc
             return SearchPath(fileName, null, out retPath);
         }
 
-        internal static bool SearchPath(string fileName, string Path)
+        internal static bool SearchPath(string fileName, string path)
         {
-            string retPath = "";
+            string retPath;
 
-            return SearchPath(fileName, Path, out retPath);
+            return SearchPath(fileName, path, out retPath);
         }
 
         /// <summary>
         /// Checks for the file using the specified path and/or %PATH% variable
         /// </summary>
         /// <param name="fileName">The name of the file for which to search</param>
-        /// <param name="Path">The path to be searched for the file (searches %path% variable if null)</param>
+        /// <param name="path">The path to be searched for the file (searches %path% variable if null)</param>
         /// <param name="retPath">The path containing the file</param>
         /// <returns>True if it was found</returns>
-        internal static bool SearchPath(string fileName, string Path, out string retPath)
+        internal static bool SearchPath(string fileName, string path, out string retPath)
         {
             StringBuilder strBuffer = new StringBuilder(260);
 
-            int ret = PInvoke.SearchPath(((!string.IsNullOrEmpty(Path)) ? (Path) : (null)), fileName, null, 260, strBuffer, null);
+            int ret = PInvoke.SearchPath(((!string.IsNullOrEmpty(path)) ? (path) : (null)), fileName, null, 260, strBuffer, null);
 
             if (ret != 0 && !string.IsNullOrWhiteSpace(strBuffer.ToString()))
             {
@@ -743,22 +739,20 @@ namespace Little_System_Cleaner.Misc
 
                 return true;
             }
-            else
-            {
-                retPath = string.Empty;
-            }
-            
+
+            retPath = string.Empty;
+
             return false;
         }
 
         /// <summary>
         /// Removes quotes from the path
         /// </summary>
-        /// <param name="Path">Path w/ quotes</param>
+        /// <param name="path">Path w/ quotes</param>
         /// <returns>Path w/o quotes</returns>
-        internal static string UnqouteSpaces(string Path)
+        internal static string UnqouteSpaces(string path)
         {
-            StringBuilder sb = new StringBuilder(Path);
+            StringBuilder sb = new StringBuilder(path);
 
             PInvoke.PathUnquoteSpaces(sb);
 
@@ -776,7 +770,7 @@ namespace Little_System_Cleaner.Misc
             // Get directory portion of the path.
             string dirName = path;
             string fullFileName = "";
-            int pos = 0;
+            int pos;
             if ((pos = path.LastIndexOf(Path.DirectorySeparatorChar)) >= 0)
             {
                 dirName = path.Substring(0, pos);
@@ -814,17 +808,17 @@ namespace Little_System_Cleaner.Misc
                 return strResultBuffer.ToString();
             }
 
-            return string.Format("Error: ({0})", nResult);
+            return $"Error: ({nResult})";
         }
 
         /// <summary>
         /// Shortens the registry hive path
         /// </summary>
-        /// <param name="SubKey">Path containing registry hive (EX: HKEY_CURRENT_USER/...) </param>
+        /// <param name="subKey">Path containing registry hive (EX: HKEY_CURRENT_USER/...) </param>
         /// <returns>Shortened registry path  (EX: HKCU/...) </returns>
-        internal static string PrefixRegPath(string SubKey)
+        internal static string PrefixRegPath(string subKey)
         {
-            string strSubKey = string.Copy(SubKey);
+            string strSubKey = string.Copy(subKey);
 
             if (strSubKey.ToUpper().StartsWith("HKEY_CLASSES_ROOT"))
             {
@@ -853,8 +847,8 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Checks for suitable browser then launches URI
         /// </summary>
-        /// <param name="WebAddress">The address to launch</param>
-        internal static bool LaunchURI(string WebAddress)
+        /// <param name="webAddress">The address to launch</param>
+        internal static bool LaunchUri(string webAddress)
         {
             // Try default application for http://
             try
@@ -862,7 +856,7 @@ namespace Little_System_Cleaner.Misc
                 string keyValue = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Classes\http\shell\open\command", "", null) as string;
                 if (!string.IsNullOrEmpty(keyValue))
                 {
-                    string browserPath = keyValue.Replace("%1", WebAddress);
+                    string browserPath = keyValue.Replace("%1", webAddress);
                     Process.Start(browserPath);
 
                     return true;
@@ -870,17 +864,19 @@ namespace Little_System_Cleaner.Misc
             }
             catch
             {
+                // ignored
             }
 
             // Try to open using Process.Start
             try
             {
-                Process.Start(WebAddress);
+                Process.Start(webAddress);
 
                 return true;
             }
             catch
             {
+                // ignored
             }
 
             // Try to open with 'explorer.exe' (on newer Windows systems, this will open the default for http://)
@@ -890,7 +886,7 @@ namespace Little_System_Cleaner.Misc
 
                 if (SearchPath("explorer.exe", out browserPath))
                 {
-                    string argUrl = "\"" + WebAddress + "\"";
+                    string argUrl = "\"" + webAddress + "\"";
 
                     Process.Start(browserPath, argUrl);
 
@@ -900,17 +896,18 @@ namespace Little_System_Cleaner.Misc
             }
             catch
             {
+                // ignored
             }
 
             // Try to open with 'firefox.exe'
             try
             {
-                string progFilesDir = (Utils.Is64BitOS ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) : Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+                string progFilesDir = (Is64BitOs ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) : Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
                 string firefoxPath = progFilesDir + @"\Mozilla Firefox\firefox.exe";
 
                 if (File.Exists(firefoxPath))
                 {
-                    string argUrl = "\"" + WebAddress + "\"";
+                    string argUrl = "\"" + webAddress + "\"";
 
                     Process.Start(firefoxPath, argUrl);
 
@@ -919,6 +916,7 @@ namespace Little_System_Cleaner.Misc
             }
             catch
             {
+                // ignored
             }
 
             // Try to open with 'chrome.exe'
@@ -928,7 +926,7 @@ namespace Little_System_Cleaner.Misc
 
                 if (File.Exists(chromePath))
                 {
-                    string argUrl = "\"" + WebAddress + "\"";
+                    string argUrl = "\"" + webAddress + "\"";
 
                     Process.Start(chromePath, argUrl);
 
@@ -937,7 +935,7 @@ namespace Little_System_Cleaner.Misc
             }
             catch
             {
-
+                // ignored
             }
 
             // return false, all failed
@@ -977,13 +975,13 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// Auto resize columns
         /// </summary>
-        internal static void AutoResizeColumns(System.Windows.Controls.ListView listView)
+        internal static void AutoResizeColumns(ListView listView)
         {
-            System.Windows.Controls.GridView gv = listView.View as System.Windows.Controls.GridView;
+            GridView gv = listView.View as GridView;
 
             if (gv != null)
             {
-                foreach (System.Windows.Controls.GridViewColumn gvc in gv.Columns)
+                foreach (GridViewColumn gvc in gv.Columns)
                 {
                     // Set width to max value because actual width doesn't include margins
                     gvc.Width = double.MaxValue;
@@ -1010,15 +1008,15 @@ namespace Little_System_Cleaner.Misc
 
             // Skip the switch for as many numbers as possible.
             if (n > 3 && n < 21)
-                return n.ToString() + "th";
+                return n + "th";
 
             // Determine the suffix for numbers ending in 1, 2 or 3, otherwise add a 'th'
             switch (n % 10)
             {
-                case 1: return n.ToString() + "st";
-                case 2: return n.ToString() + "nd";
-                case 3: return n.ToString() + "rd";
-                default: return n.ToString() + "th";
+                case 1: return n + "st";
+                case 2: return n + "nd";
+                case 3: return n + "rd";
+                default: return n + "th";
             }
         }
 
@@ -1027,7 +1025,7 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="bitmap">Source</param>
         /// <returns>Image</returns>
-        internal static System.Windows.Controls.Image CreateBitmapSourceFromBitmap(System.Drawing.Bitmap bitmap)
+        internal static Image CreateBitmapSourceFromBitmap(Bitmap bitmap)
         {
             if (bitmap == null)
                 throw new ArgumentNullException(nameof(bitmap));
@@ -1036,12 +1034,12 @@ namespace Little_System_Cleaner.Misc
 
             try
             {
-                System.Windows.Controls.Image bMapImg = new System.Windows.Controls.Image()
+                Image bMapImg = new Image
                 {
-                    Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                    Source = Imaging.CreateBitmapSourceFromHBitmap(
                                 hBitmap,
                                 IntPtr.Zero,
-                                System.Windows.Int32Rect.Empty,
+                                Int32Rect.Empty,
                                 BitmapSizeOptions.FromEmptyOptions()
                             )
                 };
@@ -1050,44 +1048,43 @@ namespace Little_System_Cleaner.Misc
             }
             finally
             {
-                if (hBitmap != null)
-                    PInvoke.DeleteObject(hBitmap);
+                PInvoke.DeleteObject(hBitmap);
             }
         }
 
         /// <summary>
         /// Compares wildcard to string
         /// </summary>
-        /// <param name="WildString">String to compare</param>
-        /// <param name="Mask">Wildcard mask (ex: *.jpg)</param>
-        /// <param name="IgnoreCase">Ignore case for comparison (default is true)</param>
+        /// <param name="wildString">String to compare</param>
+        /// <param name="mask">Wildcard mask (ex: *.jpg)</param>
+        /// <param name="ignoreCase">Ignore case for comparison (default is true)</param>
         /// <returns>True if match found</returns>
-        internal static bool CompareWildcard(string WildString, string Mask, bool IgnoreCase = true)
+        internal static bool CompareWildcard(string wildString, string mask, bool ignoreCase = true)
         {
             // Cannot continue with Mask empty
-            if (string.IsNullOrEmpty(Mask))
+            if (string.IsNullOrEmpty(mask))
                 return false;
 
             // If WildString is null -> make it an empty string
-            if (WildString == null)
-                WildString = string.Empty;
+            if (wildString == null)
+                wildString = string.Empty;
 
             // If Mask is * and WildString isn't empty -> return true
-            if (string.Compare(Mask, "*") == 0 && !string.IsNullOrEmpty(WildString))
+            if (string.Compare(mask, "*") == 0 && !string.IsNullOrEmpty(wildString))
                 return true;
 
             // If Mask is ? and WildString length is 1 -> return true
-            if (string.Compare(Mask, "?") == 0 && WildString.Length == 1)
+            if (string.Compare(mask, "?") == 0 && wildString.Length == 1)
                 return true;
 
             // If WildString and Mask match -> no need to go any further
-            if (string.Compare(WildString, Mask, IgnoreCase) == 0)
+            if (string.Compare(wildString, mask, ignoreCase) == 0)
                 return true;
 
-            string regExPattern = "^" + Regex.Escape(Mask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
-            Regex regEx = new Regex(regExPattern, (IgnoreCase ? RegexOptions.Singleline | RegexOptions.IgnoreCase : RegexOptions.Singleline));
+            string regExPattern = "^" + Regex.Escape(mask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
+            Regex regEx = new Regex(regExPattern, (ignoreCase ? RegexOptions.Singleline | RegexOptions.IgnoreCase : RegexOptions.Singleline));
             
-            return regEx.IsMatch(WildString);
+            return regEx.IsMatch(wildString);
         }
 
         /// <summary>
@@ -1148,7 +1145,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
         internal static MessageBoxResult MessageBoxThreadSafe(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            return MessageBoxThreadSafe(Utils.MainWindowThreadSafe, messageBoxText, caption, button, icon);
+            return MessageBoxThreadSafe(MainWindowThreadSafe, messageBoxText, caption, button, icon);
         }
 
         /// <summary>
@@ -1162,12 +1159,11 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns MessageBoxResult (the button the user clicked)</returns>
         internal static MessageBoxResult MessageBoxThreadSafe(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => MessageBox.Show(owner, messageBoxText, caption, button, icon));
+            Func<MessageBoxResult> showMsgBox = () => MessageBox.Show(owner, messageBoxText, caption, button, icon);
 
-            if (App.Current.Dispatcher.Thread != Thread.CurrentThread)
-                return (MessageBoxResult)App.Current.Dispatcher.Invoke(showMsgBox);
-            else
-                return showMsgBox();
+            if (System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread)
+                return (MessageBoxResult)System.Windows.Application.Current.Dispatcher.Invoke(showMsgBox);
+            return showMsgBox();
         }
 
         /// <summary>
@@ -1180,7 +1176,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns DispatcherOperation class</returns>
         internal static DispatcherOperation MessageBoxThreadSafeAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            return MessageBoxThreadSafeAsync(Utils.MainWindowThreadSafe, messageBoxText, caption, button, icon);
+            return MessageBoxThreadSafeAsync(MainWindowThreadSafe, messageBoxText, caption, button, icon);
         }
 
         /// <summary>
@@ -1194,9 +1190,9 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns DispatcherOperation class</returns>
         internal static DispatcherOperation MessageBoxThreadSafeAsync(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
         {
-            Func<MessageBoxResult> showMsgBox = new Func<MessageBoxResult>(() => MessageBox.Show(owner, messageBoxText, caption, button, icon));
+            Func<MessageBoxResult> showMsgBox = () => MessageBox.Show(owner, messageBoxText, caption, button, icon);
 
-            return App.Current.Dispatcher.BeginInvoke(showMsgBox);
+            return System.Windows.Application.Current.Dispatcher.BeginInvoke(showMsgBox);
         }
     }
 }

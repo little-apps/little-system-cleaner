@@ -1,15 +1,14 @@
-﻿using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Runtime.InteropServices;
+﻿using System;
 using System.Diagnostics;
-using Microsoft.Win32;
-using System.Security.AccessControl;
+using System.IO;
+using System.Linq;
 using System.Security;
+using System.Security.AccessControl;
+using System.Security.Principal;
+using System.Text;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
@@ -18,11 +17,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <summary>
         /// Gets the icon path and sees if it exists
         /// </summary>
-        /// <param name="IconPath">The icon path</param>
+        /// <param name="iconPath">The icon path</param>
         /// <returns>True if it exists</returns>
-        internal static bool IconExists(string IconPath)
+        internal static bool IconExists(string iconPath)
         {
-            string strFileName = string.Copy(IconPath.Trim().ToLower());
+            string strFileName = string.Copy(iconPath.Trim().ToLower());
 
             // Remove quotes
             strFileName = Utils.UnqouteSpaces(strFileName);
@@ -43,13 +42,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 return (Utils.FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName));
             }
-            else
-            {
-                StringBuilder sb = new StringBuilder(strFileName);
-                if (PInvoke.PathParseIconLocation(sb) >= 0)
-                    if (!string.IsNullOrEmpty(sb.ToString()))
-                        return (Utils.FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName));
-            }
+
+            StringBuilder sb = new StringBuilder(strFileName);
+            if (PInvoke.PathParseIconLocation(sb) < 0)
+                return false;
+
+            if (!string.IsNullOrEmpty(sb.ToString()))
+                return (Utils.FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName));
 
             return false;
         }
@@ -72,10 +71,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             // Check drive type
             Utils.VDTReturn ret = Utils.ValidDriveType(strDirectory);
-            if (ret == Utils.VDTReturn.InvalidDrive)
-                return false;
-            else if (ret == Utils.VDTReturn.SkipCheck)
-                return true;
+            switch (ret)
+            {
+                case Utils.VDTReturn.InvalidDrive:
+                    return false;
+                case Utils.VDTReturn.SkipCheck:
+                    return true;
+            }
 
             // Check for illegal chars
             if (Utils.FindAnyIllegalChars(strDirectory))
@@ -103,10 +105,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
             string baseKey, subKey;
 
-            if (!Utils.ParseRegKeyPath(inPath, out baseKey, out subKey))
-                return false;
-
-            return ValueNameExists(baseKey, subKey, valueName);
+            return Utils.ParseRegKeyPath(inPath, out baseKey, out subKey) && ValueNameExists(baseKey, subKey, valueName);
         }
 
         /// <summary>
@@ -163,7 +162,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("An error occurred trying to get permission to remove registry key ({0}). Error: {1}", regKey.ToString(), ex.Message);
+                Debug.WriteLine("An error occurred trying to get permission to remove registry key ({0}). Error: {1}", regKey, ex.Message);
             }
         }
 
@@ -193,7 +192,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                                 if (i != 0)
                                     strValue = string.Concat(strValue, ",");
 
-                                strValue = string.Format("{0} {1}", strValue, strValues[i]);
+                                strValue = $"{strValue} {strValues[i]}";
                             }
 
                             strRet = string.Copy(strValue);
@@ -202,7 +201,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                         }
                     case RegistryValueKind.Binary:
                         {
-                            string strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("", (current, b) => string.Format("{0} {1:X2}", current, b));
+                            string strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("", (current, b) => $"{current} {b:X2}");
 
                             strRet = string.Copy(strValue);
 
@@ -216,7 +215,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                         }
                     default:
                         {
-                            strRet = string.Format("{0}", regKey.GetValue(valueName));
+                            strRet = $"{regKey.GetValue(valueName)}";
                             break;
                         }
 
@@ -243,12 +242,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 {
                     bool ret = false;
 
-                    foreach (RegistryKey subRegKey in key.GetSubKeyNames().Select(subKey => key.OpenSubKey(subKey)))
+                    foreach (RegistryKey subRegKey in key.GetSubKeyNames().Select(key.OpenSubKey))
                     {
-                        if (subRegKey != null)
-                            ret = CanDeleteKey(subRegKey);
-                        else
-                            ret = false;
+                        ret = subRegKey != null && CanDeleteKey(subRegKey);
 
                         if (!ret)
                             break;
@@ -256,17 +252,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                     return ret;
                 }
-                else
-                {
-                    System.Security.AccessControl.RegistrySecurity regSecurity = key.GetAccessControl();
 
-                    return regSecurity.GetAccessRules(true, false, typeof (System.Security.Principal.NTAccount)).Cast<AuthorizationRule>().All(rule => (System.Security.AccessControl.RegistryRights.Delete & ((System.Security.AccessControl.RegistryAccessRule) (rule)).RegistryRights) == System.Security.AccessControl.RegistryRights.Delete);
-                }
+                RegistrySecurity regSecurity = key.GetAccessControl();
 
+                return regSecurity.GetAccessRules(true, false, typeof (NTAccount)).Cast<AuthorizationRule>().All(rule => (RegistryRights.Delete & ((RegistryAccessRule) (rule)).RegistryRights) == RegistryRights.Delete);
             }
             catch (SecurityException ex)
             {
-                Debug.WriteLine("Unable to check if registry key ({0}) can be deleted.\nError: {1}", key.ToString(), ex.Message);
+                Debug.WriteLine("Unable to check if registry key ({0}) can be deleted.\nError: {1}", key, ex.Message);
                 return false;
             }
         }

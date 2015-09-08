@@ -16,12 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Win32;
-using System.Windows.Forms;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
 using System.Threading;
@@ -30,10 +26,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class ApplicationSettings : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.ApplicationSettings; }
-        }
+        public override string ScannerName => Strings.ApplicationSettings;
 
         internal static void Scan()
         {
@@ -42,7 +35,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 ScanRegistryKey(Registry.LocalMachine.OpenSubKey("SOFTWARE"));
                 ScanRegistryKey(Registry.CurrentUser.OpenSubKey("SOFTWARE"));
 
-                if (Utils.Is64BitOS)
+                if (Utils.Is64BitOs)
                 {
                     ScanRegistryKey(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node"));
                     ScanRegistryKey(Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Wow6432Node"));
@@ -65,22 +58,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
 
-            foreach (string strSubKey in baseRegKey.GetSubKeyNames())
+            foreach (string strSubKey in baseRegKey.GetSubKeyNames().Where(strSubKey => IsEmptyRegistryKey(baseRegKey.OpenSubKey(strSubKey, true))))
             {
-                // Skip needed keys, we dont want to mess the system up
-                //if (strSubKey == "Microsoft" ||
-                //    strSubKey == "Policies" ||
-                //    strSubKey == "Classes" ||
-                //    strSubKey == "Printers" ||
-                //    strSubKey == "Wow6432Node")
-                //    continue;
-
-                if (IsEmptyRegistryKey(baseRegKey.OpenSubKey(strSubKey, true)))
-                    Wizard.StoreInvalidKey(Strings.NoRegKey, baseRegKey.Name + "\\" + strSubKey);
+                Wizard.StoreInvalidKey(Strings.NoRegKey, baseRegKey.Name + "\\" + strSubKey);
             }
 
             baseRegKey.Close();
-            return;
         }
 
         /// <summary>
@@ -96,9 +79,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             int nValueCount = regKey.ValueCount;
             int nSubKeyCount = regKey.SubKeyCount;
 
-            if (regKey.ValueCount == 0)
-                if (regKey.GetValue("") != null)
-                    nValueCount = 1;
+            if (regKey.ValueCount != 0)
+                return (nValueCount == 0 && nSubKeyCount == 0);
+
+            if (regKey.GetValue("") != null)
+                nValueCount = 1;
 
             return (nValueCount == 0 && nSubKeyCount == 0);
         }

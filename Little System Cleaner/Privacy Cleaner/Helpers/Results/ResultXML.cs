@@ -1,37 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Xml;
+using System.Xml.XPath;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
-    public struct XMLInfo
+    public struct XmlInfo
     {
-        public string filePath;
-        public string searchElement;
-        public string searchElementText;
-        public string searchAttribute;
-        public string searchAttributeText;
+        public string FilePath;
+        public string SearchElement;
+        public string SearchElementText;
+        public string SearchAttribute;
+        public string SearchAttributeText;
     }
 
-    public class ResultXML : ResultNode
+    public class ResultXml : ResultNode
     {
         /// <summary>
         /// Constructor for XML file
         /// </summary>
         /// <param name="desc">Description</param>
-        /// <param name="xmlInfo">XML Info Array</param>
-        public ResultXML(string desc, Dictionary<string, List<string>> xmlPaths)
+        /// <param name="xmlPaths">XML Paths</param>
+        public ResultXml(string desc, Dictionary<string, List<string>> xmlPaths)
         {
-            this.Description = desc;
-            this.XMLPaths = xmlPaths;
+            Description = desc;
+            XmlPaths = xmlPaths;
         }
 
         public override void Clean(Report report)
         {
-            foreach (KeyValuePair<string, List<string>> kvp in this.XMLPaths)
+            foreach (KeyValuePair<string, List<string>> kvp in XmlPaths)
             {
                 string filePath = kvp.Key;
                 List<string> xPaths = kvp.Value;
@@ -56,9 +57,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     {
                         xmlNodes = xmlDoc.SelectNodes(xPath);
                     }
-                    catch (System.Xml.XPath.XPathException ex)
+                    catch (XPathException ex)
                     {
-                        Debug.WriteLine("The following error occurred: {0}\nUnable to find XPath ({1}) in XML file ({1})", ex.Message, xPath, filePath);
+                        Debug.WriteLine("The following error occurred: {0}\nUnable to find XPath ({1}) in XML file ({2})", ex.Message, xPath, filePath);
                         continue;
                     }
 
@@ -71,10 +72,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         else
                             xmlDoc.RemoveChild(xmlNode);
 
-                        Properties.Settings.Default.lastScanErrorsFixed++;
+                        Settings.Default.lastScanErrorsFixed++;
                     }
                     
-                    report.WriteLine("Removed XML File: {0} Matching XPath: {0}", filePath, xPath);
+                    report.WriteLine("Removed XML File: {0} Matching XPath: {1}", filePath, xPath);
                 }
 
                 xmlDoc.Save(filePath);

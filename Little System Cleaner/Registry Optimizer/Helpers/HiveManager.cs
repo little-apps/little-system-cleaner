@@ -17,14 +17,10 @@
 */
 
 using Little_System_Cleaner.Registry_Optimizer.Controls;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
@@ -42,8 +38,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                 string tempPath = Path.GetTempPath();
                 string randFilename = Path.GetRandomFileName();
 
-                string tempHivePath;
-
                 if (tempPath[0] != drive)
                 {
                     tempPath = drive + ":\\temp\\";
@@ -52,13 +46,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                         Directory.CreateDirectory(tempPath);
                 }
 
-                tempHivePath = Path.Combine(tempPath, randFilename);
+                var tempHivePath = Path.Combine(tempPath, randFilename);
 
                 // File cant exists, keep retrying until we get a file that doesnt exist
-                if (File.Exists(tempHivePath))
-                    return GetTempHivePath(drive);
-
-                return tempHivePath;
+                return File.Exists(tempHivePath) ? GetTempHivePath(drive) : tempHivePath;
             }
             catch (IOException)
             {
@@ -69,11 +60,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <summary>
         /// Converts \\Device\\HarddiskVolumeX\... to X:\...
         /// </summary>
-        /// <param name="DevicePath">Device name with path</param>
+        /// <param name="devicePath">Device name with path</param>
         /// <returns>Drive path</returns>
-        internal static string ConvertDeviceToMSDOSName(string DevicePath)
+        internal static string ConvertDeviceToMsdosName(string devicePath)
         {
-            string strDevicePath = string.Copy(DevicePath.ToLower());
+            string strDevicePath = string.Copy(devicePath.ToLower());
             string strRetVal = "";
 
             // Convert \Device\HarddiskVolumeX\... to X:\...
@@ -82,11 +73,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                 string strDrivePath = kvp.Key.ToLower();
                 string strDeviceName = kvp.Value.ToLower();
 
-                if (strDevicePath.StartsWith(strDeviceName))
-                {
-                    strRetVal = strDevicePath.Replace(strDeviceName, strDrivePath);
-                    break;
-                }
+                if (!strDevicePath.StartsWith(strDeviceName))
+                    continue;
+
+                strRetVal = strDevicePath.Replace(strDeviceName, strDrivePath);
+                break;
             }
 
             return strRetVal;

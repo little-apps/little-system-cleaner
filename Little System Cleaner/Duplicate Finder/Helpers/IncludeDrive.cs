@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -15,48 +11,34 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private string _name;
-        private bool? _bIsChecked = true;
+        public bool? IsChecked { get; set; } = true;
 
-
-        public bool? IsChecked
-        {
-            get { return _bIsChecked; }
-            set { this._bIsChecked = value; }
-        }
-
-        public string Name
-        {
-            get { return this._name; }
-            set { this._name = value; }
-        }
+        public string Name { get; }
 
         public IncludeDrive(DriveInfo drive)
         {
-            this._name = drive.ToString();
+            Name = drive.ToString();
         }
 
         public bool Equals(IncludeDrive other)
         {
-            return (other != null && this.Name == other.Name);
+            return (other != null && Name == other.Name);
         }
         public override bool Equals(object obj)
         {
-            if (obj is IncludeDrive)
-                return Equals(obj as IncludeDrive);
-            else
-                return false;
+            var a = obj as IncludeDrive;
+
+            return a != null && Equals(a);
         }
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode();
+            return Name.GetHashCode();
         }
     }
 }

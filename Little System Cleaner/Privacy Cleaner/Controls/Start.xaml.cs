@@ -17,99 +17,78 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     /// <summary>
     /// Interaction logic for Start.xaml
     /// </summary>
-    public partial class Start : UserControl
+    public partial class Start
     {
-        Wizard scanBase;
-        SectionModel _model = null;
+        readonly Wizard _scanBase;
 
-        public SectionModel Model
-        {
-            get
-            {
-                return _model;
-            }
-            set
-            {
-                _model = value;
-            }
-        }
+        public SectionModel Model { get; set; } = null;
 
         public Start(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            _scanBase = sb;
 
-            this._tree.Model = SectionModel.CreateSectionModel();
-            this._tree.ExpandAll();
+            _tree.Model = SectionModel.CreateSectionModel();
+            _tree.ExpandAll();
 
-            this.radioButtonPerm.IsChecked = Properties.Settings.Default.privacyCleanerDeletePerm;
-            this.radioButtonMove.IsChecked = Properties.Settings.Default.privacyCleanerDeleteRecBin;
-            this.checkBoxReadOnly.IsChecked = Properties.Settings.Default.privacyCleanerIncReadOnlyFile;
-            this.checkBoxHidden.IsChecked = Properties.Settings.Default.privacyCleanerIncHiddenFile;
-            this.checkBoxSystem.IsChecked = Properties.Settings.Default.privacyCleanerIncSysFile;
-            this.checkBoxZeroByte.IsChecked = Properties.Settings.Default.privacyCleanerInc0ByteFile;
-            this.checkBoxLogScan.IsChecked = Properties.Settings.Default.privacyCleanerLog;
-            this.checkBoxDisplayLog.IsChecked = Properties.Settings.Default.privacyCleanerDisplayLog;
+            radioButtonPerm.IsChecked = Settings.Default.privacyCleanerDeletePerm;
+            radioButtonMove.IsChecked = Settings.Default.privacyCleanerDeleteRecBin;
+            checkBoxReadOnly.IsChecked = Settings.Default.privacyCleanerIncReadOnlyFile;
+            checkBoxHidden.IsChecked = Settings.Default.privacyCleanerIncHiddenFile;
+            checkBoxSystem.IsChecked = Settings.Default.privacyCleanerIncSysFile;
+            checkBoxZeroByte.IsChecked = Settings.Default.privacyCleanerInc0ByteFile;
+            checkBoxLogScan.IsChecked = Settings.Default.privacyCleanerLog;
+            checkBoxDisplayLog.IsChecked = Settings.Default.privacyCleanerDisplayLog;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Wizard.SQLiteLoaded = Utils.IsAssemblyLoaded("System.Data.SQLite", new Version(1, 0, 66), true);
+            Wizard.SqLiteLoaded = Utils.IsAssemblyLoaded("System.Data.SQLite", new Version(1, 0, 66), true);
 
-            if (!Wizard.SQLiteLoaded)
-                MessageBox.Show(App.Current.MainWindow, "It appears that System.Data.SQLite.dll is not loaded, because of this, some privacy information will not be able to be cleaned.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.66.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);   
+            if (!Wizard.SqLiteLoaded)
+                MessageBox.Show(Application.Current.MainWindow, "It appears that System.Data.SQLite.dll is not loaded, because of this, some privacy information will not be able to be cleaned.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.66.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);   
         }
 
         private void UpdateSettings(object sender, RoutedEventArgs e)
         {
-            this.UpdateSettings();
+            UpdateSettings();
         }
 
         private void UpdateSettings()
         {
-            Properties.Settings.Default.privacyCleanerDeletePerm = this.radioButtonPerm.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerDeleteRecBin = this.radioButtonMove.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerIncReadOnlyFile = this.checkBoxReadOnly.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerIncHiddenFile = this.checkBoxHidden.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerIncSysFile = this.checkBoxSystem.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerInc0ByteFile = this.checkBoxZeroByte.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerLog = this.checkBoxLogScan.IsChecked.GetValueOrDefault();
-            Properties.Settings.Default.privacyCleanerDisplayLog = this.checkBoxDisplayLog.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerDeletePerm = radioButtonPerm.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerDeleteRecBin = radioButtonMove.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerIncReadOnlyFile = checkBoxReadOnly.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerIncHiddenFile = checkBoxHidden.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerIncSysFile = checkBoxSystem.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerInc0ByteFile = checkBoxZeroByte.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerLog = checkBoxLogScan.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerDisplayLog = checkBoxDisplayLog.IsChecked.GetValueOrDefault();
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)
         {
-            this.scanBase.Model = this._tree.Model as SectionModel;
+            _scanBase.Model = _tree.Model as SectionModel;
 
-            if (!this.scanBase.Model.RootChildren.Any(n => n.IsChecked == null || n.IsChecked == true))
+            if (!_scanBase.Model.RootChildren.Any(n => n.IsChecked == null || n.IsChecked == true))
             {
-                MessageBox.Show(App.Current.MainWindow, "At least one item must be selected in order for privacy issues to be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "At least one item must be selected in order for privacy issues to be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            this.scanBase.MoveNext();
+            _scanBase.MoveNext();
         }
 
         

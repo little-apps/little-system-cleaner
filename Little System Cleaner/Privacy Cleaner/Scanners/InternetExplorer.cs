@@ -18,25 +18,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
+using System.Windows;
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Little_System_Cleaner.Misc;
-using System.Windows;
-using System.Threading;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class InternetExplorer : ScannerBase
     {
-        List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<INTERNET_CACHE_ENTRY_INFO>();
-        List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<INTERNET_CACHE_ENTRY_INFO>();
+        readonly List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<INTERNET_CACHE_ENTRY_INFO>();
+        readonly List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<INTERNET_CACHE_ENTRY_INFO>();
 
         #region Internet Explorer Enums
         
@@ -53,7 +49,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             /// <summary>
             /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is a top-level item.
             /// </summary>
-            STATURLFLAG_ISTOPLEVEL = 0x00000002,
+            STATURLFLAG_ISTOPLEVEL = 0x00000002
         }
 
         /// <summary>
@@ -91,14 +87,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             /// <summary>
             /// //The item is a top-level item.
             /// </summary>
-            STATURL_QUERYFLAG_TOPLEVEL = 0x00080000,
+            STATURL_QUERYFLAG_TOPLEVEL = 0x00080000
 
         }
 
         #endregion
         #region Internet Explorer Structures
         [StructLayout(LayoutKind.Sequential)]
-        internal struct UUID
+        internal struct Uuid
         {
             public int Data1;
             public short Data2;
@@ -146,39 +142,27 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             /// <summary>
             /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
             /// </summary>
-            public string URL
-            {
-                get { return pwcsUrl; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public string Title
-            {
-                get { return pwcsTitle; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime LastVisited
-            {
-                get { return DateTime.MinValue; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime LastUpdated
-            {
-                get { return DateTime.MinValue; }
-            }
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime Expires
-            {
-                get { return DateTime.MinValue; }
-            }
+            public string Url => pwcsUrl;
 
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public string Title => pwcsTitle;
+
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime LastVisited => DateTime.MinValue;
+
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime LastUpdated => DateTime.MinValue;
+
+            /// <summary>
+            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime Expires => DateTime.MinValue;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -225,14 +209,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
         internal interface IUrlHistoryStg2
         {
-            UInt32 AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
-            UInt32 DeleteUrl(string pocsUrl, int dwFlags);
-            UInt32 QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
-            UInt32 BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut);
-            UInt32 EnumUrls([Out] IntPtr ppEnum);
+            uint AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
+            uint DeleteUrl(string pocsUrl, int dwFlags);
+            uint QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
+            uint BindToObject([In] string pocsUrl, [In] Uuid riid, IntPtr ppvOut);
+            uint EnumUrls([Out] IntPtr ppEnum);
             [PreserveSig]
-            UInt32 AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory, IntPtr IOleCommandTarget, IntPtr punkISFolder);
-            UInt32 ClearHistory();
+            uint AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory, IntPtr IOleCommandTarget, IntPtr punkISFolder);
+            uint ClearHistory();
         }
         #endregion
         #region Internet Explorer Functions
@@ -246,12 +230,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         public InternetExplorer() 
         {
             Name = "Internet Explorer";
-            Icon = Properties.Resources.InternetExplorer;
+            Icon = Resources.InternetExplorer;
 
-            this.Children.Add(new InternetExplorer(this, "History"));
-            this.Children.Add(new InternetExplorer(this, "Cookies"));
-            this.Children.Add(new InternetExplorer(this, "Auto Complete"));
-            this.Children.Add(new InternetExplorer(this, "Temporary Internet Files"));
+            Children.Add(new InternetExplorer(this, "History"));
+            Children.Add(new InternetExplorer(this, "Cookies"));
+            Children.Add(new InternetExplorer(this, "Auto Complete"));
+            Children.Add(new InternetExplorer(this, "Temporary Internet Files"));
             //this.Children.Add(new InternetExplorer(this, "Index.dat Files"));
         }
 
@@ -271,17 +255,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             return true;
         }
 
-        public override string ProcessName
-        {
-            get
-            {
-                return "iexplore";
-            }
-        }
+        public override string ProcessName => "iexplore";
 
         public override void Scan(ScannerBase child)
         {
-            if (!this.Children.Contains(child))
+            if (!Children.Contains(child))
                 return;
 
             if (!child.IsChecked.GetValueOrDefault())
@@ -309,7 +287,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanHistory()
         {
-            Wizard.StoreCleanDelegate(new CleanDelegate(ClearHistory), "Clear History", 0);
+            Wizard.StoreCleanDelegate(ClearHistory, "Clear History", 0);
         }
 
         private void ClearHistory()
@@ -340,45 +318,34 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             
             if (folderSize > 0)
-                Wizard.StoreCleanDelegate(new CleanDelegate(ClearIECookies), "Clear Cookies", folderSize);
+                Wizard.StoreCleanDelegate(ClearIeCookies, "Clear Cookies", folderSize);
         }
 
-        private void ClearIECookies()
+        private void ClearIeCookies()
         {
-            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies)
+            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies.Where(cacheEntry => !DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName)).Where(cacheEntry => Marshal.GetLastWin32Error() == 5).Where(cacheEntry => UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0)))
             {
-                if (!DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
-                {
-                    // ERROR_ACCESS_DENIED
-                    if (Marshal.GetLastWin32Error() == 5)
-                    {
-                        // Unlock file and try again
-                        if (UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                            DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
-                    }
-                }
+                DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
             }
         }
 
         private void ScanAutoComplete()
         {
-            Wizard.StoreCleanDelegate(new CleanDelegate(ClearFormData), "Clear Form Data & Passwords", 0);
+            Wizard.StoreCleanDelegate(ClearFormData, "Clear Form Data & Passwords", 0);
         }
 
         private void ClearFormData()
         {
-            if (Utils.MessageBoxThreadSafe("This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
-            {
-                Process proc;
+            if (Utils.MessageBoxThreadSafe("This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
+                return;
 
-                // Clear Form Data
-                proc = Process.Start("rundll32.exe", "InetCpl.cpl,ClearMyTracksByProcess 16");
-                proc.WaitForExit();
+            // Clear Form Data
+            var proc = Process.Start("rundll32.exe", "InetCpl.cpl,ClearMyTracksByProcess 16");
+            proc.WaitForExit();
 
-                // Clear Saved Passwords
-                proc = Process.Start("rundll32.exe", "InetCpl.cpl,ClearMyTracksByProcess 32");
-                proc.WaitForExit();
-            }
+            // Clear Saved Passwords
+            proc = Process.Start("rundll32.exe", "InetCpl.cpl,ClearMyTracksByProcess 32");
+            proc.WaitForExit();
         }
 
         private void ScanTemporaryFiles()
@@ -393,31 +360,28 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
 
             if (folderSize > 0)
-                Wizard.StoreCleanDelegate(new CleanDelegate(ClearIECache), "Clear Cache Files", folderSize);
+                Wizard.StoreCleanDelegate(ClearIeCache, "Clear Cache Files", folderSize);
         }
 
-        private void ClearIECache()
+        private void ClearIeCache()
         {
             const uint COOKIE_CACHE_ENTRY = 0x00100000;
 
             foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCache)
             {
-
                 // Delete entry if its not a cookie
-                if ((cacheEntry.CacheEntryType & COOKIE_CACHE_ENTRY) == 0)
-                {
-                    if (!DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
-                    {
-                        // ERROR_ACCESS_DENIED
-                        if (Marshal.GetLastWin32Error() == 5)
-                        {
-                            // Unlock file and try again
-                            if (UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                                DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
-                        }
-                    }
+                if ((cacheEntry.CacheEntryType & COOKIE_CACHE_ENTRY) != 0)
+                    continue;
 
-                }
+                if (DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                    continue;
+
+                // ERROR_ACCESS_DENIED
+                if (Marshal.GetLastWin32Error() != 5)
+                    continue;
+                // Unlock file and try again
+                if (UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
+                    DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
             }
         }
 

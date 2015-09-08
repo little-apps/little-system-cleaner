@@ -16,13 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using Microsoft.Win32;
-
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Multimedia : ScannerBase
@@ -36,7 +29,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 string name, desc;
 
                 if (PluginIsValid(filePath, out name, out desc))
-                    this.Children.Add(new Multimedia(this, name, desc, filePath));
+                    Children.Add(new Multimedia(this, name, desc, filePath));
             }
         }
 

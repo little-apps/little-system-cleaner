@@ -1,80 +1,77 @@
-﻿using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
     #region INI Info Struct
-    public struct INIInfo
+    public struct IniInfo
     {
         /// <summary>
         /// Path of the INI File
         /// </summary>
-        public string filePath;
+        public string FilePath;
         /// <summary>
         /// Section Name
         /// </summary>
-        public string sectionName;
+        public string SectionName;
         /// <summary>
         /// Value Name (optional)
         /// </summary>
-        public string valueName;
+        public string ValueName;
     }
     #endregion
 
-    public class ResultINI : ResultNode
+    public class ResultIni : ResultNode
     {
         /// <summary>
         /// Constructor for bad INI file
         /// </summary>
         /// <param name="desc">Description</param>
         /// <param name="iniInfo">INI Info Array</param>
-        public ResultINI(string desc, INIInfo[] iniInfo)
+        public ResultIni(string desc, IniInfo[] iniInfo)
         {
-            this.Description = desc;
-            this.iniInfoList = iniInfo;
+            Description = desc;
+            IniInfoList = iniInfo;
         }
 
         public override void Clean(Report report)
         {
-            foreach (INIInfo iniInfo in this.iniInfoList)
+            foreach (IniInfo iniInfo in IniInfoList)
             {
-                string filePath = iniInfo.filePath;
-                string section = iniInfo.sectionName;
-                string valueName = iniInfo.valueName;
+                string filePath = iniInfo.FilePath;
+                string section = iniInfo.SectionName;
+                string valueName = iniInfo.ValueName;
 
                 // Delete section if value name is empty
                 if (string.IsNullOrEmpty(valueName))
                 {
                     if (MiscFunctions.WritePrivateProfileString(section, null, null, filePath))
-                        report.WriteLine(string.Format("Erased INI File: {0} Section: {1}", filePath, section));
+                        report.WriteLine($"Erased INI File: {filePath} Section: {section}");
                     else
                     {
                         Win32Exception ex = new Win32Exception(Marshal.GetLastWin32Error());
-                        string message = string.Format("Unable to erase INI File: {0} Section: {1}\nError: {3}", filePath, section, valueName, ex.Message);
+                        string message = $"Unable to erase INI File: {filePath} Section: {section}\nValue: {valueName}\nError: {ex.Message}";
 
-                        System.Diagnostics.Debug.WriteLine(message);
+                        Debug.WriteLine(message);
                     }
                 }
                 else
                 {
                     if (MiscFunctions.WritePrivateProfileString(section, valueName, null, filePath))
-                        report.WriteLine(string.Format("Erased INI File: {0} Section: {1} Value Name: {2}", filePath, section, valueName));
+                        report.WriteLine($"Erased INI File: {filePath} Section: {section} Value Name: {valueName}");
                     else
                     {
                         Win32Exception ex = new Win32Exception(Marshal.GetLastWin32Error());
-                        string message = string.Format("Unable to erase INI File: {0} Section: {1} Value Name: {2}\nError: {3}", filePath, section, valueName, ex.Message);
+                        string message = $"Unable to erase INI File: {filePath} Section: {section} Value Name: {valueName}\nError: {ex.Message}";
 
-                        System.Diagnostics.Debug.WriteLine(message);
+                        Debug.WriteLine(message);
                     }
                 }
 
-                Properties.Settings.Default.lastScanErrorsFixed++;
+                Settings.Default.lastScanErrorsFixed++;
             }
         }
     }

@@ -1,27 +1,21 @@
 ﻿using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Duplicate_Finder.Controls;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     public class ResultModel : ITreeModel
     {
-        public Result Root { get; private set; }
+        public Result Root { get; }
 
         internal static ResultModel CreateResultModel(Wizard scanBase)
         {
-            Result root = new Result();
             ResultModel model = new ResultModel();
 
             if (scanBase.FilesGroupedByFilename.Count > 0)
             {
                 foreach (KeyValuePair<string, List<FileEntry>> kvp in scanBase.FilesGroupedByFilename)
                 {
-                    string fileName = kvp.Key;
-
                     Result res = new Result();
 
                     foreach (FileEntry fileEntry in kvp.Value)
@@ -37,8 +31,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 foreach (KeyValuePair<string, List<FileEntry>> kvp in scanBase.FilesGroupedByHash)
                 {
-                    string fileName = kvp.Key;
-
                     Result res = new Result();
 
                     foreach (FileEntry fileEntry in kvp.Value)
@@ -64,12 +56,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             if (parent == null)
                 parent = Root;
-            return (parent as Result).Children;
+
+            var result = parent as Result;
+            return result?.Children;
         }
 
         public bool HasChildren(object parent)
         {
-            return (parent as Result).Children.Count > 0;
+            var result = parent as Result;
+
+            return result != null && result.Children.Count > 0;
         }
     }
 }

@@ -17,14 +17,11 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Little_System_Cleaner
+namespace Little_System_Cleaner.Misc
 {
-    internal static class OSVersion
+    internal static class OsVersion
     {
         #region PInvoke Signatures
         public const byte VER_NT_WORKSTATION = 1;
@@ -141,7 +138,7 @@ namespace Little_System_Cleaner
         internal static extern int GetSystemMetrics(int nIndex);
         #endregion
 
-        internal static string GetOSVersion()
+        internal static string GetOsVersion()
         {
             OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX() { dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX)) };
 

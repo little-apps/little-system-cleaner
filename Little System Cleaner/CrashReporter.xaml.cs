@@ -18,38 +18,32 @@
 
 using System;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.IO;
 using System.Diagnostics;
-using System.Threading;
-using System.Net;
-using Little_System_Cleaner.Misc;
+using System.Drawing;
 using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner
 {
     /// <summary>
     /// Interaction logic for CrashReporter.xaml
     /// </summary>
-    public partial class CrashReporter : Window
+    public partial class CrashReporter
     {
-        private readonly Exception exception;
+        private readonly Exception _exception;
 
-        public System.Windows.Media.Imaging.BitmapSource ImageSource
+        public BitmapSource ImageSource
         {
             get 
             {
-                IntPtr hBitmap = System.Drawing.SystemIcons.Error.ToBitmap().GetHbitmap();
-                return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                IntPtr hBitmap = SystemIcons.Error.ToBitmap().GetHbitmap();
+                return Imaging.CreateBitmapSourceFromHBitmap(
                     hBitmap,
                     IntPtr.Zero,
                     Int32Rect.Empty,
@@ -80,7 +74,7 @@ namespace Little_System_Cleaner
         {
             InitializeComponent();
 
-            this.exception = e;
+            _exception = e;
 
             GenerateDialogReport();
         }
@@ -88,7 +82,6 @@ namespace Little_System_Cleaner
         /// <summary>
         /// Fills in text box with exception info
         /// </summary>
-        /// <param name="e"></param>
         private void GenerateDialogReport()
         {
             StringBuilder sb = new StringBuilder();
@@ -96,42 +89,43 @@ namespace Little_System_Cleaner
             Process proc = Process.GetCurrentProcess();
 
             // dates and time
-            sb.AppendLine(string.Format("Current Date/Time: {0}", DateTime.Now.ToString()));
-            sb.AppendLine(string.Format("Exec. Date/Time: {0}", proc.StartTime.ToString()));
-            sb.AppendLine(string.Format("Build Date: {0}", Properties.Settings.Default.strBuildTime));
+            sb.AppendLine($"Current Date/Time: {DateTime.Now}");
+            sb.AppendLine($"Exec. Date/Time: {proc.StartTime}");
+            sb.AppendLine($"Build Date: {Settings.Default.BuildTime}");
             // os info
-            sb.AppendLine(string.Format("OS: {0}", Environment.OSVersion.VersionString));
-            sb.AppendLine(string.Format("Language: {0}", System.Windows.Forms.Application.CurrentCulture.ToString()));
+            sb.AppendLine($"OS: {Environment.OSVersion.VersionString}");
+            sb.AppendLine($"Language: {System.Windows.Forms.Application.CurrentCulture}");
             // uptime stats
-            sb.AppendLine(string.Format("System Uptime: {0} Days {1} Hours {2} Mins {3} Secs", Math.Round((decimal)Environment.TickCount / 86400000), Math.Round((decimal)Environment.TickCount / 3600000 % 24), Math.Round((decimal)Environment.TickCount / 120000 % 60), Math.Round((decimal)Environment.TickCount / 1000 % 60)));
-            sb.AppendLine(string.Format("Program Uptime: {0}", proc.TotalProcessorTime.ToString()));
+            sb.AppendLine(
+                $"System Uptime: {Math.Round((decimal) Environment.TickCount/86400000)} Days {Math.Round((decimal) Environment.TickCount/3600000%24)} Hours {Math.Round((decimal) Environment.TickCount/120000%60)} Mins {Math.Round((decimal) Environment.TickCount/1000%60)} Secs");
+            sb.AppendLine($"Program Uptime: {proc.TotalProcessorTime}");
             // process id
-            sb.AppendLine(string.Format("PID: {0}", proc.Id));
+            sb.AppendLine($"PID: {proc.Id}");
             // exe name
-            sb.AppendLine(string.Format("Executable: {0}", System.Windows.Forms.Application.ExecutablePath));
-            sb.AppendLine(string.Format("Process Name: {0}", proc.ToString()));
-            sb.AppendLine(string.Format("Main Module Name: {0}", proc.MainModule.ModuleName));
+            sb.AppendLine($"Executable: {System.Windows.Forms.Application.ExecutablePath}");
+            sb.AppendLine($"Process Name: {proc}");
+            sb.AppendLine($"Main Module Name: {proc.MainModule.ModuleName}");
             // exe stats
-            sb.AppendLine(string.Format("Module Count: {0}", proc.Modules.Count));
-            sb.AppendLine(string.Format("Thread Count: {0}", proc.Threads.Count));
-            sb.AppendLine(string.Format("Thread ID: {0}", Thread.CurrentThread.ManagedThreadId));
-            sb.AppendLine(string.Format("Is Admin: {0}", Permissions.IsUserAdministrator));
-            sb.AppendLine(string.Format("Is Debugged: {0}", Debugger.IsAttached));
+            sb.AppendLine($"Module Count: {proc.Modules.Count}");
+            sb.AppendLine($"Thread Count: {proc.Threads.Count}");
+            sb.AppendLine($"Thread ID: {Thread.CurrentThread.ManagedThreadId}");
+            sb.AppendLine($"Is Admin: {Permissions.IsUserAdministrator}");
+            sb.AppendLine($"Is Debugged: {Debugger.IsAttached}");
             // versions
-            sb.AppendLine(string.Format("Version: {0}", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
-            sb.AppendLine(string.Format("CLR Version: {0}", Environment.Version.ToString()));
+            sb.AppendLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
+            sb.AppendLine($"CLR Version: {Environment.Version}");
 
 
-            Exception ex = this.exception;
+            Exception ex = _exception;
             for (int i = 0; ex != null; ex = ex.InnerException, i++)
             {
                 sb.AppendLine();
-                sb.AppendLine(string.Format("Type #{0} {1}", i, ex.GetType().ToString()));
+                sb.AppendLine($"Type #{i} {ex.GetType()}");
 
-                foreach (System.Reflection.PropertyInfo propInfo in ex.GetType().GetProperties())
+                foreach (PropertyInfo propInfo in ex.GetType().GetProperties())
                 {
-                    string fieldName = string.Format("{0} #{1}", propInfo.Name, i);
-                    string fieldValue = string.Format("{0}", propInfo.GetValue(ex, null));
+                    string fieldName = $"{propInfo.Name} #{i}";
+                    string fieldValue = $"{propInfo.GetValue(ex, null)}";
 
                     // Ignore stack trace + data
                     if (propInfo.Name == "StackTrace"
@@ -140,39 +134,38 @@ namespace Little_System_Cleaner
                         || string.IsNullOrEmpty(fieldValue))
                         continue;
 
-                    sb.AppendLine(string.Format("{0}: {1}", fieldName, fieldValue));
+                    sb.AppendLine($"{fieldName}: {fieldValue}");
                 }
 
-                if (ex.Data != null)
-                    foreach (DictionaryEntry de in ex.Data)
-                        sb.AppendLine(string.Format("Dictionary Entry #{0}: Key: {1} Value: {2}", i, de.Key, de.Value));
+                foreach (DictionaryEntry de in ex.Data)
+                    sb.AppendLine($"Dictionary Entry #{i}: Key: {de.Key} Value: {de.Value}");
             }
 
             sb.AppendLine();
             sb.AppendLine("StackTrace:");
-            sb.AppendLine(this.exception.StackTrace);
+            sb.AppendLine(_exception.StackTrace);
 
-            this.textBox1.Text = sb.ToString();
+            textBox1.Text = sb.ToString();
         }
 
         private void buttonDontSend_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void buttonSend_Click(object sender, RoutedEventArgs e)
         {
             if (Main.Watcher != null)
-                Main.Watcher.Exception(this.exception);
+                Main.Watcher.Exception(_exception);
 
-            this.Close();
+            Close();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (this.checkBoxRestart.IsChecked.GetValueOrDefault())
+            if (checkBoxRestart.IsChecked.GetValueOrDefault())
             {
-                System.Diagnostics.Process.Start(App.ResourceAssembly.Location, "/restart");
+                Process.Start(Application.ResourceAssembly.Location, "/restart");
                 Application.Current.Shutdown();
             }
         }

@@ -1,35 +1,26 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading;
+using System.Windows.Controls;
+using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
     /// Interaction logic for LoadHives.xaml
     /// </summary>
-    public partial class LoadHives : UserControl
+    public partial class LoadHives
     {
-        Wizard scanBase;
+        readonly Wizard _scanBase;
 
         public LoadHives(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            _scanBase = sb;
 
-            Thread t = new Thread(new ThreadStart(InitHives));
+            Thread t = new Thread(InitHives);
             t.Start();
         }
 
@@ -37,7 +28,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         {
             RegistryKey rkHives = null;
             int i = 0;
-            Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives = new System.Collections.ObjectModel.ObservableCollection<Little_System_Cleaner.Registry_Optimizer.Helpers.Hive>();
+            Wizard.RegistryHives = new ObservableCollection<Hive>();
 
             using (rkHives = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\hivelist"))
             {
@@ -46,7 +37,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
                 foreach (string strValueName in rkHives.GetValueNames())
                 {
-                    this.Dispatcher.Invoke(new Action(() => this.label1.Text = string.Format("Loading {0}/{1} Hives", ++i, rkHives.ValueCount)));
+                    Dispatcher.Invoke(new Action(() => label1.Text = $"Loading {++i}/{rkHives.ValueCount} Hives"));
 
                     // Don't touch these hives because they are critical for Windows
                     if (strValueName.Contains("BCD") || strValueName.Contains("HARDWARE"))
@@ -60,20 +51,19 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     if (strHivePath[strHivePath.Length - 1] == 0)
                         strHivePath = strHivePath.Substring(0, strHivePath.Length - 1);
 
-                    if (!string.IsNullOrEmpty(strValueName) && !string.IsNullOrEmpty(strHivePath)) 
-                    {
-                        Little_System_Cleaner.Registry_Optimizer.Helpers.Hive h = new Little_System_Cleaner.Registry_Optimizer.Helpers.Hive(strValueName, strHivePath);
+                    if (string.IsNullOrEmpty(strValueName) || string.IsNullOrEmpty(strHivePath))
+                        continue;
 
-                        if (h.IsValid)
-                            Little_System_Cleaner.Registry_Optimizer.Controls.Wizard.RegistryHives.Add(h);
-                    }
-                        
+                    Hive h = new Hive(strValueName, strHivePath);
+
+                    if (h.IsValid)
+                        Wizard.RegistryHives.Add(h);
                 }
             }
 
-            this.scanBase.HivesLoaded = true;
+            _scanBase.HivesLoaded = true;
 
-            this.scanBase.MoveNext();
+            _scanBase.MoveNext();
         }
     }
 }

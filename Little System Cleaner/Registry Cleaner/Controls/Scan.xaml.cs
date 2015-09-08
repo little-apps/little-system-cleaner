@@ -17,122 +17,104 @@
 */
 
 using System;
-using System.IO;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Threading;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using CommonTools;
-using System.Drawing;
-using System.Windows.Media.Imaging;
-using CommonTools.WpfAnimatedGif;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Timers;
+using System.Windows;
+using System.Windows.Shell;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Scanners;
+using ThreadState = System.Threading.ThreadState;
+using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
-	public partial class Scan : UserControl
+	public partial class Scan
 	{
-        static List<ScannerBase> enabledScanners = new List<ScannerBase>();
-        Wizard scanBase;
-        System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
-        DateTime dateTimeStart = DateTime.MinValue;
-        Thread threadScan;
-        int currentListViewIndex = -1;
-        ObservableCollection<lviScanner> _SectionCollection = new ObservableCollection<lviScanner>();
-        private static bool AbortScan;
+	    readonly Wizard _scanBase;
+	    readonly Timer _timerUpdate = new Timer(200);
+        DateTime _dateTimeStart = DateTime.MinValue;
+        Thread _threadScan;
+        int _currentListViewIndex = -1;
+	    readonly ObservableCollection<lviScanner> _sectionCollection = new ObservableCollection<lviScanner>();
+        private static bool _abortScan;
 
-        private static string currentItemScanned;
+        private static string _currentItemScanned;
         internal static int TotalItemsScanned = -1;
 
         /// <summary>
         /// Gets the enabled scanners
         /// </summary>
-        internal static List<ScannerBase> EnabledScanners
-        {
-            get { return enabledScanners; }
-        }
+        internal static List<ScannerBase> EnabledScanners { get; } = new List<ScannerBase>();
 
-        /// <summary>
+	    /// <summary>
         /// Gets the total problems
         /// </summary>
-        internal static int TotalProblems
-        {
-            get { return Wizard.badRegKeyArray.Count; }
-        }
+        internal static int TotalProblems => Wizard.badRegKeyArray.Count;
 
-        /// <summary>
+	    /// <summary>
         /// Sets the currently scanned item and increments the total
         /// </summary>
         internal static string CurrentItem
         {
-            get { return currentItemScanned; }
+            get { return _currentItemScanned; }
             set
             {
                 TotalItemsScanned++;
-                currentItemScanned = string.Copy(value);
+                _currentItemScanned = string.Copy(value);
             }
         }
         
-        public lviScanner CurrentListViewItem
+        public lviScanner CurrentListViewItem => SectionsCollection[_currentListViewIndex];
+
+	    public ObservableCollection<lviScanner> SectionsCollection => _sectionCollection;
+
+	    public Scan(Wizard sb)
         {
-            get { return this.SectionsCollection[currentListViewIndex] as lviScanner; }
-        }
+            InitializeComponent();
 
-        public ObservableCollection<lviScanner> SectionsCollection
-        {
-            get { return _SectionCollection; }
-        }
+            Focus();
 
-        public Scan(Wizard sb)
-        {
-            this.InitializeComponent();
-
-            this.Focus();
-
-            this.scanBase = sb;
+            _scanBase = sb;
 
             // Reset AbortScan
-            AbortScan = false;
+            _abortScan = false;
 
             // Zero last scan errors found + fixed and elapsed
-            Properties.Settings.Default.lastScanErrors = 0;
-            Properties.Settings.Default.lastScanErrorsFixed = 0;
-            Properties.Settings.Default.lastScanElapsed = 0;
+            Settings.Default.lastScanErrors = 0;
+            Settings.Default.lastScanErrorsFixed = 0;
+            Settings.Default.lastScanElapsed = 0;
 
             // Set last scan date
-            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Start timer
-            this.timerUpdate.Interval = 250;
-            this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
-            this.timerUpdate.Start();
+            _timerUpdate.Interval = 250;
+            _timerUpdate.Elapsed += timerUpdate_Elapsed;
+            _timerUpdate.Start();
 
             // Set taskbar progress bar
-            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
             Main.TaskbarProgressValue = 0;
 
             // Set the progress bar
-            this.progressBar.Minimum = 0;
-            this.progressBar.Maximum = Scan.EnabledScanners.Count;
-            this.progressBar.Value = 0;
+            progressBar.Minimum = 0;
+            progressBar.Maximum = EnabledScanners.Count;
+            progressBar.Value = 0;
 
             // Populate ListView
-            foreach (ScannerBase scanBase in Scan.EnabledScanners)
+            foreach (var lvi in EnabledScanners.Select(scanBase => new lviScanner(scanBase.ScannerName)))
             {
-                this._SectionCollection.Add(new lviScanner(scanBase.ScannerName));
+                _sectionCollection.Add(lvi);
             }
 
-            Wizard.ScanThread = new Thread(new ThreadStart(StartScanning));
+            Wizard.ScanThread = new Thread(StartScanning);
             Wizard.ScanThread.Start();
         }
 
@@ -145,22 +127,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
 
             // In case ScanThread failed to abort the child thread
-            if (this.threadScan.IsAlive)
-                this.threadScan.Abort();
+            if (_threadScan.IsAlive)
+                _threadScan.Abort();
         }
 
-        void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                Dispatcher.Invoke(new ElapsedEventHandler(timerUpdate_Elapsed), sender, e);
                 return;
             }
 
-            if (this.currentListViewIndex != -1)
+            if (_currentListViewIndex != -1)
             {
-                this.CurrentListViewItem.Errors = string.Format("{0} Errors", Wizard.badRegKeyArray.Problems(this.CurrentListViewItem.Section));
-                this.listView.Items.Refresh();
+                CurrentListViewItem.Errors = $"{Wizard.badRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
+                listView.Items.Refresh();
             }
         }
 
@@ -170,7 +152,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void StartScanning()
         {
             // Set scan start time
-            this.dateTimeStart = DateTime.Now;
+            _dateTimeStart = DateTime.Now;
 
             // Create log file + Write Header
             Wizard.CreateNewLogFile();
@@ -180,19 +162,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             try
             {
-                Wizard.Report.WriteLine("Started scan at " + DateTime.Now.ToString());
+                Wizard.Report.WriteLine("Started scan at " + DateTime.Now);
                 Wizard.Report.WriteLine();
 
                 // Begin Scanning
-                foreach (ScannerBase scanner in Scan.EnabledScanners)
+                foreach (ScannerBase scanner in EnabledScanners)
                 {
-                    invokeCurrentSection(scanner.ScannerName);
+                    InvokeCurrentSection(scanner.ScannerName);
 
                     Wizard.Report.WriteLine("Starting scanning: " + scanner.ScannerName);
 
-                    this.StartScanner(scanner);
+                    StartScanner(scanner);
 
-                    if (AbortScan)
+                    if (_abortScan)
                         break;
 
                     Wizard.Report.WriteLine("Finished scanning: " + scanner.ScannerName);
@@ -202,12 +184,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             catch (ThreadAbortException )
             {
                 // Scanning was aborted
-                AbortScan = true;
+                _abortScan = true;
 
                 Wizard.Report.Write("User aborted scan... ");
 
-                if (this.threadScan.IsAlive && threadScan.ThreadState != System.Threading.ThreadState.AbortRequested)
-                    this.threadScan.Abort();
+                if (_threadScan.IsAlive && _threadScan.ThreadState != ThreadState.AbortRequested)
+                    _threadScan.Abort();
 
                 Wizard.Report.WriteLine("Exiting.\r\n");
 
@@ -216,41 +198,41 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             finally
             {
                 // Compute time between start and end of scan
-                TimeSpan ts = DateTime.Now.Subtract(dateTimeStart);
+                TimeSpan ts = DateTime.Now.Subtract(_dateTimeStart);
 
                 // Report to Little Software Stats
                 Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int)ts.TotalSeconds, true);
 
                 // Set last scan elapsed time (in ticks)
-                Properties.Settings.Default.lastScanElapsed = ts.Ticks;
+                Settings.Default.lastScanElapsed = ts.Ticks;
 
                 // Increase total number of scans
-                Properties.Settings.Default.totalScans++;
+                Settings.Default.totalScans++;
 
                 // Stop timer
-                this.timerUpdate.Stop();
+                _timerUpdate.Stop();
 
                 // Write scan stats to log file
-                Wizard.Report.WriteLine(string.Format("Total time elapsed: {0} minutes {0} seconds", ts.Minutes, ts.Seconds));
-                Wizard.Report.WriteLine(string.Format("Total problems found: {0}", TotalProblems));
-                Wizard.Report.WriteLine(string.Format("Total objects scanned: {0}", TotalItemsScanned));
+                Wizard.Report.WriteLine("Total time elapsed: {0} minutes {1} seconds", ts.Minutes, ts.Seconds);
+                Wizard.Report.WriteLine("Total problems found: {0}", TotalProblems);
+                Wizard.Report.WriteLine("Total objects scanned: {0}", TotalItemsScanned);
                 Wizard.Report.WriteLine();
-                Wizard.Report.WriteLine("Finished scan at " + DateTime.Now.ToString());
+                Wizard.Report.WriteLine("Finished scan at " + DateTime.Now);
 
                 // End Critical Region
                 Thread.EndCriticalRegion();
 
                 // Reset taskbar progress bar
-                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
 
-                if (!AbortScan)
-                    this.scanBase.MoveNext();
+                if (!_abortScan)
+                    _scanBase.MoveNext();
             }
         }
 
         private void StartScanner(ScannerBase scanner)
         {
-            System.Reflection.MethodInfo mi = scanner.GetType().GetMethod("Scan", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            MethodInfo mi = scanner.GetType().GetMethod("Scan", BindingFlags.NonPublic | BindingFlags.Static);
 
             if (mi == null)
             {
@@ -261,22 +243,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Action objScan = (Action)Delegate.CreateDelegate(typeof(Action), mi);
 
             // Start thread
-            this.threadScan = new Thread(new ThreadStart(objScan));
+            _threadScan = new Thread(new ThreadStart(objScan));
 
             try
             {
-                threadScan.Start();
-                threadScan.Join();
+                _threadScan.Start();
+                _threadScan.Join();
             }
             catch (Exception ex)
             {
                 if (ex is ThreadInterruptedException)
                 {
-                    if (!AbortScan)
-                        AbortScan = true;
+                    if (!_abortScan)
+                        _abortScan = true;
 
-                    if (threadScan.IsAlive)
-                        threadScan.Abort();
+                    if (_threadScan.IsAlive)
+                        _threadScan.Abort();
                 }
                 else
                 {
@@ -289,55 +271,55 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <summary>
         /// Sets the current section and increments the progress bar
         /// </summary>
-        private void invokeCurrentSection(string sectionName)
+        private void InvokeCurrentSection(string sectionName)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action<string>(invokeCurrentSection), new object[] { sectionName });
+                Dispatcher.BeginInvoke(new Action<string>(InvokeCurrentSection), sectionName);
                 return;
             }
 
-            if (this.currentListViewIndex != -1)
+            if (_currentListViewIndex != -1)
             {
                 // Update number of errors in case it wasn't updated yet
-                this.CurrentListViewItem.Errors = string.Format("{0} Errors", Wizard.badRegKeyArray.Problems(this.CurrentListViewItem.Section));
+                CurrentListViewItem.Errors = $"{Wizard.badRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
 
-                this.CurrentListViewItem.Status = "Finished";
-                this.CurrentListViewItem.UnloadGif();
+                CurrentListViewItem.Status = "Finished";
+                CurrentListViewItem.UnloadGif();
             }
 
-            this.progressBar.Value++;
-            this.currentListViewIndex++;
+            progressBar.Value++;
+            _currentListViewIndex++;
 
-            Wizard.currentScannerName = sectionName;
-            this.currentSection.Content = "Section: " + sectionName;
+            Wizard.CurrentScannerName = sectionName;
+            currentSection.Content = "Section: " + sectionName;
 
-            this.CurrentListViewItem.Status = "Scanning";
-            this.CurrentListViewItem.LoadGif();
+            CurrentListViewItem.Status = "Scanning";
+            CurrentListViewItem.LoadGif();
 
-            this.CurrentListViewItem.Errors = "0 Errors";
+            CurrentListViewItem.Errors = "0 Errors";
 
-            this.listView.Items.Refresh();
+            listView.Items.Refresh();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(App.Current.MainWindow, "Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 // AbortScanThread will be called via Unloaded event
-                this.scanBase.MoveFirst();
+                _scanBase.MoveFirst();
             }
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            this.AbortScanThread();
+            AbortScanThread();
         }
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.progressBar.Maximum != 0)
-                Main.TaskbarProgressValue = (e.NewValue / this.progressBar.Maximum);
+            if (progressBar.Maximum != 0)
+                Main.TaskbarProgressValue = (e.NewValue / progressBar.Maximum);
         }
        
 	}

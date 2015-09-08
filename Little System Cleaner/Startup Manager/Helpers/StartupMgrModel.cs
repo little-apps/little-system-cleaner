@@ -2,19 +2,15 @@
 using Little_System_Cleaner.Misc;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
     public class StartupMgrModel : ITreeModel
     {
-        public StartupEntry Root { get; private set; }
+        public StartupEntry Root { get; }
 
         public StartupMgrModel()
         {
@@ -35,7 +31,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
             Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
 
-            if (Utils.Is64BitOS)
+            if (Utils.Is64BitOs)
             {
                 Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
                 Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
@@ -53,7 +49,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
             Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
 
-            if (Utils.Is64BitOS)
+            if (Utils.Is64BitOs)
             {
                 Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
                 Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
@@ -82,10 +78,16 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             if (regKey.ValueCount <= 0)
                 return;
 
-            string[] strValueNames = null;
-            StartupEntry nodeRoot = new StartupEntry() { SectionName = regKey.Name };
+            string[] strValueNames;
+            StartupEntry nodeRoot = new StartupEntry
+            {
+                SectionName = regKey.Name,
+                bMapImg =
+                    Utils.CreateBitmapSourceFromBitmap(regKey.Name.Contains(Registry.CurrentUser.ToString())
+                        ? Properties.Resources.current_user
+                        : Properties.Resources.all_users)
+            };
 
-            nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(regKey.Name.Contains(Registry.CurrentUser.ToString()) ? Properties.Resources.current_user : Properties.Resources.all_users);
 
             try
             {
@@ -103,28 +105,28 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 {
                     string strFilePath = regKey.GetValue(strItem) as string;
 
-                    if (!string.IsNullOrEmpty(strFilePath))
+                    if (string.IsNullOrEmpty(strFilePath))
+                        continue;
+
+                    // Get file arguments
+                    string strFile = "", strArgs = "";
+
+                    if (Utils.FileExists(strFilePath))
+                        strFile = strFilePath;
+                    else
                     {
-                        // Get file arguments
-                        string strFile = "", strArgs = "";
-
-                        if (Utils.FileExists(strFilePath))
-                            strFile = strFilePath;
-                        else
-                        {
-                            if (!Utils.ExtractArguments(strFilePath, out strFile, out strArgs))
-                                if (!Utils.ExtractArguments2(strFilePath, out strFile, out strArgs))
-                                    // If command line cannot be extracted, set file path to command line
-                                    strFile = strFilePath;
-                        }
-
-                        StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
-
-                        Icon ico = Utils.ExtractIcon(strFile);
-                        node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
-
-                        nodeRoot.Children.Add(node);
+                        if (!Utils.ExtractArguments(strFilePath, out strFile, out strArgs))
+                            if (!Utils.ExtractArguments2(strFilePath, out strFile, out strArgs))
+                                // If command line cannot be extracted, set file path to command line
+                                strFile = strFilePath;
                     }
+
+                    StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
+
+                    Icon ico = Utils.ExtractIcon(strFile);
+                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+
+                    nodeRoot.Children.Add(node);
                 }
                 catch (Exception ex)
                 {
@@ -146,10 +148,16 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             if (string.IsNullOrEmpty(strFolder) || !Directory.Exists(strFolder))
                 return;
 
-            string[] strShortcuts = null;
-            StartupEntry nodeRoot = new StartupEntry() { SectionName = strFolder };
+            string[] strShortcuts;
+            StartupEntry nodeRoot = new StartupEntry
+            {
+                SectionName = strFolder,
+                bMapImg =
+                    Utils.CreateBitmapSourceFromBitmap(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder
+                        ? Properties.Resources.current_user
+                        : Properties.Resources.all_users)
+            };
 
-            nodeRoot.bMapImg = Utils.CreateBitmapSourceFromBitmap(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder ? Properties.Resources.current_user : Properties.Resources.all_users);
 
             try
             {
@@ -166,20 +174,21 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 try
                 {
                     string strShortcutName = Path.GetFileName(strShortcut);
-                    string strFilePath, strFileArgs;
 
-                    if (Path.GetExtension(strShortcut) == ".lnk")
-                    {
-                        if (!Utils.ResolveShortcut(strShortcut, out strFilePath, out strFileArgs))
-                            continue;
+                    if (Path.GetExtension(strShortcut) != ".lnk")
+                        continue;
 
-                        StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strShortcutName, Path = strFilePath, Args = strFileArgs };
+                    string filePath, fileArgs;
 
-                        Icon ico = Utils.ExtractIcon(strFilePath);
-                        node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+                    if (!Utils.ResolveShortcut(strShortcut, out filePath, out fileArgs))
+                        continue;
 
-                        nodeRoot.Children.Add(node);
-                    }
+                    StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strShortcutName, Path = filePath, Args = fileArgs };
+
+                    Icon ico = Utils.ExtractIcon(filePath);
+                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+
+                    nodeRoot.Children.Add(node);
                 }
                 catch (Exception ex)
                 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
@@ -21,13 +18,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <param name="sectionName">Section Name</param>
         public RootNode(string sectionName)
         {
-            this.Section = sectionName;
+            Section = sectionName;
         }
 
         public override void Clean(Report report)
         {
             // Nothing to do here
-            return;
         }
     }
 }

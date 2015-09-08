@@ -12,10 +12,7 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind
-        {
-            get { return GifBlockKind.Other; }
-        }
+        internal override GifBlockKind Kind => GifBlockKind.Other;
 
         internal static GifHeader ReadHeader(Stream stream)
         {

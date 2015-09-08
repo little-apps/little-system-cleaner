@@ -1,9 +1,6 @@
 ﻿using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {

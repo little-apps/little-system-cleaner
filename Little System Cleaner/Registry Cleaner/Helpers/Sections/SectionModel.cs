@@ -16,19 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CommonTools.TreeListView.Tree;
-using System.Windows.Media.Imaging;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using System.Drawing;
 
-namespace Little_System_Cleaner.Registry_Cleaner.Helpers
+namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
     public class SectionModel : ITreeModel
     {

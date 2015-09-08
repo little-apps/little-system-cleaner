@@ -17,19 +17,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Threading;
-using CommonTools;
+using System.Windows;
+using System.Windows.Shell;
+using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
@@ -37,9 +28,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// <summary>
     /// Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class Analyze : Window
+    public partial class Analyze
     {
-        Thread threadCurrent, threadScan;
+        Thread _threadCurrent, _threadScan;
 
         public Analyze()
         {
@@ -49,27 +40,27 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Increase total number of scans
-            Properties.Settings.Default.totalScans++;
+            Settings.Default.totalScans++;
 
             // Zero last scan errors found + fixed and elapsed
-            Properties.Settings.Default.lastScanErrors = 0;
-            Properties.Settings.Default.lastScanErrorsFixed = 0;
-            Properties.Settings.Default.lastScanElapsed = 0;
+            Settings.Default.lastScanErrors = 0;
+            Settings.Default.lastScanErrorsFixed = 0;
+            Settings.Default.lastScanElapsed = 0;
 
             // Set last scan date
-            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Set taskbar progress bar
-            Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
             Little_System_Cleaner.Main.TaskbarProgressValue = 0;
 
             // Set progress bar
-            this.progressBar1.Minimum = 0;
-            this.progressBar1.Maximum = Wizard.RegistryHives.Count;
-            this.progressBar1.Value = 0;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = Wizard.RegistryHives.Count;
+            progressBar1.Value = 0;
 
-            threadScan = new Thread(new ThreadStart(AnalyzeHives));
-            threadScan.Start();
+            _threadScan = new Thread(AnalyzeHives);
+            _threadScan.Start();
         }
 
         private void AnalyzeHives()
@@ -83,9 +74,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 IncrementProgressBar(h.RegistryHive);
 
                 // Analyze Hive
-                threadCurrent = new Thread(new ThreadStart(() => h.AnalyzeHive(this)));
-                threadCurrent.Start();
-                threadCurrent.Join();
+                _threadCurrent = new Thread(() => h.AnalyzeHive(this));
+                _threadCurrent.Start();
+                _threadCurrent.Join();
             }
 
             Thread.EndCriticalRegion();
@@ -94,30 +85,30 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds, true);
 
-            Properties.Settings.Default.lastScanElapsed = timeSpan.Ticks;
+            Settings.Default.lastScanElapsed = timeSpan.Ticks;
 
-            this.Dispatcher.BeginInvoke(new Action(() => {
-                Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                this.Close();
+            Dispatcher.BeginInvoke(new Action(() => {
+                Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                Close();
             }));
         }
 
         private void IncrementProgressBar(string currentHive)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action<string>(IncrementProgressBar), currentHive);
+                Dispatcher.BeginInvoke(new Action<string>(IncrementProgressBar), currentHive);
                 return;
             }
 
-            this.progressBar1.Value++;
-            this.textBlockStatus.Text = string.Format("Analyzing: {0}", currentHive);
+            progressBar1.Value++;
+            textBlockStatus.Text = $"Analyzing: {currentHive}";
         }
 
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.progressBar1.Maximum != 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / this.progressBar1.Maximum);
+            if (progressBar1.Maximum != 0)
+                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / progressBar1.Maximum);
         }
     }
 }

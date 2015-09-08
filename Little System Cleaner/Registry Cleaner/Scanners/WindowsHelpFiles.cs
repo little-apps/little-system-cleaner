@@ -16,25 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class WindowsHelpFiles : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.WindowsHelpFiles; }
-        }
+        public override string ScannerName => Strings.WindowsHelpFiles;
 
         internal static void Scan()
         {
@@ -63,13 +56,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Checking for missing help files in " + regKey.Name);
 
-            foreach (string strHelpFile in regKey.GetValueNames())
+            foreach (var helpFile in 
+                regKey.GetValueNames()
+                    .Select(helpFile => new {Name = helpFile, Value = regKey.GetValue(helpFile) as string})
+                    .Where(o => !HelpFileExists(o.Name, o.Value))
+                    .Select(o => o.Name)
+                )
             {
-                string strHelpPath = regKey.GetValue(strHelpFile) as string;
-
-                if (!HelpFileExists(strHelpFile, strHelpPath))
-                    // (Won't include default value name as strHelpFile must not be null/empty)
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(strHelpFile) ? "(default)" : strHelpFile));
+                // (Won't include default value name as strHelpFile must not be null/empty)
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(helpFile) ? "(default)" : helpFile));
             }
         }
 

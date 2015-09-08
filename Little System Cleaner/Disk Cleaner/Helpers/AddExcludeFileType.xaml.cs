@@ -17,25 +17,17 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using Application = System.Windows.Forms.Application;
+
 //using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 {
     /// <summary>
     /// Interaction logic for AddExcludeFileType.xaml
     /// </summary>
-    public partial class AddExcludeFileType : Window
+    public partial class AddExcludeFileType
     {
         public event AddFileTypeEventHandler AddFileType;
 
@@ -46,24 +38,24 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(this.textBox.Text.Trim()))
+            if (string.IsNullOrEmpty(textBox.Text.Trim()))
             {
-                MessageBox.Show(this, "Please enter a file type", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, "Please enter a file type", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (AddFileType != null)
             {
-                AddFileTypeEventArgs eventArgs = new AddFileTypeEventArgs() { fileType =  this.textBox.Text.Trim() };
+                AddFileTypeEventArgs eventArgs = new AddFileTypeEventArgs { FileType =  textBox.Text.Trim() };
                 AddFileType(this, eventArgs);
             }
 
-            this.Close();
+            Close();
         }
     }
 
     public class AddFileTypeEventArgs : EventArgs
     {
-        public string fileType
+        public string FileType
         {
             get;
             set;

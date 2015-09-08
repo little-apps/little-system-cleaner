@@ -16,38 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Shell;
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     /// <summary>
     /// Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class Analyze : UserControl
+    public partial class Analyze
     {
-        internal System.Timers.Timer timerUpdate = new System.Timers.Timer(100);
-        public Wizard scanBase;
+        internal Timer TimerUpdate = new Timer(100);
+        public Wizard ScanBase;
 
-        public Thread threadMain
+        public Thread ThreadMain
         {
             get;
             set;
@@ -63,45 +57,45 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            ScanBase = sb;
 
-            if (Wizard.fileList == null)
-                Wizard.fileList = new ObservableCollection<ProblemFile>();
+            if (Wizard.FileList == null)
+                Wizard.FileList = new ObservableCollection<ProblemFile>();
             else
-                Wizard.fileList.Clear();
+                Wizard.FileList.Clear();
 
             // Set scan start time
             Wizard.ScanStartTime = DateTime.Now;
 
             // Increase total number of scans
-            Properties.Settings.Default.totalScans++;
+            Settings.Default.totalScans++;
 
             // Zero last scan errors found + fixed and elapsed
-            Properties.Settings.Default.lastScanErrors = 0;
-            Properties.Settings.Default.lastScanErrorsFixed = 0;
-            Properties.Settings.Default.lastScanElapsed = 0;
+            Settings.Default.lastScanErrors = 0;
+            Settings.Default.lastScanErrorsFixed = 0;
+            Settings.Default.lastScanElapsed = 0;
 
             // Set last scan date
-            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Start timer
-            this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
-            this.timerUpdate.Start();
+            TimerUpdate.Elapsed += timerUpdate_Elapsed;
+            TimerUpdate.Start();
 
-            this.threadMain = new Thread(new ThreadStart(AnalyzeDisk));
-            this.threadMain.Start();
+            ThreadMain = new Thread(AnalyzeDisk);
+            ThreadMain.Start();
         }
 
-        void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                Dispatcher.BeginInvoke(new ElapsedEventHandler(timerUpdate_Elapsed), sender, e);
                 return;
             }
 
-            this.currentFile.Text = Analyze.CurrentFile;
-            this.filesFound.Text = string.Format("Files Found: {0}", Wizard.fileList.Count);
+            currentFile.Text = CurrentFile;
+            filesFound.Text = $"Files Found: {Wizard.FileList.Count}";
         }
 
         private void AnalyzeDisk()
@@ -109,21 +103,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             try
             {
                 // Show taskbar progress bar
-                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
 
-                foreach (DriveInfo driveInfo in this.scanBase.selectedDrives)
+                foreach (DriveInfo driveInfo in ScanBase.SelectedDrives)
                 {
                     ScanFiles(driveInfo.RootDirectory);
                 }
 
                 Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
-                if (Wizard.fileList.Count > 0) {
-                    this.EnableContinueButton();
+                if (Wizard.FileList.Count > 0) {
+                    EnableContinueButton();
                 }
                 else
                 {
-                    Analyze.CurrentFile = "";
+                    CurrentFile = "";
                     Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
@@ -134,24 +128,24 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 Thread.ResetAbort();
 
-                Analyze.CurrentFile = "";
+                CurrentFile = "";
             }
             finally
             {
-                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
+                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
             }
         }
 
         private void EnableContinueButton()
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action(this.EnableContinueButton));
+                Dispatcher.Invoke(new Action(EnableContinueButton));
                 return;
             }
 
-            Analyze.CurrentFile = "View the results by clicking \"Continue\" below.";
-            this.buttonContinue.IsEnabled = true;
+            CurrentFile = "View the results by clicking \"Continue\" below.";
+            buttonContinue.IsEnabled = true;
         }
 
         private void ScanFiles(DirectoryInfo parentInfo)
@@ -162,32 +156,32 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 {
                     try
                     {
-                        Analyze.CurrentFile = fileInfo.FullName;
+                        CurrentFile = fileInfo.FullName;
 
                         // Check if file is exclude
                         if (FileTypeIsExcluded(fileInfo.Name))
                             continue;
 
                         // Check for zero-byte files
-                        if (Properties.Settings.Default.diskCleanerSearchZeroByte)
+                        if (Settings.Default.diskCleanerSearchZeroByte)
                         {
                             if (fileInfo.Length == 0)
                             {
-                                Wizard.fileList.Add(new ProblemFile(fileInfo));
+                                Wizard.FileList.Add(new ProblemFile(fileInfo));
                                 continue;
                             }
                         }
 
 
                         // Check if file matches types
-                        if (!this.CompareWildcards(fileInfo.Name, Properties.Settings.Default.diskCleanerSearchFilters))
+                        if (!CompareWildcards(fileInfo.Name, Settings.Default.diskCleanerSearchFilters))
                             continue;
 
                         // Check if file is in use or write protected
-                        if (Properties.Settings.Default.diskCleanerIgnoreWriteProtected && fileInfo.IsReadOnly)
+                        if (Settings.Default.diskCleanerIgnoreWriteProtected && fileInfo.IsReadOnly)
                             continue;
 
-                        if (Properties.Settings.Default.diskCleanerIgnoreWriteProtected && this.IsFileLocked(fileInfo))
+                        if (Settings.Default.diskCleanerIgnoreWriteProtected && IsFileLocked(fileInfo))
                             continue;
 
                         // Check file attributes
@@ -195,16 +189,16 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                             continue;
 
                         // Check file dates
-                        if (Properties.Settings.Default.diskCleanerFindFilesAfter || Properties.Settings.Default.diskCleanerFindFilesBefore)
+                        if (Settings.Default.diskCleanerFindFilesAfter || Settings.Default.diskCleanerFindFilesBefore)
                             if (!FileCheckDate(fileInfo))
                                 continue;
 
                         // Check file size
-                        if (Properties.Settings.Default.diskCleanerCheckFileSize)
+                        if (Settings.Default.diskCleanerCheckFileSize)
                             if (!FileCheckSize(fileInfo))
                                 continue;
 
-                        Wizard.fileList.Add(new ProblemFile(fileInfo));
+                        Wizard.FileList.Add(new ProblemFile(fileInfo));
                     }
                     catch (Exception ex)
                     {
@@ -229,7 +223,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                         {
                             foreach (FileInfo fileInfo in childInfo.GetFiles())
                             {
-                                Wizard.fileList.Add(new ProblemFile(fileInfo));
+                                Wizard.FileList.Add(new ProblemFile(fileInfo));
                             }
 
                             continue;
@@ -250,18 +244,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-        private bool FileCheckSize(FileInfo fileInfo)
+        private static bool FileCheckSize(FileInfo fileInfo)
         {
             try
             {
                 long fileSize = fileInfo.Length / 1024;
 
-                if (Properties.Settings.Default.diskCleanerCheckFileSizeLeast > 0)
-                    if (fileSize <= Properties.Settings.Default.diskCleanerCheckFileSizeLeast)
+                if (Settings.Default.diskCleanerCheckFileSizeLeast > 0)
+                    if (fileSize <= Settings.Default.diskCleanerCheckFileSizeLeast)
                         return false;
 
-                if (Properties.Settings.Default.diskCleanerCheckFileSizeMost > 0)
-                    if (fileSize >= Properties.Settings.Default.diskCleanerCheckFileSizeMost)
+                if (Settings.Default.diskCleanerCheckFileSizeMost > 0)
+                    if (fileSize >= Settings.Default.diskCleanerCheckFileSizeMost)
                         return false;
             }
             catch (Exception ex)
@@ -277,18 +271,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// </summary>
         /// <param name="fileInfo">File information</param>
         /// <returns>True if file is in date/time range</returns>
-        private bool FileCheckDate(FileInfo fileInfo)
+        private static bool FileCheckDate(FileInfo fileInfo)
         {
             DateTime dateTimeFile = DateTime.MinValue;
             bool bRet = false;
 
             try
             {
-                if (Properties.Settings.Default.diskCleanerFindFilesMode == 0)
+                if (Settings.Default.diskCleanerFindFilesMode == 0)
                     dateTimeFile = fileInfo.CreationTime;
-                else if (Properties.Settings.Default.diskCleanerFindFilesMode == 1)
+                else if (Settings.Default.diskCleanerFindFilesMode == 1)
                     dateTimeFile = fileInfo.LastWriteTime;
-                else if (Properties.Settings.Default.diskCleanerFindFilesMode == 2)
+                else if (Settings.Default.diskCleanerFindFilesMode == 2)
                     dateTimeFile = fileInfo.LastAccessTime;
             }
             catch (Exception ex)
@@ -297,15 +291,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return false;
             }
 
-            if (Properties.Settings.Default.diskCleanerFindFilesAfter)
+            if (Settings.Default.diskCleanerFindFilesAfter)
             {
-                if (DateTime.Compare(dateTimeFile, Properties.Settings.Default.diskCleanerDateTimeAfter) >= 0)
+                if (DateTime.Compare(dateTimeFile, Settings.Default.diskCleanerDateTimeAfter) >= 0)
                     bRet = true;
             }
 
-            if (Properties.Settings.Default.diskCleanerFindFilesBefore)
+            if (Settings.Default.diskCleanerFindFilesBefore)
             {
-                if (DateTime.Compare(dateTimeFile, Properties.Settings.Default.diskCleanerDateTimeBefore) <= 0)
+                if (DateTime.Compare(dateTimeFile, Settings.Default.diskCleanerDateTimeBefore) <= 0)
                     bRet = true;
             }
 
@@ -331,16 +325,16 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return false;
             }
 
-            if ((!Properties.Settings.Default.diskCleanerSearchHidden) && ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
+            if ((!Settings.Default.diskCleanerSearchHidden) && ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
                 return false;
 
-            if ((!Properties.Settings.Default.diskCleanerSearchArchives) && ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
+            if ((!Settings.Default.diskCleanerSearchArchives) && ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
                 return false;
 
-            if ((!Properties.Settings.Default.diskCleanerSearchReadOnly) && ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
+            if ((!Settings.Default.diskCleanerSearchReadOnly) && ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
                 return false;
 
-            if ((!Properties.Settings.Default.diskCleanerSearchSystem) && ((fileAttribs & FileAttributes.System) == FileAttributes.System))
+            if ((!Settings.Default.diskCleanerSearchSystem) && ((fileAttribs & FileAttributes.System) == FileAttributes.System))
                 return false;
 
             return true;
@@ -370,8 +364,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
             finally
             {
-                if (stream != null)
-                    stream.Close();
+                stream?.Close();
             }
 
             return ret;
@@ -379,21 +372,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private bool FolderIsIncluded(string dirPath)
         {
-            var includeDirsList = Properties.Settings.Default.diskCleanerIncludedFolders.Cast<string>();
+            var includeDirsList = Settings.Default.diskCleanerIncludedFolders.Cast<string>();
 
             return (includeDirsList.Any(includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0));
         }
 
         private bool FolderIsExcluded(string dirPath)
         {
-            var excludeDirsList = Properties.Settings.Default.diskCleanerExcludedDirs.Cast<string>();
+            var excludeDirsList = Settings.Default.diskCleanerExcludedDirs.Cast<string>();
 
             return (excludeDirsList.Any(excludeDir => Utils.CompareWildcard(dirPath, excludeDir)));
         }
 
         private bool FileTypeIsExcluded(string fileName)
         {
-            var excludeFileTypesList = Properties.Settings.Default.diskCleanerExcludedFileTypes.Cast<string>();
+            var excludeFileTypesList = Settings.Default.diskCleanerExcludedFileTypes.Cast<string>();
 
             return (excludeFileTypesList.Any(excludeFileType => Utils.CompareWildcard(fileName, excludeFileType)));
         }
@@ -401,21 +394,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// <summary>
         /// Compare multiple wildcards to string
         /// </summary>
-        /// <param name="WildString">String to compare</param>
-        /// <param name="Masks">Wildcard masks seperated by a semicolon (;)</param>
-        /// <param name="IgnoreCase">Ignore case for comparison (default is true)</param>
+        /// <param name="wildString">String to compare</param>
+        /// <param name="masks">Wildcard masks seperated by a semicolon (;)</param>
+        /// <param name="ignoreCase">Ignore case for comparison (default is true)</param>
         /// <returns>True if match found</returns>
-        private bool CompareWildcards(string WildString, string Masks, bool IgnoreCase = true)
+        private bool CompareWildcards(string wildString, string masks, bool ignoreCase = true)
         {
-            if (String.IsNullOrEmpty(Masks))
+            if (String.IsNullOrEmpty(masks))
                 return false;
 
-            if (Masks == "*")
+            if (masks == "*")
                 return true;
 
-            var masksListTrimmed = Masks.Split(';').Select(s => s.Trim()).Where(maskTrimmed => !string.IsNullOrEmpty(maskTrimmed));
+            var masksListTrimmed = masks.Split(';').Select(s => s.Trim()).Where(maskTrimmed => !string.IsNullOrEmpty(maskTrimmed));
 
-            return masksListTrimmed.Any(maskTrimmed => Utils.CompareWildcard(WildString, maskTrimmed, IgnoreCase));
+            return masksListTrimmed.Any(maskTrimmed => Utils.CompareWildcard(wildString, maskTrimmed, ignoreCase));
         }
 
         /// <summary>
@@ -423,28 +416,26 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// </summary>
         public void CancelAnalyze()
         {
-            this.timerUpdate.Stop();
+            TimerUpdate.Stop();
 
-            if (this.threadMain != null)
-                this.threadMain.Abort();
+            ThreadMain?.Abort();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                this.CancelAnalyze();
-                this.scanBase.MovePrev();
-            }
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
             
+            CancelAnalyze();
+            ScanBase.MovePrev();
         }
 
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
             // Set last scan errors found
-            Properties.Settings.Default.lastScanErrors = Wizard.fileList.Count;
+            Settings.Default.lastScanErrors = Wizard.FileList.Count;
 
-            this.scanBase.MoveNext();
+            ScanBase.MoveNext();
         }
     }
 }

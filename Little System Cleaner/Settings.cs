@@ -1,5 +1,11 @@
-﻿using Little_System_Cleaner.Registry_Cleaner.Helpers;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+
 namespace Little_System_Cleaner.Properties {
     
     
@@ -9,28 +15,10 @@ namespace Little_System_Cleaner.Properties {
     //  The SettingsLoaded event is raised after the setting values are loaded.
     //  The SettingsSaving event is raised before the setting values are saved.
     internal sealed partial class Settings {
-        
-        public Settings() {
-            // // To add event handlers for saving and changing settings, uncomment the lines below:
-            //
-            // this.SettingChanging += this.SettingChangingEventHandler;
-            //
-            // this.SettingsSaving += this.SettingsSavingEventHandler;
-            //
-        }
-        
-        private void SettingChangingEventHandler(object sender, System.Configuration.SettingChangingEventArgs e) {
-            // Add code to handle the SettingChangingEvent event here.
-        }
-        
-        private void SettingsSavingEventHandler(object sender, System.ComponentModel.CancelEventArgs e) {
-            // Add code to handle the SettingsSaving event here.
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-        [global::System.Configuration.SettingsSerializeAs(System.Configuration.SettingsSerializeAs.Binary)]
-        public ObservableCollection<ExcludeItem> arrayExcludeList
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [SettingsSerializeAs(SettingsSerializeAs.Binary)]
+        public ObservableCollection<ExcludeItem> ArrayExcludeList
         {
             get
             {
@@ -45,66 +33,59 @@ namespace Little_System_Cleaner.Properties {
             }
         }
 
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public string strProgramSettingsDir
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        public string ProgramSettingsDir
         {
             get
             {
                 if (string.IsNullOrEmpty(this["strProgramSettingsDir"] as string))
-                    this["strProgramSettingsDir"] = string.Format("{0}\\Little System Cleaner", global::System.Environment.GetFolderPath(global::System.Environment.SpecialFolder.CommonProgramFiles));
+                    this["strProgramSettingsDir"] = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)}\\Little System Cleaner";
 
-                if (!global::System.IO.Directory.Exists(this["strProgramSettingsDir"] as string))
-                    global::System.IO.Directory.CreateDirectory(this["strProgramSettingsDir"] as string);
+                if (!Directory.Exists((string) this["strProgramSettingsDir"]))
+                    Directory.CreateDirectory((string) this["strProgramSettingsDir"]);
 
                 return this["strProgramSettingsDir"] as string;
             }
             set { this["strProgramSettingsDir"] = value; }
         }
 
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public string optionsBackupDir
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        public string OptionsBackupDir
         {
             get
             {
                 if (string.IsNullOrEmpty(this["optionsBackupDir"] as string))
-                    this["optionsBackupDir"] = string.Format("{0}\\Backups", strProgramSettingsDir);
+                    this["optionsBackupDir"] = $"{ProgramSettingsDir}\\Backups";
 
-                if (!global::System.IO.Directory.Exists(this["optionsBackupDir"] as string))
-                    global::System.IO.Directory.CreateDirectory(this["optionsBackupDir"] as string);
+                if (!Directory.Exists((string) this["optionsBackupDir"]))
+                    Directory.CreateDirectory((string) this["optionsBackupDir"]);
 
-                return this["optionsBackupDir"] as string; ;
+                return (string) this["optionsBackupDir"]; ;
             }
             set { this["optionsBackupDir"] = value; }
         }
 
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public string optionsLogDir
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        public string OptionsLogDir
         {
             get
             {
                 if (string.IsNullOrEmpty(this["optionsLogDir"] as string))
-                    this["optionsLogDir"] = string.Format("{0}\\Logs", strProgramSettingsDir);
+                    this["optionsLogDir"] = $"{ProgramSettingsDir}\\Logs";
 
-                if (!global::System.IO.Directory.Exists(this["optionsLogDir"] as string))
-                    global::System.IO.Directory.CreateDirectory(this["optionsLogDir"] as string);
+                if (!Directory.Exists((string) this["optionsLogDir"]))
+                    Directory.CreateDirectory((string) this["optionsLogDir"]);
 
                 return this["optionsLogDir"] as string;
             }
             set { this["optionsLogDir"] = value; }
         }
 
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public string strBuildTime
-        {
-            get
-            {
-                return new global::System.DateTime(2000, 1, 1).AddDays(global::System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build).ToString("MM/dd/yyyy");
-            }
-        }
-
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        public string BuildTime => new DateTime(2000, 1, 1).AddDays(Assembly.GetExecutingAssembly().GetName().Version.Build).ToString("MM/dd/yyyy");
     }
 }

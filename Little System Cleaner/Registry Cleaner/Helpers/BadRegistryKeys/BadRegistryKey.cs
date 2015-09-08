@@ -17,20 +17,20 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
 using System.ComponentModel;
-using Microsoft.Win32;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Little_System_Cleaner.Misc;
-using System.Diagnostics;
-using System.Security.AccessControl;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
+using Image = System.Windows.Controls.Image;
 
-namespace Little_System_Cleaner.Registry_Cleaner.Helpers 
+namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys 
 {
     public class BadRegistryKey : INotifyPropertyChanged, ICloneable
     {
@@ -40,32 +40,24 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
         #endregion
 
         #region Properties
-        private readonly ObservableCollection<BadRegistryKey> _children = new ObservableCollection<BadRegistryKey>();
-        public ObservableCollection<BadRegistryKey> Children
-        {
-            get { return _children; }
-        }
+
+        public ObservableCollection<BadRegistryKey> Children { get; } = new ObservableCollection<BadRegistryKey>();
 
         private BadRegistryKey _parent;
         private bool? _bIsChecked = true;
-        private string _strProblem = "";
-        private string _strValueName = "";
-        private string _strSectionName = "";
-        private string _strData = "";
-        private int _nSeverity = 1;
-        public readonly string baseRegKey = "";
-        public readonly string subRegKey = "";
+        private readonly int _nSeverity = 1;
+        public readonly string BaseRegKey;
+        public readonly string SubRegKey;
 
         public Image bMapImg { get; set; }
 
@@ -75,41 +67,28 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         public bool? IsChecked
         {
             get { return _bIsChecked; }
-            set { this.SetIsChecked(value, true, true); }
+            set { SetIsChecked(value, true, true); }
         }
 
         /// <summary>
         /// Gets the section name
         /// </summary>
-        public string SectionName
-        {
-            get { return _strSectionName; }
-            set { _strSectionName = value; }
-        }
+        public string SectionName { get; set; }
 
         /// <summary>
         /// Get the problem
         /// </summary>
-        public string Problem
-        {
-            get { return _strProblem; }
-        }
+        public string Problem { get; }
 
         /// <summary>
         /// Gets the value name
         /// </summary>
-        public string ValueName
-        {
-            get { return _strValueName; }
-        }
+        public string ValueName { get; } = "";
 
         /// <summary>
         /// Gets the data in the bad registry key
         /// </summary>
-        public string Data
-        {
-            get { return _strData; }
-        }
+        public string Data { get; } = "";
 
         /// <summary>
         /// Gets the registry path
@@ -118,10 +97,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
             get
             {
-                if (!string.IsNullOrEmpty(baseRegKey) && !string.IsNullOrEmpty(subRegKey))
-                    return string.Format("{0}\\{1}", baseRegKey, subRegKey);
-                else if (!string.IsNullOrEmpty(baseRegKey))
-                    return baseRegKey;
+                if (!string.IsNullOrEmpty(BaseRegKey) && !string.IsNullOrEmpty(SubRegKey))
+                    return $"{BaseRegKey}\\{SubRegKey}";
+                if (!string.IsNullOrEmpty(BaseRegKey))
+                    return BaseRegKey;
 
                 return "";
             }
@@ -135,26 +114,26 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             get
             {
                 Image img = new Image();
-                System.Drawing.Bitmap bmp;
-                if (this._nSeverity == 1)
+                Bitmap bmp;
+                if (_nSeverity == 1)
                 {
-                    bmp = Properties.Resources._1;
+                    bmp = Resources._1;
                 }
-                else if (this._nSeverity == 2)
+                else if (_nSeverity == 2)
                 {
-                    bmp = Properties.Resources._2;
+                    bmp = Resources._2;
                 }
-                else if (this._nSeverity == 3)
+                else if (_nSeverity == 3)
                 {
-                    bmp = Properties.Resources._3;
+                    bmp = Resources._3;
                 }
-                else if (this._nSeverity == 4)
+                else if (_nSeverity == 4)
                 {
-                    bmp = Properties.Resources._4;
+                    bmp = Resources._4;
                 }
-                else if (this._nSeverity == 5)
+                else if (_nSeverity == 5)
                 {
-                    bmp = Properties.Resources._5;
+                    bmp = Resources._5;
                 }
                 else
                 {
@@ -164,7 +143,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 IntPtr hBitmap = bmp.GetHbitmap();
 
-                img.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                img.Source = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 return img;
             }
@@ -185,20 +164,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             _bIsChecked = value;
 
             if (updateChildren && _bIsChecked.HasValue)
-                this.Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
 
-            if (updateParent && _parent != null)
-                _parent.VerifyCheckState();
+            if (updateParent)
+                _parent?.VerifyCheckState();
 
-            this.OnPropertyChanged("IsChecked");
+            OnPropertyChanged("IsChecked");
         }
 
         void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < this.Children.Count; ++i)
+            for (int i = 0; i < Children.Count; ++i)
             {
-                bool? current = this.Children[i].IsChecked;
+                bool? current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -209,7 +188,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     break;
                 }
             }
-            this.SetIsChecked(state, false, true);
+            SetIsChecked(state, false, true);
         }
         #endregion
         #endregion
@@ -225,22 +204,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <param name="severity">The severity (between 1-5) of the problem</param>
         public BadRegistryKey(string sectionName, string problem, string baseKey, string subKey, string valueName, int severity)
         {
-            this._strSectionName = sectionName;
-            this._strProblem = problem;
-            this.baseRegKey = baseKey;
-            this.subRegKey = subKey;
-            this._nSeverity = severity;
+            SectionName = sectionName;
+            Problem = problem;
+            BaseRegKey = baseKey;
+            SubRegKey = subKey;
+            _nSeverity = severity;
 
             if (!string.IsNullOrEmpty(valueName))
             {
-                this._strValueName = valueName;
+                ValueName = valueName;
 
                 // Open registry key
                 RegistryKey regKey = Utils.RegOpenKey(baseKey, subKey);
 
                 // Convert value to string
                 if (regKey != null)
-                    this._strData = ScanFunctions.RegConvertXValueToString(regKey, valueName);
+                    Data = ScanFunctions.RegConvertXValueToString(regKey, valueName);
             }
         }
 
@@ -249,20 +228,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// </summary>
         public BadRegistryKey(BitmapImage icon, string sectionName)
         {
-            this.bMapImg = new Image() { Source = icon };
+            bMapImg = new Image { Source = icon };
 
-            this._strProblem = sectionName;
+            Problem = sectionName;
 
-            this._strSectionName = "";
-            this._strValueName = "";
-            this.baseRegKey = "";
-            this.subRegKey = "";
-            this._nSeverity = 0;
+            SectionName = "";
+            ValueName = "";
+            BaseRegKey = "";
+            SubRegKey = "";
+            _nSeverity = 0;
         }
 
         public void Init()
         {
-            foreach (BadRegistryKey childBadRegKey in this.Children)
+            foreach (BadRegistryKey childBadRegKey in Children)
             {
                 childBadRegKey._parent = this;
                 childBadRegKey.Init();
@@ -276,10 +255,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             try
             {
-                if (!string.IsNullOrEmpty(this.ValueName))
+                if (!string.IsNullOrEmpty(ValueName))
                 {
-                    regKey = Utils.RegOpenKey(this.RegKeyPath, false, true);
-                    string valueName = (this.ValueName.ToUpper() == "(DEFAULT)" ? string.Empty : this.ValueName);
+                    regKey = Utils.RegOpenKey(RegKeyPath, false, true);
+                    string valueName = (ValueName.ToUpper() == "(DEFAULT)" ? string.Empty : ValueName);
 
                     if (regKey != null)
                     {
@@ -290,11 +269,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 }
                 else
                 {
-                    regKey = Utils.RegOpenKey(this.baseRegKey, false, true);
+                    regKey = Utils.RegOpenKey(BaseRegKey, false, true);
 
                     if (regKey != null)
                     {
-                        regKey.DeleteSubKeyTree(this.subRegKey);
+                        regKey.DeleteSubKeyTree(SubRegKey);
                         regKey.Flush();
 
                         ret = true;
@@ -303,9 +282,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
             catch (Exception ex)
             {
-                string message;
-
-                message = !string.IsNullOrEmpty(this.ValueName) ? string.Format("Unable to delete value name ({0}) from registry key ({1}).\nError: {2}", this.ValueName, this.RegKeyPath, ex.Message) : string.Format("An error occurred deleting registry key ({0}).\nError: {1}", this.RegKeyPath, ex.Message);
+                var message = !string.IsNullOrEmpty(ValueName) ?
+                    $"Unable to delete value name ({ValueName}) from registry key ({RegKeyPath}).\nError: {ex.Message}"
+                    :
+                    $"An error occurred deleting registry key ({RegKeyPath}).\nError: {ex.Message}";
 
                 Debug.WriteLine(message);
 
@@ -313,8 +293,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             } 
             finally
             {
-                if (regKey != null)
-                    regKey.Close();
+                regKey?.Close();
             }
 
             return ret;

@@ -17,27 +17,17 @@
 */
 
 using System;
-using System.IO;
-using System.Net;
-using System.Security;
-using System.Security.Permissions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Threading;
-using Microsoft.Win32;
-using System.Xml;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using Little_System_Cleaner.Misc;
-using System.Text;
-using System.Reflection;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner
 {
-    public partial class App : System.Windows.Application
+    public class App : Application
     {
         /// <summary>
         /// 
@@ -45,13 +35,9 @@ namespace Little_System_Cleaner
         [STAThread]
         static void Main()
         {
-            bool bMutexCreated = false, bWaitToExit = false;
+            bool bMutexCreated;
 
-            foreach (string arg in Environment.GetCommandLineArgs())
-            {
-                if (arg == "/restart" || arg == "--restart")
-                    bWaitToExit = true;
-            }
+            bool bWaitToExit = Environment.GetCommandLineArgs().Any(arg => arg == "/restart" || arg == "--restart");
 
             using (Mutex mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated))
             {
@@ -107,11 +93,11 @@ namespace Little_System_Cleaner
         /// </summary>
         public App()
         {
-            StartupUri = new System.Uri("Main.xaml", UriKind.Relative);
+            StartupUri = new Uri("Main.xaml", UriKind.Relative);
 
             // Add resources
-            this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new System.Uri("TreeStyles.xaml", UriKind.Relative) });
-            this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new System.Uri("Themes/Generic.xaml", UriKind.Relative) });
+            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("TreeStyles.xaml", UriKind.Relative) });
+            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("Themes/Generic.xaml", UriKind.Relative) });
             
             Permissions.SetPrivileges(true);
             Run();
@@ -121,8 +107,8 @@ namespace Little_System_Cleaner
         protected override void OnStartup(StartupEventArgs e)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            this.DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(Application_DispatcherUnhandledException);
-            this.Exit += new ExitEventHandler(App_Exit);
+            DispatcherUnhandledException += Application_DispatcherUnhandledException;
+            Exit += App_Exit;
 
             base.OnStartup(e);
         }
@@ -132,20 +118,19 @@ namespace Little_System_Cleaner
             CrashReporter.ShowCrashReport(e.ExceptionObject as Exception);
         }
 
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            if (!e.Handled)
-            {
-                CrashReporter.ShowCrashReport(e.Exception);
+            if (e.Handled)
+                return;
 
-                e.Handled = true;
-            }
-            
+            CrashReporter.ShowCrashReport(e.Exception);
+
+            e.Handled = true;
         }
 
         void App_Exit(object sender, ExitEventArgs e)
         {
-            Little_System_Cleaner.Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
     }
 }

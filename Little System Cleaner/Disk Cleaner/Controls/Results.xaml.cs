@@ -17,132 +17,126 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using System.ComponentModel;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Application = System.Windows.Forms.Application;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     /// <summary>
     /// Interaction logic for Results.xaml
     /// </summary>
-    public partial class Results : UserControl
+    public partial class Results
     {
-        public Wizard scanBase;
+        public Wizard ScanBase;
 
-        public ObservableCollection<ProblemFile> ProblemsCollection {
-            get 
-            {
-                return Wizard.fileList;
-            }
-        }
+        public ObservableCollection<ProblemFile> ProblemsCollection => Wizard.FileList;
 
         public Results(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            ScanBase = sb;
 
             // Update last scan stats
             long elapsedTime = DateTime.Now.Subtract(Wizard.ScanStartTime).Ticks;
 
-            Properties.Settings.Default.lastScanElapsed = elapsedTime;
+            Settings.Default.lastScanElapsed = elapsedTime;
 
-            this.ResetInfo();
+            ResetInfo();
 
-            Utils.AutoResizeColumns(this.listViewFiles);
+            Utils.AutoResizeColumns(listViewFiles);
         }
 
         private void listViewFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.listViewFiles.SelectedItem != null)
+            if (listViewFiles.SelectedItem != null)
             {
-                FileInfo fileInfo = (this.listViewFiles.SelectedItem as ProblemFile).FileInfo;
+                var problemFile = listViewFiles.SelectedItem as ProblemFile;
+
+                if (problemFile == null)
+                    return;
+
+                FileInfo fileInfo = problemFile.FileInfo;
 
                 // Get icon
                 var fileIcon = System.Drawing.Icon.ExtractAssociatedIcon(fileInfo.FullName) ?? SystemIcons.Application;
 
-                this.Icon.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(fileIcon.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                Icon.Source = Imaging.CreateBitmapSourceFromHBitmap(fileIcon.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                this.FileName.Text = fileInfo.Name;
-                this.FileSize.Text = Utils.ConvertSizeToString(fileInfo.Length);
-                this.Location.Text = fileInfo.DirectoryName;
-                this.LastAccessed.Text = fileInfo.LastAccessTime.ToLongDateString();
-
+                FileName.Text = fileInfo.Name;
+                FileSize.Text = Utils.ConvertSizeToString(fileInfo.Length);
+                Location.Text = fileInfo.DirectoryName;
+                LastAccessed.Text = fileInfo.LastAccessTime.ToLongDateString();
             }
             else
             {
-                this.ResetInfo();
+                ResetInfo();
             }
         }
 
         private void ResetInfo()
         {
-            this.Icon.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(System.Drawing.SystemIcons.Application.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            Icon.Source = Imaging.CreateBitmapSourceFromHBitmap(SystemIcons.Application.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-            this.FileName.Text = "N/A";
-            this.FileSize.Text = "N/A";
-            this.Location.Text = "N/A";
-            this.LastAccessed.Text = "N/A";
+            FileName.Text = "N/A";
+            FileSize.Text = "N/A";
+            Location.Text = "N/A";
+            LastAccessed.Text = "N/A";
         }
 
         private void selectAll_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ProblemFile lvi in this.ProblemsCollection)
+            foreach (ProblemFile lvi in ProblemsCollection)
             {
                 lvi.Checked = true;
             }
 
-            this.listViewFiles.Items.Refresh();
+            listViewFiles.Items.Refresh();
         }
 
         private void selectNone_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ProblemFile lvi in this.ProblemsCollection)
+            foreach (ProblemFile lvi in ProblemsCollection)
             {
                 lvi.Checked = false;
             }
 
-            this.listViewFiles.Items.Refresh();
+            listViewFiles.Items.Refresh();
         }
 
         private void selectInvert_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ProblemFile lvi in this.ProblemsCollection)
+            foreach (ProblemFile lvi in ProblemsCollection)
             {
                 lvi.Checked = !(lvi.Checked);
             }
 
-            this.listViewFiles.Items.Refresh();
+            listViewFiles.Items.Refresh();
         }
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)
         {
-            int uncheckedFiles = this.ProblemsCollection.Count(lvi => !lvi.Checked.GetValueOrDefault());
+            int uncheckedFiles = ProblemsCollection.Count(lvi => !lvi.Checked.GetValueOrDefault());
 
-            if (uncheckedFiles == this.ProblemsCollection.Count)
+            if (uncheckedFiles == ProblemsCollection.Count)
             {
-                MessageBox.Show(Window.GetWindow(this), "No files are selected", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Window.GetWindow(this), "No files are selected", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (!Properties.Settings.Default.diskCleanerAutoClean)
-                if (MessageBox.Show(Window.GetWindow(this), "Are you sure you want to remove these files?", System.Windows.Forms.Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != System.Windows.MessageBoxResult.Yes)
+            if (!Settings.Default.diskCleanerAutoClean)
+                if (MessageBox.Show(Window.GetWindow(this), "Are you sure you want to remove these files?", Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
 
             Main.Watcher.Event("Disk Cleaner", "Remove Files");
@@ -155,11 +149,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
             catch (Win32Exception ex)
             {
-                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                MessageBox.Show(System.Windows.Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            foreach (ProblemFile lvi in this.ProblemsCollection)
+            foreach (ProblemFile lvi in ProblemsCollection)
             {
                 if (!lvi.Checked.GetValueOrDefault())
                     continue;
@@ -169,38 +163,38 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     FileInfo fileInfo = lvi.FileInfo;
 
                     // Set last scan erors fixed
-                    Properties.Settings.Default.lastScanErrorsFixed++;
+                    Settings.Default.lastScanErrorsFixed++;
 
                     // Make sure file exists
                     if (!fileInfo.Exists)
                         continue;
 
-                    if (Properties.Settings.Default.diskCleanerRemoveMode == 0)
+                    if (Settings.Default.diskCleanerRemoveMode == 0)
                     {
                         // Remove permanately
                         fileInfo.Delete();
                     }
-                    else if (Properties.Settings.Default.diskCleanerRemoveMode == 1)
+                    else if (Settings.Default.diskCleanerRemoveMode == 1)
                     {
                         // Recycle file
-                        this.SendFileToRecycleBin(fileInfo.FullName);
+                        SendFileToRecycleBin(fileInfo.FullName);
                     }
                     else
                     {
                         // Move file to specified directory
-                        if (!Directory.Exists(Properties.Settings.Default.diskCleanerMoveFolder))
-                            Directory.CreateDirectory(Properties.Settings.Default.diskCleanerMoveFolder);
+                        if (!Directory.Exists(Settings.Default.diskCleanerMoveFolder))
+                            Directory.CreateDirectory(Settings.Default.diskCleanerMoveFolder);
 
-                        File.Move(fileInfo.FullName, string.Format(@"{0}\{1}", Properties.Settings.Default.diskCleanerMoveFolder, fileInfo.Name));
+                        File.Move(fileInfo.FullName, $@"{Settings.Default.diskCleanerMoveFolder}\{fileInfo.Name}");
                     }
                 }
-                catch (Exception ex)
+                catch (Exception )
                 {
                     //this.m_watcher.Exception(ex);
                 }
             }
 
-            Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
+            Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
             if (lSeqNum != 0)
             {
@@ -210,27 +204,27 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                    MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                    MessageBox.Show(System.Windows.Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
-            MessageBox.Show(Window.GetWindow(this), "Successfully cleaned files from disk", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Window.GetWindow(this), "Successfully cleaned files from disk", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
-            this.scanBase.MoveFirst();
+            ScanBase.MoveFirst();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.ResetInfo();
-            Wizard.fileList.Clear();
+            ResetInfo();
+            Wizard.FileList.Clear();
 
-            this.scanBase.MoveFirst();
+            ScanBase.MoveFirst();
         }
 
         private void SendFileToRecycleBin(string filePath)
         {
-            PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT() { wFunc = PInvoke.FO_DELETE, fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION, pFrom = filePath };
+            PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT { wFunc = PInvoke.FO_DELETE, fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION, pFrom = filePath };
             PInvoke.SHFileOperation(ref shf);
         }
     }

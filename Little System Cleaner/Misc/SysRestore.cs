@@ -17,14 +17,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
-using Little_System_Cleaner.Misc;
+using System.Runtime.InteropServices;
 
-namespace Little_System_Cleaner
+namespace Little_System_Cleaner.Misc
 {
     public class SysRestore
     {

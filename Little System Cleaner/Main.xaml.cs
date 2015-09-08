@@ -18,17 +18,9 @@
 
 using System;
 using System.IO;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Collections.Generic;
 using System.Windows.Input;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
 using System.Windows.Shell;
 using System.Reflection;
@@ -41,12 +33,12 @@ namespace Little_System_Cleaner
 
         internal static TaskbarItemProgressState TaskbarProgressState
         {
-            get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressState; }
+            get { return (Application.Current.MainWindow as Main).taskBarItemInfo.ProgressState; }
             set 
             {
-                if (App.Current != null)
+                if (Application.Current != null)
                 {
-                    Main currentWindow = App.Current.MainWindow as Main;
+                    Main currentWindow = Application.Current.MainWindow as Main;
 
                     if (currentWindow != null)
                     {
@@ -62,10 +54,10 @@ namespace Little_System_Cleaner
 
         internal static double TaskbarProgressValue
         {
-            get { return (App.Current.MainWindow as Main).taskBarItemInfo.ProgressValue; }
+            get { return (Application.Current.MainWindow as Main).taskBarItemInfo.ProgressValue; }
             set
             {
-                TaskbarItemInfo taskBarItemInfo = (App.Current.MainWindow as Main).taskBarItemInfo;
+                TaskbarItemInfo taskBarItemInfo = (Application.Current.MainWindow as Main).taskBarItemInfo;
 
                 if (taskBarItemInfo != null)
                     taskBarItemInfo.ProgressValue = value; 
@@ -73,35 +65,32 @@ namespace Little_System_Cleaner
         }
 
         private static LittleSoftwareStats.Watcher _watcher;
-        internal static LittleSoftwareStats.Watcher Watcher
-        {
-            get { return _watcher; }
-        }
+        internal static LittleSoftwareStats.Watcher Watcher => _watcher;
 
-        System.Timers.Timer timerCheck = new System.Timers.Timer(500);
-        private bool ignoreSetTabControl = false;
+        private readonly System.Timers.Timer _timerCheck = new System.Timers.Timer(500);
+        private bool _ignoreSetTabControl;
 
 		public Main()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
 		}
 
         void timerCheck_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
+            if (Dispatcher.Thread != System.Threading.Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new EventHandler<System.Timers.ElapsedEventArgs>(timerCheck_Elapsed), new object[] { sender, e });
+                Dispatcher.BeginInvoke(new EventHandler<System.Timers.ElapsedEventArgs>(timerCheck_Elapsed), sender, e);
                 return;
             }
 
-            this.tabItemWelcome.IsEnabled = this.tabItemOptions.IsEnabled = this.tabItemStartupMgr.IsEnabled = this.tabItemUninstallMgr.IsEnabled = IsTabsEnabled;
+            tabItemWelcome.IsEnabled = tabItemOptions.IsEnabled = tabItemStartupMgr.IsEnabled = tabItemUninstallMgr.IsEnabled = IsTabsEnabled;
         }
 
-        protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            this.DragMove();
+            DragMove();
 
             base.OnMouseLeftButtonDown(e);
         }
@@ -118,27 +107,27 @@ namespace Little_System_Cleaner
 
             IsTabsEnabled = true;
 
-            this.timerCheck.Elapsed += new System.Timers.ElapsedEventHandler(timerCheck_Elapsed);
-            this.timerCheck.Start();
+            _timerCheck.Elapsed += timerCheck_Elapsed;
+            _timerCheck.Start();
 
             // See if we have the current version
             if (Properties.Settings.Default.updateAuto)
             {
-                AutoUpdaterWPF.AutoUpdater.MainDispatcher = this.Dispatcher;
+                AutoUpdaterWPF.AutoUpdater.MainDispatcher = Dispatcher;
                 AutoUpdaterWPF.AutoUpdater.Start(Properties.Settings.Default.updateURL);
             }
 
-            this.taskBarItemInfo.Description = Utils.ProductName;
+            taskBarItemInfo.Description = Utils.ProductName;
         }
 
         private void OnClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (System.Windows.MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 bool? canExit = null;
 
-                UserControl lastCtrl = (this.tabControl.SelectedContent as UserControl);
-                System.Reflection.MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
+                UserControl lastCtrl = (tabControl.SelectedContent as UserControl);
+                MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
                 if (methodUnload != null)
                     canExit = (bool)methodUnload.Invoke(lastCtrl, new object[] { true });
 
@@ -157,7 +146,7 @@ namespace Little_System_Cleaner
                 Watcher.Stop();
         }
 
-        private void imageHelp_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void imageHelp_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ContextMenu contextMenu = new ContextMenu();
 
@@ -191,7 +180,7 @@ namespace Little_System_Cleaner
 
             menuItem.Icon = imgCtrl;
             menuItem.Header = header;
-            menuItem.Click += new RoutedEventHandler(menuItem_Click);
+            menuItem.Click += menuItem_Click;
 
             return menuItem;
         }
@@ -213,14 +202,14 @@ namespace Little_System_Cleaner
                     }
                 case "Visit Website":
                     {
-                        if (!Utils.LaunchURI(@"http://www.little-apps.com/little-system-cleaner/"))
+                        if (!Utils.LaunchUri(@"http://www.little-apps.com/little-system-cleaner/"))
                             MessageBox.Show(this, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                         break;
                     }
                 case "Check for updates":
                     {
-                        AutoUpdaterWPF.AutoUpdater.MainDispatcher = this.Dispatcher;
+                        AutoUpdaterWPF.AutoUpdater.MainDispatcher = Dispatcher;
                         AutoUpdaterWPF.AutoUpdater.Start(true);
                         break;
                     }
@@ -228,65 +217,61 @@ namespace Little_System_Cleaner
                     {
                         if (IsTabsEnabled)
                         {
-                            this.tabControl.SelectedIndex = this.tabControl.Items.IndexOf(this.tabItemOptions);
-                            this.ctrlOptions.ShowAboutTab();
+                            tabControl.SelectedIndex = tabControl.Items.IndexOf(tabItemOptions);
+                            ctrlOptions.ShowAboutTab();
                         }
                         break;
                     }
-
-                default:
-                    break;
             }
         }
 
         private void imageHelp_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         }
 
         private void imageHelp_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.Cursor = Cursors.Arrow;
+            Cursor = Cursors.Arrow;
         }
 
         private void comboBoxTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.ignoreSetTabControl)
+            if (_ignoreSetTabControl)
             {
-                this.ignoreSetTabControl = false;
+                _ignoreSetTabControl = false;
 
                 return;
             }
 
-            this.setTabControl(this.comboBoxTab.SelectedIndex);
+            SetTabControl(comboBoxTab.SelectedIndex);
         }
 
-        private void setTabControl(int index)
+        private void SetTabControl(int index)
         {
-            if (this.tabControl == null)
+            if (tabControl == null)
                 return;
 
             bool? bUnload = null;
 
-            UserControl lastCtrl = (this.tabControl.SelectedContent as UserControl);
-            System.Reflection.MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
+            UserControl lastCtrl = (tabControl.SelectedContent as UserControl);
+            MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
                 bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
 
             if (bUnload == true || !bUnload.HasValue)
             {
-                this.tabControl.SelectedIndex = index;
+                tabControl.SelectedIndex = index;
 
-                UserControl nextCtrl = (this.tabControl.SelectedContent as UserControl);
-                System.Reflection.MethodBase methodLoad = nextCtrl.GetType().GetMethod("OnLoaded");
-                if (methodLoad != null)
-                    methodLoad.Invoke(nextCtrl, new object[] { });
+                UserControl nextCtrl = (tabControl.SelectedContent as UserControl);
+                MethodBase methodLoad = nextCtrl.GetType().GetMethod("OnLoaded");
+                methodLoad?.Invoke(nextCtrl, new object[] { });
             }
             else
             {
                 // Change combobox back
-                this.ignoreSetTabControl = true;
-                this.comboBoxTab.SelectedIndex = this.tabControl.SelectedIndex;
+                _ignoreSetTabControl = true;
+                comboBoxTab.SelectedIndex = tabControl.SelectedIndex;
             }
         }
 	}

@@ -28,7 +28,7 @@ namespace CommonTools.WpfAnimatedGif
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
+                if (obj.GetType() != GetType()) return false;
                 return Equals((CacheKey)obj);
             }
 
@@ -72,11 +72,9 @@ namespace CommonTools.WpfAnimatedGif
             private static Uri GetUri(ImageSource image)
             {
                 var bmp = image as BitmapImage;
-                if (bmp != null)
-                {
-                    if (bmp.BaseUri != null && bmp.UriSource != null && !bmp.UriSource.IsAbsoluteUri)
-                        return new Uri(bmp.BaseUri, bmp.UriSource);
-                }
+                if (bmp?.BaseUri != null && bmp.UriSource != null && !bmp.UriSource.IsAbsoluteUri)
+                    return new Uri(bmp.BaseUri, bmp.UriSource);
+
                 var frame = image as BitmapFrame;
                 if (frame != null)
                 {
@@ -98,39 +96,36 @@ namespace CommonTools.WpfAnimatedGif
 
         }
 
-        private static readonly Dictionary<CacheKey, ObjectAnimationUsingKeyFrames> _animationCache =
-            new Dictionary<CacheKey, ObjectAnimationUsingKeyFrames>();
+        private static readonly Dictionary<CacheKey, ObjectAnimationUsingKeyFrames> _animationCache = new Dictionary<CacheKey, ObjectAnimationUsingKeyFrames>();
 
-        private static readonly Dictionary<CacheKey, int> _referenceCount =
-            new Dictionary<CacheKey, int>();
+        private static readonly Dictionary<CacheKey, int> ReferenceCount = new Dictionary<CacheKey, int>();
 
-        private static readonly Dictionary<CacheKey, AnimationClock> _clockCache =
-            new Dictionary<CacheKey, AnimationClock>();
+        private static readonly Dictionary<CacheKey, AnimationClock> ClockCache = new Dictionary<CacheKey, AnimationClock>();
 
         public static void IncrementReferenceCount(ImageSource source, RepeatBehavior repeatBehavior)
         {
             var cacheKey = new CacheKey(source, repeatBehavior);
             int count;
-            _referenceCount.TryGetValue(cacheKey, out count);
+            ReferenceCount.TryGetValue(cacheKey, out count);
             count++;
-            _referenceCount[cacheKey] = count;
+            ReferenceCount[cacheKey] = count;
         }
 
         public static void DecrementReferenceCount(ImageSource source, RepeatBehavior repeatBehavior)
         {
             var cacheKey = new CacheKey(source, repeatBehavior);
             int count;
-            _referenceCount.TryGetValue(cacheKey, out count);
+            ReferenceCount.TryGetValue(cacheKey, out count);
             if (count > 0)
             {
                 count--;
-                _referenceCount[cacheKey] = count;
+                ReferenceCount[cacheKey] = count;
             }
             if (count == 0)
             {
                 _animationCache.Remove(cacheKey);
-                _referenceCount.Remove(cacheKey);
-                _clockCache.Remove(cacheKey);
+                ReferenceCount.Remove(cacheKey);
+                ClockCache.Remove(cacheKey);
             }
         }
 
@@ -157,14 +152,14 @@ namespace CommonTools.WpfAnimatedGif
         public static void AddClock(ImageSource source, RepeatBehavior repeatBehavior, AnimationClock clock)
         {
             var key = new CacheKey(source, repeatBehavior);
-            _clockCache[key] = clock;
+            ClockCache[key] = clock;
         }
 
         public static AnimationClock GetClock(ImageSource source, RepeatBehavior repeatBehavior)
         {
             var key = new CacheKey(source, repeatBehavior);
             AnimationClock clock;
-            _clockCache.TryGetValue(key, out clock);
+            ClockCache.TryGetValue(key, out clock);
             return clock;
         }
     }

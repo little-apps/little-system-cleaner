@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Diagnostics;
-using System.Threading;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System.IO;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security;
+using System.Threading;
+using System.Windows;
+using System.Windows.Shell;
+using Little_System_Cleaner.Duplicate_Finder.Helpers;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     /// <summary>
     /// Interaction logic for Scan.xaml
     /// </summary>
-    public partial class Scan : UserControl, INotifyPropertyChanged
+    public partial class Scan : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
 
@@ -30,24 +25,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        public Wizard scanBase;
+        public Wizard ScanBase;
 
-        private Thread threadScan;
+        private readonly Thread _threadScan;
 
-        private readonly List<FileEntry> FileList;
+        private readonly List<FileEntry> _fileList;
 
         private string _statusText;
         private string _currentFile;
 
-        internal static List<string> validAudioFiles = new List<string>() { "aac", "aif", "ape", "wma", "aa", "aax", "flac", "mka", "mpc", "mp+", "mpp", "mp4", "m4a", "ogg", "oga", "wav", "wv", "mp3", "m2a", "mp2", "mp1" };
-        internal static Dictionary<string, KeyValuePair<int, byte[]>> compressedFiles = new Dictionary<string, KeyValuePair<int, byte[]>>()
-            {
+        internal static List<string> ValidAudioFiles = new List<string> { "aac", "aif", "ape", "wma", "aa", "aax", "flac", "mka", "mpc", "mp+", "mpp", "mp4", "m4a", "ogg", "oga", "wav", "wv", "mp3", "m2a", "mp2", "mp1" };
+        internal static Dictionary<string, KeyValuePair<int, byte[]>> CompressedFiles = new Dictionary<string, KeyValuePair<int, byte[]>>
+        {
                 { "cab", new KeyValuePair<int, byte[]>(0, new byte[] { 0x4d, 0x53, 0x43, 0x46 } ) },
                 { "zip", new KeyValuePair<int, byte[]>(0, new byte[] { 0x50, 0x4B, 0x03, 0x04 } ) },
                 { "jar", new KeyValuePair<int, byte[]>(0, new byte[] { 0x50, 0x4B, 0x03, 0x04 } ) },
@@ -61,38 +55,38 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 { "tbz2", new KeyValuePair<int, byte[]>(0, new byte[] { 0x42, 0x5A, 0x68 } ) },
                 { "xz", new KeyValuePair<int, byte[]>(0, new byte[] { 0xFD, 0x37, 0x7A, 0x58, 0x5A, 0x00 } ) },
                 { "xar", new KeyValuePair<int, byte[]>(0, new byte[] { 0x78, 0x61, 0x72, 0x21 } ) },
-                { "rpm", new KeyValuePair<int, byte[]>(0, new byte[] { 0xED, 0xAB, 0xEE, 0xDB } ) },
+                { "rpm", new KeyValuePair<int, byte[]>(0, new byte[] { 0xED, 0xAB, 0xEE, 0xDB } ) }
             };
 
         public string StatusText
         {
-            get { return this._statusText; }
+            get { return _statusText; }
             set
             {
-                if (this.Dispatcher.Thread != Thread.CurrentThread)
+                if (Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    this.Dispatcher.BeginInvoke(new Action(() => this.StatusText = value));
+                    Dispatcher.BeginInvoke(new Action(() => StatusText = value));
                     return;
                 }
 
-                this._statusText = value;
-                this.OnPropertyChanged("StatusText");
+                _statusText = value;
+                OnPropertyChanged("StatusText");
             }
         }
 
         public string CurrentFile
         {
-            get { return this._currentFile; }
+            get { return _currentFile; }
             set
             {
-                if (this.Dispatcher.Thread != Thread.CurrentThread)
+                if (Dispatcher.Thread != Thread.CurrentThread)
                 {
-                    this.Dispatcher.Invoke(new Action(() => this.CurrentFile = value));
+                    Dispatcher.Invoke(new Action(() => CurrentFile = value));
                     return;
                 }
 
-                this._currentFile = value;
-                this.OnPropertyChanged("CurrentFile");
+                _currentFile = value;
+                OnPropertyChanged("CurrentFile");
             }
         }
 
@@ -100,23 +94,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            ScanBase = sb;
 
-            this.FileList = new List<FileEntry>();
+            _fileList = new List<FileEntry>();
 
             // Increase total number of scans
-            Properties.Settings.Default.totalScans++;
+            Settings.Default.totalScans++;
 
             // Zero last scan errors found + fixed and elapsed
-            Properties.Settings.Default.lastScanErrors = 0;
-            Properties.Settings.Default.lastScanErrorsFixed = 0;
-            Properties.Settings.Default.lastScanElapsed = 0;
+            Settings.Default.lastScanErrors = 0;
+            Settings.Default.lastScanErrorsFixed = 0;
+            Settings.Default.lastScanElapsed = 0;
 
             // Set last scan date
-            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
-            this.threadScan = new Thread(new ThreadStart(this.ScanDisk));
-            this.threadScan.Start();
+            _threadScan = new Thread(ScanDisk);
+            _threadScan.Start();
         }
 
         private void ScanDisk()
@@ -126,67 +120,67 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             try
             {
                 DateTime dtStart = DateTime.Now;
-                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate));
-                this.StatusText = "Building list of all files";
+                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+                StatusText = "Building list of all files";
 
-                if (!this.BuildFileList(dtStart))
+                if (!BuildFileList(dtStart))
                 {
-                    this.ResetInfo(completedSucessfully);
-                    this.SetLastScanElapsed(dtStart);
+                    ResetInfo(completedSucessfully);
+                    SetLastScanElapsed(dtStart);
                 }
 
-                if (this.scanBase.Options.CompareFilename.GetValueOrDefault())
+                if (ScanBase.Options.CompareFilename.GetValueOrDefault())
                 {
                     // Group by filename
-                    this.GroupByFilename();
+                    GroupByFilename();
 
-                    if (this.scanBase.FilesGroupedByFilename.Count == 0)
+                    if (ScanBase.FilesGroupedByFilename.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.ResetInfo(completedSucessfully);
-                        this.SetLastScanElapsed(dtStart);
+                        ResetInfo(completedSucessfully);
+                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
 
-                    Properties.Settings.Default.lastScanErrors = this.scanBase.FilesGroupedByFilename.Count;
+                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByFilename.Count;
                 }
 
-                if (this.scanBase.Options.CompareChecksum.GetValueOrDefault() || this.scanBase.Options.CompareChecksumFilename.GetValueOrDefault())
+                if (ScanBase.Options.CompareChecksum.GetValueOrDefault() || ScanBase.Options.CompareChecksumFilename.GetValueOrDefault())
                 {
                     // Group by filename and/or checksum
-                    this.GroupByChecksum();
+                    GroupByChecksum();
 
-                    if (this.scanBase.FilesGroupedByHash.Count == 0)
+                    if (ScanBase.FilesGroupedByHash.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.ResetInfo(completedSucessfully);
-                        this.SetLastScanElapsed(dtStart);
+                        ResetInfo(completedSucessfully);
+                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
 
-                    Properties.Settings.Default.lastScanErrors = this.scanBase.FilesGroupedByHash.Count;
+                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
-                if (this.scanBase.Options.CompareMusicTags.GetValueOrDefault())
+                if (ScanBase.Options.CompareMusicTags.GetValueOrDefault())
                 {
                     // Group by audio tags
-                    this.GroupByTags();
+                    GroupByTags();
 
-                    if (this.scanBase.FilesGroupedByHash.Count == 0)
+                    if (ScanBase.FilesGroupedByHash.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.ResetInfo(completedSucessfully);
-                        this.SetLastScanElapsed(dtStart);
+                        ResetInfo(completedSucessfully);
+                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
 
-                    Properties.Settings.Default.lastScanErrors = this.scanBase.FilesGroupedByHash.Count;
+                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
-                this.SetLastScanElapsed(dtStart);
+                SetLastScanElapsed(dtStart);
                 completedSucessfully = true;
             }
             catch (ThreadAbortException)
@@ -195,36 +189,36 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             finally
             {
-                this.ResetInfo(completedSucessfully);
+                ResetInfo(completedSucessfully);
             }
         }
 
         public void AbortScanThread()
         {
-            if ((this.threadScan != null) && threadScan.IsAlive)
-                this.threadScan.Abort();
+            if ((_threadScan != null) && _threadScan.IsAlive)
+                _threadScan.Abort();
         }
 
         private void ResetInfo(bool success)
         {
-            this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
-            this.CurrentFile = "";
+            Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
+            CurrentFile = "";
 
             if (success) 
             {
-                this.StatusText = "View the results by clicking \"Continue\" below.";
-                this.Dispatcher.Invoke(new Action(() => this.buttonContinue.IsEnabled = true));
+                StatusText = "View the results by clicking \"Continue\" below.";
+                Dispatcher.Invoke(new Action(() => buttonContinue.IsEnabled = true));
             }
             else
             {
-                this.StatusText = "Click \"Cancel\" to go back to the previous screen.";
+                StatusText = "Click \"Cancel\" to go back to the previous screen.";
             }
                 
         }
 
         private void SetLastScanElapsed(DateTime dtStart)
         {
-            Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+            Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
         }
 
         /// <summary>
@@ -234,7 +228,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         /// <returns>True if file list created. Otherwise, false if no directories or files were located.</returns>
         private bool BuildFileList(DateTime dtStart)
         {
-            if (this.scanBase.Options.AllDrives.GetValueOrDefault())
+            if (ScanBase.Options.AllDrives.GetValueOrDefault())
             {
                 bool driveSelected = false;
 
@@ -259,7 +253,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
-            else if (this.scanBase.Options.AllExceptDrives.GetValueOrDefault())
+            else if (ScanBase.Options.AllExceptDrives.GetValueOrDefault())
             {
                 bool driveSelected = false;
 
@@ -268,13 +262,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
                         continue;
 
-                    if (this.scanBase.Options.AllExceptSystem.GetValueOrDefault() && Environment.SystemDirectory[0] == di.RootDirectory.Name[0])
+                    if (ScanBase.Options.AllExceptSystem.GetValueOrDefault() && Environment.SystemDirectory[0] == di.RootDirectory.Name[0])
                         continue;
 
-                    if (this.scanBase.Options.AllExceptRemovable.GetValueOrDefault() && di.DriveType == DriveType.Removable)
+                    if (ScanBase.Options.AllExceptRemovable.GetValueOrDefault() && di.DriveType == DriveType.Removable)
                         continue;
 
-                    if (this.scanBase.Options.AllExceptNetwork.GetValueOrDefault() && di.DriveType == DriveType.Network)
+                    if (ScanBase.Options.AllExceptNetwork.GetValueOrDefault() && di.DriveType == DriveType.Network)
                         continue;
 
                     if (!driveSelected)
@@ -292,34 +286,29 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
-            else if (this.scanBase.Options.OnlySelectedDrives.GetValueOrDefault())
+            else if (ScanBase.Options.OnlySelectedDrives.GetValueOrDefault())
             {
                 bool driveSelected = false;
 
-                foreach (IncludeDrive incDrive in this.scanBase.Options.Drives)
+                foreach (IncludeDrive incDrive in ScanBase.Options.Drives.Where(incDrive => incDrive.IsChecked.GetValueOrDefault()))
                 {
-                    if (incDrive.IsChecked.GetValueOrDefault())
+                    if (!driveSelected)
+                        driveSelected = true;
+
+                    try
                     {
-                        if (!driveSelected)
-                            driveSelected = true;
+                        DriveInfo di = new DriveInfo(incDrive.Name);
 
-                        try
-                        {
-                            DriveInfo di = new DriveInfo(incDrive.Name);
-
-                            if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
-                                continue;
-
-                            if (this.scanBase.Options.Drives.Contains(new IncludeDrive(di)))
-                                RecurseDirectory(di.RootDirectory);
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine("Unable to scan drive ({0}). The following error occurred: {1}", incDrive.Name, ex.Message);
+                        if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
                             continue;
-                        }
-                    }
 
+                        if (ScanBase.Options.Drives.Contains(new IncludeDrive(di)))
+                            RecurseDirectory(di.RootDirectory);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Unable to scan drive ({0}). The following error occurred: {1}", incDrive.Name, ex.Message);
+                    }
                 }
 
                 if (!driveSelected)
@@ -335,15 +324,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 bool dirSelected = false;
 
-                foreach (IncludeFolder dir in this.scanBase.Options.IncFolders)
+                foreach (IncludeFolder dir in ScanBase.Options.IncFolders.Where(dir => dir.IsChecked.GetValueOrDefault()))
                 {
-                    if (dir.IsChecked.GetValueOrDefault())
-                    {
-                        if (!dirSelected)
-                            dirSelected = true;
+                    if (!dirSelected)
+                        dirSelected = true;
 
-                        RecurseDirectory(dir.DirInfo);
-                    }
+                    RecurseDirectory(dir.DirInfo);
                 }
 
                 if (!dirSelected)
@@ -356,14 +342,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
 
-            if (this.FileList.Count == 0)
-            {
-                Utils.MessageBoxThreadSafe("No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                
-                return false;
-            }
+            if (_fileList.Count != 0)
+                return true;
 
-            return true;
+            Utils.MessageBoxThreadSafe("No files were found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                
+            return false;
         }
 
         private void RecurseDirectory(DirectoryInfo di)
@@ -371,7 +355,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (!di.Exists || di.FullName.Length > 248)
                 return;
 
-            if (this.scanBase.Options.ExcludeFolders.Contains(new ExcludeFolder(di.FullName)))
+            if (ScanBase.Options.ExcludeFolders.Contains(new ExcludeFolder(di.FullName)))
                 return;
 
             try
@@ -382,7 +366,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 {
                     foreach (string file in files)
                     {
-                        this.CurrentFile = file;
+                        CurrentFile = file;
 
                         if (file.Length > 260)
                             continue;
@@ -391,26 +375,26 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         {
                             FileInfo fi = new FileInfo(file);
 
-                            if (this.scanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
+                            if (ScanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
                                 continue;
 
-                            if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                            if (!ScanBase.Options.IncHiddenFiles.GetValueOrDefault() && (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                                 continue;
 
-                            if (this.IsSizeGreaterThan(fi.Length))
+                            if (IsSizeGreaterThan(fi.Length))
                                 continue;
 
-                            if ((this.scanBase.Options.SkipCompressedFiles.GetValueOrDefault()) && this.IsCompressedFile(fi))
+                            if ((ScanBase.Options.SkipCompressedFiles.GetValueOrDefault()) && IsCompressedFile(fi))
                                 continue;
 
-                            FileEntry fileEntry = new FileEntry(fi, this.scanBase.Options.CompareMusicTags.GetValueOrDefault());
-                            this.FileList.Add(fileEntry);
+                            FileEntry fileEntry = new FileEntry(fi, ScanBase.Options.CompareMusicTags.GetValueOrDefault());
+                            _fileList.Add(fileEntry);
                         }
                         catch (UnauthorizedAccessException)
                         {
 
                         }
-                        catch (System.Security.SecurityException)
+                        catch (SecurityException)
                         {
 
                         }
@@ -435,12 +419,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Debug.WriteLine("The following unknown exception occurred reading files: {0}", (object)ex.Message);
 
 #if (DEBUG)
-                throw ex;
+                throw;
 #endif
             }
             
 
-            if (this.scanBase.Options.ScanSubDirs.GetValueOrDefault()) // Will stop if false and only include root directory
+            if (ScanBase.Options.ScanSubDirs.GetValueOrDefault()) // Will stop if false and only include root directory
             {
                 try
                 {
@@ -450,7 +434,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     {
                         foreach (string dir in dirs)
                         {
-                            this.CurrentFile = dir;
+                            CurrentFile = dir;
 
                             if (dir.Length > 248)
                                 continue;
@@ -459,7 +443,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             {
                                 DirectoryInfo dirInfo = new DirectoryInfo(dir);
 
-                                if (!this.scanBase.Options.IncHiddenFiles.GetValueOrDefault() && (dirInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                                if (!ScanBase.Options.IncHiddenFiles.GetValueOrDefault() && (dirInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                                     continue;
 
                                 RecurseDirectory(dirInfo);
@@ -468,7 +452,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             {
                                 Debug.WriteLine("Could not access directories: {0}", (object)ex.Message);
                             }
-                            catch (System.Security.SecurityException ex)
+                            catch (SecurityException ex)
                             {
                                 Debug.WriteLine("A security exception error occurred reading directories: {0}", (object)ex.Message);
                             }
@@ -494,7 +478,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Debug.WriteLine("The following unknown exception occurred reading directories: {0}", (object)ex.Message);
 
 #if (DEBUG)
-                    throw ex;
+                    throw;
 #endif
                 }
             }
@@ -502,14 +486,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private bool IsSizeGreaterThan(long size)
         {
-            if (!this.scanBase.Options.SkipFilesGreaterThan.GetValueOrDefault())
+            if (!ScanBase.Options.SkipFilesGreaterThan.GetValueOrDefault())
                 return false;
 
-            long maxSize = this.scanBase.Options.SkipFilesGreaterSize;
+            long maxSize = ScanBase.Options.SkipFilesGreaterSize;
             double multiplier = 1;
 
             // Get size in bytes
-            switch (this.scanBase.Options.SkipFilesGreaterUnit)
+            switch (ScanBase.Options.SkipFilesGreaterUnit)
             {
                 case "KB":
                     multiplier = Math.Pow(1024, 1);
@@ -528,8 +512,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (size > maxSizeBytes)
                 return true;
-            else
-                return false;
+            return false;
         }
 
         /// <summary>
@@ -539,22 +522,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         /// <returns>True if file matches compressed file extension and signature</returns>
         private bool IsCompressedFile(FileInfo fileInfo)
         {
-            // Make sure fileInfo isn't null
-            if (fileInfo == null)
-                return false;
-
             // Get file extension
-            string fileExt = fileInfo.Extension;
+            string fileExt = fileInfo?.Extension;
 
             if (string.IsNullOrWhiteSpace(fileExt))
                 return false;
 
-            if (!compressedFiles.ContainsKey(fileExt))
+            if (!CompressedFiles.ContainsKey(fileExt))
                 return false;
 
-            int offset = compressedFiles[fileExt].Key;
+            int offset = CompressedFiles[fileExt].Key;
 
-            byte[] expectedSignature = compressedFiles[fileExt].Value;
+            byte[] expectedSignature = CompressedFiles[fileExt].Value;
             int expectedSignatureLen = expectedSignature.Length;
 
             byte[] actualSignature = new byte[expectedSignatureLen];
@@ -600,8 +579,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             finally
             {
-                if (fileStream != null)
-                    fileStream.Close();
+                fileStream?.Close();
             }
 
             if (expectedSignature.SequenceEqual(actualSignature))
@@ -612,94 +590,94 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void GroupByFilename()
         {
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != System.Windows.Shell.TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
-                if (!this.progressBar.IsIndeterminate)
-                    this.progressBar.IsIndeterminate = true;
+                if (!progressBar.IsIndeterminate)
+                    progressBar.IsIndeterminate = true;
             }));
 
-            this.StatusText = "Grouping files by filename";
+            StatusText = "Grouping files by filename";
 
             Main.Watcher.Event("Duplicate Finder", "Group by filename");
 
-            this.scanBase.FilesGroupedByFilename.Clear();
+            ScanBase.FilesGroupedByFilename.Clear();
 
-            var query = from p in this.FileList
-                        where p.IsDeleteable == true
+            var query = from p in _fileList
+                        where p.IsDeleteable
                         group p by p.FileName into g
                         where g.Count() > 1
                         select new { FileName = g.Key, Files = g };
 
             foreach (var group in query)
             {
-                if (!string.IsNullOrEmpty(group.FileName) && group.Files.Count() > 0)
-                    this.scanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList<FileEntry>());
+                if (!string.IsNullOrEmpty(group.FileName) && group.Files.Any())
+                    ScanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList());
             }
         }
 
         private void GroupByChecksum()
         {
             Dictionary<long, List<FileEntry>> filesGroupedBySize = new Dictionary<long, List<FileEntry>>();
-            bool compareFilename = this.scanBase.Options.CompareChecksumFilename.GetValueOrDefault();
+            bool compareFilename = ScanBase.Options.CompareChecksumFilename.GetValueOrDefault();
             long totalFiles = 0;
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != System.Windows.Shell.TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
-                if (!this.progressBar.IsIndeterminate)
-                    this.progressBar.IsIndeterminate = true;
+                if (!progressBar.IsIndeterminate)
+                    progressBar.IsIndeterminate = true;
             }));
 
-            this.StatusText = "Grouping files by size";
-            this.CurrentFile = "Please wait...";
+            StatusText = "Grouping files by size";
+            CurrentFile = "Please wait...";
 
             Main.Watcher.Event("Duplicate Finder", "Group by checksum");
 
-            this.scanBase.FilesGroupedByHash.Clear();
+            ScanBase.FilesGroupedByHash.Clear();
             
-            var query2 = from p in this.FileList
-                            where p.IsDeleteable == true
+            var query2 = from p in _fileList
+                            where p.IsDeleteable
                             group p by p.FileSize into g
                             where g.Count() > 1
                             select new { FileSize = g.Key, Files = g };
 
             foreach (var group in query2)
             {
-                if (group.Files.Count() > 0)
-                {
-                    List<FileEntry> filesGroup = group.Files.ToList<FileEntry>();
+                if (!@group.Files.Any())
+                    continue;
+                
+                List<FileEntry> filesGroup = @group.Files.ToList();
 
-                    filesGroupedBySize.Add(group.FileSize, filesGroup);
+                filesGroupedBySize.Add(@group.FileSize, filesGroup);
 
-                    totalFiles += filesGroup.Count;
-                }
+                totalFiles += filesGroup.Count;
             }
 
             if (filesGroupedBySize.Count == 0)
                 // Nothing found
                 return;
 
-            this.StatusText = "Getting checksums from files";
+            StatusText = "Getting checksums from files";
 
             // Sort file sizes from least to greatest
             var fileSizesSorted = from p in filesGroupedBySize
                         orderby p.Key ascending
                         select p.Value;
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
                 Main.TaskbarProgressValue = 0D;
 
-                this.progressBar.IsIndeterminate = false;
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = totalFiles;
+                progressBar.IsIndeterminate = false;
+                progressBar.Value = 0;
+                progressBar.Minimum = 0;
+                progressBar.Maximum = totalFiles;
             }));
 
             foreach (List<FileEntry> files in fileSizesSorted)
@@ -708,35 +686,35 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 {
                     foreach (FileEntry file in files)
                     {
-                        this.CurrentFile = file.FilePath;
+                        CurrentFile = file.FilePath;
 
-                        file.GetChecksum(this.scanBase.Options.HashAlgorithm.Algorithm, compareFilename);
+                        file.GetChecksum(ScanBase.Options.HashAlgorithm.Algorithm, compareFilename);
 
-                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            this.progressBar.Value += 1;
-                            Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                            progressBar.Value += 1;
+                            Main.TaskbarProgressValue = (progressBar.Value / progressBar.Maximum);
                         }));
                     }
 
                     var query3 = from p in files
                                  group p by p.Checksum into g
                                  where g.Count() > 1
-                                 select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
+                                 select new { Checksum = g.Key, Files = g.ToList() };
 
                     foreach (var group in query3)
                     {
-                        if (!string.IsNullOrEmpty(group.Checksum) && group.Files.Count<FileEntry>() > 0)
+                        if (!string.IsNullOrEmpty(group.Checksum) && group.Files.Any())
                         {
-                            if (!this.scanBase.FilesGroupedByHash.ContainsKey(group.Checksum))
-                                this.scanBase.FilesGroupedByHash.Add(group.Checksum, group.Files);
+                            if (!ScanBase.FilesGroupedByHash.ContainsKey(group.Checksum))
+                                ScanBase.FilesGroupedByHash.Add(group.Checksum, group.Files);
                             else
                             {
-                                List<FileEntry> existingKey = this.scanBase.FilesGroupedByHash[group.Checksum];
+                                List<FileEntry> existingKey = ScanBase.FilesGroupedByHash[group.Checksum];
 
                                 var mergedList = existingKey.Union(group.Files).Distinct();
 
-                                this.scanBase.FilesGroupedByHash[group.Checksum] = mergedList.ToList();
+                                ScanBase.FilesGroupedByHash[group.Checksum] = mergedList.ToList();
                             }
                         }
 
@@ -749,43 +727,43 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             List<FileEntry> fileEntriesTags = new List<FileEntry>();
 
-            this.StatusText = "Getting checksums from audio files";
-            this.CurrentFile = "Please wait...";
+            StatusText = "Getting checksums from audio files";
+            CurrentFile = "Please wait...";
 
             Main.Watcher.Event("Duplicate Finder", "Group by audio tags");
 
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != System.Windows.Shell.TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
-                if (!this.progressBar.IsIndeterminate)
-                    this.progressBar.IsIndeterminate = true;
+                if (!progressBar.IsIndeterminate)
+                    progressBar.IsIndeterminate = true;
             }));
             
-            foreach (FileEntry fileEntry in this.FileList)
+            foreach (FileEntry fileEntry in _fileList)
             {
                 if (fileEntry.IsDeleteable && fileEntry.HasAudioTags)
                 {
-                    fileEntry.GetTagsChecksum(this.scanBase.Options);
+                    fileEntry.GetTagsChecksum(ScanBase.Options);
                     fileEntriesTags.Add(fileEntry);
                 }
 
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    this.progressBar.Value += 1;
-                    Main.TaskbarProgressValue = (this.progressBar.Value / this.progressBar.Maximum);
+                    progressBar.Value += 1;
+                    Main.TaskbarProgressValue = (progressBar.Value / progressBar.Maximum);
                 }));
             }
 
-            this.StatusText = "Grouping files by audio tags";
-            this.CurrentFile = "Please wait...";
+            StatusText = "Grouping files by audio tags";
+            CurrentFile = "Please wait...";
 
             var query = from p in fileEntriesTags
-                        where p.HasAudioTags == true
+                        where p.HasAudioTags
                         group p by p.TagsChecksum into g
                         where g.Count() > 1
-                        select new { Checksum = g.Key, Files = g.ToList<FileEntry>() };
+                        select new { Checksum = g.Key, Files = g.ToList() };
 
             foreach (var group in query)
             {
@@ -793,7 +771,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 List<FileEntry> files = group.Files;
 
                 if (!string.IsNullOrEmpty(checksum) && files.Count > 0)
-                    this.scanBase.FilesGroupedByHash.Add(checksum, files);
+                    ScanBase.FilesGroupedByHash.Add(checksum, files);
             }
         }
 
@@ -801,16 +779,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                this.AbortScanThread();
-                this.scanBase.MovePrev();
+                AbortScanThread();
+                ScanBase.MovePrev();
             }
         }
 
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
-            this.scanBase.MoveNext();
-
-            
+            ScanBase.MoveNext();
         }
     }
 }

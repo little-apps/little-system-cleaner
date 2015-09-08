@@ -17,9 +17,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -30,27 +27,22 @@ namespace Little_System_Cleaner.Misc
     /// </summary>
     public class WindowWrapper : System.Windows.Forms.IWin32Window
     {
-        private IntPtr _hwnd;
-
         public WindowWrapper(IntPtr handle)
         {
-            _hwnd = handle;
+            Handle = handle;
         }
 
         public WindowWrapper(Window window)
         {
             WindowInteropHelper wih = new WindowInteropHelper(window);
-            this._hwnd = wih.Handle;
+            Handle = wih.Handle;
         }
 
-        public IntPtr Handle
-        {
-            get { return _hwnd; }
-        }
+        public IntPtr Handle { get; }
 
         internal static WindowWrapper GetCurrentWindowHandle()
         {
-            WindowWrapper winWrapper = new WindowWrapper(App.Current.MainWindow);
+            WindowWrapper winWrapper = new WindowWrapper(Application.Current.MainWindow);
 
             return winWrapper;
         }

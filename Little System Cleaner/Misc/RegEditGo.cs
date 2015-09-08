@@ -17,11 +17,12 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using Microsoft.Win32;
 
-namespace Little_System_Cleaner
+namespace Little_System_Cleaner.Misc
 {
     public class RegEditGo : IDisposable
     {
@@ -42,51 +43,51 @@ namespace Little_System_Cleaner
 
                     process.WaitForInputIdle();
 
-                    wndApp = process.MainWindowHandle;
+                    _wndApp = process.MainWindowHandle;
                     processId = (uint)process.Id;
 
                 }
             }
             else
             {
-                wndApp = processes[0].MainWindowHandle;
+                _wndApp = processes[0].MainWindowHandle;
                 processId = (uint)processes[0].Id;
 
-                Interop.SetForegroundWindow(wndApp);
+                Interop.SetForegroundWindow(_wndApp);
             }
 
-            if (wndApp == IntPtr.Zero)
+            if (_wndApp == IntPtr.Zero)
             {
                 ShowErrorMessage(new SystemException("no app handle"));
             }
 
             // get handle to treeview
-            wndTreeView = Interop.FindWindowEx(wndApp, IntPtr.Zero, "SysTreeView32", null);
-            if (wndTreeView == IntPtr.Zero)
+            _wndTreeView = Interop.FindWindowEx(_wndApp, IntPtr.Zero, "SysTreeView32", null);
+            if (_wndTreeView == IntPtr.Zero)
             {
                 ShowErrorMessage(new SystemException("no treeview"));
             }
 
             // get handle to listview
-            wndListView = Interop.FindWindowEx(wndApp, IntPtr.Zero, "SysListView32", null);
-            if (wndListView == IntPtr.Zero)
+            _wndListView = Interop.FindWindowEx(_wndApp, IntPtr.Zero, "SysListView32", null);
+            if (_wndListView == IntPtr.Zero)
             {
                 ShowErrorMessage(new SystemException("no listview"));
             }
 
 
             // allocate buffer in local process
-            lpLocalBuffer = Marshal.AllocHGlobal(dwBufferSize);
-            if (lpLocalBuffer == IntPtr.Zero)
+            _lpLocalBuffer = Marshal.AllocHGlobal(dwBufferSize);
+            if (_lpLocalBuffer == IntPtr.Zero)
                 ShowErrorMessage(new SystemException("Failed to allocate memory in local process"));
 
-            hProcess = Interop.OpenProcess(Interop.PROCESS_ALL_ACCESS, false, processId);
-            if (hProcess == IntPtr.Zero)
+            _hProcess = Interop.OpenProcess(Interop.PROCESS_ALL_ACCESS, false, processId);
+            if (_hProcess == IntPtr.Zero)
                 ShowErrorMessage(new ApplicationException("Failed to access process"));
 
             // Allocate a buffer in the remote process
-            lpRemoteBuffer = Interop.VirtualAllocEx(hProcess, IntPtr.Zero, dwBufferSize, Interop.MEM_COMMIT, Interop.PAGE_READWRITE);
-            if (lpRemoteBuffer == IntPtr.Zero)
+            _lpRemoteBuffer = Interop.VirtualAllocEx(_hProcess, IntPtr.Zero, dwBufferSize, Interop.MEM_COMMIT, Interop.PAGE_READWRITE);
+            if (_lpRemoteBuffer == IntPtr.Zero)
                 ShowErrorMessage(new SystemException("Failed to allocate memory in remote process"));
         }
 
@@ -121,7 +122,7 @@ namespace Little_System_Cleaner
 
                 if (hasValue)
                 {
-                    System.Threading.Thread.Sleep(200);
+                    Thread.Sleep(200);
                     locator.OpenValue(valueName);
                 }
             }
@@ -146,9 +147,9 @@ namespace Little_System_Cleaner
                 path = "HKEY_CLASSES_ROOT" + path.Remove(0, 4);
             }
 
-            Interop.SendMessage(wndTreeView, Interop.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+            Interop.SendMessage(_wndTreeView, Interop.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 
-            IntPtr tvItem = Interop.SendMessage(wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr)Interop.TVGN_ROOT, IntPtr.Zero);
+            IntPtr tvItem = Interop.SendMessage(_wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr)Interop.TVGN_ROOT, IntPtr.Zero);
             foreach (string key in path.Split('\\'))
             {
                 if (key.Length == 0) continue;
@@ -158,19 +159,19 @@ namespace Little_System_Cleaner
                 {
                     return;
                 }
-                Interop.SendMessage(wndTreeView, Interop.TVM_SELECTITEM, (IntPtr)TVGN_CARET, tvItem);
+                Interop.SendMessage(_wndTreeView, Interop.TVM_SELECTITEM, (IntPtr)TVGN_CARET, tvItem);
 
                 // expand tree node 
                 const int VK_RIGHT = 0x27;
-                Interop.SendMessage(wndTreeView, Interop.WM_KEYDOWN, (IntPtr)VK_RIGHT, IntPtr.Zero);
-                Interop.SendMessage(wndTreeView, Interop.WM_KEYUP, (IntPtr)VK_RIGHT, IntPtr.Zero);
+                Interop.SendMessage(_wndTreeView, Interop.WM_KEYDOWN, (IntPtr)VK_RIGHT, IntPtr.Zero);
+                Interop.SendMessage(_wndTreeView, Interop.WM_KEYUP, (IntPtr)VK_RIGHT, IntPtr.Zero);
             }
 
-            Interop.SendMessage(wndTreeView, Interop.TVM_SELECTITEM, (IntPtr)TVGN_CARET, tvItem);
+            Interop.SendMessage(_wndTreeView, Interop.TVM_SELECTITEM, (IntPtr)TVGN_CARET, tvItem);
 
             if (select)
             {
-                Interop.BringWindowToTop(wndApp);
+                Interop.BringWindowToTop(_wndApp);
             }
             else
             {
@@ -182,7 +183,7 @@ namespace Little_System_Cleaner
         {
             if (string.IsNullOrEmpty(value)) return;
 
-            Interop.SendMessage(wndListView, Interop.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+            Interop.SendMessage(_wndListView, Interop.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 
             if (value.Length == 0)
             {
@@ -210,9 +211,9 @@ namespace Little_System_Cleaner
 
             const int LVM_FIRST = 0x1000;
             const int LVM_ENSUREVISIBLE = (LVM_FIRST + 19);
-            Interop.SendMessage(wndListView, LVM_ENSUREVISIBLE, (IntPtr)item, IntPtr.Zero);
+            Interop.SendMessage(_wndListView, LVM_ENSUREVISIBLE, (IntPtr)item, IntPtr.Zero);
 
-            Interop.BringWindowToTop(wndApp);
+            Interop.BringWindowToTop(_wndApp);
 
             SendTabKey(false);
             SendTabKey(true);
@@ -227,23 +228,23 @@ namespace Little_System_Cleaner
             {
             }
 
-            if (lpLocalBuffer != IntPtr.Zero)
-                Marshal.FreeHGlobal(lpLocalBuffer);
-            if (lpRemoteBuffer != IntPtr.Zero)
-                Interop.VirtualFreeEx(hProcess, lpRemoteBuffer, 0, Interop.MEM_RELEASE);
-            if (hProcess != IntPtr.Zero)
-                Interop.CloseHandle(hProcess);
+            if (_lpLocalBuffer != IntPtr.Zero)
+                Marshal.FreeHGlobal(_lpLocalBuffer);
+            if (_lpRemoteBuffer != IntPtr.Zero)
+                Interop.VirtualFreeEx(_hProcess, _lpRemoteBuffer, 0, Interop.MEM_RELEASE);
+            if (_hProcess != IntPtr.Zero)
+                Interop.CloseHandle(_hProcess);
         }
 
         private const int dwBufferSize = 1024;
 
-        private IntPtr wndApp;
-        private IntPtr wndTreeView;
-        private IntPtr wndListView;
+        private readonly IntPtr _wndApp;
+        private readonly IntPtr _wndTreeView;
+        private readonly IntPtr _wndListView;
 
-        private IntPtr hProcess = IntPtr.Zero;
-        private IntPtr lpRemoteBuffer = IntPtr.Zero;
-        private IntPtr lpLocalBuffer = IntPtr.Zero;
+        private readonly IntPtr _hProcess = IntPtr.Zero;
+        private IntPtr _lpRemoteBuffer = IntPtr.Zero;
+        private IntPtr _lpLocalBuffer = IntPtr.Zero;
 
         private void SendTabKey(bool shiftPressed)
         {
@@ -251,15 +252,15 @@ namespace Little_System_Cleaner
             const int VK_SHIFT = 0x10;
             if (!shiftPressed)
             {
-                Interop.PostMessage(wndApp, Interop.WM_KEYDOWN, VK_TAB, 0x1f01);
-                Interop.PostMessage(wndApp, Interop.WM_KEYUP, VK_TAB, 0x1f01);
+                Interop.PostMessage(_wndApp, Interop.WM_KEYDOWN, VK_TAB, 0x1f01);
+                Interop.PostMessage(_wndApp, Interop.WM_KEYUP, VK_TAB, 0x1f01);
             }
             else
             {
-                Interop.PostMessage(wndApp, Interop.WM_KEYDOWN, VK_SHIFT, 0x1f01);
-                Interop.PostMessage(wndApp, Interop.WM_KEYDOWN, VK_TAB, 0x1f01);
-                Interop.PostMessage(wndApp, Interop.WM_KEYUP, VK_TAB, 0x1f01);
-                Interop.PostMessage(wndApp, Interop.WM_KEYUP, VK_SHIFT, 0x1f01);
+                Interop.PostMessage(_wndApp, Interop.WM_KEYDOWN, VK_SHIFT, 0x1f01);
+                Interop.PostMessage(_wndApp, Interop.WM_KEYDOWN, VK_TAB, 0x1f01);
+                Interop.PostMessage(_wndApp, Interop.WM_KEYUP, VK_TAB, 0x1f01);
+                Interop.PostMessage(_wndApp, Interop.WM_KEYUP, VK_SHIFT, 0x1f01);
             }
         }
 
@@ -270,9 +271,9 @@ namespace Little_System_Cleaner
             const int MAX_TVITEMTEXT = 512;
 
             // set address to remote buffer immediately following the tvItem
-            Int64 nRemoteBufferPtr = lpRemoteBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            var nRemoteBufferPtr = _lpRemoteBuffer.ToInt64() + Marshal.SizeOf(typeof(Interop.TVITEM));
 
-            Interop.TVITEM tvi = new Interop.TVITEM()
+            Interop.TVITEM tvi = new Interop.TVITEM
             {
                 mask = TVIF_TEXT,
                 hItem = item,
@@ -281,34 +282,34 @@ namespace Little_System_Cleaner
             };
 
             // copy local tvItem to remote buffer
-            bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref tvi, Marshal.SizeOf(typeof(Interop.TVITEM)), IntPtr.Zero);
+            bool bSuccess = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref tvi, Marshal.SizeOf(typeof(Interop.TVITEM)), IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
 
-            Interop.SendMessage(wndTreeView, Interop.TVM_GETITEMW, IntPtr.Zero, lpRemoteBuffer);
+            Interop.SendMessage(wndTreeView, Interop.TVM_GETITEMW, IntPtr.Zero, _lpRemoteBuffer);
 
             // copy tvItem back into local buffer (copy whole buffer because we don't yet know how big the string is)
-            bSuccess = Interop.ReadProcessMemory(hProcess, lpRemoteBuffer, lpLocalBuffer, dwBufferSize, IntPtr.Zero);
+            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, dwBufferSize, IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
-            Int64 nLocalBufferPtr = lpLocalBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            long nLocalBufferPtr = _lpLocalBuffer.ToInt64() + Marshal.SizeOf(typeof(Interop.TVITEM));
 
             return Marshal.PtrToStringUni((IntPtr)(nLocalBufferPtr));
         }
 
         private IntPtr FindKey(IntPtr itemParent, string key)
         {
-            IntPtr itemChild = Interop.SendMessage(wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr)Interop.TVGN_CHILD, itemParent);
+            IntPtr itemChild = Interop.SendMessage(_wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr)Interop.TVGN_CHILD, itemParent);
             while (itemChild != IntPtr.Zero)
             {
-                if (string.Compare(GetTVItemTextEx(wndTreeView, itemChild), key, true) == 0)
+                if (string.Compare(GetTVItemTextEx(_wndTreeView, itemChild), key, true) == 0)
                 {
                     return itemChild;
                 }
-                itemChild = Interop.SendMessage(wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr)Interop.TVGN_NEXT, itemChild);
+                itemChild = Interop.SendMessage(_wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr)Interop.TVGN_NEXT, itemChild);
             }
-            ShowErrorMessage(new SystemException(string.Format("TVM_GETNEXTITEM failed... key '{0}' not found!", key)));
+            ShowErrorMessage(new SystemException($"TVM_GETNEXTITEM failed... key '{key}' not found!"));
             return IntPtr.Zero;
         }
 
@@ -321,7 +322,7 @@ namespace Little_System_Cleaner
             const int LVIS_FOCUSED = 0x0001;
             const int LVIS_SELECTED = 0x0002;
 
-            Interop.LVITEM lvItem = new Interop.LVITEM()
+            Interop.LVITEM lvItem = new Interop.LVITEM
             {
                 mask = LVIF_STATE,
                 iItem = item,
@@ -331,12 +332,12 @@ namespace Little_System_Cleaner
             };
 
             // copy local lvItem to remote buffer
-            bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref lvItem, Marshal.SizeOf(typeof(Interop.LVITEM)), IntPtr.Zero);
+            bool bSuccess = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref lvItem, Marshal.SizeOf(typeof(Interop.LVITEM)), IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
 
             // Send the message to the remote window with the address of the remote buffer
-            if (Interop.SendMessage(wndListView, LVM_SETITEMSTATE, (IntPtr)item, lpRemoteBuffer) == IntPtr.Zero)
+            if (Interop.SendMessage(_wndListView, LVM_SETITEMSTATE, (IntPtr)item, _lpRemoteBuffer) == IntPtr.Zero)
                 ShowErrorMessage(new SystemException("LVM_GETITEM Failed "));
         }
 
@@ -346,9 +347,9 @@ namespace Little_System_Cleaner
             const int LVIF_TEXT = 0x0001;
 
             // set address to remote buffer immediately following the lvItem 
-            Int64 nRemoteBufferPtr = lpRemoteBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            long nRemoteBufferPtr = _lpRemoteBuffer.ToInt64() + Marshal.SizeOf(typeof(Interop.TVITEM));
 
-            Interop.LVITEM lvItem = new Interop.LVITEM()
+            Interop.LVITEM lvItem = new Interop.LVITEM
             {
                 mask = LVIF_TEXT,
                 iItem = item,
@@ -358,20 +359,20 @@ namespace Little_System_Cleaner
             };
 
             // copy local lvItem to remote buffer
-            bool bSuccess = Interop.WriteProcessMemory(hProcess, lpRemoteBuffer, ref lvItem, Marshal.SizeOf(typeof(Interop.LVITEM)), IntPtr.Zero);
+            bool bSuccess = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref lvItem, Marshal.SizeOf(typeof(Interop.LVITEM)), IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
 
             // Send the message to the remote window with the address of the remote buffer
-            if (Interop.SendMessage(wndListView, LVM_GETITEM, IntPtr.Zero, lpRemoteBuffer) == IntPtr.Zero)
+            if (Interop.SendMessage(_wndListView, LVM_GETITEM, IntPtr.Zero, _lpRemoteBuffer) == IntPtr.Zero)
                 return null;
 
             // copy lvItem back into local buffer (copy whole buffer because we don't yet know how big the string is)
-            bSuccess = Interop.ReadProcessMemory(hProcess, lpRemoteBuffer, lpLocalBuffer, dwBufferSize, IntPtr.Zero);
+            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, dwBufferSize, IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
-            Int64 nLocalBufferPtr = lpLocalBuffer.ToInt64() + (Int64)Marshal.SizeOf(typeof(Interop.TVITEM));
+            Int64 nLocalBufferPtr = _lpLocalBuffer.ToInt64() + Marshal.SizeOf(typeof(Interop.TVITEM));
             return Marshal.PtrToStringAnsi((IntPtr)(nLocalBufferPtr));
         }
 
@@ -379,13 +380,10 @@ namespace Little_System_Cleaner
         {
             using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System", true))
             {
-                if (regKey == null)
-                    return;
-
-                int? n = regKey.GetValue("DisableRegistryTools") as int?;
+                int? n = regKey?.GetValue("DisableRegistryTools") as int?;
 
                 // Value doesnt exists
-                if (!n.HasValue)
+                if (n == null)
                     return;
 
                 // User has access
@@ -395,7 +393,7 @@ namespace Little_System_Cleaner
                 // Value is either 1 or 2 which means we cant access regedit.exe
 
                 // So, lets enable access
-                regKey.SetValue("DisableRegistryTools", (int)0, RegistryValueKind.DWord);
+                regKey.SetValue("DisableRegistryTools", 0, RegistryValueKind.DWord);
             }
         }
 
@@ -406,7 +404,7 @@ namespace Little_System_Cleaner
 #endif
         }
 
-        private class Interop
+        private static class Interop
         {
             #region structs
 
@@ -423,7 +421,7 @@ namespace Little_System_Cleaner
                 public uint stateMask;
                 public IntPtr pszText;
                 public int cchTextMax;
-                public int iImage;
+                public readonly int iImage;
             }
 
             /// <summary>
@@ -434,14 +432,14 @@ namespace Little_System_Cleaner
             {
                 public uint mask;
                 public IntPtr hItem;
-                public uint state;
-                public uint stateMask;
+                public readonly uint state;
+                public readonly uint stateMask;
                 public IntPtr pszText;
                 public int cchTextMax;
-                public uint iImage;
-                public uint iSelectedImage;
-                public uint cChildren;
-                public IntPtr lParam;
+                public readonly uint iImage;
+                public readonly uint iSelectedImage;
+                public readonly uint cChildren;
+                public readonly IntPtr lParam;
             }
             #endregion
 
@@ -460,18 +458,11 @@ namespace Little_System_Cleaner
             internal const int TVGN_NEXT = 0x0001;
             internal const int TVGN_CHILD = 0x0004;
 
-
-            [DllImport("user32.dll")]
-            internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
             [DllImport("user32.dll", CharSet = CharSet.Auto)]
             internal static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
             [DllImport("kernel32")]
             internal static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
-
-            [DllImport("user32.dll")]
-            internal static extern uint WaitForInputIdle(IntPtr hProcess, uint dwMilliseconds);
 
             [DllImport("kernel32")]
             internal static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, uint flAllocationType, uint flProtect);

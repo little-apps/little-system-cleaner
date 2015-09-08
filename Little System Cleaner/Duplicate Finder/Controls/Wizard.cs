@@ -1,129 +1,94 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     public class Wizard : WizardBase
     {
-        private UserControl savedControl;
-        private readonly UserOptions _options;
+        private UserControl _savedControl;
 
         private Dictionary<string, List<FileEntry>> _filesGroupedByFilename;
         private Dictionary<string, List<FileEntry>> _filesGroupedByHash;
 
-        private ResultModel _results;
+        public UserOptions Options { get; }
 
-        public UserOptions Options
-        {
-            get { return this._options; }
-        }
+        public Dictionary<string, List<FileEntry>> FilesGroupedByFilename => _filesGroupedByFilename ??
+                                                                             (_filesGroupedByFilename = new Dictionary<string, List<FileEntry>>());
 
-        public Dictionary<string, List<FileEntry>> FilesGroupedByFilename
-        {
-            get {
-                return this._filesGroupedByFilename ??
-                       (this._filesGroupedByFilename = new Dictionary<string, List<FileEntry>>());
-            }
-        }
-        public Dictionary<string, List<FileEntry>> FilesGroupedByHash
-        {
-            get {
-                return this._filesGroupedByHash ??
-                       (this._filesGroupedByHash = new Dictionary<string, List<FileEntry>>());
-            }
-        }
+        public Dictionary<string, List<FileEntry>> FilesGroupedByHash => _filesGroupedByHash ??
+                                                                         (_filesGroupedByHash = new Dictionary<string, List<FileEntry>>());
 
-        public ResultModel Results
-        {
-            get { return this._results; }
-            set { this._results = value; }
-        }
+        public ResultModel Results { get; set; }
 
         public Wizard()
         {
-            this._options = new UserOptions();
+            Options = new UserOptions();
 
-            this.Controls.Add(typeof(Start));
-            this.Controls.Add(typeof(Scan));
-            this.Controls.Add(typeof(Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Scan));
+            Controls.Add(typeof(Results));
         }
 
         public override void OnLoaded()
         {
-            this.SetCurrentControl(0);
+            SetCurrentControl(0);
         }
 
         public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.CurrentControl is Scan)
+            var scan = CurrentControl as Scan;
+            if (scan != null)
             {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
-                if (exit)
-                {
-                    (this.CurrentControl as Scan).AbortScanThread();
-
-                    return true;
-                }
-                else
-                {
+                if (!exit)
                     return false;
-                }
+
+                scan.AbortScanThread();
+
+                return true;
             }
 
-            if (this.CurrentControl is Results)
-            {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+            if (!(CurrentControl is Results))
+                return true;
 
-                if (exit)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
-
-            return true;
+            return exit;
         }
 
         public void ShowFileInfo(FileEntry fileEntry)
         {
-            if (this.CurrentControl is Details)
-                this.HideFileInfo();
+            if (CurrentControl is Details)
+                HideFileInfo();
 
-            this.savedControl = this.CurrentControl;
+            _savedControl = CurrentControl;
 
             Details fileInfoCntrl = new Details(this, fileEntry);
-            this.Content = fileInfoCntrl;
+            Content = fileInfoCntrl;
         }
 
         public void HideFileInfo()
         {
-            if (this.CurrentControl is Results)
+            if (CurrentControl is Results)
                 return;
 
-            if (this.savedControl == null)
+            if (_savedControl == null)
             {
-                MessageBox.Show(App.Current.MainWindow, "An error occurred going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                this.MoveFirst();
+                MessageBox.Show(Application.Current.MainWindow, "An error occurred going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MoveFirst();
 
                 return;
             }
 
-            this.Content = this.savedControl;
+            Content = _savedControl;
 
-            this.savedControl = null;
+            _savedControl = null;
         }
     }
 }

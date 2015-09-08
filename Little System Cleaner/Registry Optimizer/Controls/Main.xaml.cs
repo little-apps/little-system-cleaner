@@ -17,22 +17,8 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Threading;
-using System.Collections.ObjectModel;
-using Microsoft.Win32;
-using System.Runtime.InteropServices;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using Little_System_Cleaner.Misc;
 
@@ -41,29 +27,29 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// <summary>
     /// Interaction logic for Main.xaml
     /// </summary>
-    public partial class Main : UserControl
+    public partial class Main
     {       
         /// <summary>
         /// True if the registry has been compacted and is waiting for a reboot
         /// </summary>
         internal static bool IsCompacted { get; set; }
 
-        Wizard scanBase;
+        readonly Wizard _scanBase;
 
         public Main(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            _scanBase = sb;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (!Utils.IsAssemblyLoaded("System.Windows.Controls.DataVisualization.Toolkit", new Version(3, 5, 0), true))
             {
-                MessageBox.Show(App.Current.MainWindow, "It appears that System.Windows.Controls.DataVisualization.Toolkit.dll is not loaded, because of this, the registry cannot be optimized.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 3.5.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "It appears that System.Windows.Controls.DataVisualization.Toolkit.dll is not loaded, because of this, the registry cannot be optimized.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 3.5.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                this.buttonAnalyze.IsEnabled = false;
+                buttonAnalyze.IsEnabled = false;
             }
                 
         }
@@ -92,7 +78,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 return;
             }
 
-            this.scanBase.MoveNext();
+            _scanBase.MoveNext();
         }
 
     }

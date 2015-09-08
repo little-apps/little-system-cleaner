@@ -249,9 +249,9 @@ namespace CommonTools.WpfAnimatedGif
         public static void AddAnimationCompletedHandler(Image image, RoutedEventHandler handler)
         {
             if (image == null)
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
             image.AddHandler(AnimationCompletedEvent, handler);
         }
 
@@ -263,9 +263,9 @@ namespace CommonTools.WpfAnimatedGif
         public static void RemoveAnimationCompletedHandler(Image image, RoutedEventHandler handler)
         {
             if (image == null)
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
             image.RemoveHandler(AnimationCompletedEvent, handler);
         }
 
@@ -287,9 +287,9 @@ namespace CommonTools.WpfAnimatedGif
         public static void AddAnimationLoadedHandler(Image image, RoutedEventHandler handler)
         {
             if (image == null)
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
             image.AddHandler(AnimationLoadedEvent, handler);
         }
 
@@ -301,9 +301,9 @@ namespace CommonTools.WpfAnimatedGif
         public static void RemoveAnimationLoadedHandler(Image image, RoutedEventHandler handler)
         {
             if (image == null)
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
             image.RemoveHandler(AnimationLoadedEvent, handler);
         }
 
@@ -322,8 +322,7 @@ namespace CommonTools.WpfAnimatedGif
                 imageControl.Unloaded -= ImageControlUnloaded;
                 AnimationCache.DecrementReferenceCount(oldValue, GetRepeatBehavior(imageControl));
                 var controller = GetAnimationController(imageControl);
-                if (controller != null)
-                    controller.Dispose();
+                controller?.Dispose();
             }
             if (newValue != null)
             {
@@ -344,8 +343,7 @@ namespace CommonTools.WpfAnimatedGif
                 AnimationCache.DecrementReferenceCount(source, GetRepeatBehavior(imageControl));
 
             var controller = GetAnimationController(imageControl);
-            if (controller != null)
-                controller.Dispose();
+            controller?.Dispose();
         }
 
         private static void RepeatBehaviorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
@@ -399,8 +397,7 @@ namespace CommonTools.WpfAnimatedGif
         private static void InitAnimationOrImage(Image imageControl)
         {
             var controller = GetAnimationController(imageControl);
-            if (controller != null)
-                controller.Dispose();
+            controller?.Dispose();
             SetAnimationController(imageControl, null);
             SetIsAnimationLoaded(imageControl, false);
 
@@ -501,14 +498,7 @@ namespace CommonTools.WpfAnimatedGif
                             baseFrame = frame;
                             break;
                         case FrameDisposalMethod.RestoreBackground:
-                            if (IsFullFrame(metadata, fullSize))
-                            {
-                                baseFrame = null;
-                            }
-                            else
-                            {
-                                baseFrame = ClearArea(frame, metadata);
-                            }
+                            baseFrame = IsFullFrame(metadata, fullSize) ? null : ClearArea(frame, metadata);
                             break;
                         case FrameDisposalMethod.RestorePrevious:
                             // Reuse same base frame
@@ -568,9 +558,7 @@ namespace CommonTools.WpfAnimatedGif
         private static bool IsLoadingDeferred(BitmapSource source)
         {
             var bmp = source as BitmapImage;
-            if (bmp == null)
-                return false;
-            if (bmp.UriSource != null && !bmp.UriSource.IsAbsoluteUri)
+            if (bmp?.UriSource != null && !bmp.UriSource.IsAbsoluteUri)
                 return bmp.BaseUri == null;
             return false;
         }
@@ -654,11 +642,7 @@ namespace CommonTools.WpfAnimatedGif
             Stream stream = null;
             if (uri.Scheme == PackUriHelper.UriSchemePack)
             {
-                StreamResourceInfo sri;
-                if (uri.Authority == "siteoforigin:,,,")
-                    sri = Application.GetRemoteStream(uri);
-                else
-                    sri = Application.GetResourceStream(uri); 
+                var sri = uri.Authority == "siteoforigin:,,," ? Application.GetRemoteStream(uri) : Application.GetResourceStream(uri);
 
                 if (sri != null)
                     stream = sri.Stream;
@@ -668,14 +652,14 @@ namespace CommonTools.WpfAnimatedGif
                 WebClient wc = new WebClient();
                 stream = wc.OpenRead(uri);
             }
-            if (stream != null)
+
+            if (stream == null)
+                return null;
+
+            using (stream)
             {
-                using (stream)
-                {
-                    return GifFile.ReadGifFile(stream, true);
-                }
+                return GifFile.ReadGifFile(stream, true);
             }
-            return null;
         }
 
         private static bool IsFullFrame(FrameMetadata metadata, Int32Size fullSize)
@@ -728,29 +712,21 @@ namespace CommonTools.WpfAnimatedGif
             if (repeatBehavior != default(RepeatBehavior))
                 return repeatBehavior;
 
-            int repeatCount;
-            if (gifMetadata != null)
-            {
-                repeatCount = gifMetadata.RepeatCount;
-            }
-            else
-            {
-                repeatCount = GetRepeatCount(decoder);
-            }
+            var repeatCount = gifMetadata?.RepeatCount ?? GetRepeatCount(decoder);
+
             if (repeatCount == 0)
                 return RepeatBehavior.Forever;
+
             return new RepeatBehavior(repeatCount);
         }
 
         private static int GetRepeatCount(BitmapDecoder decoder)
         {
             var ext = GetApplicationExtension(decoder, "NETSCAPE2.0");
-            if (ext != null)
-            {
-                byte[] bytes = ext.GetQueryOrNull<byte[]>("/Data");
-                if (bytes != null && bytes.Length >= 4)
-                    return BitConverter.ToUInt16(bytes, 2);
-            }
+            byte[] bytes = ext?.GetQueryOrNull<byte[]>("/Data");
+
+            if (bytes != null && bytes.Length >= 4)
+                return BitConverter.ToUInt16(bytes, 2);
             return 1;
         }
 
@@ -768,7 +744,7 @@ namespace CommonTools.WpfAnimatedGif
                     if (extApplication == application)
                         return extension;
                 }
-                query = string.Format("/[{0}]appext", ++count);
+                query = $"/[{++count}]appext";
                 extension = decoder.Metadata.GetQueryOrNull<BitmapMetadata>(query);
             }
             return null;

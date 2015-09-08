@@ -18,62 +18,56 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
 using System.Windows.Controls.DataVisualization.Charting;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
     /// Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class AnalyzeResults : UserControl
+    public partial class AnalyzeResults
     {
-        Wizard scanBase;
+        readonly Wizard _scanBase;
 
         public AnalyzeResults(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            _scanBase = sb;
 
             double oldRegistrySize = HiveManager.GetOldRegistrySize(), newRegistrySize = HiveManager.GetNewRegistrySize();
 
-            decimal oldRegistrySizeMB = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
-            decimal diffRegistrySizeMB = decimal.Round((Convert.ToDecimal(oldRegistrySize - newRegistrySize)) / 1024 / 1024, 2);
+            decimal oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
+            decimal diffRegistrySizeMb = decimal.Round((Convert.ToDecimal(oldRegistrySize - newRegistrySize)) / 1024 / 1024, 2);
 
-            ((PieSeries)mcChart.Series[0]).ItemsSource = new KeyValuePair<string, decimal>[] { 
-                new KeyValuePair<string, decimal>(string.Format("Registry Size ({0}MB)", oldRegistrySizeMB), oldRegistrySizeMB - diffRegistrySizeMB),
-                new KeyValuePair<string, decimal>(string.Format("Saving ({0}MB)", diffRegistrySizeMB), diffRegistrySizeMB) };
+            ((PieSeries)mcChart.Series[0]).ItemsSource = 
+                new[] 
+                { 
+                    new KeyValuePair<string, decimal>($"Registry Size ({oldRegistrySizeMb}MB)", oldRegistrySizeMb - diffRegistrySizeMb),
+                    new KeyValuePair<string, decimal>($"Saving ({diffRegistrySizeMb}MB)", diffRegistrySizeMb)
+                };
 
             if ((100 - ((newRegistrySize / oldRegistrySize) * 100)) >= 5) {
                 // Set errors to number of registry hives
-                Properties.Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;
+                Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;
 
-                this.mcChart.Title = "The Windows Registry Needs To Be Compacted";
+                mcChart.Title = "The Windows Registry Needs To Be Compacted";
             } else {
                 // Properties.Settings.Default.lastScanErrors will still equal 0
 
-                this.mcChart.Title = "The Windows Registry Does Not Need To Be Compacted";
-                this.buttonCompact.IsEnabled = false;
+                mcChart.Title = "The Windows Registry Does Not Need To Be Compacted";
+                buttonCompact.IsEnabled = false;
             }
         }
 
         private void buttonCompact_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?", Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
             Wizard.IsBusy = true;
@@ -87,27 +81,27 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             secureDesktop.Close();
 
             // Set errors fixed to number of registry hives
-            Properties.Settings.Default.lastScanErrorsFixed = Wizard.RegistryHives.Count;
-            Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
+            Settings.Default.lastScanErrorsFixed = Wizard.RegistryHives.Count;
+            Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
             Wizard.IsBusy = false;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?", Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Application.Current.MainWindow, "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 // Restart computer
                 PInvoke.ExitWindowsEx(0x02, PInvoke.MajorOperatingSystem | PInvoke.MinorReconfig | PInvoke.FlagPlanned);
 
-            this.scanBase.MoveFirst();
+            _scanBase.MoveFirst();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             if (Wizard.IsBusy)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted", Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
-            this.scanBase.MoveFirst();
+            _scanBase.MoveFirst();
         }
     }
 

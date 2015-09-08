@@ -17,10 +17,7 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
@@ -31,10 +28,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class ApplicationPaths : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.ApplicationPaths; }
-        }
+        public override string ScannerName => Strings.ApplicationPaths;
 
         /// <summary>
         /// Verifies programs in App Paths
@@ -66,13 +60,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (string strFolder in regKey.GetValueNames())
+            foreach (string strFolder in regKey.GetValueNames().Where(strFolder => !string.IsNullOrWhiteSpace(strFolder)).Where(strFolder => !ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder)))
             {
-                if (string.IsNullOrWhiteSpace(strFolder))
-                    continue;
-
-                if (!ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder))
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
             }
         }
 
@@ -87,37 +77,37 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 RegistryKey regKey2 = regKey.OpenSubKey(strSubKey);
 
-                if (regKey2 != null)
+                if (regKey2 == null)
+                    continue;
+
+                if (Convert.ToInt32(regKey2.GetValue("BlockOnTSNonInstallMode")) == 1)
+                    continue;
+
+                string strAppPath = regKey2.GetValue("") as string;
+                string strAppDir = regKey2.GetValue("Path") as string;
+
+                if (string.IsNullOrEmpty(strAppPath))
                 {
-                    if (Convert.ToInt32(regKey2.GetValue("BlockOnTSNonInstallMode")) == 1)
-                        continue;
-
-                    string strAppPath = regKey2.GetValue("") as string;
-                    string strAppDir = regKey2.GetValue("Path") as string;
-
-                    if (string.IsNullOrEmpty(strAppPath))
-                    {
-                        Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
-                        continue;
-                    }
-
-                    if (!string.IsNullOrEmpty(strAppDir))
-                    {
-                        if (Wizard.IsOnIgnoreList(strAppDir))
-                            continue;
-                        else if (Utils.SearchPath(strAppPath, strAppDir))
-                            continue;
-                        else if (Utils.SearchPath(strSubKey, strAppDir))
-                            continue;
-                    }
-                    else
-                    {
-                        if (Utils.FileExists(strAppPath) || Wizard.IsOnIgnoreList(strAppPath))
-                            continue;
-                    }
-
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.Name);
+                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
+                    continue;
                 }
+
+                if (!string.IsNullOrEmpty(strAppDir))
+                {
+                    if (Wizard.IsOnIgnoreList(strAppDir))
+                        continue;
+                    if (Utils.SearchPath(strAppPath, strAppDir))
+                        continue;
+                    if (Utils.SearchPath(strSubKey, strAppDir))
+                        continue;
+                }
+                else
+                {
+                    if (Utils.FileExists(strAppPath) || Wizard.IsOnIgnoreList(strAppPath))
+                        continue;
+                }
+
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.Name);
             }
 
             regKey.Close();

@@ -1,81 +1,39 @@
-﻿using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Security;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
     public class PluginFunctions
     {
-        private readonly Dictionary<RegistryKey, string[]> regKeyValueNames;
-        private readonly Dictionary<RegistryKey, bool> regKeySubKeys;
-        private readonly Dictionary<string, bool> dictFolders;
-        private readonly List<string> filePathList;
-        private readonly List<INIInfo> iniInfoList;
-        private readonly Dictionary<string, List<string>> dictXmlPaths;
+        public Dictionary<RegistryKey, string[]> RegistryValueNames { get; }
 
-        public Dictionary<RegistryKey, string[]> RegistryValueNames 
-        {
-            get
-            {
-                return regKeyValueNames;
-            }
-        }
+        public Dictionary<RegistryKey, bool> RegistrySubKeys { get; }
 
-        public Dictionary<RegistryKey, bool> RegistrySubKeys
-        {
-            get
-            {
-                return regKeySubKeys;
-            }
-        }
-        public Dictionary<string, bool> Folders
-        {
-            get
-            {
-                return dictFolders;
-            }
-        }
+        public Dictionary<string, bool> Folders { get; }
 
-        public List<string> FilePaths
-        {
-            get
-            {
-                return filePathList;
-            }
-        }
+        public List<string> FilePaths { get; }
 
-        public List<INIInfo> INIList
-        {
-            get
-            {
-                return iniInfoList;
-            }
-        }
+        public List<IniInfo> IniList { get; }
 
-        public Dictionary<string, List<string>> XmlPaths
-        {
-            get
-            {
-                return dictXmlPaths;
-            }
-        }
+        public Dictionary<string, List<string>> XmlPaths { get; }
 
         public PluginFunctions()
         {
-            regKeyValueNames = new Dictionary<RegistryKey, string[]>();
-            regKeySubKeys = new Dictionary<RegistryKey, bool>();
-            dictFolders = new Dictionary<string, bool>();
-            filePathList = new List<string>();
-            iniInfoList = new List<INIInfo>();
-            dictXmlPaths = new Dictionary<string, List<string>>();
+            RegistryValueNames = new Dictionary<RegistryKey, string[]>();
+            RegistrySubKeys = new Dictionary<RegistryKey, bool>();
+            Folders = new Dictionary<string, bool>();
+            FilePaths = new List<string>();
+            IniList = new List<IniInfo>();
+            XmlPaths = new Dictionary<string, List<string>>();
         }
 
         public void DeleteKey(RegistryKey regKey, bool recurse)
@@ -101,13 +59,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 regValueNames = regKey.GetValueNames();
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey.ToString());
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey);
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey.ToString());
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey);
             }
 
             if (regValueNames == null)
@@ -213,27 +171,30 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             Dictionary<string, bool> regexSubKeys = new Dictionary<string, bool>();
             List<string> regexValueNames = new List<string>();
-            Dictionary<RegistryKey, string[]> valueNames = new Dictionary<RegistryKey, string[]>();
-            Dictionary<RegistryKey, bool> subKeys = new Dictionary<RegistryKey, bool>();
 
             while (xmlChildren.Read())
             {
-                if (xmlChildren.Name == "IfSubKey")
+                switch (xmlChildren.Name)
                 {
-                    string searchText = xmlChildren.GetAttribute("SearchText");
-                    bool recurse = ((xmlChildren.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                    case "IfSubKey":
+                    {
+                        string searchText = xmlChildren.GetAttribute("SearchText");
+                        bool recurse = ((xmlChildren.GetAttribute("Recursive") == "Y") ? (true) : (false));
 
-                    regexSubKeys.Add(searchText, recurse);
-                }
-                else if (xmlChildren.Name == "IfValueName")
-                {
-                    string searchText = xmlChildren.GetAttribute("SearchText");
-                    regexValueNames.Add(searchText);
+                        regexSubKeys.Add(searchText, recurse);
+                    }
+                        break;
+                    case "IfValueName":
+                    {
+                        string searchText = xmlChildren.GetAttribute("SearchText");
+                        regexValueNames.Add(searchText);
+                    }
+                        break;
                 }
             }
 
-            valueNames = RecurseRegKeyValueNames(regKey, regexValueNames, includeSubKeys);
-            subKeys = RecurseRegKeySubKeys(regKey, regexSubKeys, includeSubKeys);
+            var valueNames = RecurseRegKeyValueNames(regKey, regexValueNames, includeSubKeys);
+            var subKeys = RecurseRegKeySubKeys(regKey, regexSubKeys, includeSubKeys);
 
             if (valueNames.Count > 0)
             {
@@ -264,7 +225,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 else if (xmlChildren.Name == "IfFolder")
                 {
                     string folderName = xmlChildren.GetAttribute("SearchText");
-                    bool recurse = ((xmlChildren.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                    bool recurse = ((xmlChildren.GetAttribute("Recursive") == "Y"));
 
                     if (!string.IsNullOrEmpty(folderName))
                         regexFolders.Add(folderName, recurse);
@@ -301,10 +262,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 string folderName = folderPath.Substring(Path.GetDirectoryName(folderPath).Length + 1);
 
                 // Iterate through the files and folders in the current folder
-                foreach (KeyValuePair<string, bool> kvp in regexFolders)
+                foreach (KeyValuePair<string, bool> kvp in regexFolders.Where(kvp => Regex.IsMatch(folderName, kvp.Key)))
                 {
-                    if (Regex.IsMatch(folderName, kvp.Key))
-                        AddToFolders(folderPath, kvp.Value);
+                    AddToFolders(folderPath, kvp.Value);
                 }
 
                 try
@@ -337,7 +297,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
         }
 
-        public void DeleteINIValue(string filePath, string searchSectionText, string searchValueNameText)
+        public void DeleteIniValue(string filePath, string searchSectionText, string searchValueNameText)
         {
             if (!File.Exists(filePath))
                 return;
@@ -347,33 +307,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 if (string.IsNullOrEmpty(sectionName))
                     continue;
 
-                if (Regex.IsMatch(sectionName, searchSectionText))
+                if (!Regex.IsMatch(sectionName, searchSectionText))
+                    continue;
+
+                foreach (KeyValuePair<string, string> kvp in MiscFunctions.GetValues(filePath, sectionName).Cast<KeyValuePair<string, string>>().Where(kvp => Regex.IsMatch(kvp.Key, searchValueNameText)))
                 {
-                    foreach (KeyValuePair<string, string> kvp in MiscFunctions.GetValues(filePath, sectionName))
-                    {
-                        if (Regex.IsMatch(kvp.Key, searchValueNameText))
-                        {
-                            INIList.Add(new INIInfo() { filePath = filePath, sectionName = sectionName, valueName = kvp.Key });
-                        }
-                    }
+                    IniList.Add(new IniInfo { FilePath = filePath, SectionName = sectionName, ValueName = kvp.Key });
                 }
             }
         }
 
-        public void DeleteINISection(string filePath, string searchSectionText)
+        public void DeleteIniSection(string filePath, string searchSectionText)
         {
             if (!File.Exists(filePath))
                 return;
 
-            foreach (string sectionName in MiscFunctions.GetSections(filePath))
+            foreach (string sectionName in MiscFunctions.GetSections(filePath).Where(sectionName => !string.IsNullOrEmpty(sectionName)).Where(sectionName => Regex.IsMatch(sectionName, searchSectionText)))
             {
-                if (string.IsNullOrEmpty(sectionName))
-                    continue;
-
-                if (Regex.IsMatch(sectionName, searchSectionText))
-                {
-                    INIList.Add(new INIInfo() { filePath = filePath, sectionName = sectionName });
-                }
+                IniList.Add(new IniInfo { FilePath = filePath, SectionName = sectionName });
             }
         }
 
@@ -399,7 +350,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 regValueNames = regKey.GetValueNames();
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
                 Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key value names.", ex.Message);
             }
@@ -427,7 +378,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 {
                     subKeys = regKey.GetSubKeyNames();
                 }
-                catch (System.Security.SecurityException ex)
+                catch (SecurityException ex)
                 {
                     Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.", ex.Message);
                 }
@@ -449,7 +400,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     {
                         subRegKey = regKey.OpenSubKey(subKey);
                     }
-                    catch (System.Security.SecurityException ex)
+                    catch (SecurityException ex)
                     {
                         Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
                     }
@@ -481,7 +432,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 subKeys = regKey.GetSubKeyNames();
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
                 Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
             }
@@ -495,27 +446,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             foreach (string subKeyName in subKeys)
             {
-                foreach (KeyValuePair<string, bool> kvp in regexSubKeys)
+                foreach (KeyValuePair<string, bool> kvp in regexSubKeys.Where(kvp => Regex.IsMatch(subKeyName, kvp.Key)))
                 {
-                    if (Regex.IsMatch(subKeyName, kvp.Key))
+                    RegistryKey subKey = null;
+
+                    try
                     {
-                        RegistryKey subKey = null;
-
-                        try
-                        {
-                            subKey = regKey.OpenSubKey(subKeyName, true);
-                        }
-                        catch (System.Security.SecurityException ex)
-                        {
-                            Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
-                        }
-
-                        if (subKey != null)
-                        {
-                            ret.Add(subKey, kvp.Value);
-                            break;
-                        }
+                        subKey = regKey.OpenSubKey(subKeyName, true);
                     }
+                    catch (SecurityException ex)
+                    {
+                        Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
+                    }
+
+                    if (subKey == null)
+                        continue;
+
+                    ret.Add(subKey, kvp.Value);
+                    break;
                 }
             }
 
@@ -527,7 +475,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 {
                     recurseSubKeys = regKey.GetSubKeyNames();
                 }
-                catch (System.Security.SecurityException ex)
+                catch (SecurityException ex)
                 {
                     Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
                 }
@@ -547,16 +495,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     {
                         subRegKey = regKey.OpenSubKey(subKey, true);
                     }
-                    catch (System.Security.SecurityException ex)
+                    catch (SecurityException ex)
                     {
                         Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
                     }
 
-                    if (subRegKey != null)
-                    {
-                        foreach (KeyValuePair<RegistryKey, bool> kvp in RecurseRegKeySubKeys(subRegKey, regexSubKeys, recurse))
-                            ret.Add(kvp.Key, kvp.Value);
-                    }
+                    if (subRegKey == null)
+                        continue;
+
+                    foreach (KeyValuePair<RegistryKey, bool> kvp in RecurseRegKeySubKeys(subRegKey, regexSubKeys, recurse))
+                        ret.Add(kvp.Key, kvp.Value);
                 }
             }
 
@@ -578,7 +526,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!Directory.Exists(folderPath))
                 return;
 
-            string cleanFolderPath = null;
+            string cleanFolderPath;
 
             try
             {
@@ -620,7 +568,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (!FolderAlreadyAdded(filePath))
             {
-                this.FilePaths.Add(filePath);
+                FilePaths.Add(filePath);
             }
         }
 
@@ -632,13 +580,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             filePath = filePath.Trim();
             xPath = xPath.Trim();
 
-            if (!this.XmlPaths.ContainsKey(filePath))
+            if (!XmlPaths.ContainsKey(filePath))
             {
-                this.XmlPaths.Add(filePath, new List<string>(new string[] { xPath }));
+                XmlPaths.Add(filePath, new List<string>(new[] { xPath }));
             }
             else
             {
-                List<string> xPaths = this.XmlPaths[filePath];
+                List<string> xPaths = XmlPaths[filePath];
 
                 if (xPaths.Contains(xPath))
                     // Already added
@@ -646,7 +594,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
                 xPaths.Add(xPath);
 
-                this.XmlPaths[filePath] = xPaths;
+                XmlPaths[filePath] = xPaths;
             }
         }
 
@@ -695,13 +643,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
             catch (Exception)
             {
+                // ignored
             }
 
-            if (diParent != null)
-                return FolderAlreadyAdded(diParent.ToString(), false);
-            else 
-                // No parent folder or an exception occurred
-                return true;
+            return diParent == null || FolderAlreadyAdded(diParent.ToString(), false);
         }
     }
 }

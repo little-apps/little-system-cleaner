@@ -16,24 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows.Forms;
 using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Media.Imaging;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
    
     public class SectionModel : ITreeModel
     {
-        public ObservableCollection<ScannerBase> RootChildren { get; private set; }
+        public ObservableCollection<ScannerBase> RootChildren { get; }
 
         internal static SectionModel CreateSectionModel()
         {
@@ -50,16 +45,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             // Check for chrome.exe in install directory
-            if (gChrome.IsInstalled())
+            if (GChrome.IsInstalled())
             {
-                sectionModel.RootChildren.Add(new gChrome());
+                sectionModel.RootChildren.Add(new GChrome());
             }
 
             // Misc scanners
-            sectionModel.RootChildren.Add(new Little_System_Cleaner.Privacy_Cleaner.Scanners.Misc());
+            sectionModel.RootChildren.Add(new Scanners.Misc());
 
             // If plugins exist -> Recurse through the plugins directory
-            string pluginDir = string.Format(@"{0}\Privacy Cleaner Plugins", System.Windows.Forms.Application.StartupPath);
+            string pluginDir = $@"{Application.StartupPath}\Privacy Cleaner Plugins";
             if (Directory.Exists(pluginDir))
             {
                 sectionModel.RootChildren.Add(new Plugins(Directory.GetFiles(pluginDir, "*.xml")));
@@ -73,12 +68,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             RootChildren = new ObservableCollection<ScannerBase>();
         }
 
-        public System.Collections.IEnumerable GetChildren(object parent)
+        public IEnumerable GetChildren(object parent)
         {
             if (parent == null)
                 return RootChildren;
-            else
-                return (parent as ScannerBase).Children;
+            return (parent as ScannerBase).Children;
         }
 
         public bool HasChildren(object parent)

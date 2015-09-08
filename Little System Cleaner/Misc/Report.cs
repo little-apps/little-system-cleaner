@@ -17,34 +17,27 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using Little_System_Cleaner.Properties;
 
-namespace Little_System_Cleaner
+namespace Little_System_Cleaner.Misc
 {
     /// <summary>
     /// This log class is used for the scanner modules
     /// </summary>
-    public class Report : StreamWriter
+    public sealed class Report : StreamWriter
     {
-        private readonly bool _isEnabled;
-        private readonly object lockObject = new object();
+        private readonly object _lockObject = new object();
 
         /// <summary>
         /// Gets/Sets whether logging is enabled
         /// </summary>
-        public bool IsEnabled
-        {
-            get { return this._isEnabled; }
-        }
+        public bool IsEnabled { get; }
 
-        public override Encoding Encoding
-        {
-            get { return Encoding.ASCII; }
-        }
+        public override Encoding Encoding => Encoding.ASCII;
 
         /// <summary>
         /// Creates an instance of a report
@@ -61,27 +54,27 @@ namespace Little_System_Cleaner
         public Report(MemoryStream stream, bool isEnabled)
             : base(stream)
         {
-            this._isEnabled = isEnabled;
+            IsEnabled = isEnabled;
 
-            if (this.IsEnabled)
+            if (IsEnabled)
             {
                 try
                 {
                     // Flush the buffers automatically
-                    this.AutoFlush = true;
+                    AutoFlush = true;
 
                     // Create log directory if it doesnt exist
-                    if (!Directory.Exists(Little_System_Cleaner.Properties.Settings.Default.optionsLogDir))
-                        Directory.CreateDirectory(Little_System_Cleaner.Properties.Settings.Default.optionsLogDir);
+                    if (!Directory.Exists(Settings.Default.OptionsLogDir))
+                        Directory.CreateDirectory(Settings.Default.OptionsLogDir);
 
-                    lock (this.lockObject)
+                    lock (_lockObject)
                     {
                         // Writes header to log file
-                        this.WriteLine("Little System Cleaner " + Application.ProductVersion);
-                        this.WriteLine("Website: http://www.little-apps.com/little-system-cleaner/");
-                        this.WriteLine("Date & Time: " + DateTime.Now.ToString());
-                        this.WriteLine("OS: " + OSVersion.GetOSVersion());
-                        this.WriteLine();
+                        WriteLine("Little System Cleaner " + Application.ProductVersion);
+                        WriteLine("Website: http://www.little-apps.com/little-system-cleaner/");
+                        WriteLine("Date & Time: " + DateTime.Now);
+                        WriteLine("OS: " + OsVersion.GetOsVersion());
+                        WriteLine();
                     }
                 }
                 catch (Exception ex)
@@ -97,17 +90,18 @@ namespace Little_System_Cleaner
         /// <returns>True if the file is displayed</returns>
         public bool DisplayLogFile(bool displayFile)
         {
-            if (this.IsEnabled)
+            if (IsEnabled)
             {
-                string strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt", Little_System_Cleaner.Properties.Settings.Default.optionsLogDir, DateTime.Now);
+                string strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt", Settings.Default.OptionsLogDir, DateTime.Now);
 
                 try
                 {
-                    lock (this.lockObject)
+                    lock (_lockObject)
                     {
                         using (FileStream fileStream = new FileStream(strNewFileName, FileMode.Create, FileAccess.Write))
                         {
-                            (this.BaseStream as MemoryStream).WriteTo(fileStream);
+                            var memoryStream = BaseStream as MemoryStream;
+                            memoryStream?.WriteTo(fileStream);
                         }
 
                         if (displayFile)

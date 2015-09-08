@@ -1,27 +1,19 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
+using System.Reflection;
+using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
     /// <summary>
     /// Interaction logic for Update.xaml
     /// </summary>
-    public partial class Update : Window
+    public partial class Update
     {
-        private System.Timers.Timer _timer;
+        private Timer _timer;
 
         public Update(bool remindLater = false)
         {
@@ -36,42 +28,42 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     Debug.Write(e);
                 }
                 
-                this.Text = AutoUpdater.DialogTitle;
-                this.textBlockUpdate.Text = string.Format(this.textBlockUpdate.Text, AutoUpdater.AppTitle);
-                this.textBlockDescription.Text =
-                    string.Format(this.textBlockDescription.Text,
+                Text = AutoUpdater.DialogTitle;
+                textBlockUpdate.Text = string.Format(textBlockUpdate.Text, AutoUpdater.AppTitle);
+                textBlockDescription.Text =
+                    string.Format(textBlockDescription.Text,
                         AutoUpdater.AppTitle, AutoUpdater.CurrentVersion, AutoUpdater.InstalledVersion);
             }
         }
 
         public string Text
         {
-            get { return base.Title; }
-            set { base.Title = value; }
+            get { return Title; }
+            set { Title = value; }
         }
 
         private void UpdateWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.webBrowser.Navigate(AutoUpdater.ChangeLogURL);
+            webBrowser.Navigate(AutoUpdater.ChangeLogUrl);
         }
 
         private void buttonUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (AutoUpdater.OpenDownloadPage)
             {
-                var processStartInfo = new ProcessStartInfo(AutoUpdater.DownloadURL);
+                var processStartInfo = new ProcessStartInfo(AutoUpdater.DownloadUrl);
 
                 Process.Start(processStartInfo);
             }
             else
             {
-                var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadURL);
+                var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
 
                 try
                 {
                     downloadDialog.ShowDialog();
                 }
-                catch (System.Reflection.TargetInvocationException)
+                catch (TargetInvocationException)
                 {
                 }
             }
@@ -92,13 +84,13 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 }
                 else if (dialogResult == false)
                 {
-                    var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadURL);
+                    var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
 
                     try
                     {
                         downloadDialog.ShowDialog();
                     }
-                    catch (System.Reflection.TargetInvocationException)
+                    catch (TargetInvocationException)
                     {
                         return;
                     }
@@ -150,7 +142,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         public void SetTimer(DateTime remindLater)
         {
             TimeSpan timeSpan = remindLater - DateTime.Now;
-            _timer = new System.Timers.Timer
+            _timer = new Timer
             {
                 Interval = (int)timeSpan.TotalMilliseconds
             };
@@ -158,7 +150,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             _timer.Start();
         }
 
-        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
             _timer.Stop();
             AutoUpdater.Start();

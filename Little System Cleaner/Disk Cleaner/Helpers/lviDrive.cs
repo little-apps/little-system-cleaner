@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 {
-    public class lviDrive
+    public class LviDrive
     {
         public bool? Checked
         {
@@ -44,14 +40,14 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
             set;
         }
 
-        public lviDrive(bool isChecked, string driveName, string driveFormat, string driveCapacity, string driveFreeSpace, DriveInfo di)
+        public LviDrive(bool isChecked, string driveName, string driveFormat, string driveCapacity, string driveFreeSpace, DriveInfo di)
         {
-            this.Checked = isChecked;
-            this.Drive = driveName;
-            this.DriveFormat = driveFormat;
-            this.DriveCapacity = driveCapacity;
-            this.DriveFreeSpace = driveFreeSpace;
-            this.Tag = di;
+            Checked = isChecked;
+            Drive = driveName;
+            DriveFormat = driveFormat;
+            DriveCapacity = driveCapacity;
+            DriveFreeSpace = driveFreeSpace;
+            Tag = di;
         }
     }
 }

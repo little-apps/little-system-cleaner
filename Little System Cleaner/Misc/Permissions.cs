@@ -17,22 +17,19 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Security.Principal;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace Little_System_Cleaner.Misc
 {
     public class Permissions
     {
-        internal static void SetPrivileges(bool Enabled)
+        internal static void SetPrivileges(bool enabled)
         {
-            SetPrivilege("SeShutdownPrivilege", Enabled);
-            SetPrivilege("SeBackupPrivilege", Enabled);
-            SetPrivilege("SeRestorePrivilege", Enabled);
-            SetPrivilege("SeDebugPrivilege", Enabled);
+            SetPrivilege("SeShutdownPrivilege", enabled);
+            SetPrivilege("SeBackupPrivilege", enabled);
+            SetPrivilege("SeRestorePrivilege", enabled);
+            SetPrivilege("SeDebugPrivilege", enabled);
         }
 
         internal static bool SetPrivilege(string privilege, bool enabled)
@@ -83,18 +80,18 @@ namespace Little_System_Cleaner.Misc
                     WindowsPrincipal principal = new WindowsPrincipal(user);
                     isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
                 }
-                catch (UnauthorizedAccessException ex)
+                catch (UnauthorizedAccessException)
                 {
                     isAdmin = false;
 #if (DEBUG)
-                    throw ex;
+                    throw;
 #endif
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     isAdmin = false;
 #if (DEBUG)
-                    throw ex;
+                    throw;
 #endif
                 }
                 return isAdmin;

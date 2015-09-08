@@ -16,25 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class SystemDrivers : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.SystemDrivers; }
-        }
+        public override string ScannerName => Strings.SystemDrivers;
 
         /// <summary>
         /// Scans for invalid references to drivers
@@ -50,13 +42,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     Wizard.Report.WriteLine("Scanning for missing drivers");
 
-                    foreach (string strDriverName in regKey.GetValueNames())
+                    foreach (
+                        var driverName in
+                            regKey.GetValueNames()
+                                .Select(driverName => new { Name = driverName, Value = regKey.GetValue(driverName) as string })
+                                .Where(o => !string.IsNullOrEmpty(o.Value))
+                                .Where(o => !Utils.FileExists(o.Value) && !Wizard.IsOnIgnoreList(o.Value))
+                                .Select(o => o.Name))
                     {
-                        string strValue = regKey.GetValue(strDriverName) as string;
-
-                        if (!string.IsNullOrEmpty(strValue))
-                            if (!Utils.FileExists(strValue) && !Wizard.IsOnIgnoreList(strValue))
-                                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(strDriverName) ? "(default)" : strDriverName));
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(driverName) ? "(default)" : driverName));
                     }
                 }
             }

@@ -1,18 +1,17 @@
-﻿using Little_System_Cleaner.Misc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     public class Result : INotifyPropertyChanged
     {
         #region File Types
-        private static readonly Dictionary<string, string> MIMETypesDictionary = new Dictionary<string, string> 
+        private static readonly Dictionary<string, string> MimeTypesDictionary = new Dictionary<string, string> 
         {
             {"ai", "application/postscript"},
             {"aif", "Audio"},
@@ -155,25 +154,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private readonly ObservableCollection<Result> _children = new ObservableCollection<Result>();
-        public ObservableCollection<Result> Children
-        {
-            get { return _children; }
-        }
+        public ObservableCollection<Result> Children { get; } = new ObservableCollection<Result>();
 
-        public bool IsParent
-        {
-            get
-            {
-                return (this.Children.Count > 0);
-            }
-        }
+        public bool IsParent => (Children.Count > 0);
 
         private readonly FileEntry _fileEntry;
         private bool? _bIsChecked = false;
@@ -187,20 +175,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             _bIsChecked = value;
 
             if (updateChildren && _bIsChecked.HasValue)
-                this.Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
 
-            if (updateParent && Parent != null)
-                Parent.VerifyCheckState();
+            if (updateParent)
+                Parent?.VerifyCheckState();
 
-            this.OnPropertyChanged("IsChecked");
+            OnPropertyChanged("IsChecked");
         }
 
         void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < this.Children.Count; ++i)
+            for (int i = 0; i < Children.Count; ++i)
             {
-                bool? current = this.Children[i].IsChecked;
+                bool? current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -211,14 +199,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     break;
                 }
             }
-            this.SetIsChecked(state, false, true);
+            SetIsChecked(state, false, true);
         }
         #endregion
 
         public bool? IsChecked
         {
             get { return _bIsChecked; }
-            set { this.SetIsChecked(value, true, true); }
+            set { SetIsChecked(value, true, true); }
         }
 
         public Result Parent { get; set; }
@@ -227,31 +215,26 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             get
             {
-                if (this._fileEntry != null) 
+                if (_fileEntry != null) 
                 {
-                    return this.FileEntry.FileName;
+                    return FileEntry.FileName;
                 }
-                else if (this.IsParent)
-                {
-                    string firstFileName = this.Children.First().FileName;
 
-                    if (this.Children.All(s => s.FileName.ToLower() == firstFileName.ToLower()))
-                    {
-                        return firstFileName;
-                    }
-                    else
-                    {
-                        var groupedByFilenames = this.Children.GroupBy(s => s.FileName.ToLower()).Select(g => g.Key).ToArray<string>();
-
-                        string fileNames = string.Join(", ", groupedByFilenames);
-
-                        return this.ShortenStringForDisplay(fileNames);
-                    }
-                }
-                else
-                {
+                if (!IsParent)
                     return string.Empty;
+
+                string firstFileName = Children.First().FileName;
+
+                if (Children.All(s => string.Equals(s.FileName, firstFileName, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    return firstFileName;
                 }
+
+                var groupedByFilenames = Children.GroupBy(s => s.FileName.ToLower()).Select(g => g.Key).ToArray();
+
+                string fileNames = string.Join(", ", groupedByFilenames);
+
+                return ShortenStringForDisplay(fileNames);
             }
         }
 
@@ -259,26 +242,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             get
             {
-                if (this._fileEntry != null)
+                if (_fileEntry != null)
                 {
-                    return Utils.ConvertSizeToString(this.FileEntry.FileSize, false);
+                    return Utils.ConvertSizeToString(FileEntry.FileSize, false);
                 }
-                else if (this.IsParent)
+                if (IsParent)
                 {
-                    string firstFileSize = this.Children.First().FileSize;
+                    string firstFileSize = Children.First().FileSize;
 
-                    if (this.Children.All(s => s.FileSize == firstFileSize)) 
+                    if (Children.All(s => s.FileSize == firstFileSize)) 
                     {
                         return firstFileSize;
                     }
-                    else
-                    {
-                        var groupedByFileSizes = this.Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray<string>();
+                    var groupedByFileSizes = Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray();
 
-                        string fileSizes = string.Join(", ", groupedByFileSizes);
+                    string fileSizes = string.Join(", ", groupedByFileSizes);
 
-                        return this.ShortenStringForDisplay(fileSizes);
-                    }
+                    return ShortenStringForDisplay(fileSizes);
                 }
 
                 return string.Empty;
@@ -289,9 +269,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             get
             {
-                if (this._fileEntry != null)
+                if (_fileEntry != null)
                 {
-                    string fileExt = Path.GetExtension(this.FileEntry.FilePath);
+                    string fileExt = Path.GetExtension(FileEntry.FilePath);
 
                     if (string.IsNullOrEmpty(fileExt))
                         return "(No Extension)";
@@ -300,63 +280,44 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     string ext;
 
-                    if (Result.MIMETypesDictionary.ContainsKey(fileExt))
-                        ext = Result.MIMETypesDictionary[fileExt] + " (." + fileExt.ToUpper() + ")";
+                    if (MimeTypesDictionary.ContainsKey(fileExt))
+                        ext = MimeTypesDictionary[fileExt] + " (." + fileExt.ToUpper() + ")";
                     else
                         ext = "." + fileExt.ToUpper() + " File";
 
                     return ext;
                 }
-                else if (this.IsParent)
+                if (IsParent)
                 {
-                    string firstFileFormat = this.Children.First().FileFormat;
+                    string firstFileFormat = Children.First().FileFormat;
 
-                    if (this.Children.All(s => s.FileFormat == firstFileFormat)) 
+                    if (Children.All(s => s.FileFormat == firstFileFormat)) 
                     {
                         return firstFileFormat;
                     }
-                    else
-                    {
-                        var groupedByFileFormats = this.Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray<string>();
+                    var groupedByFileFormats = Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray();
 
-                        string fileFormats = string.Join(", ", groupedByFileFormats);
+                    string fileFormats = string.Join(", ", groupedByFileFormats);
 
-                        return this.ShortenStringForDisplay(fileFormats);
-                    }
+                    return ShortenStringForDisplay(fileFormats);
                 }
-                else
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
-        public string FilePath
-        {
-            get 
-            {
-                if (this._fileEntry != null)
-                    return this._fileEntry.FilePath;
-                else
-                    // File paths are always going to be different
-                    return string.Empty;
-            }
-        }
+        public string FilePath => _fileEntry != null ? _fileEntry.FilePath : string.Empty;
 
-        public FileEntry FileEntry
-        {
-            get { return this._fileEntry; }
-        }
+        public FileEntry FileEntry => _fileEntry;
 
         public Result(Result parent = null)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         public Result(FileEntry fileEntry, Result parent)
         {
-            this._fileEntry = fileEntry;
-            this.Parent = parent;
+            _fileEntry = fileEntry;
+            Parent = parent;
         }
 
         private string ShortenStringForDisplay(string str)

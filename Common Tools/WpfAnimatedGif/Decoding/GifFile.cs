@@ -38,10 +38,7 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                                 .OfType<GifApplicationExtension>()
                                 .FirstOrDefault(GifHelpers.IsNetscapeExtension);
 
-            if (netscapeExtension != null)
-                RepeatCount = GifHelpers.GetRepeatCount(netscapeExtension);
-            else
-                RepeatCount = 1;
+            RepeatCount = netscapeExtension != null ? GifHelpers.GetRepeatCount(netscapeExtension) : (ushort)1;
         }
 
         private void ReadFrames(Stream stream, bool metadataOnly)
@@ -56,9 +53,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                 if (block.Kind == GifBlockKind.GraphicRendering)
                     controlExtensions = new List<GifExtension>();
 
-                if (block is GifFrame)
+                var item = block as GifFrame;
+                if (item != null)
                 {
-                    frames.Add((GifFrame)block);
+                    frames.Add(item);
                 }
                 else if (block is GifExtension)
                 {
@@ -71,9 +69,7 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                         case GifBlockKind.SpecialPurpose:
                             specialExtensions.Add(extension);
                             break;
-                        default:
-                            // Just ignore plain text extensions, as most software don't support them.
-                            break;
+                        // Just ignore plain text extensions, as most software don't support them.
                     }
                 }
                 else if (block is GifTrailer)

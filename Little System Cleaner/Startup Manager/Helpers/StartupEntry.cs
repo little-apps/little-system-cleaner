@@ -1,10 +1,7 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
+using System.Windows.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
@@ -16,28 +13,20 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private readonly ObservableCollection<StartupEntry> _children = new ObservableCollection<StartupEntry>();
-        private string _cmd = null;
+        private string _cmd;
 
-        public ObservableCollection<StartupEntry> Children
-        {
-            get { return _children; }
-        }
+        public ObservableCollection<StartupEntry> Children { get; } = new ObservableCollection<StartupEntry>();
 
         public RegistryKey RegKey { get; set; }
 
         public StartupEntry Parent { get; set; }
 
-        public bool IsLeaf
-        {
-            get { return (Children.Count == 0); }
-        }
+        public bool IsLeaf => (Children.Count == 0);
 
         public string SectionName { get; set; }
         public string Path { get; set; }
@@ -47,37 +36,33 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             get
             {
-                if (_cmd == null)
+                if (_cmd != null)
+                    return _cmd;
+
+                if (!IsLeaf)
                 {
-                    if (!this.IsLeaf)
-                    {
-                        this._cmd = string.Empty;
-                        return this._cmd;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(this.Path) && string.IsNullOrWhiteSpace(this.Args))
-                    {
-                        this._cmd = string.Empty;
-                        return this._cmd;
-                    }
-
-                    string cmd = this.Path.Trim();
-                    string args = this.Args.Trim();
-
-                    if (!string.IsNullOrEmpty(args))
-                        cmd = cmd + " " + args;
-
-                    this._cmd = cmd;
+                    _cmd = string.Empty;
+                    return _cmd;
                 }
 
-                return this._cmd;
+                if (string.IsNullOrWhiteSpace(Path) && string.IsNullOrWhiteSpace(Args))
+                {
+                    _cmd = string.Empty;
+                    return _cmd;
+                }
+
+                string cmd = Path.Trim();
+                string args = Args.Trim();
+
+                if (!string.IsNullOrEmpty(args))
+                    cmd = cmd + " " + args;
+
+                _cmd = cmd;
+
+                return _cmd;
             }
         }
 
-        public System.Windows.Controls.Image bMapImg { get; set; }
-
-        public StartupEntry()
-        {
-        }
+        public Image bMapImg { get; set; }
     }
 }

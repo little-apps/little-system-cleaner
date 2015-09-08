@@ -18,41 +18,37 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Windows;
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Little_System_Cleaner.Misc;
-using System.Windows;
+using Little_System_Cleaner.Properties;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
-    public class gChrome : ScannerBase
+    public class GChrome : ScannerBase
     {
         private static string _chromeProfileDir = string.Empty;
 
-        private string ChromeDefaultDir
-        {
-            get { return _chromeProfileDir; }
-        }
+        private string ChromeDefaultDir => _chromeProfileDir;
 
-        public gChrome() 
+        public GChrome() 
         {
             Name = "Google Chrome";
-            Icon = Properties.Resources.gChrome;
+            Icon = Resources.gChrome;
 
-            this.Children.Add(new gChrome(this, "Cookies"));
-            this.Children.Add(new gChrome(this, "Download History"));
-            this.Children.Add(new gChrome(this, "Internet Cache"));
-            this.Children.Add(new gChrome(this, "Internet History"));
+            Children.Add(new GChrome(this, "Cookies"));
+            Children.Add(new GChrome(this, "Download History"));
+            Children.Add(new GChrome(this, "Internet Cache"));
+            Children.Add(new GChrome(this, "Internet History"));
         }
 
-        public gChrome(ScannerBase parent, string header)
+        public GChrome(ScannerBase parent, string header)
         {
             Parent = parent;
             Name = header;
@@ -85,24 +81,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             finally
             {
-                if (regKey != null)
-                    regKey.Close();
+                regKey?.Close();
             }
 
             return installed;
         }
 
-        public override string ProcessName
-        {
-            get
-            {
-                return "chrome";
-            }
-        }
+        public override string ProcessName => "chrome";
 
         public override void Scan(ScannerBase child)
         {
-            if (!this.Children.Contains(child))
+            if (!Children.Contains(child))
                 return;
 
             if (!child.IsChecked.GetValueOrDefault())
@@ -135,13 +124,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private static bool GetChromeUserDir()
         {
-            string username = Environment.UserName;
-
-            string[] userDataDirs = new string[] {
-                string.Format(@"{0}\Google\Chrome\User Data", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)),
+            string[] userDataDirs = {
+                $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Google\Chrome\User Data",
                 // Taken from http://www.chromium.org/user-experience/user-data-directory
-                string.Format(@"C:\Documents and Settings\{0}\Local Settings\Application Data\Google\Chrome\User Data", Environment.UserName),
-                string.Format(@"C:\Users\{0}\AppData\Local\Google\Chrome\User Data", Environment.UserName)
+                $@"C:\Documents and Settings\{Environment.UserName}\Local Settings\Application Data\Google\Chrome\User Data",
+                $@"C:\Users\{Environment.UserName}\AppData\Local\Google\Chrome\User Data"
             };
 
             foreach (string userDataDir in userDataDirs)
@@ -156,14 +143,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     return true;
                 }
 
-                foreach (string dir in Directory.GetDirectories(userDataDir))
+                foreach (string dir in Directory.GetDirectories(userDataDir).Where(IsValidProfileDir))
                 {
-                    if (IsValidProfileDir(dir))
-                    {
-                        _chromeProfileDir = dir;
+                    _chromeProfileDir = dir;
 
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -178,7 +162,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             try
             {
                 // Make sure all the needed files + dirs are there
-                string[] neededFilesDirs = new string[] { "Cookies", "History", "Cache" };
+                string[] neededFilesDirs = { "Cookies", "History", "Cache" };
                 List<string> fileSysEntries = new List<string>(Directory.EnumerateFileSystemEntries(path));
 
                 if (neededFilesDirs.Any(neededFileDir => !fileSysEntries.Contains(path + "\\" + neededFileDir)))
@@ -192,36 +176,34 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             return true;
         }
 
-        
-
         private void ScanCookies()
         {
-            string cookiesFile = string.Format(@"{0}\Cookies", ChromeDefaultDir);
+            string cookiesFile = $@"{ChromeDefaultDir}\Cookies";
 
             Wizard.CurrentFile = cookiesFile;
 
-            if (File.Exists(cookiesFile))
+            if (!File.Exists(cookiesFile))
+                return;
+
+            if (MiscFunctions.IsFileValid(cookiesFile))
             {
-                if (MiscFunctions.IsFileValid(cookiesFile))
-                {
-                    Wizard.StoreBadFileList("Clear Cookies", new string[] { cookiesFile }, MiscFunctions.GetFileSize(cookiesFile));
-                }
+                Wizard.StoreBadFileList("Clear Cookies", new[] { cookiesFile }, MiscFunctions.GetFileSize(cookiesFile));
             }
         }
 
         private void ScanDownloadHistory()
         {
-            if (!Wizard.SQLiteLoaded)
+            if (!Wizard.SqLiteLoaded)
                 return;
 
-            Wizard.StoreCleanDelegate(new CleanDelegate(CleanDownloadHistory), "Clear Download History", 0);
+            Wizard.StoreCleanDelegate(CleanDownloadHistory, "Clear Download History", 0);
         }
 
         private void CleanDownloadHistory()
         {
             try
             {
-                using (SQLiteConnection sqliteConn = new SQLiteConnection(string.Format("Data Source={0};Version=3;FailIfMissing=True", string.Format(@"{0}\History", ChromeDefaultDir))))
+                using (SQLiteConnection sqliteConn = new SQLiteConnection($"Data Source={$@"{ChromeDefaultDir}\History"};Version=3;FailIfMissing=True"))
                 {
                     sqliteConn.Open();
 
@@ -234,14 +216,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (SQLiteException ex)
             {
-                MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to clear recent downloads in Google Chrome: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to clear recent downloads in Google Chrome: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ScanCache() 
         {
-            string cacheDir = string.Format(@"{0}\Cache", ChromeDefaultDir);
+            string cacheDir = $@"{ChromeDefaultDir}\Cache";
             List<string> fileList = new List<string>();
             long nTotalSize = 0;
 
@@ -249,11 +230,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             {
                 Wizard.CurrentFile = filePath;
 
-                if (MiscFunctions.IsFileValid(filePath))
-                {    
-                    fileList.Add(filePath);
-                    nTotalSize += MiscFunctions.GetFileSize(filePath);
-                }
+                if (!MiscFunctions.IsFileValid(filePath))
+                    continue;
+
+                fileList.Add(filePath);
+                nTotalSize += MiscFunctions.GetFileSize(filePath);
             }
 
             Wizard.StoreBadFileList("Clear Internet Cache", fileList.ToArray(), nTotalSize);
@@ -267,7 +248,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             try
             {
-                filePath = string.Format(@"{0}\Archived History", ChromeDefaultDir);
+                filePath = $@"{ChromeDefaultDir}\Archived History";
                 Wizard.CurrentFile = filePath;
                 if (File.Exists(filePath))
                 {
@@ -280,11 +261,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (Exception)
             {
+                // ignored
             }
 
             try
             {
-                filePath = string.Format(@"{0}\Visited Links", ChromeDefaultDir);
+                filePath = $@"{ChromeDefaultDir}\Visited Links";
                 Wizard.CurrentFile = filePath;
                 if (File.Exists(filePath))
                 {
@@ -297,11 +279,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (Exception)
             {
+                // ignored
             }
 
             try
             {
-                filePath = string.Format(@"{0}\Current Tabs", ChromeDefaultDir);
+                filePath = $@"{ChromeDefaultDir}\Current Tabs";
                 Wizard.CurrentFile = filePath;
                 if (File.Exists(filePath))
                 {
@@ -314,11 +297,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (Exception)
             {
+                // ignored
             }
-            
+
             try
             {
-                filePath = string.Format(@"{0}\Last Tabs", ChromeDefaultDir);
+                filePath = $@"{ChromeDefaultDir}\Last Tabs";
                 Wizard.CurrentFile = filePath;
                 if (File.Exists(filePath))
                 {
@@ -331,8 +315,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (Exception)
             {
+                // ignored
             }
-            
+
 
             try
             {
@@ -340,20 +325,21 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 {
                     Wizard.CurrentFile = filePath;
 
-                    if (File.Exists(fileHistory))
-                    {
-                        if (MiscFunctions.IsFileValid(fileHistory))
-                        {
-                            fileList.Add(fileHistory);
-                            nTotalSize += MiscFunctions.GetFileSize(fileHistory);
-                        }
-                    }
+                    if (!File.Exists(fileHistory))
+                        continue;
+
+                    if (!MiscFunctions.IsFileValid(fileHistory))
+                        continue;
+
+                    fileList.Add(fileHistory);
+                    nTotalSize += MiscFunctions.GetFileSize(fileHistory);
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
-            
+
             Wizard.StoreBadFileList("Clear Internet History", fileList.ToArray(), nTotalSize);
         }
     }

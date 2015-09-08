@@ -17,33 +17,24 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using System.Threading;
-using System.Security.Permissions;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System.Windows;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Sections;
+using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using Microsoft.Win32;
-using System.Security;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {
-        List<ScannerBase> arrayScanners = new List<ScannerBase>();
-        SectionModel _model = null;
-        static BadRegKeyArray _badRegKeyArray = new BadRegKeyArray();
+        readonly List<ScannerBase> _arrayScanners = new List<ScannerBase>();
+        SectionModel _model;
+        static readonly BadRegKeyArray BadRegKeyArray = new BadRegKeyArray();
 
         public SectionModel Model
         {
@@ -58,43 +49,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        internal static string currentScannerName
+        internal static string CurrentScannerName
         {
             get;
             set;
         }
 
-        internal static BadRegKeyArray badRegKeyArray
-        {
-            get { return _badRegKeyArray; }
-        }
+        internal static BadRegKeyArray badRegKeyArray => BadRegKeyArray;
 
-        public List<ScannerBase> Scanners
-        {
-            get { return arrayScanners; }
-        }
+        public List<ScannerBase> Scanners => _arrayScanners;
 
         private static Report _report;
-        internal static Report Report
-        {
-            get { return _report; }
-        }
+        internal static Report Report => _report;
 
         internal static bool CreateNewLogFile() 
         {
-            string fileName;
-
-            try
-            {
-                fileName = System.IO.Path.GetTempFileName();
-            }
-            catch (System.IO.IOException ex)
-            {
-                MessageBox.Show(App.Current.MainWindow, "The following error occurred: " + ex.Message + "\nDue to this, a log of the scan will not be created.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-
-            _report = Report.CreateReport(Properties.Settings.Default.registryCleanerOptionsLog);
+            _report = Report.CreateReport(Settings.Default.registryCleanerOptionsLog);
 
             return true;
         }
@@ -105,72 +75,66 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public Wizard()
         {
-            this.Controls.Add(typeof(Start));
-            this.Controls.Add(typeof(Scan));
-            this.Controls.Add(typeof(Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Scan));
+            Controls.Add(typeof(Results));
 
-            this.arrayScanners.Add(new ApplicationInfo());
-            this.arrayScanners.Add(new ApplicationPaths());
-            this.arrayScanners.Add(new ApplicationSettings());
-            this.arrayScanners.Add(new ActivexComObjects());
-            this.arrayScanners.Add(new SharedDLLs());
-            this.arrayScanners.Add(new SystemDrivers());
-            this.arrayScanners.Add(new WindowsFonts());
-            this.arrayScanners.Add(new WindowsHelpFiles());
-            this.arrayScanners.Add(new RecentDocs());
-            this.arrayScanners.Add(new WindowsSounds());
-            this.arrayScanners.Add(new StartupFiles());
+            _arrayScanners.Add(new ApplicationInfo());
+            _arrayScanners.Add(new ApplicationPaths());
+            _arrayScanners.Add(new ApplicationSettings());
+            _arrayScanners.Add(new ActivexComObjects());
+            _arrayScanners.Add(new SharedDLLs());
+            _arrayScanners.Add(new SystemDrivers());
+            _arrayScanners.Add(new WindowsFonts());
+            _arrayScanners.Add(new WindowsHelpFiles());
+            _arrayScanners.Add(new RecentDocs());
+            _arrayScanners.Add(new WindowsSounds());
+            _arrayScanners.Add(new StartupFiles());
         }
 
         public override void OnLoaded()
         {
-            this.SetCurrentControl(0);
+            SetCurrentControl(0);
         }
 
         public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.CurrentControl is Scan)
+            var scan = CurrentControl as Scan;
+            if (scan != null)
             {
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
-                if (exit)
-                {
-                    (this.CurrentControl as Scan).AbortScanThread();
-                    Wizard.badRegKeyArray.Clear();
-                    Scan.EnabledScanners.Clear();
-
-                    return true;
-                }
-                else
-                {
+                if (!exit)
                     return false;
-                }
+
+                scan.AbortScanThread();
+                badRegKeyArray.Clear();
+                Scan.EnabledScanners.Clear();
+
+                return true;
             }
 
-            if (this.CurrentControl is Results)
+            var results = CurrentControl as Results;
+            if (results != null)
             {
-                if ((!forceExit && (this.CurrentControl as Results).FixThread != null) && (this.CurrentControl as Results).FixThread.IsAlive)
+                if ((!forceExit && (CurrentControl as Results).FixThread != null) && (CurrentControl as Results).FixThread.IsAlive)
                     return false;
 
-                exit = (forceExit ? true : MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
-                if (exit)
-                {
-                    // Forced to exit -> abort fix thread
-                    if (((this.CurrentControl as Results).FixThread != null) && (this.CurrentControl as Results).FixThread.IsAlive)
-                        (this.CurrentControl as Results).FixThread.Abort();
-
-                    Wizard.badRegKeyArray.Clear();
-                    Scan.EnabledScanners.Clear();
-
-                    return true;
-                }
-                else
-                {
+                if (!exit)
                     return false;
-                }
+
+                // Forced to exit -> abort fix thread
+                if ((((Results) CurrentControl).FixThread != null) && ((Results) CurrentControl).FixThread.IsAlive)
+                    ((Results) CurrentControl).FixThread.Abort();
+
+                badRegKeyArray.Clear();
+                Scan.EnabledScanners.Clear();
+
+                return true;
             }
             
 
@@ -192,7 +156,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             badRegKeyArray.Clear();
 
-            base.SetCurrentControl(1);
+            SetCurrentControl(1);
         }
 
         internal void ParseModelChild(SectionModel model)
@@ -200,13 +164,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (model.Root.Children[0].Children.Count <= 0)
                 throw new ArgumentException("model must contain children", nameof(model));
 
-            foreach (Little_System_Cleaner.Registry_Cleaner.Helpers.Section child in model.Root.Children[0].Children)
+            foreach (Section child in model.Root.Children[0].Children)
             {
-                foreach (ScannerBase scanner in arrayScanners)
+                foreach (ScannerBase scanner in _arrayScanners)
                 {
                     if (child.SectionName == scanner.ScannerName)
                     {
-                        if (child.IsChecked.HasValue && child.IsChecked.Value == true)
+                        if (child.IsChecked.HasValue && child.IsChecked.Value)
                         {
                             scanner.bMapImg = child.bMapImg;
                             scanner.IsEnabled = true;
@@ -223,12 +187,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <para>Stores an invalid registry key to array list</para>
         /// <para>Use IsOnIgnoreList to check for ignored registry keys and paths</para>
         /// </summary>
-        /// <param name="Problem">Reason its invalid</param>
-        /// <param name="Path">The path to registry key (including registry hive)</param>
+        /// <param name="problem">Reason its invalid</param>
+        /// <param name="path">The path to registry key (including registry hive)</param>
         /// <returns>True if it was added</returns>
-        internal static bool StoreInvalidKey(string Problem, string Path)
+        internal static bool StoreInvalidKey(string problem, string path)
         {
-            return StoreInvalidKey(Problem, Path, "");
+            return StoreInvalidKey(problem, path, "");
         }
 
         /// <summary>
@@ -249,7 +213,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return false;
 
             // Make sure registry key isnt already in array
-            if (_badRegKeyArray.Contains(regPath, valueName))
+            if (BadRegKeyArray.Contains(regPath, valueName))
                 return false;
 
             // Make sure registry key exists
@@ -331,12 +295,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 severity = 1;
             }
 
-            _badRegKeyArray.Add(new BadRegistryKey(Wizard.currentScannerName, problem, baseKey, subKey, valueName, severity));
+            BadRegKeyArray.Add(new BadRegistryKey(CurrentScannerName, problem, baseKey, subKey, valueName, severity));
 
-            Wizard.Report.WriteLine(!string.IsNullOrEmpty(valueName)
-                ? string.Format("Bad Registry Value Found! Problem: \"{0}\" Path: \"{1}\" Value Name: \"{2}\"", problem,
-                    regPath, valueName)
-                : string.Format("Bad Registry Key Found! Problem: \"{0}\" Path: \"{1}\"", problem, regPath));
+            Report.WriteLine(!string.IsNullOrEmpty(valueName)
+                ? $"Bad Registry Value Found! Problem: \"{problem}\" Path: \"{regPath}\" Value Name: \"{valueName}\""
+                : $"Bad Registry Key Found! Problem: \"{problem}\" Path: \"{regPath}\"");
 
             return true;
         }
@@ -345,39 +308,39 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// Checks for the path in ignore list
         /// </summary>
         /// <returns>true if it is on the ignore list, otherwise false</returns>
-        internal static bool IsOnIgnoreList(string Path)
+        internal static bool IsOnIgnoreList(string path)
         {
-            if (!string.IsNullOrEmpty(Path) && Properties.Settings.Default.arrayExcludeList.Count > 0)
+            if (string.IsNullOrEmpty(path) || Settings.Default.ArrayExcludeList.Count <= 0)
+                return false;
+
+            string expandedPath = string.Empty;
+            bool isPath = (!path.ToUpper().StartsWith("HKEY"));
+
+            foreach (ExcludeItem i in Settings.Default.ArrayExcludeList)
             {
-                string expandedPath = string.Empty;
-                bool isPath = (!Path.ToUpper().StartsWith("HKEY"));
-
-                foreach (ExcludeItem i in Properties.Settings.Default.arrayExcludeList)
+                if (isPath && i.IsPath)
                 {
-                    if (isPath && i.IsPath)
+                    if (string.IsNullOrEmpty(expandedPath))
                     {
-                        if (string.IsNullOrEmpty(expandedPath))
-                        {
-                            // Trim and change to lower case
-                            expandedPath = Path.Trim().ToLower();
+                        // Trim and change to lower case
+                        expandedPath = path.Trim().ToLower();
 
-                            // Remove quotes
-                            expandedPath = Utils.UnqouteSpaces(expandedPath);
+                        // Remove quotes
+                        expandedPath = Utils.UnqouteSpaces(expandedPath);
 
-                            // Remove environment variables
-                            expandedPath = Environment.ExpandEnvironmentVariables(expandedPath);
-                        }
-
-                        if (!string.IsNullOrEmpty(expandedPath))
-                        {
-                            if (Utils.CompareWildcard(expandedPath, i.ToString()))
-                                return true;
-                        }
+                        // Remove environment variables
+                        expandedPath = Environment.ExpandEnvironmentVariables(expandedPath);
                     }
 
-                    if (Utils.CompareWildcard(Path, i.ToString()))
-                        return true;
+                    if (!string.IsNullOrEmpty(expandedPath))
+                    {
+                        if (Utils.CompareWildcard(expandedPath, i.ToString()))
+                            return true;
+                    }
                 }
+
+                if (Utils.CompareWildcard(path, i.ToString()))
+                    return true;
             }
 
             return false;

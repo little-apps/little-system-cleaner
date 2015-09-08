@@ -16,33 +16,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Shell;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Scanners;
+using Little_System_Cleaner.Properties;
+using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     /// <summary>
     /// Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class Analyze : UserControl, INotifyPropertyChanged
+    public partial class Analyze : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
 
@@ -50,87 +43,73 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+
         #endregion
+        
+        readonly Wizard _scanBase;
+        readonly Timer _timerUpdate = new Timer(200);
+        int _currentListViewParentIndex = -1;
+        int _currentListViewIndex = -1;
+        Thread _threadScan;
 
-        static List<ScannerBase> enabledScanners = new List<ScannerBase>();
-        Wizard scanBase;
-        System.Timers.Timer timerUpdate = new System.Timers.Timer(200);
-        int currentListViewParentIndex = -1;
-        int currentListViewIndex = -1;
-        Thread threadScan;
-
-        public ScannerBase CurrentListViewItem
-        {
-            get { return this.SectionsCollection[currentListViewParentIndex].Children[currentListViewIndex] as ScannerBase; }
-        }
+        public ScannerBase CurrentListViewItem => SectionsCollection[_currentListViewParentIndex].Children[_currentListViewIndex];
 
         private int CurrentSectionProblems
         {
             get
             {
-                string currentSection = (this.CurrentListViewItem.Parent != null ? this.CurrentListViewItem.Parent.Section : this.CurrentListViewItem.Section);
+                string currentSection = (CurrentListViewItem.Parent != null ? CurrentListViewItem.Parent.Section : CurrentListViewItem.Section);
 
                 return Wizard.ResultArray.Where(n => currentSection == n.Section).Select(n => n.Children.Count).FirstOrDefault();
             }
         }
 
-        public ObservableCollection<ScannerBase> SectionsCollection
-        {
-            get { return this.scanBase.Model.RootChildren; }
-            //get { return this._sectionsCollection; }
-            //set
-            //{
-            //    this._sectionsCollection = value;
-
-            //    this.OnPropertyChanged("SectionsCollection");
-            //}
-        }
+        public ObservableCollection<ScannerBase> SectionsCollection => _scanBase.Model.RootChildren;
 
         public Analyze(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            _scanBase = sb;
 
-            this.listView.ItemsSource = this.SectionsCollection;
+            listView.ItemsSource = SectionsCollection;
 
             // Increase total number of scans
-            Properties.Settings.Default.totalScans++;
+            Settings.Default.totalScans++;
 
             // Zero last scan errors found + fixed and elapsed
-            Properties.Settings.Default.lastScanErrors = 0;
-            Properties.Settings.Default.lastScanErrorsFixed = 0;
-            Properties.Settings.Default.lastScanElapsed = 0;
+            Settings.Default.lastScanErrors = 0;
+            Settings.Default.lastScanErrorsFixed = 0;
+            Settings.Default.lastScanElapsed = 0;
 
             // Set last scan date
-            Properties.Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
 
             // Start timer
-            this.timerUpdate.Elapsed += new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed);
-            this.timerUpdate.Start();
+            _timerUpdate.Elapsed += timerUpdate_Elapsed;
+            _timerUpdate.Start();
 
             // Set the progress bar
-            this.SetProgressBar();
+            SetProgressBar();
 
-            Wizard.ScanThread = new Thread(new ThreadStart(StartScanning));
+            Wizard.ScanThread = new Thread(StartScanning);
             Wizard.ScanThread.Start();
         }
 
         private void SetProgressBar()
         {
-            int max = this.SectionsCollection.Where(n => n.IsChecked.GetValueOrDefault() != false).SelectMany(n => n.Children).Count(child => child.IsChecked.GetValueOrDefault() != false);
+            int max = SectionsCollection.Where(n => n.IsChecked.GetValueOrDefault()).SelectMany(n => n.Children).Count(child => child.IsChecked.GetValueOrDefault());
 
             // Set task bar progress bar
-            Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
             Main.TaskbarProgressValue = 0;
 
             // Set progress bar
-            this.progressBar.Value = 0;
-            this.progressBar.Minimum = 0;
-            this.progressBar.Maximum = max;
+            progressBar.Value = 0;
+            progressBar.Minimum = 0;
+            progressBar.Maximum = max;
         }
 
         private void StartScanning()
@@ -145,10 +124,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 // Begin critical region
                 Thread.BeginCriticalRegion();
 
-                foreach (ScannerBase n in this.SectionsCollection)
+                foreach (ScannerBase n in SectionsCollection)
                 {
                     currentParent++;
-                    currentListViewIndex = -1;
+                    _currentListViewIndex = -1;
 
                     if (n.IsChecked.GetValueOrDefault() == false)
                         continue;
@@ -161,32 +140,32 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         {
                             InvokeCurrentSection(child.Section, currentParent);
 
-                            this.StartScanner(n, child);
+                            StartScanner(n, child);
                         }
 
                         if (n.Results.Children.Count > 0)
                         {
                             Wizard.ResultArray.Add(n.Results);
-                            Properties.Settings.Default.lastScanErrors += n.Results.Children.Count;
+                            Settings.Default.lastScanErrors += n.Results.Children.Count;
                         }
                     }
                     else
                     {
                         InvokeCurrentSection(n.Section, currentParent);
 
-                        this.StartScanner(n);
+                        StartScanner(n);
 
                         if (n.Results.Children.Count > 0)
                         {
                             Wizard.ResultArray.Add(n.Results);
-                            Properties.Settings.Default.lastScanErrors += n.Results.Children.Count;
+                            Settings.Default.lastScanErrors += n.Results.Children.Count;
                         }
                             
                     }
 
                     // Update info before going to next section (or exiting) 
-                    this.Dispatcher.Invoke(new Action(() => {
-                        n.Errors = string.Format("{0} Errors", this.CurrentSectionProblems);
+                    Dispatcher.Invoke(new Action(() => {
+                        n.Errors = $"{CurrentSectionProblems} Errors";
                         n.Status = "Finished";
                         n.UnloadGif();
                     }));
@@ -200,8 +179,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 {
                     scanAborted = false;
 
-                    if (this.threadScan.IsAlive)
-                        this.threadScan.Abort();
+                    if (_threadScan.IsAlive)
+                        _threadScan.Abort();
 
                     if (ex is ThreadAbortException)
                         Thread.ResetAbort();
@@ -216,12 +195,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
                 Main.Watcher.EventPeriod("Privacy Cleaner", "Analyze", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
 
-                Properties.Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
+                Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
 
-                this.Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None));
+                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
 
                 if (scanAborted)
-                    this.scanBase.MoveNext();
+                    _scanBase.MoveNext();
             }
         }
 
@@ -230,27 +209,27 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         /// </summary>
         private void InvokeCurrentSection(string sectionName, int parentSection)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.Invoke(new Action<string, int>(InvokeCurrentSection), new object[] { sectionName, parentSection });
+                Dispatcher.Invoke(new Action<string, int>(InvokeCurrentSection), sectionName, parentSection);
                 return;
             }
 
-            if (currentListViewParentIndex != parentSection)
-                currentListViewParentIndex = parentSection;
+            if (_currentListViewParentIndex != parentSection)
+                _currentListViewParentIndex = parentSection;
 
-            this.progressBar.Value++;
-            this.currentListViewIndex++;
+            progressBar.Value++;
+            _currentListViewIndex++;
 
             Wizard.CurrentSectionName = sectionName;
-            this.currentSection.Content = "Section: " + sectionName;
+            currentSectionLabel.Content = "Section: " + sectionName;
 
-            this.CurrentListViewItem.Status = "Scanning " + sectionName;
-            this.CurrentListViewItem.LoadGif();
+            CurrentListViewItem.Status = "Scanning " + sectionName;
+            CurrentListViewItem.LoadGif();
 
-            Utils.AutoResizeColumns(this.listView);
+            Utils.AutoResizeColumns(listView);
 
-            this.listView.Items.Refresh();
+            listView.Items.Refresh();
         }
 
         private void StartScanner(ScannerBase parent, ScannerBase child)
@@ -265,13 +244,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 if (ret.GetValueOrDefault() == false)
                 {
                     // Skip plugin
-                    if (this.Dispatcher.Thread != Thread.CurrentThread)
+                    if (Dispatcher.Thread != Thread.CurrentThread)
                     {
-                        this.Dispatcher.BeginInvoke(new Action(() => this.progressBar.Value++));
+                        Dispatcher.BeginInvoke(new Action(() => progressBar.Value++));
                     }
                     else
                     {
-                        this.progressBar.Value++;
+                        progressBar.Value++;
                     }
 
                     parent.Skipped = true;
@@ -280,12 +259,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            threadScan = new Thread(() => this.TryScanMethod(() => parent.Scan(child)));
+            _threadScan = new Thread(() => TryScanMethod(() => parent.Scan(child)));
 
             try
             {
-                threadScan.Start();
-                threadScan.Join();
+                _threadScan.Start();
+                _threadScan.Join();
             }
             catch (ThreadInterruptedException)
             {
@@ -307,13 +286,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 if (ret.GetValueOrDefault() == false)
                 {
                     // Skip plugin
-                    if (this.Dispatcher.Thread != Thread.CurrentThread)
+                    if (Dispatcher.Thread != Thread.CurrentThread)
                     {
-                        this.Dispatcher.BeginInvoke(new Action(() => this.progressBar.Value++));
+                        Dispatcher.BeginInvoke(new Action(() => progressBar.Value++));
                     }
                     else
                     {
-                        this.progressBar.Value++;
+                        progressBar.Value++;
                     }
 
                     parent.Skipped = true;
@@ -322,12 +301,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            threadScan = new Thread(() => this.TryScanMethod(parent.Scan));
+            _threadScan = new Thread(() => TryScanMethod(parent.Scan));
 
             try
             {
-                threadScan.Start();
-                threadScan.Join();
+                _threadScan.Start();
+                _threadScan.Join();
             }
             catch (ThreadInterruptedException)
             {
@@ -348,19 +327,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             
         }
 
-        void timerUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new System.Timers.ElapsedEventHandler(timerUpdate_Elapsed), new object[] { sender, e });
+                Dispatcher.BeginInvoke(new ElapsedEventHandler(timerUpdate_Elapsed), sender, e);
                 return;
             }
 
 
-            if (this.currentListViewIndex != -1)
+            if (_currentListViewIndex != -1)
             {
-                this.CurrentListViewItem.Errors = string.Format("{0} Errors", this.CurrentSectionProblems);
-                this.listView.Items.Refresh();
+                CurrentListViewItem.Errors = $"{CurrentSectionProblems} Errors";
+                listView.Items.Refresh();
             }
         }
 
@@ -372,24 +351,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 Wizard.ScanThread.Abort();
             }
 
-            if (this.threadScan.IsAlive)
-                this.threadScan.Abort();
+            if (_threadScan.IsAlive)
+                _threadScan.Abort();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                this.AbortScanThread();
-                this.scanBase.MoveFirst();
+                AbortScanThread();
+                _scanBase.MoveFirst();
             }
         }
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.progressBar.Maximum != 0)
+            if (progressBar.Maximum != 0)
             {
-                Main.TaskbarProgressValue = (e.NewValue / this.progressBar.Maximum);
+                Main.TaskbarProgressValue = (e.NewValue / progressBar.Maximum);
             }
         }
     }

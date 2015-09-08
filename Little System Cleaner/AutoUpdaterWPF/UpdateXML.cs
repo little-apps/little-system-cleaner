@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
-    [XmlRootAttribute("items")]
-    public class UpdateXML
+    [XmlRoot("items")]
+    public class UpdateXml
     {
         public class Item
         {
@@ -19,13 +16,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 set;
             }
 
-            public Version Version
-            {
-                get
-                {
-                    return (!string.IsNullOrEmpty(this.VersionString) ? new Version(this.VersionString) : null);
-                }
-            }
+            public Version Version => (!string.IsNullOrEmpty(VersionString) ? new Version(VersionString) : null);
 
             [XmlElement("title")]
             public string Title
@@ -42,7 +33,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
 
             [XmlElement("url")]
-            public string URL
+            public string Url
             {
                 get;
                 set;
@@ -63,11 +54,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             get;
             set;
-        }
-
-        public UpdateXML()
-        {
-
         }
     }
 }

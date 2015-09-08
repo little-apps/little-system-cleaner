@@ -27,7 +27,7 @@
             </RadioButton.Content>
         </RadioButton>
         <RadioButton x:Name="radioButtonNo" Content="No, download updates now (recommended)" HorizontalAlignment="Left" Margin="84,143,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Button x:Name="buttonOK" HorizontalAlignment="Left" Margin="362,168,0,0" VerticalAlignment="Top" Width="74" Height="32">
+        <Button x:Name="buttonOK" HorizontalAlignment="Left" Margin="362,168,0,0" VerticalAlignment="Top" Width="74" Height="32" Click="ButtonOkClick">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <Image Width="16" Height="16" Source="pack://siteoforigin:,,,/Resources/clock_go.png" Margin="0,0,5,0" />

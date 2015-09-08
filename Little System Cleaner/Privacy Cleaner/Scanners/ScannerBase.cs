@@ -17,28 +17,27 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml;
-using System.Text.RegularExpressions;
-using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using System.Windows.Controls;
-using CommonTools;
-using System.Windows;
-using System.Windows.Media;
-using CommonTools.WpfAnimatedGif;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using System.Security;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Xml;
+using CommonTools.WpfAnimatedGif;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
+using Image = System.Windows.Controls.Image;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -50,17 +49,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private readonly ObservableCollection<ScannerBase> _children = new ObservableCollection<ScannerBase>();
-        public ObservableCollection<ScannerBase> Children
-        {
-            get { return _children; }
-        }
+        public ObservableCollection<ScannerBase> Children { get; } = new ObservableCollection<ScannerBase>();
 
         private bool? _bIsChecked = true;
 
@@ -74,22 +68,22 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             if (updateChildren && _bIsChecked.HasValue)
             {
-                foreach (ScannerBase c in this.Children)
+                foreach (ScannerBase c in Children)
                     c.SetIsChecked(_bIsChecked, true, false);
             }
 
-            if (updateParent && Parent != null)
-                Parent.VerifyCheckState();
+            if (updateParent)
+                Parent?.VerifyCheckState();
 
-            this.OnPropertyChanged("IsChecked");
+            OnPropertyChanged("IsChecked");
         }
 
         void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < this.Children.Count; ++i)
+            for (int i = 0; i < Children.Count; ++i)
             {
-                bool? current = this.Children[i].IsChecked;
+                bool? current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -100,14 +94,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     break;
                 }
             }
-            this.SetIsChecked(state, false, true);
+            SetIsChecked(state, false, true);
         }
         #endregion
 
         public bool? IsChecked
         {
             get { return _bIsChecked; }
-            set { this.SetIsChecked(value, true, true); }
+            set { SetIsChecked(value, true, true); }
         }
 
         public ScannerBase Parent { get; set; }
@@ -122,41 +116,38 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             get
             {
-                if (this.Parent != null)
-                    return this.Parent.Skipped;
-                else
-                    return this._skipped;
+                if (Parent != null)
+                    return Parent.Skipped;
+                return _skipped;
             }
             set
             {
-                if (this.Parent != null)
-                    this.Parent.Skipped = value;
+                if (Parent != null)
+                    Parent.Skipped = value;
                 else
-                    this._skipped = value;
+                    _skipped = value;
             }
         }
 
         public ImageSource bMapImg { get; private set; }
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
             set
             {
                 IntPtr hBitmap = value.GetHbitmap();
 
-                bMapImg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                bMapImg = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                this.OnPropertyChanged("bMapImg");
+                OnPropertyChanged("bMapImg");
             }
         }
 
         public virtual void Scan(ScannerBase child)
         {
-            return;
         }
 
         public virtual void Scan()
         {
-            return;
         }
 
         public virtual bool IsRunning()
@@ -171,16 +162,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             get
             {
-                return this._errors;
+                return _errors;
             }
             set
             {
-                if (this.Parent != null)
-                    this.Parent.Errors = value;
+                if (Parent != null)
+                    Parent.Errors = value;
                 else
                 {
-                    this._errors = value;
-                    this.OnPropertyChanged("Errors");
+                    _errors = value;
+                    OnPropertyChanged("Errors");
                 }
                     
             }
@@ -189,10 +180,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// <summary>
         /// Returns process name for scanner
         /// </summary>
-        public virtual string ProcessName
-        {
-            get { return string.Empty; }
-        }
+        public virtual string ProcessName => string.Empty;
 
         private string _name;
 
@@ -202,14 +190,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             set 
             {
                 _name = value;
-                this.Results = new RootNode(this.Section);
+                Results = new RootNode(Section);
             }
         }
 
-        public string ToolTipText
-        {
-            get { return Description; }
-        }
+        public string ToolTipText => Description;
 
         public string PluginPath
         {
@@ -221,15 +206,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             get
             {
-                if (this.Parent == null)
+                if (Parent == null)
                 {
-                    return this.Name;
+                    return Name;
                 }
-                else
-                {
-                    string parentName = this.Parent.Name;
-                    return parentName + " - " + this.Name;
-                }
+                string parentName = Parent.Name;
+                return parentName + " - " + Name;
             }
         }
 
@@ -237,15 +219,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public string Status
         {
-            get { return this._status; }
+            get { return _status; }
             set 
             {
-                if (this.Parent != null)
-                    this.Parent.Status = value;
+                if (Parent != null)
+                    Parent.Status = value;
                 else
                 {
-                    this._status = value;
-                    this.OnPropertyChanged("Status");
+                    _status = value;
+                    OnPropertyChanged("Status");
                 }
                     
             }
@@ -255,50 +237,49 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public Image Image
         {
-            get { return this._image; }
+            get { return _image; }
             set
             {
-                if (this.Parent != null)
-                    this.Parent.Image = value;
+                if (Parent != null)
+                    Parent.Image = value;
                 else
                 {
-                    this._image = value;
-                    this.OnPropertyChanged("Image");
+                    _image = value;
+                    OnPropertyChanged("Image");
                 }
             }
         }
 
-        public ScannerBase() 
-        {
-        
-        }
-
         public void LoadGif()
         {
-            if (this.Parent != null)
+            if (Parent != null)
             {
-                this.Parent.LoadGif();
+                Parent.LoadGif();
                 return;
             }
 
-            this.Image = new System.Windows.Controls.Image();
+            Image = new Image();
 
-            BitmapSource gif = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-            ImageBehavior.SetAnimatedSource(this.Image, gif);
+            BitmapSource gif = Imaging.CreateBitmapSourceFromHBitmap(Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            ImageBehavior.SetAnimatedSource(Image, gif);
         }
 
         public void UnloadGif()
         {
-            if (this.Parent != null)
+            if (Parent != null)
             {
-                this.Parent.UnloadGif();
+                Parent.UnloadGif();
                 return;
             }
 
-            this.Image = null;
+            Image = null;
 
-            this.Image = new System.Windows.Controls.Image();
-            this.Image.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            Image = new Image
+            {
+                Source =
+                    Imaging.CreateBitmapSourceFromHBitmap(Resources.finished_scanning.GetHbitmap(), IntPtr.Zero,
+                        Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())
+            };
         }
 
         public ResultNode Results;
@@ -337,94 +318,95 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 // See if scanner is valid
                 if (xmlReader.ReadToFollowing("IsValid"))
                 {
-                    while (xmlReader.Read()) 
+                    while (xmlReader.Read())
                     {
                         if (xmlReader.NodeType != XmlNodeType.Element)
                             continue;
 
                         // Parse registry key and see if it exists
-                        if (xmlReader.Name == "KeyExist")
+                        switch (xmlReader.Name)
                         {
-                            string regKeyPath = xmlReader.ReadElementContentAsString();
-
-                            bRet = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
-
-                            if (!bRet)
-                                return bRet;
-                        }
-                        else if (xmlReader.Name == "ValueExist")
-                        {
-                            string regKeyPath = xmlReader.GetAttribute("RegKey");
-                            string valueNameRegEx = xmlReader.GetAttribute("ValueName");
-
-                            if (string.IsNullOrWhiteSpace(regKeyPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
-                                bRet = false;
-                            else
+                            case "KeyExist":
                             {
-                                using (RegistryKey rk = Utils.RegOpenKey(regKeyPath))
+                                string regKeyPath = xmlReader.ReadElementContentAsString();
+
+                                bRet = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
+
+                                if (!bRet)
+                                    return false;
+                            }
+                                break;
+                            case "ValueExist":
+                            {
+                                string regKeyPath = xmlReader.GetAttribute("RegKey");
+                                string valueNameRegEx = xmlReader.GetAttribute("ValueName");
+
+                                if (string.IsNullOrWhiteSpace(regKeyPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
+                                    bRet = false;
+                                else
                                 {
-                                    if (rk == null)
-                                        continue;
+                                    using (RegistryKey rk = Utils.RegOpenKey(regKeyPath))
+                                    {
+                                        if (rk == null)
+                                            continue;
 
-                                    string[] valueNames = null;
+                                        string[] valueNames = null;
 
-                                    try
-                                    {
-                                        valueNames = rk.GetValueNames();
-                                    }
-                                    catch (System.Security.SecurityException ex)
-                                    {
-                                        Debug.WriteLine("The following exception occurred: " + ex.Message + "\nUnable to get registry key (" + regKeyPath + ") value names.");
-                                        bRet = false;
-                                    }
-                                    catch (UnauthorizedAccessException ex)
-                                    {
-                                        Debug.WriteLine("The following exception occurred: " + ex.Message + "\nUnable to get registry key (" + regKeyPath + ") value names.");
-                                        bRet = false;
-                                    }
+                                        try
+                                        {
+                                            valueNames = rk.GetValueNames();
+                                        }
+                                        catch (SecurityException ex)
+                                        {
+                                            Debug.WriteLine("The following exception occurred: " + ex.Message + "\nUnable to get registry key (" + regKeyPath + ") value names.");
+                                            bRet = false;
+                                        }
+                                        catch (UnauthorizedAccessException ex)
+                                        {
+                                            Debug.WriteLine("The following exception occurred: " + ex.Message + "\nUnable to get registry key (" + regKeyPath + ") value names.");
+                                            bRet = false;
+                                        }
 
-                                    if (valueNames != null)
-                                    {
-                                        if (valueNames.Where(valueName => !string.IsNullOrWhiteSpace(valueName)).Any(valueName => Regex.IsMatch(valueName, valueNameRegEx)))
-                                            bRet = true;
+                                        if (valueNames != null)
+                                        {
+                                            if (valueNames.Where(valueName => !string.IsNullOrWhiteSpace(valueName)).Any(valueName => Regex.IsMatch(valueName, valueNameRegEx)))
+                                                bRet = true;
+                                        }
                                     }
                                 }
-                            }
 
-                            if (!bRet)
-                                return bRet;
-                        }
-                        // See if file exists
-                        else if (xmlReader.Name == "FileExist")
-                        {
-                            string filePath = xmlReader.ReadElementContentAsString();
-
-                            if (string.IsNullOrWhiteSpace(filePath))
-                                bRet = false;
-                            else
-                            {
-                                filePath = MiscFunctions.ExpandVars(filePath);
-                                bRet = File.Exists(filePath);
+                                if (!bRet)
+                                    return false;
                             }
+                                break;
+                            case "FileExist":
+                                string filePath = xmlReader.ReadElementContentAsString();
+
+                                if (string.IsNullOrWhiteSpace(filePath))
+                                    bRet = false;
+                                else
+                                {
+                                    filePath = MiscFunctions.ExpandVars(filePath);
+                                    bRet = File.Exists(filePath);
+                                }
                             
-                            if (!bRet)
-                                return bRet;
-                        }
-                        // See if folder exists
-                        else if (xmlReader.Name == "FolderExist")
-                        {
-                            string folderPath = xmlReader.ReadElementContentAsString();
+                                if (!bRet)
+                                    return false;
+                                break;
+                            case "FolderExist":
+                                string folderPath = xmlReader.ReadElementContentAsString();
 
-                            if (string.IsNullOrWhiteSpace(folderPath))
-                                bRet = false;
-                            else
-                            {
-                                folderPath = MiscFunctions.ExpandVars(folderPath);
-                                bRet = Directory.Exists(folderPath);
-                            }
+                                if (string.IsNullOrWhiteSpace(folderPath))
+                                    bRet = false;
+                                else
+                                {
+                                    folderPath = MiscFunctions.ExpandVars(folderPath);
+                                    bRet = Directory.Exists(folderPath);
+                                }
 
-                            if (!bRet)
-                                return bRet;
+                                if (!bRet)
+                                    return false;
+                                break;
                         }
                     }
                 }
@@ -440,189 +422,189 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 }
 
                 // Ensure Action commands are valid before being added
-                if (xmlReader.ReadToFollowing("Action"))
+                if (!xmlReader.ReadToFollowing("Action"))
+                    return bRet;
+
+                while (xmlReader.Read())
                 {
-                    while (xmlReader.Read())
+                    if (xmlReader.NodeType != XmlNodeType.Element)
+                        continue;
+
+                    if (xmlReader.Name == "DeleteKey")
                     {
-                        if (xmlReader.NodeType != XmlNodeType.Element)
-                            continue;
+                        string regPath = xmlReader.ReadElementContentAsString();
 
-                        if (xmlReader.Name == "DeleteKey")
+                        if (string.IsNullOrWhiteSpace(regPath))
                         {
-                            string regPath = xmlReader.ReadElementContentAsString();
+                            bRet = false;
+                            break;
+                        }
+                    }
 
-                            if (string.IsNullOrWhiteSpace(regPath))
-                            {
-                                bRet = false;
-                                break;
-                            }
+                    if (xmlReader.Name == "DeleteValue")
+                    {
+                        string regPath = xmlReader.GetAttribute("RegKey");
+                        string valueNameRegEx = xmlReader.GetAttribute("ValueName");
+
+                        if (string.IsNullOrWhiteSpace(regPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
+                        {
+                            bRet = false;
+                            break;
+                        }
+                    }
+
+                    if (xmlReader.Name == "DeleteFile")
+                    {
+                        string filePath = xmlReader.ReadElementContentAsString();
+
+                        if (string.IsNullOrWhiteSpace(filePath))
+                        {
+                            bRet = false;
+                            break;
+                        }
+                    }
+
+                    if (xmlReader.Name == "DeleteFolder")
+                    {
+                        string folderPath = xmlReader.ReadElementContentAsString();
+
+                        if (string.IsNullOrWhiteSpace(folderPath))
+                        {
+                            bRet = false;
+                            break;
+                        }
+                    }
+
+                    if (xmlReader.Name == "DeleteFileList")
+                    {
+                        string searchPath = xmlReader.GetAttribute("Path");
+                        string searchText = xmlReader.GetAttribute("SearchText");
+                        if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
+                        {
+                            bRet = false;
+                            break;
+                        }
+                    }
+
+                    if (xmlReader.Name == "DeleteFolderList")
+                    {
+                        string searchPath = xmlReader.GetAttribute("Path");
+                        string searchText = xmlReader.GetAttribute("SearchText");
+
+                        if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
+                        {
+                            bRet = false;
+                            break;
+                        }
+                    }
+
+                    if (xmlReader.Name == "FindRegKey")
+                    {
+                        string regKey = xmlReader.GetAttribute("RegKey");
+
+                        if (string.IsNullOrWhiteSpace(regKey))
+                        {
+                            bRet = false;
+                            break;
                         }
 
-                        if (xmlReader.Name == "DeleteValue")
-                        {
-                            string regPath = xmlReader.GetAttribute("RegKey");
-                            string valueNameRegEx = xmlReader.GetAttribute("ValueName");
-
-                            if (string.IsNullOrWhiteSpace(regPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
-                            {
-                                bRet = false;
-                                break;
-                            }
-                        }
-
-                        if (xmlReader.Name == "DeleteFile")
-                        {
-                            string filePath = xmlReader.ReadElementContentAsString();
-
-                            if (string.IsNullOrWhiteSpace(filePath))
-                            {
-                                bRet = false;
-                                break;
-                            }
-                        }
-
-                        if (xmlReader.Name == "DeleteFolder")
-                        {
-                            string folderPath = xmlReader.ReadElementContentAsString();
-
-                            if (string.IsNullOrWhiteSpace(folderPath))
-                            {
-                                bRet = false;
-                                break;
-                            }
-                        }
-
-                        if (xmlReader.Name == "DeleteFileList")
-                        {
-                            string searchPath = xmlReader.GetAttribute("Path");
-                            string searchText = xmlReader.GetAttribute("SearchText");
-                            if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
-                            {
-                                bRet = false;
-                                break;
-                            }
-                        }
-
-                        if (xmlReader.Name == "DeleteFolderList")
-                        {
-                            string searchPath = xmlReader.GetAttribute("Path");
-                            string searchText = xmlReader.GetAttribute("SearchText");
-
-                            if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
-                            {
-                                bRet = false;
-                                break;
-                            }
-                        }
-
-                        if (xmlReader.Name == "FindRegKey")
-                        {
-                            string regKey = xmlReader.GetAttribute("RegKey");
-
-                            if (string.IsNullOrWhiteSpace(regKey))
+                        // Must have child nodes
+                        using (XmlReader children = xmlReader.ReadSubtree()) {
+                            if (children.IsEmptyElement)
                             {
                                 bRet = false;
                                 break;
                             }
 
-                            // Must have child nodes
-                            using (XmlReader children = xmlReader.ReadSubtree()) {
-                                if (children.IsEmptyElement)
+                            bool hasChildren = false;
+                            while (children.Read()) {
+                                if ((children.Name == "IfSubKey" || children.Name == "IfValueName") && !string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
                                 {
-                                    bRet = false;
-                                    break;
-                                }
-
-                                bool hasChildren = false;
-                                while (children.Read()) {
-                                    if ((children.Name == "IfSubKey" || children.Name == "IfValueName") && !string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
-                                    {
-                                        hasChildren = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!hasChildren)
-                                {
-                                    bRet = false;
+                                    hasChildren = true;
                                     break;
                                 }
                             }
+
+                            if (!hasChildren)
+                            {
+                                bRet = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (xmlReader.Name == "FindPath")
+                    {
+                        string searchPath = xmlReader.GetAttribute("Path");
+                        string searchText = xmlReader.GetAttribute("SearchText");
+
+                        if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
+                        {
+                            bRet = false;
+                            break;
                         }
 
-                        if (xmlReader.Name == "FindPath")
+                        // Must have child nodes
+                        using (XmlReader children = xmlReader.ReadSubtree())
                         {
-                            string searchPath = xmlReader.GetAttribute("Path");
-                            string searchText = xmlReader.GetAttribute("SearchText");
-
-                            if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
+                            if (children.IsEmptyElement)
                             {
                                 bRet = false;
                                 break;
                             }
 
-                            // Must have child nodes
-                            using (XmlReader children = xmlReader.ReadSubtree())
+                            bool hasChildren = false;
+                            while (children.Read())
                             {
-                                if (children.IsEmptyElement)
+                                if ((children.Name == "IfFile" || children.Name == "IfFile") && !string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
                                 {
-                                    bRet = false;
+                                    hasChildren = true;
                                     break;
                                 }
-
-                                bool hasChildren = false;
-                                while (children.Read())
-                                {
-                                    if ((children.Name == "IfFile" || children.Name == "IfFile") && !string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
-                                    {
-                                        hasChildren = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!hasChildren)
-                                {
-                                    bRet = false;
-                                    break;
-                                }
                             }
-                        }
 
-                        if (xmlReader.Name == "RemoveINIValue")
-                        {
-                            string filePath = xmlReader.GetAttribute("Path");
-                            string sectionRegEx = xmlReader.GetAttribute("Section");
-                            string valueRegEx = xmlReader.GetAttribute("Name");
-
-                            if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(sectionRegEx) || string.IsNullOrWhiteSpace(valueRegEx))
+                            if (!hasChildren)
                             {
                                 bRet = false;
                                 break;
                             }
                         }
+                    }
 
-                        if (xmlReader.Name == "RemoveINISection")
+                    if (xmlReader.Name == "RemoveINIValue")
+                    {
+                        string filePath = xmlReader.GetAttribute("Path");
+                        string sectionRegEx = xmlReader.GetAttribute("Section");
+                        string valueRegEx = xmlReader.GetAttribute("Name");
+
+                        if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(sectionRegEx) || string.IsNullOrWhiteSpace(valueRegEx))
                         {
-                            string filePath = xmlReader.GetAttribute("Path");
-                            string sectionRegEx = xmlReader.GetAttribute("Section");
-
-                            if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(sectionRegEx))
-                            {
-                                bRet = false;
-                                break;
-                            }
+                            bRet = false;
+                            break;
                         }
+                    }
 
-                        if (xmlReader.Name == "RemoveXML")
+                    if (xmlReader.Name == "RemoveINISection")
+                    {
+                        string filePath = xmlReader.GetAttribute("Path");
+                        string sectionRegEx = xmlReader.GetAttribute("Section");
+
+                        if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(sectionRegEx))
                         {
-                            string filePath = xmlReader.GetAttribute("Path");
-                            string xPath = xmlReader.GetAttribute("XPath");
+                            bRet = false;
+                            break;
+                        }
+                    }
 
-                            if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(xPath))
-                            {
-                                bRet = false;
-                                break;
-                            }
+                    if (xmlReader.Name == "RemoveXML")
+                    {
+                        string filePath = xmlReader.GetAttribute("Path");
+                        string xPath = xmlReader.GetAttribute("XPath");
+
+                        if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(xPath))
+                        {
+                            bRet = false;
+                            break;
                         }
                     }
                 }
@@ -636,7 +618,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// </summary>
         public void ScanPlugins()
         {
-            foreach (ScannerBase n in this.Children)
+            foreach (ScannerBase n in Children)
             {
                 if (!string.IsNullOrEmpty(n.Name) && !string.IsNullOrEmpty(n.PluginPath))
                     ScanPlugin(n.Name, n.PluginPath);
@@ -646,6 +628,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// <summary>
         /// Parses the .xml file and performs the actions specified
         /// </summary>
+        /// <param name="name">Scanner name</param>
         /// <param name="pluginFile">Path to .xml file</param>
         public void ScanPlugin(string name, string pluginFile)
         {
@@ -656,7 +639,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             try
             {
-                using (XmlReader xmlReader = XmlTextReader.Create(pluginFile))
+                using (XmlReader xmlReader = XmlReader.Create(pluginFile))
                 {
                     while (xmlReader.ReadToFollowing("IsRunning"))
                     {
@@ -667,7 +650,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     }
                 }
 
-                using (XmlReader xmlReader = XmlTextReader.Create(pluginFile))
+                using (XmlReader xmlReader = XmlReader.Create(pluginFile))
                 {
                     if (xmlReader.ReadToFollowing("Action"))
                     {
@@ -680,7 +663,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             {
                                 string regPath = xmlReader.ReadElementContentAsString();
                                 RegistryKey regKey = Utils.RegOpenKey(regPath);
-                                bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                                bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y"));
 
                                 pluginFunctions.DeleteKey(regKey, recurse);
                             }
@@ -705,7 +688,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             if (xmlReader.Name == "DeleteFolder")
                             {
                                 string folderPath = MiscFunctions.ExpandVars(xmlReader.ReadElementContentAsString());
-                                bool recurse = ((xmlReader.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                                bool recurse = (xmlReader.GetAttribute("Recursive") == "Y");
 
                                 pluginFunctions.DeleteFolder(folderPath, recurse);
                             }
@@ -731,7 +714,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             if (xmlReader.Name == "FindRegKey")
                             {
                                 string regKey = xmlReader.GetAttribute("RegKey");
-                                bool includeSubKeys = ((xmlReader.GetAttribute("IncludeSubKeys") == "Y") ? (true) : (false));
+                                bool includeSubKeys = ((xmlReader.GetAttribute("IncludeSubKeys") == "Y"));
 
                                 RegistryKey rk = Utils.RegOpenKey(regKey, false);
                                 XmlReader xmlChildren = xmlReader.ReadSubtree();
@@ -756,7 +739,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 string sectionRegEx = xmlReader.GetAttribute("Section");
                                 string valueRegEx = xmlReader.GetAttribute("Name");
 
-                                pluginFunctions.DeleteINIValue(filePath, sectionRegEx, valueRegEx);
+                                pluginFunctions.DeleteIniValue(filePath, sectionRegEx, valueRegEx);
                             }
 
                             if (xmlReader.Name == "RemoveINISection")
@@ -764,7 +747,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 string filePath = MiscFunctions.ExpandVars(xmlReader.GetAttribute("Path"));
                                 string sectionRegEx = xmlReader.GetAttribute("Section");
 
-                                pluginFunctions.DeleteINISection(filePath, sectionRegEx);
+                                pluginFunctions.DeleteIniSection(filePath, sectionRegEx);
                             }
 
                             if (xmlReader.Name == "RemoveXML")
@@ -778,7 +761,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     }
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
                 Debug.WriteLine("The following error occurred: {0}\nUnable to load plugin file ({1})", ex.Message, pluginFile);
             }
@@ -800,13 +783,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             if (pluginFunctions.Folders.Count > 0)
                 Wizard.StoreBadFolderList(name, pluginFunctions.Folders);
 
-            if (pluginFunctions.INIList.Count > 0)
-                Wizard.StoreINIKeys(name, pluginFunctions.INIList.ToArray());
+            if (pluginFunctions.IniList.Count > 0)
+                Wizard.StoreIniKeys(name, pluginFunctions.IniList.ToArray());
 
             if (pluginFunctions.XmlPaths.Count > 0)
-                Wizard.StoreXML(name, pluginFunctions.XmlPaths);
-
-            return;
+                Wizard.StoreXml(name, pluginFunctions.XmlPaths);
         }
 
         

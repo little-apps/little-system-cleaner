@@ -3,10 +3,9 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:Little_System_Cleaner.Controls"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 	mc:Ignorable="d"
-	x:Class="Little_System_Cleaner.Controls.Options"
+	x:Class="Little_System_Cleaner.Tab_Controls.Options.Options"
 	x:Name="UserControl"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     
@@ -65,7 +64,7 @@
                         <StackPanel Margin="5,5,5,5">
                             <StackPanel Orientation="Horizontal">
                                 <RadioButton x:Name="radioButtonNoProxy" Margin="0,0,10,0" IsChecked="{Binding NoProxy}">No Proxy</RadioButton>
-                                <RadioButton x:Name="radioButtonIEProxy" Margin="0,0,10,0" IsChecked="{Binding IEProxy}">Use Internet Explorer Proxy Settings</RadioButton>
+                                <RadioButton x:Name="radioButtonIEProxy" Margin="0,0,10,0" IsChecked="{Binding IeProxy}">Use Internet Explorer Proxy Settings</RadioButton>
                                 <RadioButton x:Name="radioButtonProxy"  IsChecked="{Binding Proxy}">Manual Proxy Configuration</RadioButton>
                             </StackPanel>
                             <StackPanel Visibility="{Binding Path=ShowProxySettings}">

@@ -17,12 +17,6 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Collections.ObjectModel;
-using Little_System_Cleaner.Misc;
 using System.ComponentModel;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
@@ -39,9 +33,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             get { return _pathRegistry; }
             set
             {
-                this._pathRegistry = value;
+                _pathRegistry = value;
 
-                this.OnPropertyChanged("Item");
+                OnPropertyChanged("Item");
             }
         }
 
@@ -50,9 +44,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             get { return _pathFolder; }
             set
             {
-                this._pathFolder = value;
+                _pathFolder = value;
 
-                this.OnPropertyChanged("Item");
+                OnPropertyChanged("Item");
             }
         }
 
@@ -61,21 +55,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             get { return _pathFile; }
             set
             {
-                this._pathFile = value;
+                _pathFile = value;
 
-                this.OnPropertyChanged("Item");
+                OnPropertyChanged("Item");
             }
         }
 
-        public bool IsPath
-        {
-            get { return (!string.IsNullOrEmpty(this._pathFile) || !string.IsNullOrEmpty(this._pathFolder)); }
-        }
+        public bool IsPath => (!string.IsNullOrEmpty(_pathFile) || !string.IsNullOrEmpty(_pathFolder));
 
-        public string Item
-        {
-            get { return ToString(); }
-        }
+        public string Item => ToString();
 
         /// <summary>
         /// Returns the assigned path (registry/file/folder)
@@ -91,47 +79,43 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             if (!string.IsNullOrEmpty(_pathFolder))
                 return string.Copy(_pathFolder);
 
-            return this.GetType().Name;
-        }
-
-        /// <summary>
-        /// The constructor for this class
-        /// </summary>
-        public ExcludeItem()
-        {
+            return GetType().Name;
         }
 
         #region ICloneable Members
         public Object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
         #endregion
 
         #region IEquatable Members
         public bool Equals(ExcludeItem other)
         {
-            return (other != null && this.ToString() == other.ToString());
+            return (other != null && ToString() == other.ToString());
         }
 
         public bool Equals(string other)
         {
-            return (!string.IsNullOrEmpty(other) && this.FolderPath == other);
+            return (!string.IsNullOrEmpty(other) && FolderPath == other);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is ExcludeItem)
-                return Equals(obj as ExcludeItem);
-            else if (obj is string)
-                return Equals(obj as string);
-            else
-                return false;
+            var a = obj as ExcludeItem;
+            if (a != null)
+                return Equals(a);
+
+            var s = obj as string;
+            if (s != null)
+                return Equals(s);
+
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
         #endregion
 
@@ -141,8 +125,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
         #endregion
     }

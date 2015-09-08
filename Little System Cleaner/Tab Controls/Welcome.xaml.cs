@@ -17,28 +17,18 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using System.Windows;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 
-namespace Little_System_Cleaner.Controls
+namespace Little_System_Cleaner.Tab_Controls
 {
     /// <summary>
     /// Interaction logic for Welcome.xaml
     /// </summary>
-    public partial class Welcome : UserControl
+    public partial class Welcome
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         internal class MEMORYSTATUSEX
@@ -55,7 +45,7 @@ namespace Little_System_Cleaner.Controls
 
             public MEMORYSTATUSEX()
             {
-                this.dwLength = (uint)Marshal.SizeOf(this);
+                dwLength = (uint)Marshal.SizeOf(this);
             }
         }
 
@@ -74,48 +64,46 @@ namespace Little_System_Cleaner.Controls
             MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
             RegistryKey regKey = null;
 
-            this.lastDateTime.Text = Properties.Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Properties.Settings.Default.lastScanDate).ToString() : "Unknown";
-            this.errorsFound.Text = string.Format("{0} errors found", Properties.Settings.Default.lastScanErrors);
-            this.errorsRepaired.Text = string.Format("{0} errors fixed", Properties.Settings.Default.lastScanErrorsFixed);
-            if (Properties.Settings.Default.lastScanElapsed != 0)
+            lastDateTime.Text = Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Settings.Default.lastScanDate).ToString() : "Unknown";
+            errorsFound.Text = $"{Settings.Default.lastScanErrors} errors found";
+            errorsRepaired.Text = $"{Settings.Default.lastScanErrorsFixed} errors fixed";
+            if (Settings.Default.lastScanElapsed != 0)
             {
-                TimeSpan ts = TimeSpan.FromTicks(Properties.Settings.Default.lastScanElapsed);
-                this.elapsedTime.Text = string.Format("{0} seconds", Convert.ToInt32(ts.TotalSeconds));
+                TimeSpan ts = TimeSpan.FromTicks(Settings.Default.lastScanElapsed);
+                elapsedTime.Text = $"{Convert.ToInt32(ts.TotalSeconds)} seconds";
             }
             else 
-                this.elapsedTime.Text = "Unknown";
+                elapsedTime.Text = "Unknown";
 
-            this.totalScans.Text = string.Format("{0} scans performed", Properties.Settings.Default.totalScans);
-            this.totalErrors.Text = string.Format("{0} errors found", Properties.Settings.Default.totalErrorsFound);
-            this.totalErrorsFixed.Text = string.Format("{0} errors fixed", Properties.Settings.Default.totalErrorsFixed);
+            totalScans.Text = $"{Settings.Default.totalScans} scans performed";
+            totalErrors.Text = $"{Settings.Default.totalErrorsFound} errors found";
+            totalErrorsFixed.Text = $"{Settings.Default.totalErrorsFixed} errors fixed";
 
-            this.cpuType.Text = "Unknown";
+            cpuType.Text = "Unknown";
 
             try
             {
                 regKey = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
 
-                if (regKey != null)
-                {
-                    string procName = regKey.GetValue("ProcessorNameString") as string;
+                string procName = regKey?.GetValue("ProcessorNameString") as string;
 
-                    if (!string.IsNullOrEmpty(procName))
-                        this.cpuType.Text = procName;
-                }
+                if (!string.IsNullOrEmpty(procName))
+                    cpuType.Text = procName;
             }
             catch (Exception)
             {
-                this.cpuType.Text = "Unknown";
+                cpuType.Text = "Unknown";
             }
             finally
             {
-                if (regKey != null)
-                    regKey.Close();
+                regKey?.Close();
             }
 
-            this.totalRAM.Text = GlobalMemoryStatusEx(memStatus) ? string.Format("{0} total memory", Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))) : "Unknown";
+            totalRAM.Text = GlobalMemoryStatusEx(memStatus) ?
+                $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory"
+                : "Unknown";
 
-            this.osVersion.Text = OSVersion.GetOSVersion();
+            osVersion.Text = OsVersion.GetOsVersion();
         }
     }
 }

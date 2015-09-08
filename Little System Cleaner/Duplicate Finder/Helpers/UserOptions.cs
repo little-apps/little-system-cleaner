@@ -1,10 +1,6 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Controls;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -16,38 +12,24 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private ObservableCollection<IncludeDrive> _drives = new ObservableCollection<IncludeDrive>();
-        private ObservableCollection<IncludeFolder> _incFolders = new ObservableCollection<IncludeFolder>();
         private ObservableCollection<HashAlgorithm> _hashAlgorithms;
 
         private IncludeFolder _incFolderSelected;
         private ExcludeFolder _excFolderSelected;
 
-        private bool? _allDrives = false;
         private bool? _allExceptDrives = true;
-        private bool? _allExceptSystem = true;
-        private bool? _allExceptRemovable = true;
-        private bool? _allExceptNetwork = true;
         private bool? _onlySelectedDrives = false;
         private bool? _onlySelectedFolders = false;
 
-        private bool? _compareChecksumFilename = false;
-        private bool? _compareChecksum = true;
-        private bool? _compareFilename = false;
         private bool? _compareMusicTags = false;
 
         private bool? _skipTempFiles = false;
-        private bool? _scanSubDirs = true;
         private bool? _skipSysAppDirs = false;
-        private bool? _skipZeroByteFiles = true;
-        private bool? _incHiddenFiles = false;
-        private bool? _skipCompressedFiles = false;
         private bool? _skipWindowsDir = false;
         private bool? _skipFilesGreaterThan = true;
         private int _skipFilesGreaterSize = 512;
@@ -55,148 +37,91 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private HashAlgorithm _hashAlgorithm;
 
-        private bool? _musicTagTitle = true;
-        private bool? _musicTagYear = false;
-        private bool? _musicTagArtist = true;
-        private bool? _musicTagGenre = false;
-        private bool? _musicTagAlbum = false;
-        private bool? _musicTagDuration = false;
-        private bool? _musicTagTrackNo = false;
-        private bool? _musicTagBitRate = false;
-
-        private ObservableCollection<ExcludeFolder> _excFolders = new ObservableCollection<ExcludeFolder>();
-
         #region Drives/Folders Properties
-        public ObservableCollection<IncludeDrive> Drives
-        {
-            get { return this._drives; }
-        }
+        public ObservableCollection<IncludeDrive> Drives { get; } = new ObservableCollection<IncludeDrive>();
 
-        public ObservableCollection<IncludeFolder> IncFolders
-        {
-            get { return this._incFolders; }
-        }
+        public ObservableCollection<IncludeFolder> IncFolders { get; } = new ObservableCollection<IncludeFolder>();
 
         public IncludeFolder IncludeFolderSelected
         {
-            get { return this._incFolderSelected; }
+            get { return _incFolderSelected; }
             set
             {
-                this._incFolderSelected = value;
-                this.OnPropertyChanged("IncludeFolderSelected");
+                _incFolderSelected = value;
+                OnPropertyChanged("IncludeFolderSelected");
             }
         }
 
-        public bool? AllDrives
-        {
-            get { return this._allDrives; }
-            set { this._allDrives = value; }
-        }
+        public bool? AllDrives { get; set; } = false;
 
         public bool? AllExceptDrives
         {
-            get { return this._allExceptDrives; }
+            get { return _allExceptDrives; }
             set
             {
-                this._allExceptDrives = value;
-                this.OnPropertyChanged("AllExceptEnabled");
+                _allExceptDrives = value;
+                OnPropertyChanged("AllExceptEnabled");
             }
         }
 
-        public bool? AllExceptSystem
-        {
-            get { return this._allExceptSystem; }
-            set { this._allExceptSystem = value; }
-        }
-        public bool? AllExceptRemovable
-        {
-            get { return this._allExceptRemovable; }
-            set { this._allExceptRemovable = value; }
-        }
-        public bool? AllExceptNetwork
-        {
-            get { return this._allExceptNetwork; }
-            set { this._allExceptNetwork = value; }
-        }
+        public bool? AllExceptSystem { get; set; } = true;
+
+        public bool? AllExceptRemovable { get; set; } = true;
+
+        public bool? AllExceptNetwork { get; set; } = true;
+
         public bool? OnlySelectedDrives
         {
-            get { return this._onlySelectedDrives; }
+            get { return _onlySelectedDrives; }
             set
             {
-                this._onlySelectedDrives = value;
-                this.OnPropertyChanged("SelectedDrivesEnabled");
+                _onlySelectedDrives = value;
+                OnPropertyChanged("SelectedDrivesEnabled");
             }
         }
         public bool? OnlySelectedFolders
         {
-            get { return this._onlySelectedFolders; }
+            get { return _onlySelectedFolders; }
             set
             {
-                this._onlySelectedFolders = value;
-                this.OnPropertyChanged("SelectedFoldersEnabled");
+                _onlySelectedFolders = value;
+                OnPropertyChanged("SelectedFoldersEnabled");
             }
         }
 
-        public bool AllExceptEnabled
-        {
-            get
-            {
-                return (this.AllExceptDrives.GetValueOrDefault());
-            }
-        }
+        public bool AllExceptEnabled => (AllExceptDrives.GetValueOrDefault());
 
-        public bool SelectedDrivesEnabled
-        {
-            get
-            {
-                return (this.OnlySelectedDrives.GetValueOrDefault());
-            }
-        }
+        public bool SelectedDrivesEnabled => (OnlySelectedDrives.GetValueOrDefault());
 
-        public bool SelectedFoldersEnabled
-        {
-            get
-            {
-                return (this.OnlySelectedFolders.GetValueOrDefault());
-            }
-        }
+        public bool SelectedFoldersEnabled => (OnlySelectedFolders.GetValueOrDefault());
+
         #endregion
 
         #region Files Properties
-        public bool? CompareChecksumFilename
-        {
-            get { return this._compareChecksumFilename; }
-            set { this._compareChecksumFilename = value; }
-        }
+        public bool? CompareChecksumFilename { get; set; } = false;
 
-        public bool? CompareChecksum
-        {
-            get { return this._compareChecksum; }
-            set { this._compareChecksum = value; }
-        }
-        public bool? CompareFilename
-        {
-            get { return this._compareFilename; }
-            set { this._compareFilename = value; }
-        }
+        public bool? CompareChecksum { get; set; } = true;
+
+        public bool? CompareFilename { get; set; } = false;
+
         public bool? CompareMusicTags
         {
-            get { return this._compareMusicTags; }
+            get { return _compareMusicTags; }
             set
             {
-                this._compareMusicTags = value;
-                this.OnPropertyChanged("MusicTagsEnabled");
+                _compareMusicTags = value;
+                OnPropertyChanged("MusicTagsEnabled");
             }
         }
 
         public bool? SkipTempFiles
         {
-            get { return this._skipTempFiles; }
+            get { return _skipTempFiles; }
             set
             {
-                this._skipTempFiles = value;
+                _skipTempFiles = value;
 
-                string[] excFolders = new string[] {
+                string[] excFolders = {
                         Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine),
                         Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User)
                     };
@@ -204,40 +129,37 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 foreach (string excFolderPath in excFolders)
                 {
                     ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = this.ExcludeFolders.IndexOf(excFolder);
+                    int index = ExcludeFolders.IndexOf(excFolder);
 
                     if (value.GetValueOrDefault())
                     {
                         if (index == -1)
-                            this.ExcludeFolders.Add(excFolder);
-                        else if (this.ExcludeFolders[index].ReadOnly == false)
-                            this.ExcludeFolders[index].ReadOnly = true;
+                            ExcludeFolders.Add(excFolder);
+                        else if (ExcludeFolders[index].ReadOnly == false)
+                            ExcludeFolders[index].ReadOnly = true;
                     }
                     else
                     {
                         if (index != -1)
-                            this.ExcludeFolders.RemoveAt(index);
+                            ExcludeFolders.RemoveAt(index);
                     }
                 }
 
-                this.OnPropertyChanged("SkipTempFiles");
-                this.OnPropertyChanged("ExcludeFolders");
+                OnPropertyChanged("SkipTempFiles");
+                OnPropertyChanged("ExcludeFolders");
             }
         }
 
-        public bool? ScanSubDirs
-        {
-            get { return this._scanSubDirs; }
-            set { this._scanSubDirs = value; }
-        }
+        public bool? ScanSubDirs { get; set; } = true;
+
         public bool? SkipSysAppDirs
         {
-            get { return this._skipSysAppDirs; }
+            get { return _skipSysAppDirs; }
             set
             {
-                this._skipSysAppDirs = value;
+                _skipSysAppDirs = value;
 
-                string[] excFolders = new string[] {
+                string[] excFolders = {
                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), // Program files directory
                         Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), 
                         Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), // Program files (x86) directory
@@ -250,208 +172,156 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 foreach (string excFolderPath in excFolders)
                 {
                     ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = this.ExcludeFolders.IndexOf(excFolder);
+                    int index = ExcludeFolders.IndexOf(excFolder);
 
                     if (value.GetValueOrDefault())
                     {
                         if (index == -1)
-                            this.ExcludeFolders.Add(excFolder);
-                        else if (this.ExcludeFolders[index].ReadOnly == false)
-                            this.ExcludeFolders[index].ReadOnly = true;
+                            ExcludeFolders.Add(excFolder);
+                        else if (ExcludeFolders[index].ReadOnly == false)
+                            ExcludeFolders[index].ReadOnly = true;
                     }
                     else
                     {
                         if (index != -1)
-                            this.ExcludeFolders.RemoveAt(index);
+                            ExcludeFolders.RemoveAt(index);
                     }
                 }
 
-                this.OnPropertyChanged("SkipSysAppDirs");
-                this.OnPropertyChanged("ExcludeFolders");
+                OnPropertyChanged("SkipSysAppDirs");
+                OnPropertyChanged("ExcludeFolders");
             }
         }
-        public bool? SkipZeroByteFiles
-        {
-            get { return this._skipZeroByteFiles; }
-            set { this._skipZeroByteFiles = value; }
-        }
-        public bool? IncHiddenFiles
-        {
-            get { return this._incHiddenFiles; }
-            set { this._incHiddenFiles = value; }
-        }
-        public bool? SkipCompressedFiles
-        {
-            get { return this._skipCompressedFiles; }
-            set { this._skipCompressedFiles = value; }
-        }
+        public bool? SkipZeroByteFiles { get; set; } = true;
+
+        public bool? IncHiddenFiles { get; set; } = false;
+
+        public bool? SkipCompressedFiles { get; set; } = false;
+
         public bool? SkipWindowsDir
         {
-            get { return this._skipWindowsDir; }
+            get { return _skipWindowsDir; }
             set
             {
-                this._skipWindowsDir = value;
+                _skipWindowsDir = value;
 
-                string[] excFolders = new string[] {
+                string[] excFolders = {
                         Environment.GetFolderPath(Environment.SpecialFolder.Windows)
                     };
 
                 foreach (string excFolderPath in excFolders)
                 {
                     ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = this.ExcludeFolders.IndexOf(excFolder);
+                    int index = ExcludeFolders.IndexOf(excFolder);
 
                     if (value.GetValueOrDefault())
                     {
                         if (index == -1)
-                            this.ExcludeFolders.Add(excFolder);
-                        else if (this.ExcludeFolders[index].ReadOnly == false)
-                            this.ExcludeFolders[index].ReadOnly = true;
+                            ExcludeFolders.Add(excFolder);
+                        else if (ExcludeFolders[index].ReadOnly == false)
+                            ExcludeFolders[index].ReadOnly = true;
                     }
                     else
                     {
                         if (index != -1)
-                            this.ExcludeFolders.RemoveAt(index);
+                            ExcludeFolders.RemoveAt(index);
                     }
                 }
 
-                this.OnPropertyChanged("SkipWindowsDir");
-                this.OnPropertyChanged("ExcludeFolders");
+                OnPropertyChanged("SkipWindowsDir");
+                OnPropertyChanged("ExcludeFolders");
             }
         }
 
         public bool? SkipFilesGreaterThan
         {
-            get { return this._skipFilesGreaterThan; }
+            get { return _skipFilesGreaterThan; }
             set
             {
-                this._skipFilesGreaterThan = value;
-                this.OnPropertyChanged("SkipFilesGreaterThan");
-                this.OnPropertyChanged("SkipFilesGreaterEnabled");
+                _skipFilesGreaterThan = value;
+                OnPropertyChanged("SkipFilesGreaterThan");
+                OnPropertyChanged("SkipFilesGreaterEnabled");
             }
         }
 
         public int SkipFilesGreaterSize
         {
-            get { return this._skipFilesGreaterSize; }
+            get { return _skipFilesGreaterSize; }
             set
             {
-                this._skipFilesGreaterSize = value;
-                this.OnPropertyChanged("SkipFilesGreaterSize");
+                _skipFilesGreaterSize = value;
+                OnPropertyChanged("SkipFilesGreaterSize");
             }
         }
 
-        public string[] SkipFilesGreaterUnits
-        {
-            get
-            {
-                return new string[] { "B", "KB", "MB", "GB" };
-            }
-        }
+        public string[] SkipFilesGreaterUnits => new[] { "B", "KB", "MB", "GB" };
 
         public string SkipFilesGreaterUnit
         {
-            get { return this._skipFilesGreaterUnit; }
+            get { return _skipFilesGreaterUnit; }
             set
             {
-                this._skipFilesGreaterUnit = value;
-                this.OnPropertyChanged("SkipFilesGreaterUnit");
+                _skipFilesGreaterUnit = value;
+                OnPropertyChanged("SkipFilesGreaterUnit");
             }
         }
 
-        public bool SkipFilesGreaterEnabled
-        {
-            get { return (this.SkipFilesGreaterThan.GetValueOrDefault()); }
-        }
+        public bool SkipFilesGreaterEnabled => (SkipFilesGreaterThan.GetValueOrDefault());
 
         public HashAlgorithm HashAlgorithm
         {
-            get { return this._hashAlgorithm; }
+            get { return _hashAlgorithm; }
             set
             {
-                this._hashAlgorithm = value;
-                this.OnPropertyChanged("HashAlgorithm");
+                _hashAlgorithm = value;
+                OnPropertyChanged("HashAlgorithm");
             }
         }
 
         public ObservableCollection<HashAlgorithm> HashAlgorithms
         {
-            get { return this._hashAlgorithms; }
+            get { return _hashAlgorithms; }
             set
             {
-                this._hashAlgorithms = value;
-                this.OnPropertyChanged("HashAlgorithms");
+                _hashAlgorithms = value;
+                OnPropertyChanged("HashAlgorithms");
             }
         }
         #endregion
 
         #region Music Tags Properties
-        public bool MusicTagsEnabled
-        {
-            get { return (this.CompareMusicTags.GetValueOrDefault()); }
-        }
+        public bool MusicTagsEnabled => (CompareMusicTags.GetValueOrDefault());
 
-        public bool? MusicTagTitle
-        {
-            get { return this._musicTagTitle; }
-            set { this._musicTagTitle = value; }
-        }
-        public bool? MusicTagYear
-        {
-            get { return this._musicTagYear; }
-            set { this._musicTagYear = value; }
-        }
-        public bool? MusicTagArtist
-        {
-            get { return this._musicTagArtist; }
-            set { this._musicTagArtist = value; }
-        }
-        public bool? MusicTagGenre
-        {
-            get { return this._musicTagGenre; }
-            set { this._musicTagGenre = value; }
-        }
-        public bool? MusicTagAlbum
-        {
-            get { return this._musicTagAlbum; }
-            set { this._musicTagAlbum = value; }
-        }
-        public bool? MusicTagDuration
-        {
-            get { return this._musicTagDuration; }
-            set { this._musicTagDuration = value; }
-        }
-        public bool? MusicTagTrackNo
-        {
-            get { return this._musicTagTrackNo; }
-            set { this._musicTagTrackNo = value; }
-        }
-        public bool? MusicTagBitRate
-        {
-            get { return this._musicTagBitRate; }
-            set { this._musicTagBitRate = value; }
-        }
+        public bool? MusicTagTitle { get; set; } = true;
+
+        public bool? MusicTagYear { get; set; } = false;
+
+        public bool? MusicTagArtist { get; set; } = true;
+
+        public bool? MusicTagGenre { get; set; } = false;
+
+        public bool? MusicTagAlbum { get; set; } = false;
+
+        public bool? MusicTagDuration { get; set; } = false;
+
+        public bool? MusicTagTrackNo { get; set; } = false;
+
+        public bool? MusicTagBitRate { get; set; } = false;
+
         #endregion
 
         #region Exclude Folders Properties
-        public ObservableCollection<ExcludeFolder> ExcludeFolders
-        {
-            get { return this._excFolders; }
-        }
+        public ObservableCollection<ExcludeFolder> ExcludeFolders { get; } = new ObservableCollection<ExcludeFolder>();
 
         public ExcludeFolder ExcludeFolderSelected
         {
-            get { return this._excFolderSelected; }
+            get { return _excFolderSelected; }
             set
             {
-                this._excFolderSelected = value;
-                this.OnPropertyChanged("ExcludeFolderSelected");
+                _excFolderSelected = value;
+                OnPropertyChanged("ExcludeFolderSelected");
             }
         }
         #endregion
-
-        public UserOptions()
-        {
-        }
     }
 }

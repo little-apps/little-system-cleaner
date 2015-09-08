@@ -1,27 +1,21 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Shell;
+using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     /// <summary>
     /// Interaction logic for Results.xaml
     /// </summary>
-    public partial class Results : UserControl, INotifyPropertyChanged
+    public partial class Results : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
 
@@ -29,48 +23,44 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private Wizard scanBase;
+        private readonly Wizard _scanBase;
         private string _progressBarText;
 
         public string ProgressBarText
         {
-            get { return this._progressBarText; }
+            get { return _progressBarText; }
             set
             {
-                this._progressBarText = value;
-                this.OnPropertyChanged("ProgressBarText");
+                _progressBarText = value;
+                OnPropertyChanged("ProgressBarText");
             }
         }
 
-        public ResultModel DuplicateFiles
-        {
-            get { return (this._tree.Model as ResultModel); }
-        }
+        public ResultModel DuplicateFiles => (_tree.Model as ResultModel);
 
         public Results(Wizard sb)
         {
             InitializeComponent();
 
-            this.scanBase = sb;
+            _scanBase = sb;
 
-            LoadingResults loadingResults = new LoadingResults(this.scanBase, this._tree);
+            LoadingResults loadingResults = new LoadingResults(_scanBase, _tree);
 
             bool? windowResult = loadingResults.ShowDialog();
 
             if (windowResult.GetValueOrDefault(false))
             {
-                Utils.AutoResizeColumns(this._tree);
+                Utils.AutoResizeColumns(_tree);
             }
             else
             {
                 Utils.MessageBoxThreadSafe("The results could not be prepared. Going back to start screen.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                this.scanBase.MoveFirst();
+                _scanBase.MoveFirst();
             }
 
             //this._tree.Model = this.scanBase.Results;
@@ -83,7 +73,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             //List<FileEntry> files = (from resParent in (this._tree.Model as ResultModel).Root.Children where resParent.Children.Count > 0 from resChild in resParent.Children where resChild.IsChecked.GetValueOrDefault() select resChild.FileEntry).ToList();
 
-            List<FileEntry> files = (this._tree.Model as ResultModel).Root.Children.Where(resParent => resParent.Children.Count > 0)
+            var resultModel = _tree.Model as ResultModel;
+
+            if (resultModel == null)
+                return;
+
+            List<FileEntry> files = resultModel.Root.Children.Where(resParent => resParent.Children.Count > 0)
                 .SelectMany(resParent => resParent.Children)
                 .Where(resChild => resChild.IsChecked.GetValueOrDefault())
                 .Select(resChild => resChild.FileEntry)
@@ -91,27 +86,27 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (files.Count == 0)
             {
-                MessageBox.Show(App.Current.MainWindow, "No files were selected to be removed. If you would like to not remove any files, please click cancel.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No files were selected to be removed. If you would like to not remove any files, please click cancel.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to remove the selected files?\nYou may not be able to get them back once they're deleted.", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove the selected files?\nYou may not be able to get them back once they're deleted.", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 long seqNum = 0;
                 bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
                 Main.Watcher.Event("Duplicate Finder", "Remove Duplicates");
 
-                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
                 Main.TaskbarProgressValue = 0;
 
-                this.progressBar.Value = 0;
-                this.progressBar.Minimum = 0;
-                this.progressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
+                progressBar.Value = 0;
+                progressBar.Minimum = 0;
+                progressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
 
                 if (sysRestoreAvailable)
                 {
-                    this.ProgressBarText = "Creating System Restore Point";
+                    ProgressBarText = "Creating System Restore Point";
 
                     try
                     {
@@ -119,38 +114,38 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
                     catch (Win32Exception ex)
                     {
-                        MessageBox.Show(App.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
-                    this.progressBar.Value++;
+                    progressBar.Value++;
                 }
                 
                 foreach (FileEntry fileEntry in files)
                 {
                     string filePath = fileEntry.FilePath;
 
-                    double percent = ((this.progressBar.Value / this.progressBar.Maximum) * 100);
-                    this.ProgressBarText = string.Format("{0}/{1} ({2:0.##}%)", this.progressBar.Value, this.progressBar.Maximum, percent);
+                    double percent = ((progressBar.Value / progressBar.Maximum) * 100);
+                    ProgressBarText = $"{progressBar.Value}/{progressBar.Maximum} ({percent:0.##}%)";
 
                     try
                     {
-                        System.IO.File.Delete(filePath);
+                        File.Delete(filePath);
                     }
                     catch (Exception ex)
                     {
-                        string message = string.Format("Unable to remove file ({0}).\nThe following error occurred: {1}", filePath, ex.Message);
-                        MessageBox.Show(App.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        string message = $"Unable to remove file ({filePath}).\nThe following error occurred: {ex.Message}";
+                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
-                    this.progressBar.Value++;
-                    Properties.Settings.Default.lastScanErrorsFixed++;
+                    progressBar.Value++;
+                    Settings.Default.lastScanErrorsFixed++;
                 }
 
-                Properties.Settings.Default.totalErrorsFixed += Properties.Settings.Default.lastScanErrorsFixed;
+                Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
                 if (sysRestoreAvailable)
                 {
-                    this.ProgressBarText = "Finalizing system restore point";
+                    ProgressBarText = "Finalizing system restore point";
 
                     if (seqNum != 0)
                     {
@@ -160,72 +155,77 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         }
                         catch (Win32Exception ex)
                         {
-                            MessageBox.Show(App.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
 
-                    this.progressBar.Value++;
+                    progressBar.Value++;
                 }
 
-                MessageBox.Show(App.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                Main.TaskbarProgressState = TaskbarItemProgressState.None;
                 Main.TaskbarProgressValue = 0;
 
-                this.scanBase.MoveFirst();
+                _scanBase.MoveFirst();
             }
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                this.scanBase.MoveFirst();
+                _scanBase.MoveFirst();
             }
         }
 
         private void _tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            this.ShowDetails();
+            ShowDetails();
         }
 
         private void ShowDetails()
         {
-            if (this._tree.SelectedNode == null)
+            if (_tree.SelectedNode == null)
                 return;
 
-            Result resultNode = this._tree.SelectedNode.Tag as Result;
+            Result resultNode = _tree.SelectedNode.Tag as Result;
 
-            if (resultNode.Children.Count > 0 || resultNode.FileEntry == null)
+            if (resultNode != null && (resultNode.Children.Count > 0 || resultNode.FileEntry == null))
                 return;
 
-            this.scanBase.ShowFileInfo(resultNode.FileEntry);
+            if (resultNode != null)
+                _scanBase.ShowFileInfo(resultNode.FileEntry);
         }
 
         #region Context Menu Events
         private void selectAll_Click(object sender, RoutedEventArgs e)
         {
-            this.SetCheckedItems(true);
+            SetCheckedItems(true);
         }
 
         private void selectNone_Click(object sender, RoutedEventArgs e)
         {
-            this.SetCheckedItems(false);
+            SetCheckedItems(false);
         }
 
         private void selectInvert_Click(object sender, RoutedEventArgs e)
         {
-            this.SetCheckedItems(null);
+            SetCheckedItems(null);
         }
 
         private void viewFileInfo_Click(object sender, RoutedEventArgs e)
         {
-            this.ShowDetails();
+            ShowDetails();
         }
 
         private void SetCheckedItems(bool? isChecked)
         {
-            foreach (Result root in (this._tree.Model as ResultModel).Root.Children)
+            var resultModel = _tree.Model as ResultModel;
+
+            if (resultModel == null)
+                return;
+            foreach (Result root in resultModel.Root.Children)
             {
                 foreach (Result child in root.Children)
                 {
@@ -235,16 +235,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         child.IsChecked = isChecked.Value;
                 }
             }
-
-            return;
         }
+
         #endregion
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.progressBar.Maximum != 0)
+            if (progressBar.Maximum != 0)
             {
-                Main.TaskbarProgressValue = (e.NewValue / this.progressBar.Maximum);
+                Main.TaskbarProgressValue = (e.NewValue / progressBar.Maximum);
             }
         }
     }

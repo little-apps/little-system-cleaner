@@ -18,68 +18,66 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace Little_System_Cleaner.Registry_Cleaner.Helpers
+namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 {
     public class BadRegKeyArray : CollectionBase
     {
-        private static object _lockObj = new object();
+        private static readonly object _lockObj = new object();
 
         public BadRegistryKey this[int index]
         {
-            get { return (BadRegistryKey)this.InnerList[index]; }
-            set { this.InnerList[index] = value; }
+            get { return (BadRegistryKey)InnerList[index]; }
+            set { InnerList[index] = value; }
         }
 
-        public int Add(BadRegistryKey BadRegKey)
+        public int Add(BadRegistryKey badRegKey)
         {
-            if (BadRegKey == null)
-                throw new ArgumentNullException(nameof(BadRegKey));
+            if (badRegKey == null)
+                throw new ArgumentNullException(nameof(badRegKey));
 
             int index; 
 
             lock (_lockObj)
             {
-                index = this.InnerList.Add(BadRegKey);
+                index = InnerList.Add(badRegKey);
             }
 
             return index;
         }
 
-        public int IndexOf(BadRegistryKey BadRegKey)
+        public int IndexOf(BadRegistryKey badRegKey)
         {
             int index;
 
             lock (_lockObj)
             {
-                index = this.InnerList.IndexOf(BadRegKey);
+                index = InnerList.IndexOf(badRegKey);
             }
 
             return index;
         }
 
-        public void Insert(int index, BadRegistryKey BadRegKey)
+        public void Insert(int index, BadRegistryKey badRegKey)
         {
-            if (BadRegKey == null)
-                throw new ArgumentNullException(nameof(BadRegKey));
+            if (badRegKey == null)
+                throw new ArgumentNullException(nameof(badRegKey));
 
             lock (_lockObj)
             {
-                this.InnerList.Insert(index, BadRegKey);
+                InnerList.Insert(index, badRegKey);
             }
         }
 
-        public void Remove(BadRegistryKey BadRegKey)
+        public void Remove(BadRegistryKey badRegKey)
         {
-            if (BadRegKey == null)
-                throw new ArgumentNullException(nameof(BadRegKey));
+            if (badRegKey == null)
+                throw new ArgumentNullException(nameof(badRegKey));
 
             lock (_lockObj)
             {
-                this.InnerList.Remove(BadRegKey);
+                InnerList.Remove(badRegKey);
             }
         }
 
@@ -93,7 +91,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
             lock (_lockObj)
             {
-                foreach (BadRegistryKey brk in this.InnerList)
+                foreach (BadRegistryKey brk in InnerList)
                 {
                     if (string.IsNullOrEmpty(valueName))
                     {
@@ -117,7 +115,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             lock (_lockObj)
             {
-                count += ((ArrayList) this.InnerList.Clone()).Cast<BadRegistryKey>().Count(badRegKey => badRegKey.SectionName == sectionName);
+                count += ((ArrayList) InnerList.Clone()).Cast<BadRegistryKey>().Count(badRegKey => badRegKey.SectionName == sectionName);
             }
 
             return count;

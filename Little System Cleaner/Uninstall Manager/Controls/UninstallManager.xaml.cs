@@ -17,23 +17,17 @@
 */
 
 using System;
-using System.IO;
-using System.Net;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Microsoft.Win32;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.ComponentModel;
-using Little_System_Cleaner.Uninstall_Manager.Helpers;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Controls
 {
@@ -44,7 +38,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
 		public UninstallManager()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 
         public void OnLoaded()
@@ -52,13 +46,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((this.listViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
+            Sort((listViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
         }
 
         public bool OnUnloaded(bool forceExit)
         {
-            if (this.listViewProgs.Items.Count > 0)
-                this.listViewProgs.Items.Clear();
+            if (listViewProgs.Items.Count > 0)
+                listViewProgs.Items.Clear();
 
             return true;
         }
@@ -69,15 +63,15 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             RegistryKey regKey = null;
 
             // Clear listview
-            this.listViewProgs.Items.Clear();
+            listViewProgs.Items.Clear();
 
             // Turn textbox into regex pattern
             Regex regex = new Regex("", RegexOptions.IgnoreCase);
 
-            if (this.textBoxSearch.HasText)
+            if (textBoxSearch.HasText)
             {
                 StringBuilder result = new StringBuilder();
-                foreach (string str in this.textBoxSearch.Text.Split(' '))
+                foreach (string str in textBoxSearch.Text.Split(' '))
                 {
                     result.Append(Regex.Escape(str));
                     result.Append(".*");
@@ -106,12 +100,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey.ToString() + "\\" + strSubKeyName + "...");
+                            Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName + "...");
                         }
                         finally
                         {
-                            if (subKey != null)
-                                subKey.Close();
+                            subKey?.Close();
                         }
                     }
                 }
@@ -122,12 +115,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             }
             finally
             {
-                if (regKey != null)
-                    regKey.Close();
+                regKey?.Close();
             }
 
             // (x64 registry keys)
-            if (Utils.Is64BitOS)
+            if (Utils.Is64BitOs)
             {
                 try
                 {
@@ -148,12 +140,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                             }
                             catch (Exception ex)
                             {
-                                Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey.ToString() + "\\" + strSubKeyName + "...");
+                                Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName + "...");
                             }
                             finally
                             {
-                                if (subKey != null)
-                                    subKey.Close();
+                                subKey?.Close();
                             }
                         }
                     }
@@ -164,8 +155,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 }
                 finally
                 {
-                    if (regKey != null)
-                        regKey.Close();
+                    regKey?.Close();
                 }
             }
 
@@ -173,18 +163,18 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             // Populate list view
             foreach (ProgramInfo progInfo in listProgInfo)
             {
-                if ((!string.IsNullOrEmpty(progInfo._displayName))
-                    && (string.IsNullOrEmpty(progInfo._parentKeyName))
-                    && (!progInfo._systemComponent))
+                if ((!string.IsNullOrEmpty(progInfo.DisplayName))
+                    && (string.IsNullOrEmpty(progInfo.ParentKeyName))
+                    && (!progInfo.SystemComponent))
                 {
 
                     if (regex.IsMatch(progInfo.Program))
-                        this.listViewProgs.Items.Add(progInfo);
+                        listViewProgs.Items.Add(progInfo);
                 }
             }
 
             // Resize columns
-            Utils.AutoResizeColumns(this.listViewProgs);
+            Utils.AutoResizeColumns(listViewProgs);
         }
 
         private void SearchTextBox_Search(object sender, RoutedEventArgs e)
@@ -196,12 +186,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
         private void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
         {
             GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
-            ListSortDirection direction;
 
             if (headerClicked != null)
             {
                 if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
                 {
+                    ListSortDirection direction;
                     if (headerClicked.Column != _lastColumnClicked)
                         direction = ListSortDirection.Ascending;
                     else
@@ -214,7 +204,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void Sort(GridViewColumn column, ListSortDirection direction)
         {
-            ICollectionView dataView = CollectionViewSource.GetDefaultView(this.listViewProgs.Items);
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(listViewProgs.Items);
             string sortBy = column.Header as string;
             
             dataView.SortDescriptions.Clear();
@@ -237,13 +227,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void buttonRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewProgs.SelectedItems.Count == 0)
+            if (listViewProgs.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
+            ProgramInfo progInfo = listViewProgs.SelectedItems[0] as ProgramInfo;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -254,18 +244,18 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((listViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
-            if (this.listViewProgs.SelectedItems.Count == 0)
+            if (listViewProgs.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ProgramInfo progInfo = this.listViewProgs.SelectedItems[0] as ProgramInfo;
+            ProgramInfo progInfo = listViewProgs.SelectedItems[0] as ProgramInfo;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -276,15 +266,15 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((listViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
-            this.PopulateListView();
+            PopulateListView();
 
             // Manually sort listview
-            Sort((this.listViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((listViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
 	}

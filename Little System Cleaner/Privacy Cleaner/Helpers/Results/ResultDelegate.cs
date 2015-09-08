@@ -1,8 +1,5 @@
 ﻿using Little_System_Cleaner.Misc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
@@ -18,20 +15,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <param name="size">Size of file or files in bytes (optional)</param>
         public ResultDelegate(CleanDelegate cleanDelegate, string desc, long size)
         {
-            this.CleanDelegate = cleanDelegate;
-            this.Description = desc;
+            CleanDelegate = cleanDelegate;
+            Description = desc;
             if (size > 0)
-                this.Size = Utils.ConvertSizeToString(size);
+                Size = Utils.ConvertSizeToString(size);
         }
 
         public override void Clean(Report report)
         {
-            if (this.CleanDelegate != null)
-            {
-                this.CleanDelegate();
-                report.WriteLine(this.Description);
-                Properties.Settings.Default.lastScanErrorsFixed++;
-            }
+            if (CleanDelegate == null)
+                return;
+
+            CleanDelegate();
+            report.WriteLine(Description);
+            Settings.Default.lastScanErrorsFixed++;
         }
     }
 }

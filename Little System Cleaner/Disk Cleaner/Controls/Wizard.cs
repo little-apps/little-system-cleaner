@@ -16,45 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {
-        List<DriveInfo> selDrives = new List<DriveInfo>();
+        public List<DriveInfo> SelectedDrives { get; } = new List<DriveInfo>();
 
-        public List<DriveInfo> selectedDrives
-        {
-            get
-            {
-                return this.selDrives;
-            }
-        }
-
-        internal static ObservableCollection<ProblemFile> fileList
+        internal static ObservableCollection<ProblemFile> FileList
         {
             get;
             set;
         }
 
-        internal static ObservableCollection<lviDrive> DiskDrives
+        internal static ObservableCollection<LviDrive> DiskDrives
         {
             get;
             set;
         }
 
-        internal static ObservableCollection<lviFolder> IncludeFolders
+        internal static ObservableCollection<LviFolder> IncludeFolders
         {
             get;
             set;
@@ -64,10 +52,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             get
             {
-                if (Wizard.DiskDrives == null || Wizard.IncludeFolders == null)
+                if (DiskDrives == null || IncludeFolders == null)
                     return false;
 
-                if (Wizard.DiskDrives.Count == 0 || Wizard.IncludeFolders.Count == 0)
+                if (DiskDrives.Count == 0 || IncludeFolders.Count == 0)
                     return false;
 
                 return true;
@@ -76,52 +64,45 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         internal static DateTime ScanStartTime { get; set; }
 
-        public Wizard() : base()
+        public Wizard()
         {
-            this.Controls.Add(typeof(Start));
-            this.Controls.Add(typeof(Analyze));
-            this.Controls.Add(typeof(Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Analyze));
+            Controls.Add(typeof(Results));
         }
 
         public override void OnLoaded()
         {
-            this.MoveFirst();
+            MoveFirst();
         }
 
         public override bool OnUnloaded(bool forceExit)
         {
             bool exit;
 
-            if (this.CurrentControl is Analyze)
+            var analyze = CurrentControl as Analyze;
+
+            if (analyze != null)
             {
-                exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = (forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
-                if (exit) {
-                    (this.CurrentControl as Analyze).CancelAnalyze();
-
-                    return true;
-                }
-                else
-                {
+                if (!exit)
                     return false;
-                }
+
+                analyze.CancelAnalyze();
+
+                return true;
             }
 
-            if (this.CurrentControl is Results)
-            {
-                exit = (forceExit ? true : MessageBox.Show(App.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+            if (!(CurrentControl is Results))
+                return true;
 
-                if (exit)
-                {
-                    Wizard.fileList.Clear();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            exit = (forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
+            if (!exit)
+                return false;
+
+            FileList.Clear();
             return true;
         }
     }

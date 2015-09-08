@@ -12,11 +12,11 @@ namespace CommonTools.WpfAnimatedGif
     /// </summary>
     public class ImageAnimationController : IDisposable
     {
-        private static readonly DependencyPropertyDescriptor _sourceDescriptor;
+        private static readonly DependencyPropertyDescriptor SourceDescriptor;
 
         static ImageAnimationController()
         {
-            _sourceDescriptor = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof (Image));
+            SourceDescriptor = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof (Image));
         }
 
         private readonly Image _image;
@@ -31,7 +31,7 @@ namespace CommonTools.WpfAnimatedGif
             _animation.Completed += AnimationCompleted;
             _clock = clock;
             _clockController = _clock.Controller;
-            _sourceDescriptor.AddValueChanged(image, ImageSourceChanged);
+            SourceDescriptor.AddValueChanged(image, ImageSourceChanged);
 
             // ReSharper disable PossibleNullReferenceException
             _clockController.Pause();
@@ -56,26 +56,17 @@ namespace CommonTools.WpfAnimatedGif
         /// <summary>
         /// Returns the number of frames in the image.
         /// </summary>
-        public int FrameCount
-        {
-            get { return _animation.KeyFrames.Count; }
-        }
+        public int FrameCount => _animation.KeyFrames.Count;
 
         /// <summary>
         /// Returns a value that indicates whether the animation is paused.
         /// </summary>
-        public bool IsPaused
-        {
-            get { return _clock.IsPaused; }
-        }
+        public bool IsPaused => _clock.IsPaused;
 
         /// <summary>
         /// Returns a value that indicates whether the animation is complete.
         /// </summary>
-        public bool IsComplete
-        {
-            get { return _clock.CurrentState == ClockState.Filling; }
-        }
+        public bool IsComplete => _clock.CurrentState == ClockState.Filling;
 
         /// <summary>
         /// Seeks the animation to the specified frame index.
@@ -141,7 +132,7 @@ namespace CommonTools.WpfAnimatedGif
         private void OnCurrentFrameChanged()
         {
             EventHandler handler = CurrentFrameChanged;
-            if (handler != null) handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -171,7 +162,7 @@ namespace CommonTools.WpfAnimatedGif
             {
                 _image.BeginAnimation(Image.SourceProperty, null);
                 _animation.Completed -= AnimationCompleted;
-                _sourceDescriptor.RemoveValueChanged(_image, ImageSourceChanged);
+                SourceDescriptor.RemoveValueChanged(_image, ImageSourceChanged);
             }
         }
     }

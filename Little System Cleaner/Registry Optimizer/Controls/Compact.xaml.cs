@@ -17,22 +17,14 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using CommonTools;
-using System.Threading;
-using System.Runtime.InteropServices;
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading;
+using System.Windows;
+using System.Windows.Shell;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -41,7 +33,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// </summary>
     public partial class Compact : Window
     {
-        Thread threadScan, threadCurrent;
+        Thread _threadScan, _threadCurrent;
 
         public Compact()
         {
@@ -51,28 +43,27 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Set task bar progress bar
-            Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+            Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
             Little_System_Cleaner.Main.TaskbarProgressValue = 0;
 
             // Set progress bar
-            this.progressBar1.Minimum = 0;
-            this.progressBar1.Maximum = Wizard.RegistryHives.Count;
-            this.progressBar1.Value = 0;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = Wizard.RegistryHives.Count;
+            progressBar1.Value = 0;
 
-            this.threadScan = new Thread(new ThreadStart(CompactRegistry));
-            this.threadScan.Start();
+            _threadScan = new Thread(CompactRegistry);
+            _threadScan.Start();
         }
 
         private void CompactRegistry()
         {
             long lSeqNum = 0;
-            long lSpaceSaved = 0;
 
             Little_System_Cleaner.Main.Watcher.Event("Registry Optimizer", "Compact Registry");
 
             Thread.BeginCriticalRegion();
 
-            this.SetShutdownBlockReason(true);
+            SetShutdownBlockReason(true);
 
             try
             {
@@ -80,25 +71,23 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             }
             catch (Win32Exception ex)
             {
-                string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                MessageBox.Show(App.Current.MainWindow, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
             foreach (Hive h in Wizard.RegistryHives)
             {
                 if (h.SkipCompact)
                 {
-                    SetStatusText(string.Format("Skipping: {0}", h.RegistryHive));
+                    SetStatusText($"Skipping: {h.RegistryHive}");
                 }
                 else
                 {
-                    SetStatusText(string.Format("Compacting: {0}", h.RegistryHive));
+                    SetStatusText($"Compacting: {h.RegistryHive}");
 
-                    threadCurrent = new Thread(new ThreadStart(() => h.CompactHive(this)));
-                    threadCurrent.Start();
-                    threadCurrent.Join();
-
-                    lSpaceSaved += h.OldHiveSize - h.NewHiveSize;
+                    _threadCurrent = new Thread(() => h.CompactHive(this));
+                    _threadCurrent.Start();
+                    _threadCurrent.Join();
                 }
 
                 IncrementProgressBar();
@@ -112,12 +101,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    string message = string.Format("Unable to create system restore point.\nThe following error occurred: {0}", ex.Message);
-                    MessageBox.Show(App.Current.MainWindow, message, Little_System_Cleaner.Misc.Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
-            this.SetShutdownBlockReason(false);
+            SetShutdownBlockReason(false);
             
             Thread.EndCriticalRegion();
 
@@ -126,43 +115,43 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             SetDialogResult(true);
 
-            this.Dispatcher.BeginInvoke(new Action(() => {
-                Little_System_Cleaner.Main.TaskbarProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                this.Close();
+            Dispatcher.BeginInvoke(new Action(() => {
+                Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                Close();
             }));
         }
 
         private void SetDialogResult(bool bResult)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action<bool>(SetDialogResult), bResult);
+                Dispatcher.BeginInvoke(new Action<bool>(SetDialogResult), bResult);
                 return;
             }
 
-            this.DialogResult = bResult;
+            DialogResult = bResult;
         }
 
         private void SetStatusText(string statusText)
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action<string>(SetStatusText), statusText);
+                Dispatcher.BeginInvoke(new Action<string>(SetStatusText), statusText);
                 return;
             }
 
-            this.textBlockStatus.Text = statusText;
+            textBlockStatus.Text = statusText;
         }
 
         private void IncrementProgressBar()
         {
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                this.Dispatcher.BeginInvoke(new Action(IncrementProgressBar));
+                Dispatcher.BeginInvoke(new Action(IncrementProgressBar));
                 return;
             }
 
-            this.progressBar1.Value++;
+            progressBar1.Value++;
         }
 
         /// <summary>
@@ -172,23 +161,22 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private bool SetShutdownBlockReason(bool enable)
         {
             // The shutdown block will only succeed if it is called from the main thread
-            if (this.Dispatcher.Thread != Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                return (bool)this.Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
+                return (bool)Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
             }
 
-            bool ret;
-            IntPtr hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
+            IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
 
-            ret = enable ? PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted") : PInvoke.ShutdownBlockReasonDestroy(hWnd);
+            var ret = enable ? PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted") : PInvoke.ShutdownBlockReasonDestroy(hWnd);
 
             return ret;
         }
 
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.progressBar1.Maximum != 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / this.progressBar1.Maximum);
+            if (progressBar1.Maximum != 0)
+                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / progressBar1.Maximum);
         }
     }
 }

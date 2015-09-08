@@ -17,19 +17,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Timers;
 using System.Windows.Threading;
 
 namespace CommonTools
@@ -38,7 +29,7 @@ namespace CommonTools
     public enum SearchMode
     {
         Instant,
-        Delayed,
+        Delayed
     }
 
     public class SearchTextBox : TextBox
@@ -63,7 +54,7 @@ namespace CommonTools
                 typeof(SearchTextBox),
                 new PropertyMetadata(SearchMode.Instant));
 
-        private static DependencyPropertyKey HasTextPropertyKey =
+        private static readonly DependencyPropertyKey HasTextPropertyKey =
             DependencyProperty.RegisterReadOnly(
                 "HasText",
                 typeof(bool),
@@ -71,7 +62,7 @@ namespace CommonTools
                 new PropertyMetadata());
         public static DependencyProperty HasTextProperty = HasTextPropertyKey.DependencyProperty;
 
-        private static DependencyPropertyKey IsMouseLeftButtonDownPropertyKey =
+        private static readonly DependencyPropertyKey IsMouseLeftButtonDownPropertyKey =
             DependencyProperty.RegisterReadOnly(
                 "IsMouseLeftButtonDown",
                 typeof(bool),
@@ -86,7 +77,7 @@ namespace CommonTools
                 typeof(SearchTextBox),
                 new FrameworkPropertyMetadata(
                     new Duration(new TimeSpan(0, 0, 0, 0, 500)),
-                    new PropertyChangedCallback(OnSearchEventTimeDelayChanged)));
+                    OnSearchEventTimeDelayChanged));
 
         public static readonly RoutedEvent SearchEvent =
             EventManager.RegisterRoutedEvent(
@@ -102,18 +93,17 @@ namespace CommonTools
                 new FrameworkPropertyMetadata(typeof(SearchTextBox)));
         }
 
-        private readonly DispatcherTimer searchEventDelayTimer;
+        private readonly DispatcherTimer _searchEventDelayTimer;
 
         public SearchTextBox()
-            : base()
         {
-            searchEventDelayTimer = new DispatcherTimer() { Interval = SearchEventTimeDelay.TimeSpan };
-            searchEventDelayTimer.Tick += new EventHandler(OnSeachEventDelayTimerTick);
+            _searchEventDelayTimer = new DispatcherTimer { Interval = SearchEventTimeDelay.TimeSpan };
+            _searchEventDelayTimer.Tick += OnSeachEventDelayTimerTick;
         }
 
         void OnSeachEventDelayTimerTick(object o, EventArgs e)
         {
-            searchEventDelayTimer.Stop();
+            _searchEventDelayTimer.Stop();
             RaiseSearchEvent();
         }
 
@@ -123,8 +113,8 @@ namespace CommonTools
             SearchTextBox stb = o as SearchTextBox;
             if (stb != null)
             {
-                stb.searchEventDelayTimer.Interval = ((Duration)e.NewValue).TimeSpan;
-                stb.searchEventDelayTimer.Stop();
+                stb._searchEventDelayTimer.Interval = ((Duration)e.NewValue).TimeSpan;
+                stb._searchEventDelayTimer.Stop();
             }
         }
 
@@ -134,11 +124,11 @@ namespace CommonTools
 
             HasText = Text.Length != 0;
 
-            if (SearchMode == SearchMode.Instant)
-            {
-                searchEventDelayTimer.Stop();
-                searchEventDelayTimer.Start();
-            }
+            if (SearchMode != SearchMode.Instant)
+                return;
+
+            _searchEventDelayTimer.Stop();
+            _searchEventDelayTimer.Start();
         }
 
         public override void OnApplyTemplate()
@@ -146,12 +136,13 @@ namespace CommonTools
             base.OnApplyTemplate();
             
             Border iconBorder = GetTemplateChild("PART_SearchIconBorder") as Border;
-            if (iconBorder != null)
-            {
-                iconBorder.MouseLeftButtonDown += new MouseButtonEventHandler(IconBorder_MouseLeftButtonDown);
-                iconBorder.MouseLeftButtonUp += new MouseButtonEventHandler(IconBorder_MouseLeftButtonUp);
-                iconBorder.MouseLeave += new MouseEventHandler(IconBorder_MouseLeave);
-            }
+
+            if (iconBorder == null)
+                return;
+
+            iconBorder.MouseLeftButtonDown += IconBorder_MouseLeftButtonDown;
+            iconBorder.MouseLeftButtonUp += IconBorder_MouseLeftButtonUp;
+            iconBorder.MouseLeave += IconBorder_MouseLeave;
         }
 
         private void IconBorder_MouseLeftButtonDown(object obj, MouseButtonEventArgs e)
@@ -165,7 +156,7 @@ namespace CommonTools
 
             if (HasText && SearchMode == SearchMode.Instant)
             {
-                this.Text = "";
+                Text = "";
             }
 
             if (HasText && SearchMode == SearchMode.Delayed)
@@ -185,7 +176,7 @@ namespace CommonTools
         {
             if (e.Key == Key.Escape && SearchMode == SearchMode.Instant)
             {
-                this.Text = "";
+                Text = "";
             }
             else if ((e.Key == Key.Return || e.Key == Key.Enter) &&
                 SearchMode == SearchMode.Delayed)

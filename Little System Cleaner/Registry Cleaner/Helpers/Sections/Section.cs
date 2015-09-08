@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
@@ -18,17 +15,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
 
-        private readonly ObservableCollection<Section> _children = new ObservableCollection<Section>();
-        public ObservableCollection<Section> Children
-        {
-            get { return _children; }
-        }
+        public ObservableCollection<Section> Children { get; } = new ObservableCollection<Section>();
 
         private bool? _bIsChecked = true;
 
@@ -41,20 +33,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             _bIsChecked = value;
 
             if (updateChildren && _bIsChecked.HasValue)
-                this.Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
 
-            if (updateParent && Parent != null)
-                Parent.VerifyCheckState();
+            if (updateParent)
+                Parent?.VerifyCheckState();
 
-            this.OnPropertyChanged("IsChecked");
+            OnPropertyChanged("IsChecked");
         }
 
         void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < this.Children.Count; ++i)
+            for (int i = 0; i < Children.Count; ++i)
             {
-                bool? current = this.Children[i].IsChecked;
+                bool? current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -65,14 +57,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     break;
                 }
             }
-            this.SetIsChecked(state, false, true);
+            SetIsChecked(state, false, true);
         }
         #endregion
 
         public bool? IsChecked
         {
             get { return _bIsChecked; }
-            set { this.SetIsChecked(value, true, true); }
+            set { SetIsChecked(value, true, true); }
         }
 
         public Section Parent { get; set; }
@@ -92,14 +84,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                     bMapImg = new BitmapImage();
                     bMapImg.BeginInit();
-                    bMapImg.StreamSource = new System.IO.MemoryStream(ms.ToArray());
+                    bMapImg.StreamSource = new MemoryStream(ms.ToArray());
                     bMapImg.EndInit();
                 }
             }
-        }
-
-        public Section()
-        {
         }
     }
 }

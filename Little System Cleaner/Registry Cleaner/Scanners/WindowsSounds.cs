@@ -16,25 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class WindowsSounds : ScannerBase
     {
-        public override string ScannerName
-        {
-            get { return Strings.WindowsSounds; }
-        }
+        public override string ScannerName => Strings.WindowsSounds;
 
         internal static void Scan()
         {
@@ -42,11 +33,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey("AppEvents\\Schemes\\Apps"))
                 {
-                    if (regKey != null)
-                    {
-                        Wizard.Report.WriteLine("Scanning for missing sound events");
-                        ParseSoundKeys(regKey);
-                    }
+                    if (regKey == null)
+                        return;
+
+                    Wizard.Report.WriteLine("Scanning for missing sound events");
+                    ParseSoundKeys(regKey);
                 }
             }
             catch (System.Security.SecurityException ex)
@@ -74,15 +65,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     // Gets the (default) key and sees if the file exists
                     RegistryKey rk2 = rk.OpenSubKey(strSubKey);
 
-                    if (rk2 != null)
-                    {
-                        string strSoundPath = rk2.GetValue("") as string;
+                    string strSoundPath = rk2?.GetValue("") as string;
 
-                        if (!string.IsNullOrEmpty(strSoundPath))
-                            if (!Utils.FileExists(strSoundPath) && !Wizard.IsOnIgnoreList(strSoundPath))
-                                Wizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
-                    }
+                    if (string.IsNullOrEmpty(strSoundPath))
+                        continue;
 
+                    if (!Utils.FileExists(strSoundPath) && !Wizard.IsOnIgnoreList(strSoundPath))
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
                 }
                 else if (!string.IsNullOrEmpty(strSubKey))
                 {
@@ -94,8 +83,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
 
             }
-
-            return;
         }
     }
 }

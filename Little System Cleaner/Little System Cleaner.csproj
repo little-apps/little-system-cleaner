@@ -339,7 +339,7 @@
     <Compile Include="Privacy Cleaner\Helpers\SectionModel.cs" />
     <Compile Include="Privacy Cleaner\Scanners\Applications.cs" />
     <Compile Include="Privacy Cleaner\Scanners\Firefox.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\gChrome.cs" />
+    <Compile Include="Privacy Cleaner\Scanners\GChrome.cs" />
     <Compile Include="Privacy Cleaner\Scanners\InternetExplorer.cs" />
     <Compile Include="Privacy Cleaner\Scanners\Misc.cs" />
     <Compile Include="Privacy Cleaner\Scanners\Multimedia.cs" />

@@ -1,5 +1,4 @@
-﻿using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Scanners;
+﻿using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
@@ -44,7 +42,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             IntPtr bufferPtr = IntPtr.Zero;
             IntPtr cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
 
-            InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry = null;
+            InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry;
 
             switch (Marshal.GetLastWin32Error())
             {
@@ -163,7 +161,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// <returns>INTERNET_CACHE_ENTRY_INFO struct or null on error</returns>
         private static InternetExplorer.INTERNET_CACHE_ENTRY_INFO? GetCacheEntry(IntPtr bufferPtr)
         {
-            InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry = null;
+            InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry;
 
             try
             {
@@ -234,7 +232,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return new string[] { };
             }
 
-            string local = Marshal.PtrToStringAnsi(pReturnedString, (int)bytesReturned).ToString();
+            string local = Marshal.PtrToStringAnsi(pReturnedString, (int)bytesReturned);
             Marshal.FreeCoTaskMem(pReturnedString);
 
             return local.Substring(0, local.Length - 1).Split('\0');
@@ -317,7 +315,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                totalSize += Directory.GetFiles(folderPath, "*", (includeSubDirs) ? (System.IO.SearchOption.AllDirectories) : (System.IO.SearchOption.TopDirectoryOnly)).Select(filePath => GetFileSize(filePath)).Where(fileSize => fileSize != 0).Sum();
+                totalSize += Directory.GetFiles(folderPath, "*", (includeSubDirs) ? (System.IO.SearchOption.AllDirectories) : (System.IO.SearchOption.TopDirectoryOnly)).Select(GetFileSize).Where(fileSize => fileSize != 0).Sum();
             }
             catch (Exception)
             {
@@ -378,7 +376,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 Debug.WriteLine("File path cannot be empty or null. Unable to check if file is valid.");
-                return bRet;
+                return false;
             }
 
             try

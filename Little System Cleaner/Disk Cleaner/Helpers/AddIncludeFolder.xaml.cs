@@ -17,24 +17,18 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Forms;
+using Little_System_Cleaner.Misc;
+using Application = System.Windows.Forms.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 {
     /// <summary>
     /// Interaction logic for AddExcludeFolder.xaml
     /// </summary>
-    public partial class AddIncludeFolder : Window
+    public partial class AddIncludeFolder
     {
         public event AddIncFolderEventHandler AddIncFolder;
 
@@ -45,32 +39,32 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(this.textBox.Text.Trim()))
+            if (string.IsNullOrEmpty(textBox.Text.Trim()))
             {
-                MessageBox.Show(this, "Please enter a folder", System.Windows.Forms.Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, "Please enter a folder", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (AddIncFolder != null)
             {
-                AddIncFolderEventArgs eventArgs = new AddIncFolderEventArgs() { folderPath = this.textBox.Text.Trim() };
+                AddIncFolderEventArgs eventArgs = new AddIncFolderEventArgs { FolderPath = textBox.Text.Trim() };
                 AddIncFolder(this, eventArgs);
             }
 
-            this.Close();
+            Close();
         }
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog browserDlg = new System.Windows.Forms.FolderBrowserDialog();
-            browserDlg.ShowDialog(new Little_System_Cleaner.Misc.WindowWrapper(this));
-            this.textBox.Text = browserDlg.SelectedPath;
+            FolderBrowserDialog browserDlg = new FolderBrowserDialog();
+            browserDlg.ShowDialog(new WindowWrapper(this));
+            textBox.Text = browserDlg.SelectedPath;
         }
     }
 
     public class AddIncFolderEventArgs : EventArgs
     {
-        public string folderPath
+        public string FolderPath
         {
             get;
             set;

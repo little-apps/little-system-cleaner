@@ -1,62 +1,51 @@
-﻿using CommonTools.WpfAnimatedGif;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using CommonTools.WpfAnimatedGif;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class lviScanner
     {
-        private string _section;
-        private string _status;
-        private string _errors;
+        public string Section { get; }
 
-        public string Section
-        {
-            get { return this._section; }
-        }
-        public string Status
-        {
-            get { return this._status; }
-            set { this._status = value; }
-        }
-        public string Errors
-        {
-            get { return this._errors; }
-            set { this._errors = value; }
-        }
+        public string Status { get; set; }
 
-        public System.Windows.Controls.Image Image { get; private set; }
+        public string Errors { get; set; }
+
+        public Image Image { get; private set; }
         public Uri bMapImg { get; private set; }
 
-        public lviScanner(string section)
+        public lviScanner(string section, Uri bMapImg)
         {
-            this._section = section;
+            this.bMapImg = bMapImg;
+
+            Section = section;
             Status = "Queued";
             Errors = "0 Errors";
         }
 
         public void LoadGif()
         {
-            this.Image = new System.Windows.Controls.Image();
+            Image = new Image();
 
-            BitmapSource gif = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-            ImageBehavior.SetAnimatedSource(this.Image, gif);
+            BitmapSource gif = Imaging.CreateBitmapSourceFromHBitmap(Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            ImageBehavior.SetAnimatedSource(Image, gif);
         }
 
         public void UnloadGif()
         {
-            this.Image = null;
+            Image = null;
 
-            this.Image = new System.Windows.Controls.Image()
+            Image = new Image
             {
                 Source =
-                    System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                        Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-                        System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions())
+                    Imaging.CreateBitmapSourceFromHBitmap(
+                        Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+                        BitmapSizeOptions.FromEmptyOptions())
             };
         }
     }

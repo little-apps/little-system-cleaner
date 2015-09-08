@@ -1,10 +1,9 @@
-﻿using Little_System_Cleaner.Misc;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
@@ -17,8 +16,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <param name="regKeys">Registry key with a list of value names</param>
         public ResultRegKeys(string desc, Dictionary<RegistryKey, string[]> regKeys)
         {
-            this.Description = desc;
-            this.RegKeyValueNames = regKeys;
+            Description = desc;
+            RegKeyValueNames = regKeys;
         }
 
         /// <summary>
@@ -28,15 +27,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         /// <param name="regKeys">Registry sub keys with a bool to specify if the tree should be removed</param>
         public ResultRegKeys(string desc, Dictionary<RegistryKey, bool> regKeys)
         {
-            this.Description = desc;
-            this.RegKeySubKeys = regKeys;
+            Description = desc;
+            RegKeySubKeys = regKeys;
         }
 
         public override void Clean(Report report)
         {
-            if (this.RegKeySubKeys != null)
+            if (RegKeySubKeys != null)
             {
-                foreach (KeyValuePair<RegistryKey, bool> kvp in this.RegKeySubKeys)
+                foreach (KeyValuePair<RegistryKey, bool> kvp in RegKeySubKeys)
                 {
                     RegistryKey regKey = kvp.Key;
                     bool recurse = kvp.Value;
@@ -95,12 +94,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                             else
                                 reg.DeleteSubKey(subkey);
 
-                            report.WriteLine(string.Format("Removed Registry Key: {0}", regKey.Name));
-                            Properties.Settings.Default.lastScanErrorsFixed++;
+                            report.WriteLine("Removed Registry Key: {0}", regKey.Name);
+                            Settings.Default.lastScanErrorsFixed++;
                         }
                         catch (Exception ex)
                         {
-                            string message = string.Format("The following registry key could not be removed: {0}\nError: {1}", rootKey + "\\" + subkey, ex.Message);
+                            string message = $"The following registry key could not be removed: {rootKey + "\\" + subkey}\nError: {ex.Message}";
                             Debug.WriteLine(message);
                         } 
                         finally 
@@ -113,9 +112,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 }
             }
 
-            if (this.RegKeyValueNames != null)
+            if (RegKeyValueNames != null)
             {
-                foreach (KeyValuePair<RegistryKey, string[]> kvp in this.RegKeyValueNames)
+                foreach (KeyValuePair<RegistryKey, string[]> kvp in RegKeyValueNames)
                 {
                     RegistryKey regKey = kvp.Key;
                     string[] valueNames = kvp.Value;
@@ -140,8 +139,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                             {
                                 regKey.DeleteValue(valueName);
 
-                                report.WriteLine(string.Format("Removed Registry Key: {0} Value Name: {0}", regKey.Name, valueName));
-                                Properties.Settings.Default.lastScanErrorsFixed++;
+                                report.WriteLine("Removed Registry Key: {0} Value Name: {1}", regKey.Name, valueName);
+                                Settings.Default.lastScanErrorsFixed++;
                             }
                         }
                         catch (Exception ex)

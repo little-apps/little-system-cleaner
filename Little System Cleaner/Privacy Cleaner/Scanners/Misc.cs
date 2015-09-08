@@ -18,17 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-using Microsoft.Win32;
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -64,8 +58,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             Name = "Miscellaneous";
 
-            this.Children.Add(new Misc(this, "Recycle Bin"));
-            this.Children.Add(new Misc(this, "Desktop and Start Menu Icons"));
+            Children.Add(new Misc(this, "Recycle Bin"));
+            Children.Add(new Misc(this, "Desktop and Start Menu Icons"));
         }
 
         public Misc(ScannerBase parent, string header)
@@ -76,7 +70,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public override void Scan(ScannerBase child)
         {
-            if (!this.Children.Contains(child))
+            if (!Children.Contains(child))
                 return;
 
             if (!child.IsChecked.GetValueOrDefault())
@@ -97,15 +91,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanRecycleBin()
         {
-            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO() { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
-            int hr = (int)SHQueryRecycleBin(string.Empty, ref sqrbi);
+            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
+            SHQueryRecycleBin(string.Empty, ref sqrbi);
             if (sqrbi.i64NumItems > 0)
-                Wizard.StoreCleanDelegate(new CleanDelegate(CleanRecycleBin), "Empty Recycle Bin", sqrbi.i64Size);
+                Wizard.StoreCleanDelegate(CleanRecycleBin, "Empty Recycle Bin", sqrbi.i64Size);
         }
 
         private void CleanRecycleBin()
         {
-            int hresult = SHEmptyRecycleBin(IntPtr.Zero, string.Empty, SHERB_NOCONFIRMATION | SHERB_NOSOUND);
+            SHEmptyRecycleBin(IntPtr.Zero, string.Empty, SHERB_NOCONFIRMATION | SHERB_NOSOUND);
         }
 
         private void ScanDesktopStartMenuIcons()
@@ -146,8 +140,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             foreach (string shortcutPath in Directory.GetFiles(path))
             {
-                string filePath = "", fileArgs = "";
-
                 Wizard.CurrentFile = shortcutPath;
 
                 if (fileList.Contains(shortcutPath))
@@ -156,6 +148,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 // Check if shortcut links to a file
                 if (Path.GetExtension(shortcutPath) == ".lnk")
                 {
+                    string filePath, fileArgs;
                     Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs);
 
                     if (string.IsNullOrEmpty(filePath))
