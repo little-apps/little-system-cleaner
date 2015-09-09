@@ -64,23 +64,24 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <returns>Drive path</returns>
         internal static string ConvertDeviceToMsdosName(string devicePath)
         {
-            string strDevicePath = string.Copy(devicePath.ToLower());
-            string strRetVal = "";
+            string retVal = "";
+
+            devicePath = string.Copy(devicePath.ToLower());
 
             // Convert \Device\HarddiskVolumeX\... to X:\...
             foreach (KeyValuePair<string, string> kvp in QueryDosDevice())
             {
-                string strDrivePath = kvp.Key.ToLower();
-                string strDeviceName = kvp.Value.ToLower();
+                string driveLetter = kvp.Key.ToLower();
+                string deviceName = kvp.Value.ToLower();
 
-                if (!strDevicePath.StartsWith(strDeviceName))
+                if (!devicePath.StartsWith(deviceName))
                     continue;
 
-                strRetVal = strDevicePath.Replace(strDeviceName, strDrivePath);
+                retVal = devicePath.Replace(deviceName, driveLetter);
                 break;
             }
 
-            return strRetVal;
+            return retVal;
         }
 
         private static Dictionary<string, string> QueryDosDevice()
@@ -91,12 +92,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             {
                 if (di.IsReady)
                 {
-                    string strDrivePath = di.Name.Substring(0, 2);
-                    StringBuilder strDeviceName = new StringBuilder(260);
+                    string driveLetter = di.Name.Substring(0, 2);
+                    StringBuilder deviceName = new StringBuilder(260);
 
                     // Convert C: to \Device\HarddiskVolume1
-                    if (PInvoke.QueryDosDevice(strDrivePath, strDeviceName, 260) > 0)
-                        ret.Add(strDrivePath, strDeviceName.ToString());
+                    if (PInvoke.QueryDosDevice(driveLetter, deviceName, 260) > 0)
+                        ret.Add(driveLetter, deviceName.ToString());
                 }
             }
 
