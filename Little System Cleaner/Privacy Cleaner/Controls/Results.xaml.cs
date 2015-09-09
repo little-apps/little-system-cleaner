@@ -19,7 +19,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
