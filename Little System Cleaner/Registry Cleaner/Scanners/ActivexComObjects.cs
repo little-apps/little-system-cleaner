@@ -642,7 +642,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         private static bool SafeInprocServerExists(RegistryKey rootKey, string subKey = "")
         {
             RegistryKey regKey = null;
-            bool bRet = false;
+            bool ret;
 
             subKey = subKey.Trim();
 
@@ -650,19 +650,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 regKey = !string.IsNullOrEmpty(subKey) ? rootKey.OpenSubKey(subKey) : rootKey;
 
-                bRet = InprocServerExists(regKey);
+                ret = InprocServerExists(regKey);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("The following error occured: " + ex.Message + "\nUnable to check if InprocServer exists.");
-                bRet = false;
+                ret = false;
             }
             finally
             {
                 regKey?.Close();
             }
 
-            return bRet;
+            return ret;
         }
 
         /// <summary>
