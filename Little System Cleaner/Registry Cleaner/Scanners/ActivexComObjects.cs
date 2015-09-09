@@ -438,16 +438,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
             finally
             {
-                if (regKey != null)
-                    regKey.Close();
+                regKey?.Close();
             }
 
             // Check IE Extensions
             try
             {
                 regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Internet Explorer\\Extensions");
-
-                RegistryKey rkExt = null;
 
                 Wizard.Report.WriteLine("Checking for invalid explorer extensions");
 
@@ -457,7 +454,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     {
                         try
                         {
-                            rkExt = regKey.OpenSubKey(strGuid);
+                            var rkExt = regKey.OpenSubKey(strGuid);
 
                             if (rkExt != null)
                                 ValidateExplorerExt(rkExt);
