@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using System.Windows.Navigation;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
+using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Little_System_Cleaner.Tab_Controls.Options
@@ -250,19 +251,19 @@ namespace Little_System_Cleaner.Tab_Controls.Options
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             if (!Utils.LaunchUri(e.Uri.ToString()))
-                MessageBox.Show(App.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonSupportThisProject_Click(object sender, RoutedEventArgs e)
         {
             if (!Utils.LaunchUri(@"http://www.little-apps.com/?donate"))
-                MessageBox.Show(App.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonWebsite_Click(object sender, RoutedEventArgs e)
         {
             if (!Utils.LaunchUri(@"http://www.little-apps.com/"))
-                MessageBox.Show(App.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
