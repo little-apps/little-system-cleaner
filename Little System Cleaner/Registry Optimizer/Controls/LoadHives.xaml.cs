@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading;
-using System.Windows.Controls;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using Microsoft.Win32;
 
@@ -26,7 +25,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void InitHives()
         {
-            RegistryKey rkHives = null;
+            RegistryKey rkHives;
             int i = 0;
             Wizard.RegistryHives = new ObservableCollection<Hive>();
 
