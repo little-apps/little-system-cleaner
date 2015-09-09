@@ -125,9 +125,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         private void OnPropertyChanged(string prop)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+
         #endregion
     }
 }

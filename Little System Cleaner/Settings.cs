@@ -45,7 +45,7 @@ namespace Little_System_Cleaner.Properties {
                 if (!Directory.Exists((string) this["ProgramSettingsDir"]))
                     Directory.CreateDirectory((string) this["ProgramSettingsDir"]);
 
-                return this["ProgramSettingsDir"] as string;
+                return (string) this["ProgramSettingsDir"];
             }
             set { this["ProgramSettingsDir"] = value; }
         }
@@ -79,7 +79,7 @@ namespace Little_System_Cleaner.Properties {
                 if (!Directory.Exists((string) this["OptionsLogDir"]))
                     Directory.CreateDirectory((string) this["OptionsLogDir"]);
 
-                return this["OptionsLogDir"] as string;
+                return (string) this["OptionsLogDir"];
             }
             set { this["OptionsLogDir"] = value; }
         }

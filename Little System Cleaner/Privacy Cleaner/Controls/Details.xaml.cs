@@ -121,9 +121,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void btnLocate_Click(object sender, RoutedEventArgs e)
         {
-            if (listView.SelectedItem == null)
-                return;
-
             var detailItem = listView.SelectedItem as DetailItem;
             if (detailItem == null)
                 return;

@@ -315,8 +315,9 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             }
             catch (Exception ex)
             {
-                if (ex is FileNotFoundException)
-                    message = "The file (" + ((FileNotFoundException) ex).FileName + ") could not be found. This could mean the startup entry is erroneous.";
+                var exception = ex as FileNotFoundException;
+                if (exception != null)
+                    message = "The file (" + exception.FileName + ") could not be found. This could mean the startup entry is erroneous.";
                 else
                     message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
 

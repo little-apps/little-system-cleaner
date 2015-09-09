@@ -42,8 +42,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public void OnPropertyChanged(string prop)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         #endregion
@@ -402,11 +401,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
                         {
                             Settings.Default.ArrayExcludeList.Add(excludeItem);
-                            MessageBox.Show(Application.Current.MainWindow, string.Format("Added registry key ({0}) to the exclude list", regKeyPath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show(Application.Current.MainWindow, $"Added registry key ({regKeyPath}) to the exclude list", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                             _tree.RemoveNode(_tree.SelectedNode);
                         }
                         else
-                            MessageBox.Show(Application.Current.MainWindow, string.Format("Registry key ({0}) already exists", regKeyPath), Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(Application.Current.MainWindow, $"Registry key ({regKeyPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         break;
                     }
                 case "View In RegEdit":
@@ -426,7 +425,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         }
                         catch (Exception ex)
                         {
-                            string message = string.Format("Unable to open registry key in RegEdit.\nThe following error occurred: {0}", ex.Message);
+                            string message = $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
 
                             MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }

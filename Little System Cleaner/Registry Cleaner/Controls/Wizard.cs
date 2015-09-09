@@ -119,7 +119,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             var results = CurrentControl as Results;
             if (results != null)
             {
-                if ((!forceExit && (CurrentControl as Results).FixThread != null) && (CurrentControl as Results).FixThread.IsAlive)
+                if ((!forceExit && ((Results) CurrentControl).FixThread != null) && ((Results) CurrentControl).FixThread.IsAlive)
                     return false;
 
                 exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);

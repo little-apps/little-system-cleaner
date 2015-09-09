@@ -6,7 +6,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class ResultModel : ITreeModel
     {
-        public BadRegistryKey Root { get; private set; }
+        public BadRegistryKey Root { get; }
 
         internal static ResultModel CreateResultModel()
         {

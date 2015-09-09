@@ -23,7 +23,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
     public class SectionModel : ITreeModel
     {
-        public Section Root { get; private set; }
+        public Section Root { get; }
 
         internal static SectionModel CreateSectionModel()
         {

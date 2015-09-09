@@ -269,12 +269,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
             }
 
-            foreach (string strSubKey in strClasses)
+            foreach (string strSubKey in strClasses.Where(strSubKey => strSubKey != "*"))
             {
-                // Skip any file (*)
-                if (strSubKey == "*")
-                    continue;
-
                 if (strSubKey[0] == '.')
                 {
                     // File Extension
@@ -284,15 +280,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     {
                         rkFileExt = regKey.OpenSubKey(strSubKey);
 
-                        if (rkFileExt != null)
-                        {
-                            // Find reference to ProgID
-                            string strProgID = rkFileExt.GetValue("") as string;
+                        // Find reference to ProgID
+                        string strProgID = rkFileExt?.GetValue("") as string;
 
-                            if (!string.IsNullOrEmpty(strProgID))
-                                if (!ProgIdExists(strProgID))
-                                    Wizard.StoreInvalidKey(Strings.MissingProgID, rkFileExt.ToString());
-                        }
+                        if (!string.IsNullOrEmpty(strProgID))
+                            if (!ProgIdExists(strProgID))
+                                Wizard.StoreInvalidKey(Strings.MissingProgID, rkFileExt.ToString());
                     }
                     catch (Exception ex)
                     {
@@ -300,8 +293,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     finally
                     {
-                        if (rkFileExt != null)
-                            rkFileExt.Close();
+                        rkFileExt?.Close();
                     }
                 }
                 else
@@ -313,17 +305,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     try
                     {
-                        regKeyDefaultIcon = regKey.OpenSubKey(string.Format("{0}\\DefaultIcon", strSubKey));
+                        regKeyDefaultIcon = regKey.OpenSubKey($"{strSubKey}\\DefaultIcon");
 
-                        if (regKeyDefaultIcon != null)
-                        {
-                            string iconPath = regKeyDefaultIcon.GetValue("") as string;
+                        string iconPath = regKeyDefaultIcon?.GetValue("") as string;
 
-                            if (!string.IsNullOrEmpty(iconPath))
-                                if (!ScanFunctions.IconExists(iconPath))
-                                    if (!Wizard.IsOnIgnoreList(iconPath))
-                                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKeyDefaultIcon.Name);
-                        }
+                        if (!string.IsNullOrEmpty(iconPath))
+                            if (!ScanFunctions.IconExists(iconPath))
+                                if (!Wizard.IsOnIgnoreList(iconPath))
+                                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKeyDefaultIcon.Name);
                     }
                     catch (Exception ex)
                     {
@@ -331,8 +320,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     finally
                     {
-                        if (regKeyDefaultIcon != null)
-                            regKeyDefaultIcon.Close();
+                        regKeyDefaultIcon?.Close();
                     }
 
                     // Check referenced CLSID
@@ -340,16 +328,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     try
                     {
-                        rkCLSID = regKey.OpenSubKey(string.Format("{0}\\CLSID", strSubKey));
+                        rkCLSID = regKey.OpenSubKey($"{strSubKey}\\CLSID");
 
-                        if (rkCLSID != null)
-                        {
-                            string guid = rkCLSID.GetValue("") as string;
+                        string guid = rkCLSID?.GetValue("") as string;
 
-                            if (!string.IsNullOrEmpty(guid))
-                                if (!ClsidExists(guid))
-                                    Wizard.StoreInvalidKey(Strings.MissingCLSID, string.Format("{0}\\{1}", regKey.Name, strSubKey));
-                        }
+                        if (!string.IsNullOrEmpty(guid))
+                            if (!ClsidExists(guid))
+                                Wizard.StoreInvalidKey(Strings.MissingCLSID, $"{regKey.Name}\\{strSubKey}");
                     }
                     catch (Exception ex)
                     {
@@ -357,8 +342,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                     finally
                     {
-                        if (rkCLSID != null)
-                            rkCLSID.Close();
+                        rkCLSID?.Close();
                     }
                 }
 
