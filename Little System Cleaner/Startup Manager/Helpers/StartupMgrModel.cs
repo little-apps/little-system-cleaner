@@ -1,10 +1,12 @@
-﻿using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Misc;
-using Microsoft.Win32;
-using System;
+﻿using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
@@ -84,8 +86,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 SectionName = regKey.Name,
                 bMapImg =
                     Utils.CreateBitmapSourceFromBitmap(regKey.Name.Contains(Registry.CurrentUser.ToString())
-                        ? Properties.Resources.current_user
-                        : Properties.Resources.all_users)
+                        ? Resources.current_user
+                        : Resources.all_users)
             };
 
 
@@ -95,7 +97,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey.ToString());
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey);
                 return;
             }
 
@@ -109,7 +111,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                         continue;
 
                     // Get file arguments
-                    string strFile = "", strArgs = "";
+                    string strFile, strArgs = "";
 
                     if (Utils.FileExists(strFilePath))
                         strFile = strFilePath;
@@ -121,17 +123,16 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                                 strFile = strFilePath;
                     }
 
-                    StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
+                    StartupEntry node = new StartupEntry { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
 
                     Icon ico = Utils.ExtractIcon(strFile);
-                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Resources.appinfo.ToBitmap());
 
                     nodeRoot.Children.Add(node);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping trying to get value for " + strItem + " in " + regKey.ToString() + "...");
-                    continue;
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping trying to get value for " + strItem + " in " + regKey + "...");
                 }
             }
 
@@ -154,8 +155,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 SectionName = strFolder,
                 bMapImg =
                     Utils.CreateBitmapSourceFromBitmap(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder
-                        ? Properties.Resources.current_user
-                        : Properties.Resources.all_users)
+                        ? Resources.current_user
+                        : Resources.all_users)
             };
 
 
@@ -183,10 +184,10 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     if (!Utils.ResolveShortcut(strShortcut, out filePath, out fileArgs))
                         continue;
 
-                    StartupEntry node = new StartupEntry() { Parent = nodeRoot, SectionName = strShortcutName, Path = filePath, Args = fileArgs };
+                    StartupEntry node = new StartupEntry { Parent = nodeRoot, SectionName = strShortcutName, Path = filePath, Args = fileArgs };
 
                     Icon ico = Utils.ExtractIcon(filePath);
-                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Properties.Resources.appinfo.ToBitmap());
+                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Resources.appinfo.ToBitmap());
 
                     nodeRoot.Children.Add(node);
                 }
@@ -202,7 +203,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         }
 
-        public System.Collections.IEnumerable GetChildren(object parent)
+        public IEnumerable GetChildren(object parent)
         {
             if (parent == null)
                 parent = Root;
