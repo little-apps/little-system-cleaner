@@ -163,7 +163,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             if (o == null)
                 return null;
 
-            int? ret = null;
+            int? ret;
 
             try
             {
