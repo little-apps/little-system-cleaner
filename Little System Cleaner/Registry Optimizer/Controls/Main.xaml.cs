@@ -18,7 +18,6 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using Little_System_Cleaner.Misc;
 
