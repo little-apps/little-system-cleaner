@@ -242,9 +242,9 @@ namespace Little_System_Cleaner.Misc
         private readonly IntPtr _wndTreeView;
         private readonly IntPtr _wndListView;
 
-        private readonly IntPtr _hProcess = IntPtr.Zero;
-        private IntPtr _lpRemoteBuffer = IntPtr.Zero;
-        private IntPtr _lpLocalBuffer = IntPtr.Zero;
+        private readonly IntPtr _hProcess;
+        private IntPtr _lpRemoteBuffer;
+        private IntPtr _lpLocalBuffer;
 
         private void SendTabKey(bool shiftPressed)
         {
