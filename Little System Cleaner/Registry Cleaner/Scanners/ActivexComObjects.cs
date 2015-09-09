@@ -672,47 +672,47 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <returns>False if Inprocserver is null or doesnt exist</returns>
         private static bool InprocServerExists(RegistryKey regKey)
         {
-            if (regKey != null)
+            if (regKey == null)
+                return false;
+
+            RegistryKey regKeyInprocSrvr = null, regKeyInprocSrvr32 = null;
+
+            try
             {
-                RegistryKey regKeyInprocSrvr = null, regKeyInprocSrvr32 = null;
+                regKeyInprocSrvr = regKey.OpenSubKey("InprocServer");
 
-                try
-                {
-                    regKeyInprocSrvr = regKey.OpenSubKey("InprocServer");
+                string strInprocServer = regKeyInprocSrvr?.GetValue("") as string;
 
-                    string strInprocServer = regKeyInprocSrvr?.GetValue("") as string;
+                if (!string.IsNullOrEmpty(strInprocServer))
+                    if (Utils.FileExists(strInprocServer) || Wizard.IsOnIgnoreList(strInprocServer))
+                        return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if InprocServer exists.");
+            }
+            finally
+            {
+                regKeyInprocSrvr?.Close();
+            }
 
-                    if (!string.IsNullOrEmpty(strInprocServer))
-                        if (Utils.FileExists(strInprocServer) || Wizard.IsOnIgnoreList(strInprocServer))
-                            return true;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if InprocServer exists.");
-                }
-                finally
-                {
-                    regKeyInprocSrvr?.Close();
-                }
+            try
+            {
+                regKeyInprocSrvr32 = regKey.OpenSubKey("InprocServer32");
 
-                try
-                {
-                    regKeyInprocSrvr32 = regKey.OpenSubKey("InprocServer32");
+                string strInprocServer32 = regKeyInprocSrvr32?.GetValue("") as string;
 
-                    string strInprocServer32 = regKeyInprocSrvr32?.GetValue("") as string;
-
-                    if (!string.IsNullOrEmpty(strInprocServer32))
-                        if (Utils.FileExists(strInprocServer32) || Wizard.IsOnIgnoreList(strInprocServer32))
-                            return true;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if InprocServer32 exists.");
-                }
-                finally
-                {
-                    regKeyInprocSrvr32?.Close();
-                }
+                if (!string.IsNullOrEmpty(strInprocServer32))
+                    if (Utils.FileExists(strInprocServer32) || Wizard.IsOnIgnoreList(strInprocServer32))
+                        return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if InprocServer32 exists.");
+            }
+            finally
+            {
+                regKeyInprocSrvr32?.Close();
             }
 
             return false;
