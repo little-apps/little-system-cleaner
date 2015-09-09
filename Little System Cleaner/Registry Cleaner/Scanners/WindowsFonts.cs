@@ -17,14 +17,16 @@
 */
 
 using System;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Misc;
+using System.Security;
+using System.Text;
 using System.Threading;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -64,7 +66,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         // Check value by itself
                         .Where(o => !Utils.FileExists(o.Value))
                         .Where(o => !Wizard.IsOnIgnoreList(o.Value))
-                        .Select(o => new { Name = o.Name, Value = o.Value, Path = $"{strPath.ToString()}\\{o.Value}" })
+                        .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}" })
                         // Check for font in fonts folder
                         .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
                         .Select(o => o.Name)
@@ -75,9 +77,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
             catch (ThreadAbortException)
             {
