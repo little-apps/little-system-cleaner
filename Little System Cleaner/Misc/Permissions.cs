@@ -22,7 +22,7 @@ using System.Diagnostics;
 
 namespace Little_System_Cleaner.Misc
 {
-    public class Permissions
+    public static class Permissions
     {
         internal static void SetPrivileges(bool enabled)
         {
