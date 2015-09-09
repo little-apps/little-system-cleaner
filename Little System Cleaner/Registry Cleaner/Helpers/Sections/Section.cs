@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
 
-namespace Little_System_Cleaner.Registry_Cleaner.Helpers
+namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
     public class Section : INotifyPropertyChanged
     {
