@@ -31,7 +31,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// <summary>
     /// Interaction logic for Compact.xaml
     /// </summary>
-    public partial class Compact : Window
+    public partial class Compact
     {
         Thread _threadScan, _threadCurrent;
 
