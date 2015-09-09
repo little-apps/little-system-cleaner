@@ -10,15 +10,15 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
     public class Hive : IDisposable
     {
-        private readonly string _strHiveName;
+        private readonly string _hiveName;
 
         /// <summary>
         /// The file location of the hive that is loaded with Windows
         /// </summary>
         /// <remarks>This file is locked and cannot be removed or changed</remarks>
-        private readonly string _strHivePath;
+        private readonly string _hivePath;
 
-        private string _strRootKey, _strKeyName;
+        private string _rootKey, _keyName;
 
         public bool SkipCompact
         {
@@ -26,37 +26,37 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             private set;
         }
 
-        private string _strOldHivePath;
+        private string _oldHivePath;
 
         /// <summary>
         /// Where a backup copy of the hive is saved when RegReplaceKey is called
         /// </summary>
-        public string OldHivePath => _strOldHivePath;
+        public string OldHivePath => _oldHivePath;
 
-        private string _strNewHivePath;
+        private string _newHivePath;
 
         /// <summary>
         /// The location of the compacted hive (created with RegSaveKey)
         /// </summary>
-        public string NewHivePath => _strNewHivePath;
+        public string NewHivePath => _newHivePath;
 
         private readonly FileInfo _fi;
         public FileInfo HiveFileInfo => _fi;
 
-        private readonly long _lOldHiveSize;
-        public long OldHiveSize => _lOldHiveSize;
+        private readonly long _oldHiveSize;
+        public long OldHiveSize => _oldHiveSize;
 
-        private uint _lNewHiveSize;
-        public long NewHiveSize => _lNewHiveSize;
+        private uint _newHiveSize;
+        public long NewHiveSize => _newHiveSize;
 
         #region ListView Properties
         public string RegistryHive => HiveFileInfo.Name;
 
-        public string RegistryHivePath => _strHivePath;
+        public string RegistryHivePath => _hivePath;
 
-        public string CurrentSize => Utils.ConvertSizeToString(_lOldHiveSize);
+        public string CurrentSize => Utils.ConvertSizeToString(_oldHiveSize);
 
-        public string CompactSize => Utils.ConvertSizeToString(_lNewHiveSize);
+        public string CompactSize => Utils.ConvertSizeToString(_newHiveSize);
         #endregion
 
         public bool Anaylzed, Compacted;
@@ -71,10 +71,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                 if (HiveFileInfo == null)
                     return false;
 
-                if (_lOldHiveSize == 0)
+                if (_oldHiveSize == 0)
                     return false;
 
-                return File.Exists(_strHivePath);
+                return File.Exists(_hivePath);
             }
         }
 
@@ -85,18 +85,18 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <param name="hivePath">Path to Hive (\Device\HarddiskVolumeX\Windows\System32\config\... or C:\Windows\System32\config\...)</param>
         public Hive(string hiveName, string hivePath)
         {
-            _strHiveName = hiveName;
-            _strHivePath = File.Exists(hivePath) ? hivePath : HiveManager.ConvertDeviceToMsdosName(hivePath);
+            _hiveName = hiveName;
+            _hivePath = File.Exists(hivePath) ? hivePath : HiveManager.ConvertDeviceToMsdosName(hivePath);
 
             try
             {
-                _fi = new FileInfo(_strHivePath);
-                _lOldHiveSize = GetFileSize(_strHivePath);
+                _fi = new FileInfo(_hivePath);
+                _oldHiveSize = GetFileSize(_hivePath);
             }
             catch (Exception ex) 
             {
                 _fi = null;
-                _lOldHiveSize = 0;
+                _oldHiveSize = 0;
 
                 Debug.WriteLine("The following error occurred trying to get registry hive information: " + ex.Message); 
             }
@@ -111,7 +111,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             catch (Exception ex)
             {
                 _fi = null;
-                _lOldHiveSize = 0;
+                _oldHiveSize = 0;
 
                 Debug.WriteLine("The following error occurred trying to get temporary hive path: " + ex.Message);
             }
@@ -124,10 +124,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         private void GetTempHivePaths()
         {
             // Temporary directory must be on same partition
-            char drive = _strHivePath[0];
+            char drive = _hivePath[0];
 
-            _strOldHivePath = HiveManager.GetTempHivePath(drive);
-            _strNewHivePath = HiveManager.GetTempHivePath(drive);
+            _oldHivePath = HiveManager.GetTempHivePath(drive);
+            _newHivePath = HiveManager.GetTempHivePath(drive);
         }
 
         public void Dispose()
@@ -139,8 +139,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
                 _hKey = 0;
 
-                if (File.Exists(_strOldHivePath))
-                    File.Delete(_strOldHivePath);
+                if (File.Exists(_oldHivePath))
+                    File.Delete(_oldHivePath);
 
                 _disposed = true;
             }
@@ -157,14 +157,14 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             _hKey = 0;
 
             // Remove hives
-            if (File.Exists(_strOldHivePath))
-                File.Delete(_strOldHivePath);
+            if (File.Exists(_oldHivePath))
+                File.Delete(_oldHivePath);
 
-            if (File.Exists(_strNewHivePath))
-                File.Delete(_strNewHivePath);
+            if (File.Exists(_newHivePath))
+                File.Delete(_newHivePath);
 
             // Reset registry size
-            _lNewHiveSize = 0;
+            _newHiveSize = 0;
 
             // Reset analyzed
             Anaylzed = false;
@@ -174,19 +174,19 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         {
             int nRet = 0;
 
-            if (string.IsNullOrEmpty(_strRootKey))
-                _strRootKey = _strHiveName.ToLower();
+            if (string.IsNullOrEmpty(_rootKey))
+                _rootKey = _hiveName.ToLower();
 
-            if (string.IsNullOrEmpty(_strKeyName))
-                _strKeyName = _strRootKey.Substring(_strRootKey.LastIndexOf('\\') + 1);
+            if (string.IsNullOrEmpty(_keyName))
+                _keyName = _rootKey.Substring(_rootKey.LastIndexOf('\\') + 1);
 
             _hKey = 0;
 
             // Open Handle to registry key
-            if (_strRootKey.StartsWith(@"\registry\machine"))
-                nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_LOCAL_MACHINE, _strKeyName, ref _hKey);
-            if (_strRootKey.StartsWith(@"\registry\user"))
-                nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_USERS, _strKeyName, ref _hKey);
+            if (_rootKey.StartsWith(@"\registry\machine"))
+                nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_LOCAL_MACHINE, _keyName, ref _hKey);
+            if (_rootKey.StartsWith(@"\registry\user"))
+                nRet = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_USERS, _keyName, ref _hKey);
 
             if (nRet != 0)
                 throw new Win32Exception(nRet);
@@ -259,7 +259,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <exception cref="System.ComponentModel.Win32Exception">This exception will be thrown if RegSaveKey fails</exception>
         private void PerformAnalyze()
         {
-            int nRet;
+            int retCode;
 
             // Begin Critical Region
             Thread.BeginCriticalRegion();
@@ -268,17 +268,17 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             PInvoke.RegFlushKey(_hKey);
 
             // Function will fail if file already exists
-            if (File.Exists(_strNewHivePath))
-                File.Delete(_strNewHivePath);
+            if (File.Exists(_newHivePath))
+                File.Delete(_newHivePath);
 
             // Use API to rewrite the registry hive
-            nRet = PInvoke.RegSaveKeyA(_hKey, _strNewHivePath, 0);
-            if (nRet != 0)
-                throw new Win32Exception(nRet);
+            retCode = PInvoke.RegSaveKeyA(_hKey, _newHivePath, 0);
+            if (retCode != 0)
+                throw new Win32Exception(retCode);
 
-            _lNewHiveSize = (uint)GetFileSize(_strNewHivePath);
+            _newHiveSize = (uint)GetFileSize(_newHivePath);
 
-            if (File.Exists(_strNewHivePath))
+            if (File.Exists(_newHivePath))
                 Anaylzed = true;
 
             // End Critical Region
@@ -340,13 +340,13 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
                     throw new Exception($"A handle for the registry hive could not be opened (error code {ex.NativeErrorCode} was returned).");
                 }
             }
-            else if (!File.Exists(_strNewHivePath))
+            else if (!File.Exists(_newHivePath))
             {
-                throw new Exception($"The compacted version of the registry hive ({_strHiveName}) was not created or was deleted from {_strNewHivePath}.");
+                throw new Exception($"The compacted version of the registry hive ({_hiveName}) was not created or was deleted from {_newHivePath}.");
             }
             else if (Compacted)
             {
-                throw new Exception($"The registry hive ({_strHiveName}) has already been compacted.");
+                throw new Exception($"The registry hive ({_hiveName}) has already been compacted.");
             }
         }
 
@@ -360,11 +360,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             Thread.BeginCriticalRegion();
 
             // Old hive cant exist or function will fail
-            if (File.Exists(_strOldHivePath))
-                File.Delete(_strOldHivePath);
+            if (File.Exists(_oldHivePath))
+                File.Delete(_oldHivePath);
 
             // Replace hive with compressed hive
-            int ret = PInvoke.RegReplaceKeyA(_hKey, null, _strNewHivePath, _strOldHivePath);
+            int ret = PInvoke.RegReplaceKeyA(_hKey, null, _newHivePath, _oldHivePath);
             if (ret != 0)
                 throw new Win32Exception(ret);
 
