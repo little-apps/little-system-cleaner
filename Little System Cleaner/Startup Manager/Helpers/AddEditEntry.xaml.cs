@@ -31,7 +31,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
     /// <summary>
     /// Interaction logic for AddEditEntry.xaml
     /// </summary>
-    public partial class AddEditEntry : Window
+    public partial class AddEditEntry
     {
         readonly bool _isEditing;
         readonly string _oldStartupPath;
@@ -297,12 +297,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
             else
             {
-                string strPath = "";
-
-                if (!string.IsNullOrEmpty(textBoxPath.Text) && !string.IsNullOrEmpty(textBoxArgs.Text))
-                    strPath = $"\"{textBoxPath.Text}\" {textBoxArgs.Text}";
-                else
-                    strPath = $"\"{textBoxPath.Text}\"";
+                string strPath = (!string.IsNullOrEmpty(textBoxPath.Text) && !string.IsNullOrEmpty(textBoxArgs.Text) ? $"\"{textBoxPath.Text}\" {textBoxArgs.Text}" : $"\"{textBoxPath.Text}\"");
 
                 try
                 {
