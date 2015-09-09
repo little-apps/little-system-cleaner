@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
@@ -260,7 +259,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <exception cref="System.ComponentModel.Win32Exception">This exception will be thrown if RegSaveKey fails</exception>
         private void PerformAnalyze()
         {
-            int nRet = 0;
+            int nRet;
 
             // Begin Critical Region
             Thread.BeginCriticalRegion();

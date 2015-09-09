@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
