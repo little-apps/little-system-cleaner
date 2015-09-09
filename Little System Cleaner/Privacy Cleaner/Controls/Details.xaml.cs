@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
