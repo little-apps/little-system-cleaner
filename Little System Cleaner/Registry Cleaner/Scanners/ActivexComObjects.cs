@@ -351,11 +351,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 try
                 {
-                    if (rk != null)
-                    {
-                        if (rk.ValueCount <= 0 && rk.SubKeyCount <= 0)
-                            Wizard.StoreInvalidKey(Strings.InvalidProgIDFileExt, rk.Name);
-                    }
+                    rk = regKey.OpenSubKey(strSubKey);
+
+                    if (rk?.ValueCount <= 0 && rk.SubKeyCount <= 0)
+                        Wizard.StoreInvalidKey(Strings.InvalidProgIDFileExt, rk.Name);
                 }
                 catch (Exception ex)
                 {
@@ -363,8 +362,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 finally
                 {
-                    if (rk != null)
-                        rk.Close();
+                    rk?.Close();
                 }
             }
 
