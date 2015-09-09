@@ -55,7 +55,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         private BadRegistryKey _parent;
         private bool? _bIsChecked = true;
-        private readonly int _nSeverity = 1;
+        private readonly int _nSeverity;
         public readonly string BaseRegKey;
         public readonly string SubRegKey;
 
