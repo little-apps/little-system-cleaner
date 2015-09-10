@@ -389,7 +389,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             return dt;
         }
 
-        private object TryGetValue(RegistryKey regKey, string valueName, object defaultValue = null)
+        private static object TryGetValue(RegistryKey regKey, string valueName, object defaultValue = null)
         {
             object value = defaultValue;
 
