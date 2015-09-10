@@ -234,6 +234,36 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             }
         }
 
+        /// <summary>
+        /// Removes ARP Cache registry key (if it exists)
+        /// Please note the ARP (Add/Remove Programs) cache is from Windows XP (which is no longer supported)
+        /// </summary>
+        /// <returns>True if the ARP cache registry key was removed, otherwise, false</returns>
+        private bool RemoveArpCache()
+        {
+            if (!SlowCache)
+                return false;
+
+            bool ret = false;
+            string baseKey, subKey;
+
+            Utils.ParseRegKeyPath(SlowInfoCacheRegKey, out baseKey, out subKey);
+
+            RegistryKey regKey = Utils.RegOpenKey(baseKey, false);
+
+            if (regKey != null)
+            {
+                regKey.DeleteSubKeyTree(subKey);
+                regKey.Flush();
+
+                ret = true;
+            }
+
+            regKey?.Close();
+
+            return ret;
+        }
+
         public bool Uninstall()
         {
             string cmdLine = "";
@@ -346,6 +376,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     
             }
 
+            RemoveArpCache();
+
             MessageBox.Show("Successfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             return true;
@@ -366,6 +398,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
                 return false;
             }
+
+            RemoveArpCache();
 
             MessageBox.Show("Successfully removed registry key", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
