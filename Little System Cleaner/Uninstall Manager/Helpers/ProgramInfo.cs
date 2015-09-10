@@ -374,7 +374,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         /// <returns>DateTime structure</returns>
         private DateTime FileTime2DateTime(FILETIME ft)
         {
-            DateTime dt = DateTime.MaxValue;
+            DateTime dt;
             long hFT2 = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
 
             try
