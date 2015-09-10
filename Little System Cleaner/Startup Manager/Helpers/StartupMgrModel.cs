@@ -145,7 +145,6 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         /// </summary>
         private static void AddStartupFolder(StartupMgrModel treeModel, string folder)
         {
-            Debug.WriteLine(folder);
             if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
                 return;
 
