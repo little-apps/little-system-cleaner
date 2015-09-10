@@ -156,6 +156,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             SystemComponent = ((ConvertToNullableInt32(TryGetValue(regKey, "SystemComponent", 0)).GetValueOrDefault() == 1) ? (true) : (false));
             _windowsInstaller = ConvertToNullableInt32(TryGetValue(regKey, "WindowsInstaller", 0));
             EstimatedSize = ConvertToNullableInt32(TryGetValue(regKey, "EstimatedSize", 0));
+
+            GetArpCache();
         }
 
         private static int? ConvertToNullableInt32(object o)
@@ -188,6 +190,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         /// <summary>
         /// Gets cached information
+        /// Please note the ARP (Add/Remove Programs) cache is from Windows XP (which is no longer supported)
         /// </summary>
         private void GetArpCache()
         {
@@ -195,8 +198,10 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             {
                 RegistryKey regKey;
 
-                if ((regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\" + ParentKeyName)) == null)
-                    if ((regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\" + ParentKeyName)) == null)
+                string regKeyName = (!string.IsNullOrEmpty(ParentKeyName) ? ParentKeyName : Key);
+
+                if ((regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\" + regKeyName)) == null)
+                    if ((regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\" + regKeyName)) == null)
                         return;
 
                 byte[] b = (byte[])regKey.GetValue("SlowInfoCache");
