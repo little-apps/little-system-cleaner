@@ -158,7 +158,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             EstimatedSize = ConvertToNullableInt32(TryGetValue(regKey, "EstimatedSize", 0));
         }
 
-        private int? ConvertToNullableInt32(object o)
+        private static int? ConvertToNullableInt32(object o)
         {
             if (o == null)
                 return null;
