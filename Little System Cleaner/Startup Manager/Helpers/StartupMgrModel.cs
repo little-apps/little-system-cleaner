@@ -143,18 +143,18 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         /// <summary>
         /// Loads startup folder into tree view
         /// </summary>
-        private static void AddStartupFolder(StartupMgrModel treeModel, string strFolder)
+        private static void AddStartupFolder(StartupMgrModel treeModel, string folder)
         {
-            Debug.WriteLine(strFolder);
-            if (string.IsNullOrEmpty(strFolder) || !Directory.Exists(strFolder))
+            Debug.WriteLine(folder);
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
                 return;
 
-            string[] strShortcuts;
+            string[] shortcutList;
             StartupEntry nodeRoot = new StartupEntry
             {
-                SectionName = strFolder,
+                SectionName = folder,
                 bMapImg =
-                    Utils.CreateBitmapSourceFromBitmap(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == strFolder
+                    Utils.CreateBitmapSourceFromBitmap(Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == folder
                         ? Resources.current_user
                         : Resources.all_users)
             };
@@ -162,29 +162,29 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             try
             {
-                strShortcuts = Directory.GetFiles(strFolder);
+                shortcutList = Directory.GetFiles(folder);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get files in " + strFolder);
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get files in " + folder);
                 return;
             }
 
-            foreach (string strShortcut in strShortcuts)
+            foreach (string shortcut in shortcutList)
             {
                 try
                 {
-                    string strShortcutName = Path.GetFileName(strShortcut);
+                    string shortcutName = Path.GetFileName(shortcut);
 
-                    if (Path.GetExtension(strShortcut) != ".lnk")
+                    if (Path.GetExtension(shortcut) != ".lnk")
                         continue;
 
                     string filePath, fileArgs;
 
-                    if (!Utils.ResolveShortcut(strShortcut, out filePath, out fileArgs))
+                    if (!Utils.ResolveShortcut(shortcut, out filePath, out fileArgs))
                         continue;
 
-                    StartupEntry node = new StartupEntry { Parent = nodeRoot, SectionName = strShortcutName, Path = filePath, Args = fileArgs };
+                    StartupEntry node = new StartupEntry { Parent = nodeRoot, SectionName = shortcutName, Path = filePath, Args = fileArgs };
 
                     Icon ico = Utils.ExtractIcon(filePath);
                     node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Resources.appinfo.ToBitmap());
@@ -193,7 +193,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping trying to resolve shortcut for " + strShortcut);
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping trying to resolve shortcut for " + shortcut);
                 }
                     
             }
