@@ -241,9 +241,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         /// <returns>True if the ARP cache registry key was removed, otherwise, false</returns>
         private bool RemoveArpCache()
         {
-            if (!SlowCache)
-                return false;
-
             bool ret = false;
             string baseKey, subKey;
 
