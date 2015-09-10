@@ -295,12 +295,21 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 try
                 {
                     Process proc = Process.Start(cmdLine);
-                    proc.WaitForExit();
-
-                    if (proc.ExitCode != 0)
+                    if (proc != null)
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "It appears the program couldn't be uninstalled or the uninstall was aborted by the user.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        return false;
+                        proc.WaitForExit();
+
+                        if (proc.ExitCode != 0)
+                        {
+                            MessageBox.Show(Application.Current.MainWindow,
+                                "It appears the program couldn't be uninstalled or the uninstall was aborted by the user.",
+                                Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        throw new NullReferenceException();
                     }
                 }
                 catch (Exception ex)
