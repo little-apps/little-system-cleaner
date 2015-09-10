@@ -373,7 +373,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     
             }
 
-            RemoveArpCache();
+            if (SlowCache)
+            {
+                if (!RemoveArpCache())
+                    MessageBox.Show(Application.Current.MainWindow, "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
 
             MessageBox.Show("Successfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -396,7 +401,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 return false;
             }
 
-            RemoveArpCache();
+            if (SlowCache)
+            {
+                if (!RemoveArpCache())
+                    MessageBox.Show(Application.Current.MainWindow, "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             MessageBox.Show("Successfully removed registry key", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
