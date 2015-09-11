@@ -48,7 +48,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             {
                 MessageBox.Show(Application.Current.MainWindow, "It appears that System.Windows.Controls.DataVisualization.Toolkit.dll is not loaded, because of this, the registry cannot be optimized.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 3.5.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                buttonAnalyze.IsEnabled = false;
+                ButtonAnalyze.IsEnabled = false;
             }
                 
         }

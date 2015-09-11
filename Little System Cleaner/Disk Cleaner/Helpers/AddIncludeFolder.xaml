@@ -8,12 +8,12 @@
         <TextBlock Margin="10,0,10,0" TextWrapping="Wrap">Example: ?:\test matches a root folder named test</TextBlock>
         <StackPanel Margin="10,0,10,10" Orientation="Horizontal" Height="25">
             <Label Content="Folder:" Margin="0,0,5,0" VerticalAlignment="Center" />
-            <TextBox x:Name="textBox" Margin="0,0,5,0" Width="193" />
-            <Button x:Name="buttonBrowse" Content="..." Width="25" Click="buttonBrowse_Click" />
+            <TextBox x:Name="TextBox" Margin="0,0,5,0" Width="193" />
+            <Button x:Name="ButtonBrowse" Content="..." Width="25" Click="buttonBrowse_Click" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,0,10,10" HorizontalAlignment="Right">
-            <Button x:Name="buttonOk" Content="OK" Margin="0,0,5,0" Width="27" IsDefault="True" Click="buttonOk_Click" />
-            <Button x:Name="buttonCancel" Content="Cancel" Width="49" IsCancel="True" />
+            <Button x:Name="ButtonOk" Content="OK" Margin="0,0,5,0" Width="27" IsDefault="True" Click="buttonOk_Click" />
+            <Button x:Name="ButtonCancel" Content="Cancel" Width="49" IsCancel="True" />
         </StackPanel>
     </StackPanel>
 </Window>

@@ -46,13 +46,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((listViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
+            Sort((ListViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
         }
 
         public bool OnUnloaded(bool forceExit)
         {
-            if (listViewProgs.Items.Count > 0)
-                listViewProgs.Items.Clear();
+            if (ListViewProgs.Items.Count > 0)
+                ListViewProgs.Items.Clear();
 
             return true;
         }
@@ -63,15 +63,15 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             RegistryKey regKey = null;
 
             // Clear listview
-            listViewProgs.Items.Clear();
+            ListViewProgs.Items.Clear();
 
             // Turn textbox into regex pattern
             Regex regex = new Regex("", RegexOptions.IgnoreCase);
 
-            if (textBoxSearch.HasText)
+            if (TextBoxSearch.HasText)
             {
                 StringBuilder result = new StringBuilder();
-                foreach (string str in textBoxSearch.Text.Split(' '))
+                foreach (string str in TextBoxSearch.Text.Split(' '))
                 {
                     result.Append(Regex.Escape(str));
                     result.Append(".*");
@@ -169,12 +169,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 {
 
                     if (regex.IsMatch(progInfo.Program))
-                        listViewProgs.Items.Add(progInfo);
+                        ListViewProgs.Items.Add(progInfo);
                 }
             }
 
             // Resize columns
-            Utils.AutoResizeColumns(listViewProgs);
+            Utils.AutoResizeColumns(ListViewProgs);
         }
 
         private void SearchTextBox_Search(object sender, RoutedEventArgs e)
@@ -204,7 +204,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void Sort(GridViewColumn column, ListSortDirection direction)
         {
-            ICollectionView dataView = CollectionViewSource.GetDefaultView(listViewProgs.Items);
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(ListViewProgs.Items);
             string sortBy = column.Header as string;
             
             dataView.SortDescriptions.Clear();
@@ -227,13 +227,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void buttonRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (listViewProgs.SelectedItems.Count == 0)
+            if (ListViewProgs.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ProgramInfo progInfo = listViewProgs.SelectedItems[0] as ProgramInfo;
+            ProgramInfo progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -244,18 +244,18 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((listViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
-            if (listViewProgs.SelectedItems.Count == 0)
+            if (ListViewProgs.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ProgramInfo progInfo = listViewProgs.SelectedItems[0] as ProgramInfo;
+            ProgramInfo progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -266,7 +266,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((listViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
@@ -274,7 +274,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((listViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
 	}

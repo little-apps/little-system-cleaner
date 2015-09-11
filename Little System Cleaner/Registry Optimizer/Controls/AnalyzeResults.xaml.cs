@@ -45,7 +45,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             decimal oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
             decimal diffRegistrySizeMb = decimal.Round((Convert.ToDecimal(oldRegistrySize - newRegistrySize)) / 1024 / 1024, 2);
 
-            ((PieSeries)mcChart.Series[0]).ItemsSource = 
+            ((PieSeries)McChart.Series[0]).ItemsSource = 
                 new[] 
                 { 
                     new KeyValuePair<string, decimal>($"Registry Size ({oldRegistrySizeMb}MB)", oldRegistrySizeMb - diffRegistrySizeMb),
@@ -56,12 +56,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 // Set errors to number of registry hives
                 Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;
 
-                mcChart.Title = "The Windows Registry Needs To Be Compacted";
+                McChart.Title = "The Windows Registry Needs To Be Compacted";
             } else {
                 // Properties.Settings.Default.lastScanErrors will still equal 0
 
-                mcChart.Title = "The Windows Registry Does Not Need To Be Compacted";
-                buttonCompact.IsEnabled = false;
+                McChart.Title = "The Windows Registry Does Not Need To Be Compacted";
+                ButtonCompact.IsEnabled = false;
             }
         }
 

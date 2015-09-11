@@ -46,9 +46,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             SetComboBox(sectionName);
 
-            textBoxName.Text = entryName.EndsWith(".lnk") ? entryName.Remove(entryName.IndexOf(".lnk")) : entryName;
-            textBoxPath.Text = filePath;
-            textBoxArgs.Text = fileArgs;
+            TextBoxName.Text = entryName.EndsWith(".lnk") ? entryName.Remove(entryName.IndexOf(".lnk")) : entryName;
+            TextBoxPath.Text = filePath;
+            TextBoxArgs.Text = fileArgs;
 
             _isEditing = true;
 
@@ -68,7 +68,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             PopulateComboBox();
 
-            comboBox1.SelectedIndex = 0;
+            Sections.SelectedIndex = 0;
 
             _isEditing = false;
         }
@@ -76,142 +76,142 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         private void PopulateComboBox()
         {
             // Startup folders
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Startup\All Users"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Startup\Current User"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Startup\All Users"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Startup\Current User"));
 
             // All users startup registry keys (32bit)
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Policies\Explorer\Run"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services Once"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once\Setup"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Policies\Explorer\Run"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once\Setup"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run"));
 
             // All users startup registry keys (32bit)
             if (Utils.Is64BitOs) 
             {
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Policies\Explorer\Run"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services Once"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once\Setup"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Policies\Explorer\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once\Setup"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run"));
             }
 
             // Current user startup registry keys (32bit)
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Policies\Explorer\Run"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services Once"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once\Setup"));
-            comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Policies\Explorer\Run"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once\Setup"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run"));
 
             // Current user startup registry keys (32bit)
             if (Utils.Is64BitOs)
             {
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Policies\Explorer\Run"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services Once"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once\Setup"));
-                comboBox1.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Policies\Explorer\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once\Setup"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run"));
             }
         }
 
         private void SetComboBox(string sectionName)
         {
             if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP))
-                comboBox1.SelectedIndex = 0;
+                Sections.SelectedIndex = 0;
             else if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP))
-                comboBox1.SelectedIndex = 1;
+                Sections.SelectedIndex = 1;
 
             if (Utils.Is64BitOs)
             {
                 // All users startup registry keys (32bit)
                 if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
-                    comboBox1.SelectedIndex = 2;
+                    Sections.SelectedIndex = 2;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
-                    comboBox1.SelectedIndex = 3;
+                    Sections.SelectedIndex = 3;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
-                    comboBox1.SelectedIndex = 4;
+                    Sections.SelectedIndex = 4;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
-                    comboBox1.SelectedIndex = 5;
+                    Sections.SelectedIndex = 5;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
-                    comboBox1.SelectedIndex = 6;
+                    Sections.SelectedIndex = 6;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
-                    comboBox1.SelectedIndex = 7;
+                    Sections.SelectedIndex = 7;
 
                 // All users startup registry keys (64bit)
                 if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
-                    comboBox1.SelectedIndex = 8;
+                    Sections.SelectedIndex = 8;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices")
-                    comboBox1.SelectedIndex = 9;
+                    Sections.SelectedIndex = 9;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
-                    comboBox1.SelectedIndex = 10;
+                    Sections.SelectedIndex = 10;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
-                    comboBox1.SelectedIndex = 11;
+                    Sections.SelectedIndex = 11;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
-                    comboBox1.SelectedIndex = 12;
+                    Sections.SelectedIndex = 12;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
-                    comboBox1.SelectedIndex = 13;
+                    Sections.SelectedIndex = 13;
 
                 // Current user startup registry keys (32bit)
                 if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
-                    comboBox1.SelectedIndex = 14;
+                    Sections.SelectedIndex = 14;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
-                    comboBox1.SelectedIndex = 15;
+                    Sections.SelectedIndex = 15;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
-                    comboBox1.SelectedIndex = 16;
+                    Sections.SelectedIndex = 16;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
-                    comboBox1.SelectedIndex = 17;
+                    Sections.SelectedIndex = 17;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
-                    comboBox1.SelectedIndex = 18;
+                    Sections.SelectedIndex = 18;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
-                    comboBox1.SelectedIndex = 19;
+                    Sections.SelectedIndex = 19;
 
                 // Current user startup registry keys (64bit)
                 if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
-                    comboBox1.SelectedIndex = 20;
+                    Sections.SelectedIndex = 20;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices")
-                    comboBox1.SelectedIndex = 21;
+                    Sections.SelectedIndex = 21;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
-                    comboBox1.SelectedIndex = 22;
+                    Sections.SelectedIndex = 22;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
-                    comboBox1.SelectedIndex = 23;
+                    Sections.SelectedIndex = 23;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
-                    comboBox1.SelectedIndex = 24;
+                    Sections.SelectedIndex = 24;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
-                    comboBox1.SelectedIndex = 25;
+                    Sections.SelectedIndex = 25;
             }
             else
             {
                 // All users startup registry keys (32bit)
                 if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
-                    comboBox1.SelectedIndex = 2;
+                    Sections.SelectedIndex = 2;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
-                    comboBox1.SelectedIndex = 3;
+                    Sections.SelectedIndex = 3;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
-                    comboBox1.SelectedIndex = 4;
+                    Sections.SelectedIndex = 4;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
-                    comboBox1.SelectedIndex = 5;
+                    Sections.SelectedIndex = 5;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
-                    comboBox1.SelectedIndex = 6;
+                    Sections.SelectedIndex = 6;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
-                    comboBox1.SelectedIndex = 7;
+                    Sections.SelectedIndex = 7;
 
                 // Current user startup registry keys (32bit)
                 if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
-                    comboBox1.SelectedIndex = 8;
+                    Sections.SelectedIndex = 8;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
-                    comboBox1.SelectedIndex = 9;
+                    Sections.SelectedIndex = 9;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
-                    comboBox1.SelectedIndex = 10;
+                    Sections.SelectedIndex = 10;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
-                    comboBox1.SelectedIndex = 11;
+                    Sections.SelectedIndex = 11;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
-                    comboBox1.SelectedIndex = 12;
+                    Sections.SelectedIndex = 12;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
-                    comboBox1.SelectedIndex = 13;
+                    Sections.SelectedIndex = 13;
             }
         }
 
@@ -239,7 +239,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void buttonOK_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxName.Text) || string.IsNullOrWhiteSpace(textBoxPath.Text))
+            if (string.IsNullOrWhiteSpace(TextBoxName.Text) || string.IsNullOrWhiteSpace(TextBoxPath.Text))
             {
                 MessageBox.Show(this, "You must enter a name and a path", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -268,11 +268,11 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             RegistryKey regKey = null;
             bool created = false;
 
-            if (comboBox1.SelectedIndex <= 1)
+            if (Sections.SelectedIndex <= 1)
             {
                 try
                 {
-                    var filePath = Path.Combine(comboBox1.SelectedIndex == 0 ? Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP) : Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), textBoxName.Text + ".lnk");
+                    var filePath = Path.Combine(Sections.SelectedIndex == 0 ? Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP) : Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), TextBoxName.Text + ".lnk");
 
                     string fileDir = Path.GetDirectoryName(filePath);
                     if (!Directory.Exists(fileDir))
@@ -285,7 +285,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                         return;
                     }
 
-                    if (!(created = CreateShortcut(filePath, textBoxPath.Text, textBoxArgs.Text)))
+                    if (!(created = CreateShortcut(filePath, TextBoxPath.Text, TextBoxArgs.Text)))
                         MessageBox.Show(this, "There was an error creating the shortcut for the startup entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
@@ -297,20 +297,20 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
             else
             {
-                string strPath = (!string.IsNullOrEmpty(textBoxPath.Text) && !string.IsNullOrEmpty(textBoxArgs.Text) ? $"\"{textBoxPath.Text}\" {textBoxArgs.Text}" : $"\"{textBoxPath.Text}\"");
+                string strPath = (!string.IsNullOrEmpty(TextBoxPath.Text) && !string.IsNullOrEmpty(TextBoxArgs.Text) ? $"\"{TextBoxPath.Text}\" {TextBoxArgs.Text}" : $"\"{TextBoxPath.Text}\"");
 
                 try
                 {
                     regKey = GetSelectedRegKey();
 
                     // Make sure registry value name doesn't already exist
-                    if (regKey.GetValue(textBoxName.Text) != null)
+                    if (regKey.GetValue(TextBoxName.Text) != null)
                     {
                         MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    regKey.SetValue(textBoxName.Text, strPath);
+                    regKey.SetValue(TextBoxName.Text, strPath);
 
                     created = true;
                 }
@@ -342,7 +342,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             if (Utils.Is64BitOs)
             {
-                switch (comboBox1.SelectedIndex)
+                switch (Sections.SelectedIndex)
                 {
                     case 2:
                         regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
@@ -423,7 +423,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
             else
             {
-                switch (comboBox1.SelectedIndex) 
+                switch (Sections.SelectedIndex) 
                 {
 	                case 2:
 	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
@@ -489,15 +489,15 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             OpenFileDialog openFileDlg = new OpenFileDialog { Multiselect = false };
             
-            if (!string.IsNullOrEmpty(textBoxPath.Text))
+            if (!string.IsNullOrEmpty(TextBoxPath.Text))
             {
-                openFileDlg.InitialDirectory = Path.GetDirectoryName(textBoxPath.Text);
-                openFileDlg.FileName = textBoxPath.Text;
+                openFileDlg.InitialDirectory = Path.GetDirectoryName(TextBoxPath.Text);
+                openFileDlg.FileName = TextBoxPath.Text;
             }
 
             if (openFileDlg.ShowDialog(this).GetValueOrDefault())
             {
-                textBoxPath.Text = openFileDlg.FileName;
+                TextBoxPath.Text = openFileDlg.FileName;
             }
         }
 

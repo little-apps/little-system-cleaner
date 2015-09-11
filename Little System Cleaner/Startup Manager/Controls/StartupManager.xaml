@@ -31,7 +31,7 @@
             </Grid>
         </Border>
         <Label Height="27" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">The startup manager allows you to add, edit, and remove items that startup with your computer</Label>
-        <tree:TreeList x:Name="_tree" Grid.Row="2">
+        <tree:TreeList x:Name="Tree" Grid.Row="2">
             <tree:TreeList.View>
                 <GridView AllowsColumnReorder="False">
                     <GridView.Columns>
@@ -52,39 +52,39 @@
                 </GridView>
             </tree:TreeList.View>
 		</tree:TreeList>
-        <StackPanel Orientation="Horizontal"  Grid.Row="3" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Center" Height="30">
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonAdd" Click="buttonAdd_Click">
+        <StackPanel Orientation="Horizontal"  Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonAdd" Click="buttonAdd_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/add.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Add</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonEdit" Click="buttonEdit_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonEdit" Click="buttonEdit_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/edit.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Edit</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonDelete" Click="buttonDelete_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonDelete" Click="buttonDelete_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/delete.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Delete</TextBlock>
                 </StackPanel>
             </Button>
 
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonView" Click="buttonView_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonView" Click="buttonView_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/view.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">View</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRun" Click="buttonRun_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonRun" Click="buttonRun_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/run.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Run</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0" Padding="8,0,8,0" Name="buttonRefresh" Click="buttonRefresh_Click">
+            <Button Grid.Row="3" Margin="0" Padding="8,0,8,0" Name="ButtonRefresh" Click="buttonRefresh_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup%20manager/refresh.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Refresh</TextBlock>

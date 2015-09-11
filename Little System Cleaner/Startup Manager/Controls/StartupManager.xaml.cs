@@ -41,7 +41,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         public bool OnUnloaded(bool forceExit)
         {
-            _tree.Model = null;
+            Tree.Model = null;
 
             return true;
         }
@@ -51,12 +51,12 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
         /// </summary>
         private void LoadStartupFiles()
         {
-            _tree.Model = StartupMgrModel.CreateStarupMgrModel();
+            Tree.Model = StartupMgrModel.CreateStarupMgrModel();
 
             // Expands treeview
-            _tree.UpdateLayout();
-            _tree.ExpandAll();
-            _tree.AutoResizeColumns();
+            Tree.UpdateLayout();
+            Tree.ExpandAll();
+            Tree.AutoResizeColumns();
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
@@ -76,13 +76,13 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
-            if (_tree.SelectedNode == null)
+            if (Tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry selectedItem = _tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry selectedItem = Tree.SelectedNode.Tag as StartupEntry;
 
             // If root node -> display msg box and exit
             if (selectedItem.Children.Count > 0)
@@ -102,13 +102,13 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (_tree.SelectedNode == null)
+            if (Tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = _tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry node = Tree.SelectedNode.Tag as StartupEntry;
 
             if (node.IsLeaf)
             {
@@ -231,13 +231,13 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonView_Click(object sender, RoutedEventArgs e)
         {
-            if (_tree.SelectedNode == null)
+            if (Tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = _tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry node = Tree.SelectedNode.Tag as StartupEntry;
 
             if (!node.IsLeaf)
                 return;
@@ -279,13 +279,13 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonRun_Click(object sender, RoutedEventArgs e)
         {
-            if (_tree.SelectedNode == null)
+            if (Tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = _tree.SelectedNode.Tag as StartupEntry;
+            StartupEntry node = Tree.SelectedNode.Tag as StartupEntry;
 
             if (!node.IsLeaf)
                 return;

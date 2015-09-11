@@ -47,7 +47,7 @@
             </Grid>
         </Border>
         <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="26" Margin="52,2,51,2" Width="476">The uninstall manager allows you to remove programs that cannot be properly removed</Label>
-        <ListView IsSynchronizedWithCurrentItem="True" Name="listViewProgs" SelectionMode="Single" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler" Grid.Row="3">
+        <ListView IsSynchronizedWithCurrentItem="True" Name="ListViewProgs" SelectionMode="Single" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler" Grid.Row="3">
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn Header="Program" Width="100">
@@ -65,21 +65,21 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <controls:SearchTextBox Name="textBoxSearch" SearchMode="Instant" Search="SearchTextBox_Search" Grid.Row="2" />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Center" Height="30" Grid.Row="4">
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonUninstall" Click="buttonUninstall_Click">
+        <controls:SearchTextBox Name="TextBoxSearch" SearchMode="Instant" Search="SearchTextBox_Search" Grid.Row="2" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Grid.Row="4">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonUninstall" Click="buttonUninstall_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/uninstall%20manager.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Uninstall</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="buttonRemove" Click="buttonRemove_Click">
+            <Button Grid.Row="3" Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonRemove" Click="buttonRemove_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/button_cancel.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Remove Entry</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="3" Margin="0" Padding="8,0,8,0" Name="buttonRefresh" Click="buttonRefresh_Click">
+            <Button Grid.Row="3" Margin="0" Padding="8,0,8,0" Name="ButtonRefresh" Click="buttonRefresh_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/refresh.png" Width="16" Height="16" />
                     <TextBlock VerticalAlignment="Center">Refresh</TextBlock>

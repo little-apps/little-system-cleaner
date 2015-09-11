@@ -40,17 +40,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             _scanBase = sb;
 
-            _tree.Model = SectionModel.CreateSectionModel();
-            _tree.ExpandAll();
+            Tree.Model = SectionModel.CreateSectionModel();
+            Tree.ExpandAll();
 
-            radioButtonPerm.IsChecked = Settings.Default.privacyCleanerDeletePerm;
-            radioButtonMove.IsChecked = Settings.Default.privacyCleanerDeleteRecBin;
-            checkBoxReadOnly.IsChecked = Settings.Default.privacyCleanerIncReadOnlyFile;
-            checkBoxHidden.IsChecked = Settings.Default.privacyCleanerIncHiddenFile;
-            checkBoxSystem.IsChecked = Settings.Default.privacyCleanerIncSysFile;
-            checkBoxZeroByte.IsChecked = Settings.Default.privacyCleanerInc0ByteFile;
-            checkBoxLogScan.IsChecked = Settings.Default.privacyCleanerLog;
-            checkBoxDisplayLog.IsChecked = Settings.Default.privacyCleanerDisplayLog;
+            RadioButtonPerm.IsChecked = Settings.Default.privacyCleanerDeletePerm;
+            RadioButtonMove.IsChecked = Settings.Default.privacyCleanerDeleteRecBin;
+            CheckBoxReadOnly.IsChecked = Settings.Default.privacyCleanerIncReadOnlyFile;
+            CheckBoxHidden.IsChecked = Settings.Default.privacyCleanerIncHiddenFile;
+            CheckBoxSystem.IsChecked = Settings.Default.privacyCleanerIncSysFile;
+            CheckBoxZeroByte.IsChecked = Settings.Default.privacyCleanerInc0ByteFile;
+            CheckBoxLogScan.IsChecked = Settings.Default.privacyCleanerLog;
+            CheckBoxDisplayLog.IsChecked = Settings.Default.privacyCleanerDisplayLog;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -68,19 +68,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void UpdateSettings()
         {
-            Settings.Default.privacyCleanerDeletePerm = radioButtonPerm.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerDeleteRecBin = radioButtonMove.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerIncReadOnlyFile = checkBoxReadOnly.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerIncHiddenFile = checkBoxHidden.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerIncSysFile = checkBoxSystem.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerInc0ByteFile = checkBoxZeroByte.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerLog = checkBoxLogScan.IsChecked.GetValueOrDefault();
-            Settings.Default.privacyCleanerDisplayLog = checkBoxDisplayLog.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerDeletePerm = RadioButtonPerm.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerDeleteRecBin = RadioButtonMove.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerIncReadOnlyFile = CheckBoxReadOnly.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerIncHiddenFile = CheckBoxHidden.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerIncSysFile = CheckBoxSystem.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerInc0ByteFile = CheckBoxZeroByte.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerLog = CheckBoxLogScan.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerDisplayLog = CheckBoxDisplayLog.IsChecked.GetValueOrDefault();
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)
         {
-            _scanBase.Model = _tree.Model as SectionModel;
+            _scanBase.Model = Tree.Model as SectionModel;
 
             if (!_scanBase.Model.RootChildren.Any(n => n.IsChecked == null || n.IsChecked == true))
             {

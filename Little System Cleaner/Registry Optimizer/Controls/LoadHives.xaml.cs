@@ -36,7 +36,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
                 foreach (string strValueName in rkHives.GetValueNames())
                 {
-                    Dispatcher.Invoke(new Action(() => label1.Text = $"Loading {++i}/{rkHives.ValueCount} Hives"));
+                    Dispatcher.Invoke(new Action(() => Message.Text = $"Loading {++i}/{rkHives.ValueCount} Hives"));
 
                     // Don't touch these hives because they are critical for Windows
                     if (strValueName.Contains("BCD") || strValueName.Contains("HARDWARE"))

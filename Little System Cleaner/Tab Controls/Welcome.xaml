@@ -26,22 +26,22 @@
                     <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="494" />
                 </Grid.ColumnDefinitions>
-                <Image Height="64" HorizontalAlignment="Center" Name="image1" VerticalAlignment="Center" Width="64" Source="/Little_System_Cleaner;component/Resources/welcome/last-scan.png" />
+                <Image Height="64" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64" Source="/Little_System_Cleaner;component/Resources/welcome/last-scan.png" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,6,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Date And Time:</TextBlock>
-                    <TextBlock Name="lastDateTime" Margin="3,0,0,0" />
+                    <TextBlock Name="LastDateTime" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,28,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Errors Found:</TextBlock>
-                    <TextBlock Name="errorsFound" Margin="3,0,0,0" />
+                    <TextBlock Name="ErrorsFound" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,50,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Errors Repaired:</TextBlock>
-                    <TextBlock Name="errorsRepaired" Margin="3,0,0,0" />
+                    <TextBlock Name="ErrorsRepaired" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,72,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Elapsed Time:</TextBlock>
-                    <TextBlock Name="elapsedTime" Margin="3,0,0,0" />
+                    <TextBlock Name="ElapsedTime" Margin="3,0,0,0" />
                 </StackPanel>
             </Grid>
         </GroupBox>
@@ -51,18 +51,18 @@
                     <ColumnDefinition Width="72" />
                     <ColumnDefinition Width="492" />
                 </Grid.ColumnDefinitions>
-                <Image Height="64" HorizontalAlignment="Center" Name="image2" VerticalAlignment="Center" Width="64" Source="/Little_System_Cleaner;component/Resources/welcome/program-stats.png" />
+                <Image Height="64" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64" Source="/Little_System_Cleaner;component/Resources/welcome/program-stats.png" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,6,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Number Of Scans:</TextBlock>
-                    <TextBlock Name="totalScans" Margin="3,0,0,0" />
+                    <TextBlock Name="TotalScans" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,28,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Total Errors Found:</TextBlock>
-                    <TextBlock Name="totalErrors" Margin="3,0,0,0" />
+                    <TextBlock Name="TotalErrors" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,50,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Total Errors Fixed:</TextBlock>
-                    <TextBlock Name="totalErrorsFixed" Margin="3,0,0,0" />
+                    <TextBlock Name="TotalErrorsFixed" Margin="3,0,0,0" />
                 </StackPanel>
             </Grid>
         </GroupBox>
@@ -72,21 +72,21 @@
                     <ColumnDefinition Width="74" />
                     <ColumnDefinition Width="490" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Height="64" HorizontalAlignment="Center" Name="image3" VerticalAlignment="Center" Width="64" Source="/Little_System_Cleaner;component/Resources/welcome/system-info.png" />
+                <Image Grid.Column="0" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64" Source="/Little_System_Cleaner;component/Resources/welcome/system-info.png" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,6,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Processor:</TextBlock>
-                    <TextBlock Name="cpuType" Margin="3,0,0,0" />
+                    <TextBlock Name="CpuType" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,28,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Memory:</TextBlock>
-                    <TextBlock Name="totalRAM" Margin="3,0,0,0" />
+                    <TextBlock Name="TotalRam" Margin="3,0,0,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,50,0,0" VerticalAlignment="Top" Grid.Column="1">
                     <TextBlock FontWeight="Bold">Operating System:</TextBlock>
-                    <TextBlock Name="osVersion" Margin="3,0,0,0" />
+                    <TextBlock Name="OsVersion" Margin="3,0,0,0" />
                 </StackPanel>
             </Grid>
         </GroupBox>
-        <TextBlock Height="38" Name="textBlockTrialMode" TextAlignment="Center" FontWeight="Bold" Foreground="Red" />
+        <TextBlock Height="38" Name="TextBlockTrialMode" TextAlignment="Center" FontWeight="Bold" Foreground="Red" />
     </StackPanel>
 </UserControl>

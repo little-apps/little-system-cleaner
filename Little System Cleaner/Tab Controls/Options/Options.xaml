@@ -29,53 +29,53 @@
                 <Label FontSize="14" Content="Options" Margin="8,-2,0,-2" Foreground="White" Height="28" HorizontalAlignment="Left" />
             </Grid>
         </Border>
-        <TabControl x:Name="tabControl1" Grid.Row="1">
-            <TabItem x:Name="tabItemGeneral">
+        <TabControl x:Name="TabControl"  Grid.Row="1">
+            <TabItem x:Name="TabItemGeneral">
                 <TabItem.Header>
                     <TextBlock><Run Text="General"/></TextBlock>
                 </TabItem.Header>
                 <StackPanel>
-                    <GroupBox Header="Options" x:Name="groupBox3">
+                    <GroupBox Header="Options">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
-                                <CheckBox Name="checkBoxAutoUpdate" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding AutoUpdate}">Automatically check for updates every</CheckBox>
-                                <ComboBox SelectedIndex="{Binding Path=SelectedUpdateDelay}" Margin="3,0,0,0" Name="comboBoxUpdateDelay" IsReadOnly="True">
+                                <CheckBox Name="CheckBoxAutoUpdate" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding AutoUpdate}">Automatically check for updates every</CheckBox>
+                                <ComboBox SelectedIndex="{Binding Path=SelectedUpdateDelay}" Margin="3,0,0,0" Name="ComboBoxUpdateDelay" IsReadOnly="True">
                                     <ComboBoxItem>3 Days</ComboBoxItem>
                                     <ComboBoxItem>5 Days</ComboBoxItem>
                                     <ComboBoxItem>7 Days</ComboBoxItem>
                                     <ComboBoxItem>14 Days</ComboBoxItem>
                                 </ComboBox>
                             </StackPanel>
-                            <CheckBox x:Name="checkBoxSysRestore" Margin="0,3,0,3" IsChecked="{Binding SysRestore}">Automatically create system restore points</CheckBox>
-                            <CheckBox x:Name="checkBoxUsageStats" Margin="0,3,0,3" IsChecked="{Binding UsageStats}">Send anonymous usage statistics</CheckBox>
+                            <CheckBox x:Name="CheckBoxSysRestore" Margin="0,3,0,3" IsChecked="{Binding SysRestore}">Automatically create system restore points</CheckBox>
+                            <CheckBox x:Name="CheckBoxUsageStats" Margin="0,3,0,3" IsChecked="{Binding UsageStats}">Send anonymous usage statistics</CheckBox>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Select a folder to save the log files to" x:Name="groupBox2" VerticalAlignment="Top">
+                    <GroupBox Header="Select a folder to save the log files to" VerticalAlignment="Top">
                         <Grid Margin="5,5,5,5" Height="27">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="483*" />
                                 <ColumnDefinition Width="70" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Margin="0,0,1,0" x:Name="textBoxLog" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" Text="{Binding LogDirectory}" />
-                            <Button Margin="2,0,0,0" Padding="8,0,8,0" x:Name="buttonBrowseLogDir" Content="Browse..." Grid.Column="1" Click="buttonBrowse_Click" />
+                            <TextBox Margin="0,0,1,0" x:Name="TextBoxLog" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" Text="{Binding LogDirectory}" />
+                            <Button Margin="2,0,0,0" Padding="8,0,8,0" x:Name="ButtonBrowseLogDir" Content="Browse..." Grid.Column="1" Click="buttonBrowse_Click" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Proxy Settings" VerticalAlignment="Top">
                         <StackPanel Margin="5,5,5,5">
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="radioButtonNoProxy" Margin="0,0,10,0" IsChecked="{Binding NoProxy}">No Proxy</RadioButton>
-                                <RadioButton x:Name="radioButtonIEProxy" Margin="0,0,10,0" IsChecked="{Binding IeProxy}">Use Internet Explorer Proxy Settings</RadioButton>
-                                <RadioButton x:Name="radioButtonProxy"  IsChecked="{Binding Proxy}">Manual Proxy Configuration</RadioButton>
+                                <RadioButton x:Name="RadioButtonNoProxy" Margin="0,0,10,0" IsChecked="{Binding NoProxy}">No Proxy</RadioButton>
+                                <RadioButton x:Name="RadioButtonIeProxy" Margin="0,0,10,0" IsChecked="{Binding IeProxy}">Use Internet Explorer Proxy Settings</RadioButton>
+                                <RadioButton x:Name="RadioButtonProxy"  IsChecked="{Binding Proxy}">Manual Proxy Configuration</RadioButton>
                             </StackPanel>
                             <StackPanel Visibility="{Binding Path=ShowProxySettings}">
                                 <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
                                     <Label Width="82">IP/Hostname:</Label>
                                     <TextBox x:Name="proxyAddress" Width="175" VerticalContentAlignment="Center" Text="{Binding ProxyAddress}" />
                                     <Label>Port:</Label>
-                                    <xctk:IntegerUpDown x:Name="numericUpDownProxyPort" DefaultValue="3128" Width="54" Minimum="1" Maximum="65535" Value="{Binding ProxyPort}" />
+                                    <xctk:IntegerUpDown x:Name="NumericUpDownProxyPort" DefaultValue="3128" Width="54" Minimum="1" Maximum="65535" Value="{Binding ProxyPort}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
-                                    <CheckBox x:Name="checkBoxProxyAuthenticate" IsChecked="{Binding ProxyAuthenticate}">Use authentication</CheckBox>
+                                    <CheckBox x:Name="CheckBoxProxyAuthenticate" IsChecked="{Binding ProxyAuthenticate}">Use authentication</CheckBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
                                     <Label Width="82">Username:</Label>
@@ -90,17 +90,17 @@
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Name="tabItemAbout">
+            <TabItem x:Name="TabItemAbout">
                 <TabItem.Header>
                     <TextBlock><Run Text="About"/></TextBlock>
                 </TabItem.Header>
                 <Grid>
                     <Image HorizontalAlignment="Left" Margin="11,5,0,0" VerticalAlignment="Top" Source="/Little_System_Cleaner;component/Resources/little system cleaner.png" Height="65" Width="65" />
                     <Label HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Little System Cleaner" Height="75" Width="218" Margin="83,0,0,0" FontSize="20" FontWeight="Bold" VerticalContentAlignment="Center" />
-                    <Separator Height="2" HorizontalAlignment="Stretch" Margin="11,75,11,0" Name="separator1" VerticalAlignment="Top" Grid.ColumnSpan="2" />
+                    <Separator Height="2" HorizontalAlignment="Stretch" Margin="11,75,11,0" VerticalAlignment="Top" Grid.ColumnSpan="2" />
 
                     <Grid Margin="11,81,11,35" Grid.ColumnSpan="2">
-                        <RichTextBox Name="textBlock1" MinWidth="547" MinHeight="195" IsReadOnly="True" IsDocumentEnabled="True" Margin="0,0,0,10" VerticalScrollBarVisibility="Auto">
+                        <RichTextBox MinWidth="547" MinHeight="195" IsReadOnly="True" IsDocumentEnabled="True" Margin="0,0,0,10" VerticalScrollBarVisibility="Auto">
                             <FlowDocument>
                                 <Paragraph>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</Paragraph>
                                 <Paragraph>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</Paragraph>
@@ -137,8 +137,8 @@
                             <!-- </Frame.Content>
                         </Frame> -->
                     </Grid>
-                    <Button HorizontalAlignment="Right" Margin="0,0,11,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Name="buttonWebsite" Click="buttonWebsite_Click" Grid.Column="1">Visit Website</Button>
-                    <Button HorizontalAlignment="Left" Margin="11,0,0,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Name="buttonSupportThisProject" Click="buttonSupportThisProject_Click" Grid.ColumnSpan="2">Support This Project</Button>
+                    <Button HorizontalAlignment="Right" Margin="0,0,11,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Name="ButtonWebsite" Click="buttonWebsite_Click" Grid.Column="1">Visit Website</Button>
+                    <Button HorizontalAlignment="Left" Margin="11,0,0,8" Padding="8,0,8,0" VerticalAlignment="Bottom" Height="27" Name="ButtonSupportThisProject" Click="buttonSupportThisProject_Click" Grid.ColumnSpan="2">Support This Project</Button>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,6,0" VerticalAlignment="Top" Grid.Column="1"/>
                 </Grid>
             </TabItem>

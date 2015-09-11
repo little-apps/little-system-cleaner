@@ -38,14 +38,14 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBox.Text.Trim()))
+            if (string.IsNullOrEmpty(TextBox.Text.Trim()))
             {
                 MessageBox.Show(this, "Please enter a file type", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (AddFileType != null)
             {
-                AddFileTypeEventArgs eventArgs = new AddFileTypeEventArgs { FileType =  textBox.Text.Trim() };
+                AddFileTypeEventArgs eventArgs = new AddFileTypeEventArgs { FileType =  TextBox.Text.Trim() };
                 AddFileType(this, eventArgs);
             }
 

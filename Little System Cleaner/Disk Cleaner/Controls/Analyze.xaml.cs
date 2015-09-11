@@ -95,7 +95,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
 
             currentFile.Text = CurrentFile;
-            filesFound.Text = $"Files Found: {Wizard.FileList.Count}";
+            FilesFound.Text = $"Files Found: {Wizard.FileList.Count}";
         }
 
         private void AnalyzeDisk()
@@ -145,7 +145,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
 
             CurrentFile = "View the results by clicking \"Continue\" below.";
-            buttonContinue.IsEnabled = true;
+            ButtonContinue.IsEnabled = true;
         }
 
         private void ScanFiles(DirectoryInfo parentInfo)

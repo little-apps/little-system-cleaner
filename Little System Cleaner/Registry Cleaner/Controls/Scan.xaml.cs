@@ -104,9 +104,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Main.TaskbarProgressValue = 0;
 
             // Set the progress bar
-            progressBar.Minimum = 0;
-            progressBar.Maximum = EnabledScanners.Count;
-            progressBar.Value = 0;
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = EnabledScanners.Count;
+            ProgressBar.Value = 0;
 
             // Populate ListView
             foreach (var lvi in EnabledScanners.Select(scanBase => new lviScanner(scanBase.ScannerName)))
@@ -142,7 +142,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (_currentListViewIndex != -1)
             {
                 CurrentListViewItem.Errors = $"{Wizard.badRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
-                listView.Items.Refresh();
+                ListView.Items.Refresh();
             }
         }
 
@@ -288,18 +288,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 CurrentListViewItem.UnloadGif();
             }
 
-            progressBar.Value++;
+            ProgressBar.Value++;
             _currentListViewIndex++;
 
             Wizard.CurrentScannerName = sectionName;
-            currentSection.Content = "Section: " + sectionName;
+            CurrentSection.Content = "Section: " + sectionName;
 
             CurrentListViewItem.Status = "Scanning";
             CurrentListViewItem.LoadGif();
 
             CurrentListViewItem.Errors = "0 Errors";
 
-            listView.Items.Refresh();
+            ListView.Items.Refresh();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
@@ -318,8 +318,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (progressBar.Maximum != 0)
-                Main.TaskbarProgressValue = (e.NewValue / progressBar.Maximum);
+            if (ProgressBar.Maximum != 0)
+                Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
         }
        
 	}

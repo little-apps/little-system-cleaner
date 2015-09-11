@@ -29,9 +29,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 }
                 
                 Text = AutoUpdater.DialogTitle;
-                textBlockUpdate.Text = string.Format(textBlockUpdate.Text, AutoUpdater.AppTitle);
-                textBlockDescription.Text =
-                    string.Format(textBlockDescription.Text,
+                TextBlockUpdate.Text = string.Format(TextBlockUpdate.Text, AutoUpdater.AppTitle);
+                TextBlockDescription.Text =
+                    string.Format(TextBlockDescription.Text,
                         AutoUpdater.AppTitle, AutoUpdater.CurrentVersion, AutoUpdater.InstalledVersion);
             }
         }
@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private void UpdateWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            webBrowser.Navigate(AutoUpdater.ChangeLogUrl);
+            WebBrowser.Navigate(AutoUpdater.ChangeLogUrl);
         }
 
         private void buttonUpdate_Click(object sender, RoutedEventArgs e)

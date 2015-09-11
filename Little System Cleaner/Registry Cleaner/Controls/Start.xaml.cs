@@ -81,22 +81,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             InitializeComponent();
 
-            _tree.Model = SectionModel.CreateSectionModel();
+            Tree.Model = SectionModel.CreateSectionModel();
 
             ScanBase = sb;
 
-            textBoxBackups.Text = Settings.Default.OptionsBackupDir;
+            TextBoxBackups.Text = Settings.Default.OptionsBackupDir;
 
-            checkBoxLog.IsChecked = Settings.Default.registryCleanerOptionsLog;
-            checkBoxShowLog.IsChecked = Settings.Default.registryCleanerOptionsShowLog;
-            checkBoxAutoRescan.IsChecked = Settings.Default.registryCleanerOptionsAutoRescan;
-            checkBoxDelBackup.IsChecked = Settings.Default.registryCleanerOptionsDelBackup;
-            checkBoxIgnoreRemMedia.IsChecked = Settings.Default.registryCleanerOptionsRemMedia;
-            checkBoxShowErrors.IsChecked = Settings.Default.registryCleanerOptionsShowErrors;
-            checkBoxDeleteOnBackupError.IsEnabled = (!checkBoxShowErrors.IsChecked.Value);
-            checkBoxDeleteOnBackupError.IsChecked = Settings.Default.registryCleanerOptionsDeleteOnBackupError;
-            checkBoxAutoRepair.IsChecked = Settings.Default.registryCleanerOptionsAutoRepair;
-            checkBoxAutoExit.IsChecked = Settings.Default.registryCleanerOptionsAutoExit;
+            CheckBoxLog.IsChecked = Settings.Default.registryCleanerOptionsLog;
+            CheckBoxShowLog.IsChecked = Settings.Default.registryCleanerOptionsShowLog;
+            CheckBoxAutoRescan.IsChecked = Settings.Default.registryCleanerOptionsAutoRescan;
+            CheckBoxDelBackup.IsChecked = Settings.Default.registryCleanerOptionsDelBackup;
+            CheckBoxIgnoreRemMedia.IsChecked = Settings.Default.registryCleanerOptionsRemMedia;
+            CheckBoxShowErrors.IsChecked = Settings.Default.registryCleanerOptionsShowErrors;
+            CheckBoxDeleteOnBackupError.IsEnabled = (!CheckBoxShowErrors.IsChecked.Value);
+            CheckBoxDeleteOnBackupError.IsChecked = Settings.Default.registryCleanerOptionsDeleteOnBackupError;
+            CheckBoxAutoRepair.IsChecked = Settings.Default.registryCleanerOptionsAutoRepair;
+            CheckBoxAutoExit.IsChecked = Settings.Default.registryCleanerOptionsAutoExit;
 
             ExcludeArray = Settings.Default.ArrayExcludeList;
             RestoreFiles = new ObservableCollection<RestoreFile>();
@@ -145,29 +145,29 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
 
             // Refresh listview
-            listViewFiles.Items.Refresh();
+            ListViewFiles.Items.Refresh();
 
             // Auto resize columns
-            if (listViewFiles.Items.Count > 0)
-                Utils.AutoResizeColumns(listViewFiles);
+            if (ListViewFiles.Items.Count > 0)
+                Utils.AutoResizeColumns(ListViewFiles);
         }
 
         public void UpdateSettings()
         {
-            Settings.Default.registryCleanerOptionsLog = checkBoxLog.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsAutoRescan = checkBoxAutoRescan.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsDelBackup = checkBoxDelBackup.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsRemMedia = checkBoxIgnoreRemMedia.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsShowErrors = checkBoxShowErrors.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsDeleteOnBackupError = checkBoxDeleteOnBackupError.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsAutoRepair = checkBoxAutoRepair.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsAutoExit = checkBoxAutoExit.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsLog = CheckBoxLog.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsAutoRescan = CheckBoxAutoRescan.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsDelBackup = CheckBoxDelBackup.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsRemMedia = CheckBoxIgnoreRemMedia.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsShowErrors = CheckBoxShowErrors.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsDeleteOnBackupError = CheckBoxDeleteOnBackupError.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsAutoRepair = CheckBoxAutoRepair.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsAutoExit = CheckBoxAutoExit.IsChecked.Value;
 
-            if (checkBoxDeleteOnBackupError.IsEnabled != (!checkBoxShowErrors.IsChecked.Value))
-                checkBoxDeleteOnBackupError.IsEnabled = (!checkBoxShowErrors.IsChecked.Value);
+            if (CheckBoxDeleteOnBackupError.IsEnabled != (!CheckBoxShowErrors.IsChecked.Value))
+                CheckBoxDeleteOnBackupError.IsEnabled = (!CheckBoxShowErrors.IsChecked.Value);
 
-            if (textBoxBackups.Text != Settings.Default.OptionsBackupDir)
-                Settings.Default.OptionsBackupDir = textBoxBackups.Text;
+            if (TextBoxBackups.Text != Settings.Default.OptionsBackupDir)
+                Settings.Default.OptionsBackupDir = TextBoxBackups.Text;
 
             Settings.Default.ArrayExcludeList = ExcludeArray;
         }
@@ -220,7 +220,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         {
             long lSeqNum = 0;
 
-            if (listViewFiles.SelectedItem == null)
+            if (ListViewFiles.SelectedItem == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No restore file selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -229,7 +229,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            string filePath = (listViewFiles.SelectedItem as RestoreFile).FileInfo.FullName;
+            string filePath = (ListViewFiles.SelectedItem as RestoreFile).FileInfo.FullName;
 
             using (BackupRegistry backupReg = new BackupRegistry(filePath))
             {
@@ -269,10 +269,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     if (Settings.Default.registryCleanerOptionsDelBackup)
                     {
                         // Delete file
-                        (listViewFiles.SelectedItem as RestoreFile).FileInfo.Delete();
+                        (ListViewFiles.SelectedItem as RestoreFile).FileInfo.Delete();
 
                         // Remove from listview and refresh
-                        RestoreFiles.Remove(listViewFiles.SelectedItem as RestoreFile);
+                        RestoreFiles.Remove(ListViewFiles.SelectedItem as RestoreFile);
                         PopulateListView();
                     }
                 }
@@ -306,11 +306,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             using (FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog())
             {
                 folderBrowserDlg.Description = "Select the folder where the backup files will be placed";
-                folderBrowserDlg.SelectedPath = textBoxBackups.Text;
+                folderBrowserDlg.SelectedPath = TextBoxBackups.Text;
                 folderBrowserDlg.ShowNewFolderButton = true;
 
                 if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
-                    textBoxBackups.Text = folderBrowserDlg.SelectedPath;
+                    TextBoxBackups.Text = folderBrowserDlg.SelectedPath;
 
                 UpdateSettings();
                 PopulateListView();
@@ -331,7 +331,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     MessageBox.Show(Application.Current.MainWindow, "Successfully added file to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                     UpdateSettings();
-                    Utils.AutoResizeColumns(listView1);
+                    Utils.AutoResizeColumns(ListViewExcludes);
                 }
                 else
                     MessageBox.Show(Application.Current.MainWindow, $"File ({addExcludeItem.FilePath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -352,7 +352,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 MessageBox.Show(Application.Current.MainWindow, "Successfully added folder to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
-                Utils.AutoResizeColumns(listView1);
+                Utils.AutoResizeColumns(ListViewExcludes);
             }
             else
                 MessageBox.Show(Application.Current.MainWindow, $"Folder ({addExcludeItem.FolderPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -372,7 +372,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 MessageBox.Show(Application.Current.MainWindow, "Successfully added registry key to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
-                Utils.AutoResizeColumns(listView1);
+                Utils.AutoResizeColumns(ListViewExcludes);
             }
             else
                 MessageBox.Show(Application.Current.MainWindow, $"Registry key ({addExcludeItem.RegistryPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -380,10 +380,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void menuItemEdit_Click(object sender, RoutedEventArgs e)
         {
-            if (listView1.SelectedItems.Count == 0)
+            if (ListViewExcludes.SelectedItems.Count == 0)
                 return;
 
-            ExcludeItem excItem = listView1.SelectedItem as ExcludeItem;
+            ExcludeItem excItem = ListViewExcludes.SelectedItem as ExcludeItem;
             int pos = ExcludeArray.IndexOf(excItem);
 
             if (pos == -1)
@@ -401,26 +401,26 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             MessageBox.Show(Application.Current.MainWindow, "Successfully updated exclude entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             UpdateSettings();
-            Utils.AutoResizeColumns(listView1);
+            Utils.AutoResizeColumns(ListViewExcludes);
         }
 
         private void menuItemRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (listView1.SelectedItems.Count == 0)
+            if (ListViewExcludes.SelectedItems.Count == 0)
                 return;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            ExcludeArray.Remove(listView1.SelectedItem as ExcludeItem);
+            ExcludeArray.Remove(ListViewExcludes.SelectedItem as ExcludeItem);
 
             UpdateSettings();
-            Utils.AutoResizeColumns(listView1);
+            Utils.AutoResizeColumns(ListViewExcludes);
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)
         {
-            ScanBase.Model = _tree.Model as SectionModel;
+            ScanBase.Model = Tree.Model as SectionModel;
 
             if (Scan.EnabledScanners.Count == 0)
             {
@@ -434,8 +434,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            _tree.ExpandAll();
-            _tree.AutoResizeColumns();
+            Tree.ExpandAll();
+            Tree.AutoResizeColumns();
         }
 
         private void Option_Click(object sender, RoutedEventArgs e)

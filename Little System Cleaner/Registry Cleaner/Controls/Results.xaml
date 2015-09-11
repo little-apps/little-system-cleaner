@@ -33,22 +33,22 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="textBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of problems found in your registry</TextBlock>
-        <Button Click="buttonFix_Click" Name="buttonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5">
+        <TextBlock Grid.Row="1" Margin="93,5,65,5" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of problems found in your registry</TextBlock>
+        <Button Click="buttonFix_Click" Name="ButtonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/fix-problems.png" Width="16" Height="16" />
                 <TextBlock>Fix Problems</TextBlock>
             </StackPanel>
         </Button>
-        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="0,5,0,5">
+        <Button Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="0,5,0,5">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" Width="16" Height="16" />
                 <TextBlock>Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1">
+        <tree:TreeList x:Name="Tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1">
             <tree:TreeList.ContextMenu>
-                <ContextMenu Name="contextMenuResults">
+                <ContextMenu Name="ContextMenuResults">
                     <MenuItem Header="Select All" Click="contextMenuResults_Clicked" />
                     <MenuItem Header="Select None" Click="contextMenuResults_Clicked" />
                     <MenuItem Header="Invert Selection" Click="contextMenuResults_Clicked" />
@@ -61,7 +61,7 @@
                 <GridView AllowsColumnReorder="False">
                     <GridView.Columns>
 
-                        <GridViewColumn Header="Problem" x:Name="_problem">
+                        <GridViewColumn Header="Problem" x:Name="Problem">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -74,9 +74,9 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Header="Location" DisplayMemberBinding="{Binding RegKeyPath}" x:Name="_location" />
-                        <GridViewColumn Header="Value Name" DisplayMemberBinding="{Binding ValueName}" x:Name="_valuename" />
-                        <GridViewColumn Header="Severity" x:Name="_severity">
+                        <GridViewColumn Header="Location" DisplayMemberBinding="{Binding RegKeyPath}" />
+                        <GridViewColumn Header="Value Name" DisplayMemberBinding="{Binding ValueName}" />
+                        <GridViewColumn Header="Severity" x:Name="Severity">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <ContentPresenter Content="{Binding Path=SeverityImg}" Height="16" />
@@ -87,7 +87,7 @@
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <ProgressBar Grid.Row="3" Height="30" Name="progressBar1" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" Value="{Binding ProgressBarValue}" />
-        <Label Grid.Row="3" Height="30" Name="progressBarText" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Height="30" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" Value="{Binding ProgressBarValue}" />
+        <Label Grid.Row="3" Height="30" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
     </Grid>
 </UserControl>

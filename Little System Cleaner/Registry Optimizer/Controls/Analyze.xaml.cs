@@ -55,9 +55,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             Little_System_Cleaner.Main.TaskbarProgressValue = 0;
 
             // Set progress bar
-            progressBar1.Minimum = 0;
-            progressBar1.Maximum = Wizard.RegistryHives.Count;
-            progressBar1.Value = 0;
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = Wizard.RegistryHives.Count;
+            ProgressBar.Value = 0;
 
             _threadScan = new Thread(AnalyzeHives);
             _threadScan.Start();
@@ -101,14 +101,14 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 return;
             }
 
-            progressBar1.Value++;
-            textBlockStatus.Text = $"Analyzing: {currentHive}";
+            ProgressBar.Value++;
+            TextBlockStatus.Text = $"Analyzing: {currentHive}";
         }
 
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (progressBar1.Maximum != 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / progressBar1.Maximum);
+            if (ProgressBar.Maximum != 0)
+                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
         }
     }
 }

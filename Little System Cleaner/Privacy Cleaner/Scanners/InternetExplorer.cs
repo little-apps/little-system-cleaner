@@ -215,7 +215,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             uint BindToObject([In] string pocsUrl, [In] Uuid riid, IntPtr ppvOut);
             uint EnumUrls([Out] IntPtr ppEnum);
             [PreserveSig]
-            uint AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory, IntPtr IOleCommandTarget, IntPtr punkISFolder);
+            uint AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory, IntPtr IOleCommandTarget, IntPtr punkIsFolder);
             uint ClearHistory();
         }
         #endregion

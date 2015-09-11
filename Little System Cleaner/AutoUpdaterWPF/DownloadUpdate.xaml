@@ -6,7 +6,7 @@
         <Grid Margin="13,12,0,0" Width="53" Height="53" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Image Source="/Little_System_Cleaner;component/Resources/download_32.png" Stretch="None" Loaded="DownloadUpdateDialogLoad" />
         </Grid>
-        <TextBlock x:Name="textBlockInformation" HorizontalAlignment="Left" Margin="72,12,0,0" TextWrapping="Wrap" Text="Downloading Update..." VerticalAlignment="Top" FontSize="14"/>
-        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="23" Margin="72,42,0,0" VerticalAlignment="Top" Width="270"/>
+        <TextBlock x:Name="TextBlockInformation" HorizontalAlignment="Left" Margin="72,12,0,0" TextWrapping="Wrap" Text="Downloading Update..." VerticalAlignment="Top" FontSize="14"/>
+        <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="23" Margin="72,42,0,0" VerticalAlignment="Top" Width="270"/>
     </Grid>
 </Window>

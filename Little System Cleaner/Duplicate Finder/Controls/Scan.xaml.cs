@@ -207,7 +207,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (success) 
             {
                 StatusText = "View the results by clicking \"Continue\" below.";
-                Dispatcher.Invoke(new Action(() => buttonContinue.IsEnabled = true));
+                Dispatcher.Invoke(new Action(() => ButtonContinue.IsEnabled = true));
             }
             else
             {
@@ -595,8 +595,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
                     Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
-                if (!progressBar.IsIndeterminate)
-                    progressBar.IsIndeterminate = true;
+                if (!ProgressBar.IsIndeterminate)
+                    ProgressBar.IsIndeterminate = true;
             }));
 
             StatusText = "Grouping files by filename";
@@ -629,8 +629,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
                     Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
-                if (!progressBar.IsIndeterminate)
-                    progressBar.IsIndeterminate = true;
+                if (!ProgressBar.IsIndeterminate)
+                    ProgressBar.IsIndeterminate = true;
             }));
 
             StatusText = "Grouping files by size";
@@ -674,10 +674,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
                 Main.TaskbarProgressValue = 0D;
 
-                progressBar.IsIndeterminate = false;
-                progressBar.Value = 0;
-                progressBar.Minimum = 0;
-                progressBar.Maximum = totalFiles;
+                ProgressBar.IsIndeterminate = false;
+                ProgressBar.Value = 0;
+                ProgressBar.Minimum = 0;
+                ProgressBar.Maximum = totalFiles;
             }));
 
             foreach (List<FileEntry> files in fileSizesSorted)
@@ -692,8 +692,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            progressBar.Value += 1;
-                            Main.TaskbarProgressValue = (progressBar.Value / progressBar.Maximum);
+                            ProgressBar.Value += 1;
+                            Main.TaskbarProgressValue = (ProgressBar.Value / ProgressBar.Maximum);
                         }));
                     }
 
@@ -737,8 +737,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
                     Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
-                if (!progressBar.IsIndeterminate)
-                    progressBar.IsIndeterminate = true;
+                if (!ProgressBar.IsIndeterminate)
+                    ProgressBar.IsIndeterminate = true;
             }));
             
             foreach (FileEntry fileEntry in _fileList)
@@ -751,8 +751,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    progressBar.Value += 1;
-                    Main.TaskbarProgressValue = (progressBar.Value / progressBar.Maximum);
+                    ProgressBar.Value += 1;
+                    Main.TaskbarProgressValue = (ProgressBar.Value / ProgressBar.Maximum);
                 }));
             }
 

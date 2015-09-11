@@ -24,6 +24,7 @@ using System.Windows.Input;
 using Little_System_Cleaner.Misc;
 using System.Windows.Shell;
 using System.Reflection;
+using Little_System_Cleaner.Tab_Controls.Options;
 
 namespace Little_System_Cleaner
 {
@@ -33,7 +34,7 @@ namespace Little_System_Cleaner
 
         internal static TaskbarItemProgressState TaskbarProgressState
         {
-            get { return (Application.Current.MainWindow as Main).taskBarItemInfo.ProgressState; }
+            get { return (Application.Current.MainWindow as Main).TaskBarItemInfo.ProgressState; }
             set 
             {
                 if (Application.Current != null)
@@ -42,7 +43,7 @@ namespace Little_System_Cleaner
 
                     if (currentWindow != null)
                     {
-                        TaskbarItemInfo taskBarItemInfo = currentWindow.taskBarItemInfo;
+                        TaskbarItemInfo taskBarItemInfo = currentWindow.TaskBarItemInfo;
 
                         if (taskBarItemInfo != null)
                             taskBarItemInfo.ProgressState = value;
@@ -54,10 +55,10 @@ namespace Little_System_Cleaner
 
         internal static double TaskbarProgressValue
         {
-            get { return (Application.Current.MainWindow as Main).taskBarItemInfo.ProgressValue; }
+            get { return (Application.Current.MainWindow as Main).TaskBarItemInfo.ProgressValue; }
             set
             {
-                TaskbarItemInfo taskBarItemInfo = (Application.Current.MainWindow as Main).taskBarItemInfo;
+                TaskbarItemInfo taskBarItemInfo = (Application.Current.MainWindow as Main).TaskBarItemInfo;
 
                 if (taskBarItemInfo != null)
                     taskBarItemInfo.ProgressValue = value; 
@@ -85,7 +86,7 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            tabItemWelcome.IsEnabled = tabItemOptions.IsEnabled = tabItemStartupMgr.IsEnabled = tabItemUninstallMgr.IsEnabled = IsTabsEnabled;
+            TabItemWelcome.IsEnabled = TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -117,7 +118,7 @@ namespace Little_System_Cleaner
                 AutoUpdaterWPF.AutoUpdater.Start(Properties.Settings.Default.updateURL);
             }
 
-            taskBarItemInfo.Description = Utils.ProductName;
+            TaskBarItemInfo.Description = Utils.ProductName;
         }
 
         private void OnClose(object sender, System.ComponentModel.CancelEventArgs e)
@@ -126,7 +127,7 @@ namespace Little_System_Cleaner
             {
                 bool? canExit = null;
 
-                UserControl lastCtrl = (tabControl.SelectedContent as UserControl);
+                UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
                 MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
                 if (methodUnload != null)
                     canExit = (bool)methodUnload.Invoke(lastCtrl, new object[] { true });
@@ -217,8 +218,10 @@ namespace Little_System_Cleaner
                     {
                         if (IsTabsEnabled)
                         {
-                            tabControl.SelectedIndex = tabControl.Items.IndexOf(tabItemOptions);
-                            ctrlOptions.ShowAboutTab();
+                            TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemOptions);
+
+                            var options = TabItemOptions.Content as Options;
+                            options?.ShowAboutTab();
                         }
                         break;
                     }
@@ -244,26 +247,26 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            SetTabControl(comboBoxTab.SelectedIndex);
+            SetTabControl(ComboBoxTab.SelectedIndex);
         }
 
         private void SetTabControl(int index)
         {
-            if (tabControl == null)
+            if (TabControl == null)
                 return;
 
             bool? bUnload = null;
 
-            UserControl lastCtrl = (tabControl.SelectedContent as UserControl);
+            UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
             MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
                 bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
 
             if (bUnload == true || !bUnload.HasValue)
             {
-                tabControl.SelectedIndex = index;
+                TabControl.SelectedIndex = index;
 
-                UserControl nextCtrl = (tabControl.SelectedContent as UserControl);
+                UserControl nextCtrl = (TabControl.SelectedContent as UserControl);
                 MethodBase methodLoad = nextCtrl.GetType().GetMethod("OnLoaded");
                 methodLoad?.Invoke(nextCtrl, new object[] { });
             }
@@ -271,7 +274,7 @@ namespace Little_System_Cleaner
             {
                 // Change combobox back
                 _ignoreSetTabControl = true;
-                comboBoxTab.SelectedIndex = tabControl.SelectedIndex;
+                ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
             }
         }
 	}

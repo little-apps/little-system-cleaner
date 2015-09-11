@@ -50,7 +50,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         private void checkBoxDontShow_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.Default.privacyCleanerAutoSkipScanner = checkBoxDontShow.IsChecked.GetValueOrDefault();
+            Settings.Default.privacyCleanerAutoSkipScanner = CheckBoxDontShow.IsChecked.GetValueOrDefault();
         }
 
         internal static bool? DisplayRunningMsg(string scannerName, string procName)
@@ -82,11 +82,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             // Update list box
-            listBox.Items.Clear();
+            ListBox.Items.Clear();
             foreach (Process p in Process.GetProcessesByName(_procName))
             {
                 if (!string.IsNullOrEmpty(p.MainWindowTitle))
-                    listBox.Items.Add(p.MainWindowTitle);
+                    ListBox.Items.Add(p.MainWindowTitle);
             }
 
             // Check if process is running

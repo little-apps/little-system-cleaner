@@ -30,34 +30,34 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="textBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of duplicate files found. Double click an item to view more info.</TextBlock>
-        <Button Name="buttonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5" Click="buttonFix_Click">
+        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="TextBlock1" HorizontalAlignment="Center" VerticalAlignment="Center">Below is a list of duplicate files found. Double click an item to view more info.</TextBlock>
+        <Button Name="ButtonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5" Click="buttonFix_Click">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/fix-problems.png" Width="16" Height="16" />
                 <TextBlock>Remove Selected</TextBlock>
             </StackPanel>
         </Button>
-        <Button Name="buttonCancel" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="0,5,0,5" Click="buttonCancel_Click">
+        <Button Name="ButtonCancel" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="0,5,0,5" Click="buttonCancel_Click">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" Width="16" Height="16" />
                 <TextBlock>Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <tree:TreeList x:Name="_tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1" MouseDoubleClick="_tree_MouseDoubleClick" SelectionMode="Single">
+        <tree:TreeList x:Name="Tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1" MouseDoubleClick="_tree_MouseDoubleClick" SelectionMode="Single">
             <tree:TreeList.ContextMenu>
-                <ContextMenu x:Name="contextMenuResults">
-                    <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click" />
-                    <MenuItem x:Name="selectNone" Header="Select None" Click="selectNone_Click" />
-                    <MenuItem x:Name="selectInvert" Header="Invert Selection" Click="selectInvert_Click" />
+                <ContextMenu x:Name="ContextMenuResults">
+                    <MenuItem x:Name="SelectAll" Header="Select All" Click="selectAll_Click" />
+                    <MenuItem x:Name="SelectNone" Header="Select None" Click="selectNone_Click" />
+                    <MenuItem x:Name="SelectInvert" Header="Invert Selection" Click="selectInvert_Click" />
                     <Separator/>
-                    <MenuItem x:Name="viewFileInfo" Header="View File Information" Click="viewFileInfo_Click" />
+                    <MenuItem x:Name="ViewFileInfo" Header="View File Information" Click="viewFileInfo_Click" />
                 </ContextMenu>
             </tree:TreeList.ContextMenu>
             <tree:TreeList.View>
                 <GridView AllowsColumnReorder="False">
                     <GridView.Columns>
 
-                        <GridViewColumn Header="File" x:Name="_file">
+                        <GridViewColumn Header="File" x:Name="File">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -69,14 +69,14 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" x:Name="_fileSize" />
-                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding FileFormat}" x:Name="_fileFormat" />
-                        <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FilePath}" x:Name="_filePath" />
+                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" x:Name="FileSize" />
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding FileFormat}" x:Name="FileFormat" />
+                        <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FilePath}" x:Name="FilePath" />
                     </GridView.Columns>
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <ProgressBar Grid.Row="3" Height="30" Name="progressBar" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" ValueChanged="progressBar_ValueChanged" />
-        <Label Grid.Row="3" Height="30" Name="progressBarText" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <ProgressBar Grid.Row="3" Height="30" Name="ProgressBar" VerticalAlignment="Top" MinWidth="567" Margin="0,5,0,5" ValueChanged="progressBar_ValueChanged" />
+        <Label Grid.Row="3" Height="30" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
     </Grid>
 </UserControl>

@@ -39,7 +39,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBox.Text.Trim()))
+            if (string.IsNullOrEmpty(TextBox.Text.Trim()))
             {
                 MessageBox.Show(this, "Please enter a folder", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -47,7 +47,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
             if (AddExcludeFolderDelegate != null)
             {
-                AddExcludeFolderEventArgs eventArgs = new AddExcludeFolderEventArgs { FolderPath = textBox.Text.Trim() };
+                AddExcludeFolderEventArgs eventArgs = new AddExcludeFolderEventArgs { FolderPath = TextBox.Text.Trim() };
                 AddExcludeFolderDelegate(this, eventArgs);
             }
 
@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
         {
             FolderBrowserDialog browserDlg = new FolderBrowserDialog();
             browserDlg.ShowDialog(new WindowWrapper(this));
-            textBox.Text = browserDlg.SelectedPath;
+            TextBox.Text = browserDlg.SelectedPath;
         }
     }
 

@@ -7,13 +7,13 @@
     ShowInTaskbar="False"
     ResizeMode="NoResize" WindowStartupLocation="CenterOwner" DataContext="{Binding RelativeSource={RelativeSource Self}}" Closed="Window_Closed">
     <Grid>
-        <Canvas Name="canvas1" Height="90" VerticalAlignment="Top">
-            <Image Canvas.Left="12" Canvas.Top="11" Height="32" Name="image1" Width="32" Source="{Binding ImageSource}" />
-            <TextBlock Canvas.Left="53" Canvas.Top="11" Height="52" Name="textBlock1" Width="333" Text="An exception occured in a component of Little System Cleaner. We have created an error report that you can send us. We will treat this report as confidential and anonymous." TextWrapping="Wrap" />
-            <CheckBox Canvas.Left="12" Canvas.Top="71" Height="16" Name="checkBoxRestart" Width="107">Restart Program</CheckBox>
-            <Button Canvas.Left="314" Canvas.Top="62" Height="23" Name="buttonDontSend" Width="72" IsCancel="True" Click="buttonDontSend_Click">Don't Send</Button>
-            <Button Canvas.Left="207" Canvas.Top="62" Height="23" Name="buttonSend" Width="104" Click="buttonSend_Click">Send Error Report</Button>
+        <Canvas Height="90" VerticalAlignment="Top">
+            <Image Canvas.Left="12" Canvas.Top="11" Height="32" Width="32" Source="{Binding ImageSource}" />
+            <TextBlock Canvas.Left="53" Canvas.Top="11" Height="52" Width="333" Text="An exception occured in a component of Little System Cleaner. We have created an error report that you can send us. We will treat this report as confidential and anonymous." TextWrapping="Wrap" />
+            <CheckBox Canvas.Left="12" Canvas.Top="71" Height="16" Name="CheckBoxRestart" Width="107">Restart Program</CheckBox>
+            <Button Canvas.Left="314" Canvas.Top="62" Height="23" Name="ButtonDontSend" Width="72" IsCancel="True" Click="buttonDontSend_Click">Don't Send</Button>
+            <Button Canvas.Left="207" Canvas.Top="62" Height="23" Name="ButtonSend" Width="104" Click="buttonSend_Click">Send Error Report</Button>
         </Canvas>
-        <TextBox Margin="0,96,0,8" Name="textBox1" Width="386" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
+        <TextBox Margin="0,96,0,8" Name="TextBoxInfo" Width="386" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>

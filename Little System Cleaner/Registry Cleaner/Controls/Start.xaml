@@ -42,7 +42,7 @@
         
         <TabControl Grid.Row="1" Margin="0,10,0,0">
             <TabItem Header="Sections">
-                <tree:TreeList x:Name="_tree" MinHeight="290" MinWidth="563">
+                <tree:TreeList x:Name="Tree" MinHeight="290" MinWidth="563">
                     <tree:TreeList.View>
                         <GridView AllowsColumnReorder="False">
                             <GridView.Columns>
@@ -66,27 +66,27 @@
             </TabItem>
             <TabItem Header="Options">
                 <StackPanel>
-                    <GroupBox Header="Select a folder to backup deleted registry entries" x:Name="groupBox1" VerticalAlignment="Top">
+                    <GroupBox Header="Select a folder to backup deleted registry entries" VerticalAlignment="Top">
                         <Grid Margin="5" Height="26">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="483*" />
                                 <ColumnDefinition Width="66" />
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="buttonBrowseBackupDir" Margin="2,0,0,0" Padding="8,0,8,0" Content="Browse..." Grid.Column="1" Click="buttonBrowseBackupDir_Click" />
-                            <TextBox Margin="0,0,1,0" x:Name="textBoxBackups" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" />
+                            <Button x:Name="ButtonBrowseBackupDir" Margin="2,0,0,0" Padding="8,0,8,0" Content="Browse..." Grid.Column="1" Click="buttonBrowseBackupDir_Click" />
+                            <TextBox Margin="0,0,1,0" x:Name="TextBoxBackups" IsReadOnly="True" Grid.Column="0" VerticalContentAlignment="Center" />
                         </Grid>
                     </GroupBox>
-                    <GroupBox Header="Options" x:Name="groupBox3">
+                    <GroupBox Header="Options">
                         <StackPanel Margin="5,5,5,5">
-                            <CheckBox Name="checkBoxLog" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Option_Click">Log registry scan and repairs</CheckBox>
-                            <CheckBox Name="checkBoxShowLog" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Show log after finished scanning</CheckBox>
-                            <CheckBox Name="checkBoxAutoRescan" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Re-scan after repairing registry issues</CheckBox>
-                            <CheckBox Name="checkBoxDelBackup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Delete backup file after restoring the registry</CheckBox>
-                            <CheckBox Name="checkBoxIgnoreRemMedia" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Ignore missing files on removable media</CheckBox>
-                            <CheckBox Name="checkBoxShowErrors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Show error messages from backing up and deleting invalid registry keys</CheckBox>
-                            <CheckBox Name="checkBoxDeleteOnBackupError" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Delete registry keys that couldn't be backed up</CheckBox>
-                            <CheckBox Name="checkBoxAutoRepair" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Automatically repair registry items (not recommended)</CheckBox>
-                            <CheckBox Name="checkBoxAutoExit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Exit program after repairing registry (not recommended)</CheckBox>
+                            <CheckBox Name="CheckBoxLog" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Option_Click">Log registry scan and repairs</CheckBox>
+                            <CheckBox Name="CheckBoxShowLog" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Show log after finished scanning</CheckBox>
+                            <CheckBox Name="CheckBoxAutoRescan" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Re-scan after repairing registry issues</CheckBox>
+                            <CheckBox Name="CheckBoxDelBackup" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Delete backup file after restoring the registry</CheckBox>
+                            <CheckBox Name="CheckBoxIgnoreRemMedia" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Ignore missing files on removable media</CheckBox>
+                            <CheckBox Name="CheckBoxShowErrors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Show error messages from backing up and deleting invalid registry keys</CheckBox>
+                            <CheckBox Name="CheckBoxDeleteOnBackupError" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Delete registry keys that couldn't be backed up</CheckBox>
+                            <CheckBox Name="CheckBoxAutoRepair" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Automatically repair registry items (not recommended)</CheckBox>
+                            <CheckBox Name="CheckBoxAutoExit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" Click="Option_Click">Exit program after repairing registry (not recommended)</CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -94,16 +94,16 @@
             <TabItem Header="Ignore List">
                 <Grid>
                     <Label Content="Right click to add, edit or remove entries" Height="28" HorizontalContentAlignment="Center"  VerticalAlignment="Top" d:LayoutOverrides="Height"/>
-                    <ListView x:Name="listView1" Margin="0,29,0,8" d:LayoutOverrides="GridBox" ItemsSource="{Binding ExcludeArray}">
+                    <ListView x:Name="ListViewExcludes" Margin="0,29,0,8" d:LayoutOverrides="GridBox" ItemsSource="{Binding ExcludeArray}">
                         <ListView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem x:Name="menuItemAddFile" Header="Add File" Click="menuItemAddFile_Click" />
-                                <MenuItem x:Name="menuItemAddFolder" Header="Add Folder" Click="menuItemAddFolder_Click" />
-                                <MenuItem x:Name="menuItemAddRegKey" Header="Add Registry Path" Click="menuItemAddRegKey_Click" />
+                                <MenuItem x:Name="MenuItemAddFile" Header="Add File" Click="menuItemAddFile_Click" />
+                                <MenuItem x:Name="MenuItemAddFolder" Header="Add Folder" Click="menuItemAddFolder_Click" />
+                                <MenuItem x:Name="MenuItemAddRegKey" Header="Add Registry Path" Click="menuItemAddRegKey_Click" />
                                 <Separator />
-                                <MenuItem x:Name="menuItemEdit" Header="Edit Entry" Click="menuItemEdit_Click" />
+                                <MenuItem x:Name="MenuItemEdit" Header="Edit Entry" Click="menuItemEdit_Click" />
                                 <Separator />
-                                <MenuItem x:Name="menuItemRemove" Header="Remove Item" Click="menuItemRemove_Click" />
+                                <MenuItem x:Name="MenuItemRemove" Header="Remove Item" Click="menuItemRemove_Click" />
                             </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
@@ -122,7 +122,7 @@
                         <RowDefinition Height="40" />
                     </Grid.RowDefinitions>
                     <Label Height="26" HorizontalAlignment="Center" Grid.Row="0">Select a file below to restore your registry to a previous state</Label>
-                    <ListView IsSynchronizedWithCurrentItem="True" Name="listViewFiles" ItemsSource="{Binding RestoreFiles}" SelectionMode="Single" Grid.Row="1">
+                    <ListView IsSynchronizedWithCurrentItem="True" Name="ListViewFiles" ItemsSource="{Binding RestoreFiles}" SelectionMode="Single" Grid.Row="1">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="File" Width="100" DisplayMemberBinding="{Binding File}" />
@@ -132,19 +132,19 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Grid.Row="2">
-                        <Button Name="buttonRestore" Click="buttonRestore_Click" Margin="0,0,5,0" Padding="8,0,8,0">
+                        <Button Name="ButtonRestore" Click="buttonRestore_Click" Margin="0,0,5,0" Padding="8,0,8,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/restore.png" Width="16" Height="16" VerticalAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center">Restore</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button Name="buttonBrowse" Click="buttonBrowse_Click" Margin="0,0,5,0" Padding="8,0,8,0">
+                        <Button Name="ButtonBrowse" Click="buttonBrowse_Click" Margin="0,0,5,0" Padding="8,0,8,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/browse.png" Width="16" Height="16" VerticalAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center">Browse Directory</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button Name="buttonRefresh" Click="buttonRefresh_Click" Margin="0,0,5,0"  Padding="8,0,8,0">
+                        <Button Name="ButtonRefresh" Click="buttonRefresh_Click" Margin="0,0,5,0"  Padding="8,0,8,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/restore/refresh.png" Width="16" Height="16" VerticalAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center">Refresh</TextBlock>

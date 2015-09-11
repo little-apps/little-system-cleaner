@@ -245,7 +245,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
         public void ShowAboutTab()
         {
-            tabControl1.SelectedIndex = tabControl1.Items.IndexOf(tabItemAbout);
+            TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemAbout);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -271,7 +271,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             using (FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog())
             {
                 folderBrowserDlg.Description = "Select the folder where the log files will be placed";
-                folderBrowserDlg.SelectedPath = textBoxLog.Text;
+                folderBrowserDlg.SelectedPath = TextBoxLog.Text;
                 folderBrowserDlg.ShowNewFolderButton = true;
 
                 if (folderBrowserDlg.ShowDialog() == DialogResult.OK)

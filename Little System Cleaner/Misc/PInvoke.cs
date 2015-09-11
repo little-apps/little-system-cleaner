@@ -11,11 +11,11 @@ namespace Little_System_Cleaner.Misc
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AdjustTokenPrivileges(IntPtr TokenHandle,
-           [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
-           ref TokPriv1Luid NewState,
-           UInt32 Zero,
-           IntPtr Null1,
-           IntPtr Null2);
+           [MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges,
+           ref TokPriv1Luid newState,
+           UInt32 zero,
+           IntPtr null1,
+           IntPtr null2);
 
         [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
         internal static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr phtok);

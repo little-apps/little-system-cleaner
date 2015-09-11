@@ -74,7 +74,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             _scanBase = sb;
 
-            listView.ItemsSource = SectionsCollection;
+            ListView.ItemsSource = SectionsCollection;
 
             // Increase total number of scans
             Settings.Default.totalScans++;
@@ -107,9 +107,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             Main.TaskbarProgressValue = 0;
 
             // Set progress bar
-            progressBar.Value = 0;
-            progressBar.Minimum = 0;
-            progressBar.Maximum = max;
+            ProgressBar.Value = 0;
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = max;
         }
 
         private void StartScanning()
@@ -218,18 +218,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (_currentListViewParentIndex != parentSection)
                 _currentListViewParentIndex = parentSection;
 
-            progressBar.Value++;
+            ProgressBar.Value++;
             _currentListViewIndex++;
 
             Wizard.CurrentSectionName = sectionName;
-            currentSectionLabel.Content = "Section: " + sectionName;
+            CurrentSectionLabel.Content = "Section: " + sectionName;
 
             CurrentListViewItem.Status = "Scanning " + sectionName;
             CurrentListViewItem.LoadGif();
 
-            Utils.AutoResizeColumns(listView);
+            Utils.AutoResizeColumns(ListView);
 
-            listView.Items.Refresh();
+            ListView.Items.Refresh();
         }
 
         private void StartScanner(ScannerBase parent, ScannerBase child)
@@ -246,11 +246,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     // Skip plugin
                     if (Dispatcher.Thread != Thread.CurrentThread)
                     {
-                        Dispatcher.BeginInvoke(new Action(() => progressBar.Value++));
+                        Dispatcher.BeginInvoke(new Action(() => ProgressBar.Value++));
                     }
                     else
                     {
-                        progressBar.Value++;
+                        ProgressBar.Value++;
                     }
 
                     parent.Skipped = true;
@@ -288,11 +288,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     // Skip plugin
                     if (Dispatcher.Thread != Thread.CurrentThread)
                     {
-                        Dispatcher.BeginInvoke(new Action(() => progressBar.Value++));
+                        Dispatcher.BeginInvoke(new Action(() => ProgressBar.Value++));
                     }
                     else
                     {
-                        progressBar.Value++;
+                        ProgressBar.Value++;
                     }
 
                     parent.Skipped = true;
@@ -339,7 +339,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (_currentListViewIndex != -1)
             {
                 CurrentListViewItem.Errors = $"{CurrentSectionProblems} Errors";
-                listView.Items.Refresh();
+                ListView.Items.Refresh();
             }
         }
 
@@ -366,9 +366,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (progressBar.Maximum != 0)
+            if (ProgressBar.Maximum != 0)
             {
-                Main.TaskbarProgressValue = (e.NewValue / progressBar.Maximum);
+                Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
             }
         }
     }

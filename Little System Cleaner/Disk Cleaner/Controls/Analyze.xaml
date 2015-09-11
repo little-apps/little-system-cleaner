@@ -29,18 +29,18 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 2 of 3</Label>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" Margin="0" Name="textBlock1" HorizontalAlignment="Center" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
-        <ProgressBar x:Name="progressBar" HorizontalAlignment="Stretch" Height="43" Margin="0" Grid.Row="2" VerticalAlignment="Bottom" IsIndeterminate="True" />
-        <TextBlock x:Name="filesFound" HorizontalAlignment="Center" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="Files Found: 0" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Margin="0" HorizontalAlignment="Center" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
+        <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Stretch" Height="43" Margin="0" Grid.Row="2" VerticalAlignment="Bottom" IsIndeterminate="True" />
+        <TextBlock x:Name="FilesFound" HorizontalAlignment="Center" Margin="0" Grid.Row="2" TextWrapping="Wrap" Text="Files Found: 0" VerticalAlignment="Center"/>
         <TextBox x:Name="currentFile" Margin="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" />
 
-        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left">
+        <Button x:Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" />
                 <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <Button x:Name="buttonContinue" Click="buttonContinue_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Right" IsEnabled="False">
+        <Button x:Name="ButtonContinue" Click="buttonContinue_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Right" IsEnabled="False">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/arrow_right.png" />
                 <TextBlock VerticalAlignment="Center">Continue</TextBlock>

@@ -67,8 +67,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 _progressBarValue = val;
 
-                if (progressBar1.Maximum != 0)
-                    Main.TaskbarProgressValue = (val / progressBar1.Maximum);
+                if (ProgressBar.Maximum != 0)
+                    Main.TaskbarProgressValue = (val / ProgressBar.Maximum);
 
                 OnPropertyChanged("ProgressBarValue");
             }
@@ -109,11 +109,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 			// Insert code required on object creation below this point.
             _scanWiz = scanBase;
 
-            _tree.Model = ResultModel.CreateResultModel();
-            _tree.ExpandAll();
+            Tree.Model = ResultModel.CreateResultModel();
+            Tree.ExpandAll();
 
 
-            if ((_tree.Model as ResultModel).Root.Children.Count == 0)
+            if ((Tree.Model as ResultModel).Root.Children.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "There were no errors found!", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -123,7 +123,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 // Set last scan errors found
                 Settings.Default.lastScanErrors =
-                    (_tree.Model as ResultModel).Root.Children
+                    (Tree.Model as ResultModel).Root.Children
                     .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
                     .Count();
 
@@ -137,7 +137,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private List<BadRegistryKey> GetSelectedRegKeys()
         {
-            return (_tree.Model as ResultModel).Root.Children
+            return (Tree.Model as ResultModel).Root.Children
                 .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
                 .Where(child => (child.IsChecked.HasValue) && child.IsChecked.Value)
                 .ToList();
@@ -145,7 +145,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void SetCheckedItems(bool? isChecked)
         {
-            foreach (BadRegistryKey child in (_tree.Model as ResultModel).Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children))
+            foreach (BadRegistryKey child in (Tree.Model as ResultModel).Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children))
             {
                 if (!isChecked.HasValue)
                     child.IsChecked = !child.IsChecked;
@@ -178,16 +178,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Main.Watcher.Event("Registry Cleaner", "Fix Problems");
 
             // Disable buttons
-            buttonCancel.IsEnabled = false;
-            buttonFix.IsEnabled = false;
+            ButtonCancel.IsEnabled = false;
+            ButtonFix.IsEnabled = false;
 
             // Set taskbar progress bar
             Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
             Main.TaskbarProgressValue = 0;
 
             // Set progress bar range
-            progressBar1.Minimum = 0;
-            progressBar1.Maximum = selectedCount;
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = selectedCount;
             ProgressBarValue = 0;
 
             FixThread = new Thread(FixProblems);
@@ -282,11 +282,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         // Set icon to check mark
                         brk.bMapImg = new Image { Source = bMapSrcFinishedScanning };
 
-                        _tree.Items.Refresh();
+                        Tree.Items.Refresh();
 
                         // Increase & Update progress bar
                         ProgressBarValue++;
-                        ProgressBarText = $"Items Repaired: {ProgressBarValue}/{progressBar1.Maximum}";
+                        ProgressBarText = $"Items Repaired: {ProgressBarValue}/{ProgressBar.Maximum}";
                     }));
                 }
 
@@ -323,8 +323,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 {
                     Dispatcher.BeginInvoke(new Action(() => {
                         // Enable buttons
-                        buttonCancel.IsEnabled = true;
-                        buttonFix.IsEnabled = true;
+                        ButtonCancel.IsEnabled = true;
+                        ButtonFix.IsEnabled = true;
 
                         // Reset taskbar progress bar
                         Main.TaskbarProgressState = TaskbarItemProgressState.None;
@@ -362,10 +362,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             // If no errors found -> Go to first control
-            if ((_tree.Model as ResultModel).Root.Children.Count == 0)
+            if ((Tree.Model as ResultModel).Root.Children.Count == 0)
                 _scanWiz.MoveFirst();
 
-            _tree.AutoResizeColumns();
+            Tree.AutoResizeColumns();
         }
 
         private void contextMenuResults_Clicked(object sender, RoutedEventArgs e)
@@ -389,20 +389,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     }
                 case "Exclude Selection":
                     {
-                        if (_tree.SelectedNode == null)
+                        if (Tree.SelectedNode == null)
                         {
                             MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
 
-                        string regKeyPath = (_tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
+                        string regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
 
                         ExcludeItem excludeItem = new ExcludeItem { RegistryPath = regKeyPath };
                         if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
                         {
                             Settings.Default.ArrayExcludeList.Add(excludeItem);
                             MessageBox.Show(Application.Current.MainWindow, $"Added registry key ({regKeyPath}) to the exclude list", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                            _tree.RemoveNode(_tree.SelectedNode);
+                            Tree.RemoveNode(Tree.SelectedNode);
                         }
                         else
                             MessageBox.Show(Application.Current.MainWindow, $"Registry key ({regKeyPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -410,7 +410,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     }
                 case "View In RegEdit":
                     {
-                        if (_tree.SelectedNode == null)
+                        if (Tree.SelectedNode == null)
                         {
                             MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
@@ -418,8 +418,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                         try
                         {
-                            string regKeyPath = (_tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
-                            string regKeyValueName = (_tree.SelectedNode.Tag as BadRegistryKey).ValueName;
+                            string regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
+                            string regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey).ValueName;
 
                             RegEditGo.GoTo(regKeyPath, regKeyValueName);
                         }

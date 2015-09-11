@@ -7,7 +7,7 @@
         <TextBlock TextWrapping="Wrap" TextAlignment="Center" Text="{Binding Description}" />
         <StackPanel Visibility="{Binding RegistryVisible}">
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Top">
-                <Label Height="28" x:Name="label1" Content="Section:"/>
+                <Label Height="28" Content="Section:"/>
                 <ComboBox Height="28" IsReadOnly="True" VerticalContentAlignment="Center" ItemsSource="{Binding RootKeys}" SelectedValue="{Binding RootKey}" />
             </StackPanel>
             <Label Content="Registry Path:" />
@@ -28,9 +28,9 @@
                 <Button Padding="8,0,8,0" Content="..." Click="buttonBrowse_Click" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Margin="0,5,0,0" Height="27" HorizontalAlignment="Right" x:Name="stackPanel1" VerticalAlignment="Top" Orientation="Horizontal" >
-            <Button Margin="0,0,5,0" Padding="8,0,8,0" x:Name="buttonCancel" Click="buttonCancel_Click" IsCancel="True" Content="Cancel"/>
-            <Button x:Name="buttonAdd" Padding="8,0,8,0" Click="buttonAdd_Click" Content="{Binding AddEditText}"/>
+        <StackPanel Margin="0,5,0,0" Height="27" HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal" >
+            <Button Margin="0,0,5,0" Padding="8,0,8,0" x:Name="ButtonCancel" Click="buttonCancel_Click" IsCancel="True" Content="Cancel"/>
+            <Button x:Name="ButtonAdd" Padding="8,0,8,0" Click="buttonAdd_Click" Content="{Binding AddEditText}"/>
         </StackPanel>
     </StackPanel>
 

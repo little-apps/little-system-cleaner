@@ -21,15 +21,15 @@
         </Grid.RowDefinitions>
         <Border BorderBrush="#2044AE" BorderThickness="0"  Background="#2044AE" Grid.Row="0">
             <Grid>
-                <Image Name="loadingImg" Width="40" Height="40" HorizontalAlignment="Left" Margin="6,0,0,-2" gif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader-blue.gif" />
-                <Label Height="28" HorizontalAlignment="Left" Margin="46,6,0,0" Name="label1" VerticalAlignment="Top" Foreground="White" FontWeight="Bold">Compacting The Registry (Step 4 of 4)</Label>
+                <Image Name="LoadingImg" Width="40" Height="40" HorizontalAlignment="Left" Margin="6,0,0,-2" gif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader-blue.gif" />
+                <Label Height="28" HorizontalAlignment="Left" Margin="46,6,0,0"  VerticalAlignment="Top" Foreground="White" FontWeight="Bold">Compacting The Registry (Step 4 of 4)</Label>
             </Grid>
         </Border>
         <StackPanel Grid.Row="1" Background="#789FE7">
-            <TextBlock Height="20" Name="textBlockStatus" Text="Loading..." Margin="3,0,0,0" Width="239" FontWeight="Bold" />
-            <ProgressBar Height="20" Name="progressBar1" VerticalAlignment="Top" Width="238" ValueChanged="progressBar1_ValueChanged" />
+            <TextBlock Height="20" Name="TextBlockStatus" Text="Loading..." Margin="3,0,0,0" Width="239" FontWeight="Bold" />
+            <ProgressBar x:Name="ProgressBar" Height="20" VerticalAlignment="Top" Width="238" ValueChanged="progressBar1_ValueChanged" />
         </StackPanel>
-        <Border BorderBrush="Silver" BorderThickness="0" Name="border1" Background="#2044AE" Grid.Row="2">
+        <Border BorderBrush="Silver" BorderThickness="0" Background="#2044AE" Grid.Row="2">
             <StackPanel>
                 <TextBlock Height="15" TextAlignment="Center" Width="278">Your computer may not respond for several minutes</TextBlock>
                 <TextBlock Height="15" TextAlignment="Center">while the compacting is being completed.</TextBlock>

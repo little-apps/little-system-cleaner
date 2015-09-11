@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
-             xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:dv="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:dvc="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
              mc:Ignorable="d" 
              MinHeight="384" MinWidth="579">
     <UserControl.Resources>
-        <DV:ResourceDictionaryCollection x:Key="MyPalette">
+        <dv:ResourceDictionaryCollection x:Key="MyPalette">
             <ResourceDictionary>
                 <Style x:Key="DataPointStyle" TargetType="Control">
                     <Setter Property="Background" Value="Purple" />
@@ -19,7 +19,7 @@
                     <Setter Property="Background" Value="DeepPink" />
                 </Style>
             </ResourceDictionary>
-        </DV:ResourceDictionaryCollection>
+        </dv:ResourceDictionaryCollection>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,20 +42,20 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 4</Label>
             </Grid>
         </Border>
-        <DVC:Chart Name="mcChart" Foreground="DarkBlue" Title="Analyze Results" LegendTitle="Registry Size" Grid.Row="1" Palette="{StaticResource MyPalette}" Margin="0,6,0,0" BorderBrush="White">
-            <DVC:Chart.Series>
-                <DVC:PieSeries Title="Registry Size" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}">
-                </DVC:PieSeries>
-            </DVC:Chart.Series>
-        </DVC:Chart>
+        <dvc:Chart Name="McChart" Foreground="DarkBlue" Title="Analyze Results" LegendTitle="Registry Size" Grid.Row="1" Palette="{StaticResource MyPalette}" Margin="0,6,0,0" BorderBrush="White">
+            <dvc:Chart.Series>
+                <dvc:PieSeries Title="Registry Size" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}">
+                </dvc:PieSeries>
+            </dvc:Chart.Series>
+        </dvc:Chart>
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
-            <Button x:Name="buttonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0" IsDefault="True" FontSize="15">
+            <Button x:Name="ButtonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0" IsDefault="True" FontSize="15">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry optimizer/compact-registry.png" Width="24" Height="24" />
                     <TextBlock VerticalAlignment="Center">Compact</TextBlock>
                 </StackPanel>
             </Button>
-            <Button x:Name="buttonCancel" Click="buttonCancel_Click" Margin="0,0,0,0" Padding="8,0,8,0" FontSize="15">
+            <Button x:Name="ButtonCancel" Click="buttonCancel_Click" Margin="0,0,0,0" Padding="8,0,8,0" FontSize="15">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry optimizer/cancel.png" Width="24" Height="24" />
                     <TextBlock VerticalAlignment="Center">Cancel</TextBlock>

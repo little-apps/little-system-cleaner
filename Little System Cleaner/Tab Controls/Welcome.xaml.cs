@@ -64,22 +64,22 @@ namespace Little_System_Cleaner.Tab_Controls
             MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
             RegistryKey regKey = null;
 
-            lastDateTime.Text = Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Settings.Default.lastScanDate).ToString() : "Unknown";
-            errorsFound.Text = $"{Settings.Default.lastScanErrors} errors found";
-            errorsRepaired.Text = $"{Settings.Default.lastScanErrorsFixed} errors fixed";
+            LastDateTime.Text = Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Settings.Default.lastScanDate).ToString() : "Unknown";
+            ErrorsFound.Text = $"{Settings.Default.lastScanErrors} errors found";
+            ErrorsRepaired.Text = $"{Settings.Default.lastScanErrorsFixed} errors fixed";
             if (Settings.Default.lastScanElapsed != 0)
             {
                 TimeSpan ts = TimeSpan.FromTicks(Settings.Default.lastScanElapsed);
-                elapsedTime.Text = $"{Convert.ToInt32(ts.TotalSeconds)} seconds";
+                ElapsedTime.Text = $"{Convert.ToInt32(ts.TotalSeconds)} seconds";
             }
             else 
-                elapsedTime.Text = "Unknown";
+                ElapsedTime.Text = "Unknown";
 
-            totalScans.Text = $"{Settings.Default.totalScans} scans performed";
-            totalErrors.Text = $"{Settings.Default.totalErrorsFound} errors found";
-            totalErrorsFixed.Text = $"{Settings.Default.totalErrorsFixed} errors fixed";
+            TotalScans.Text = $"{Settings.Default.totalScans} scans performed";
+            TotalErrors.Text = $"{Settings.Default.totalErrorsFound} errors found";
+            TotalErrorsFixed.Text = $"{Settings.Default.totalErrorsFixed} errors fixed";
 
-            cpuType.Text = "Unknown";
+            CpuType.Text = "Unknown";
 
             try
             {
@@ -88,22 +88,22 @@ namespace Little_System_Cleaner.Tab_Controls
                 string procName = regKey?.GetValue("ProcessorNameString") as string;
 
                 if (!string.IsNullOrEmpty(procName))
-                    cpuType.Text = procName;
+                    CpuType.Text = procName;
             }
             catch (Exception)
             {
-                cpuType.Text = "Unknown";
+                CpuType.Text = "Unknown";
             }
             finally
             {
                 regKey?.Close();
             }
 
-            totalRAM.Text = GlobalMemoryStatusEx(memStatus) ?
+            TotalRam.Text = GlobalMemoryStatusEx(memStatus) ?
                 $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory"
                 : "Unknown";
 
-            osVersion.Text = OsVersion.GetOsVersion();
+            OsVersion.Text = Misc.OsVersion.GetOsVersion();
         }
     }
 }

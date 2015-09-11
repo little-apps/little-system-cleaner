@@ -31,7 +31,7 @@
         </Border>
         <TabControl Margin="0,10,0,0" Grid.Row="1">
             <TabItem Header="Drives">
-                <ListView x:Name="listViewDrives" Margin="5,5,5,5" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding DrivesCollection}">
+                <ListView x:Name="ListViewDrives" Margin="5,5,5,5" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding DrivesCollection}">
                     <ListView.View>
                         <GridView AllowsColumnReorder="False">
                             <GridViewColumn Header="Drive" Width="60">
@@ -56,16 +56,16 @@
                 <StackPanel>
                     <GroupBox Header="Select the mode of removing files from the disk">
                         <StackPanel>
-                            <RadioButton x:Name="radioButtonRemove" Content="Remove the junk files from the hard drive (recommended)" Margin="5,5,5,5" IsChecked="{Binding JunkFilesDelete}" />
-                            <RadioButton x:Name="radioButtonRecycle" Content="Send junk files to the recycle bin" Margin="5,5,5,5" IsChecked="{Binding JunkFilesRecycle}" />
-                            <RadioButton x:Name="radioButtonMove" Content="Move files to the specified folder:" Margin="5,5,5,5" IsChecked="{Binding JunkFilesMove}" />
+                            <RadioButton x:Name="RadioButtonRemove" Content="Remove the junk files from the hard drive (recommended)" Margin="5,5,5,5" IsChecked="{Binding JunkFilesDelete}" />
+                            <RadioButton x:Name="RadioButtonRecycle" Content="Send junk files to the recycle bin" Margin="5,5,5,5" IsChecked="{Binding JunkFilesRecycle}" />
+                            <RadioButton x:Name="RadioButtonMove" Content="Move files to the specified folder:" Margin="5,5,5,5" IsChecked="{Binding JunkFilesMove}" />
                             <Grid Margin="5,5,5,5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="textBoxMoveFolder" Grid.Column="0" Margin="0,0,5,0" IsReadOnly="True" Text="{Binding MoveFolder}" />
-                                <Button x:Name="buttonSelectMoveFolder" Grid.Column="1" Content="..." Click="buttonSelectMoveFolder_Click" />
+                                <TextBox x:Name="TextBoxMoveFolder" Grid.Column="0" Margin="0,0,5,0" IsReadOnly="True" Text="{Binding MoveFolder}" />
+                                <Button x:Name="ButtonSelectMoveFolder" Grid.Column="1" Content="..." Click="buttonSelectMoveFolder_Click" />
                             </Grid>
                         </StackPanel>
                     </GroupBox>
@@ -75,23 +75,23 @@
                 <StackPanel>
                     <GroupBox Header="Search Options">
                         <StackPanel>
-                            <CheckBox x:Name="checkBoxWriteProtected" Content="Ignore write protected and files in use (recommended)" Margin="5,5,5,5" IsChecked="{Binding IgnoreWriteProtectedFiles}" />
-                            <CheckBox x:Name="checkBoxZeroLength" Content="Assume zero length files are junk (slower)" Margin="5,5,5,5" IsChecked="{Binding ZeroLengthFilesAreJunk}" />
+                            <CheckBox x:Name="CheckBoxWriteProtected" Content="Ignore write protected and files in use (recommended)" Margin="5,5,5,5" IsChecked="{Binding IgnoreWriteProtectedFiles}" />
+                            <CheckBox x:Name="CheckBoxZeroLength" Content="Assume zero length files are junk (slower)" Margin="5,5,5,5" IsChecked="{Binding ZeroLengthFilesAreJunk}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Search Filters">
                         <StackPanel>
-                            <TextBox x:Name="textBoxSearchFilters" Margin="5,5,5,5" Text="{Binding SearchFilter}" />
+                            <TextBox x:Name="TextBoxSearchFilters" Margin="5,5,5,5" Text="{Binding SearchFilter}" />
                             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                                 <Label Content="Mode:"  VerticalAlignment="Center" />
-                                <RadioButton x:Name="radioButtonFilterSafe" Content="Safe" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterSafe}" />
-                                <RadioButton x:Name="radioButtonFilterMed" Content="Medium" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterMedium}" />
-                                <RadioButton x:Name="radioButtonFilterAgg" Content="Aggressive" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterAggressive}" />
+                                <RadioButton x:Name="RadioButtonFilterSafe" Content="Safe" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterSafe}" />
+                                <RadioButton x:Name="RadioButtonFilterMed" Content="Medium" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterMedium}" />
+                                <RadioButton x:Name="RadioButtonFilterAgg" Content="Aggressive" VerticalAlignment="Center" Margin="5,0,5,0" IsChecked="{Binding SearchFilterAggressive}" />
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Power Users">
-                        <CheckBox x:Name="checkBoxAutoClean" Content="Automatically remove files after scanning (not recommended)" Margin="5,5,5,5" IsChecked="{Binding AutoRemoveFiles}" />
+                        <CheckBox x:Name="CheckBoxAutoClean" Content="Automatically remove files after scanning (not recommended)" Margin="5,5,5,5" IsChecked="{Binding AutoRemoveFiles}" />
                     </GroupBox>
                 </StackPanel>
             </TabItem>
@@ -99,27 +99,27 @@
                 <StackPanel>
                     <GroupBox Header="Attributes">
                         <StackPanel Orientation="Horizontal" Margin="5,5,0,5">
-                            <CheckBox x:Name="checkBoxHidden" Content="Hidden" Margin="0,0,5,0" IsChecked="{Binding AttributesHidden}" />
-                            <CheckBox x:Name="checkBoxReadOnly" Content="Read Only" Margin="0,0,5,0" IsChecked="{Binding AttributesReadonly}" />
-                            <CheckBox x:Name="checkBoxArchive" Content="Archive" Margin="0,0,5,0" IsChecked="{Binding AttributesArchive}" />
-                            <CheckBox x:Name="checkBoxSystem" Content="System" Margin="0,0,5,0" IsChecked="{Binding AttributesSystem}" />
+                            <CheckBox x:Name="CheckBoxHidden" Content="Hidden" Margin="0,0,5,0" IsChecked="{Binding AttributesHidden}" />
+                            <CheckBox x:Name="CheckBoxReadOnly" Content="Read Only" Margin="0,0,5,0" IsChecked="{Binding AttributesReadonly}" />
+                            <CheckBox x:Name="CheckBoxArchive" Content="Archive" Margin="0,0,5,0" IsChecked="{Binding AttributesArchive}" />
+                            <CheckBox x:Name="CheckBoxSystem" Content="System" Margin="0,0,5,0" IsChecked="{Binding AttributesSystem}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Find Files">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="5,5,0,5">
-                                <RadioButton x:Name="radioButtonFindCreated" Content="Created" Margin="0,0,5,0" IsChecked="{Binding FindFilesCreated}" />
-                                <RadioButton x:Name="radioButtonFindModified" Content="Modified" Margin="0,0,5,0" IsChecked="{Binding FindFilesModified}" />
-                                <RadioButton x:Name="radioButtonFindAccessed" Content="Accessed" Margin="0,0,5,0" IsChecked="{Binding FindFilesAccessed}" />
+                                <RadioButton x:Name="RadioButtonFindCreated" Content="Created" Margin="0,0,5,0" IsChecked="{Binding FindFilesCreated}" />
+                                <RadioButton x:Name="RadioButtonFindModified" Content="Modified" Margin="0,0,5,0" IsChecked="{Binding FindFilesModified}" />
+                                <RadioButton x:Name="RadioButtonFindAccessed" Content="Accessed" Margin="0,0,5,0" IsChecked="{Binding FindFilesAccessed}" />
                             </StackPanel>
                             <DockPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="5,5,0,5">
-                                    <CheckBox x:Name="checkBoxFindAfter" Content="After:" Margin="0,0,5,0" VerticalAlignment="Center" IsChecked="{Binding FindFilesAfter}" />
-                                    <xctk:DateTimeUpDown x:Name="dateTimePickerAfter" Format="ShortDate" Margin="0,0,5,0" Value="{Binding FindFilesAfterDateTime}" />
+                                    <CheckBox x:Name="CheckBoxFindAfter" Content="After:" Margin="0,0,5,0" VerticalAlignment="Center" IsChecked="{Binding FindFilesAfter}" />
+                                    <xctk:DateTimeUpDown x:Name="DateTimePickerAfter" Format="ShortDate" Margin="0,0,5,0" Value="{Binding FindFilesAfterDateTime}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,5,0,5">
-                                    <CheckBox x:Name="checkBoxFindBefore" Content="Before:" Margin="0,0,5,0" VerticalAlignment="Center" IsChecked="{Binding FindFilesBefore}" />
-                                    <xctk:DateTimeUpDown x:Name="dateTimePickerBefore" Format="ShortDate" Margin="0,0,5,0" Value="{Binding FindFilesBeforeDateTime}" />
+                                    <CheckBox x:Name="CheckBoxFindBefore" Content="Before:" Margin="0,0,5,0" VerticalAlignment="Center" IsChecked="{Binding FindFilesBefore}" />
+                                    <xctk:DateTimeUpDown x:Name="DateTimePickerBefore" Format="ShortDate" Margin="0,0,5,0" Value="{Binding FindFilesBeforeDateTime}" />
                                 </StackPanel>
                             </DockPanel>
 
@@ -128,14 +128,14 @@
                     <GroupBox Header="Size">
                         <DockPanel LastChildFill="True">
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="5,5,0,5">
-                                <CheckBox x:Name="checkBoxSize" Content="Size:" VerticalAlignment="Center" Margin="0,0,1,0" IsChecked="{Binding FindFilesBySize}" />
+                                <CheckBox x:Name="CheckBoxSize" Content="Size:" VerticalAlignment="Center" Margin="0,0,1,0" IsChecked="{Binding FindFilesBySize}" />
                                 <Label Content="At least:" Margin="0,0,5,0" />
-                                <xctk:IntegerUpDown x:Name="numericUpDownSizeAtLeast" Margin="0,0,2,0" DefaultValue="0" Width="39" Value="{Binding FindFilesBySizeAtLeast}" />
+                                <xctk:IntegerUpDown x:Name="NumericUpDownSizeAtLeast" Margin="0,0,2,0" DefaultValue="0" Width="39" Value="{Binding FindFilesBySizeAtLeast}" />
                                 <Label Content="KB" Margin="0,0,5,0" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="5,5,0,5">
                                 <Label Content="At most:" Margin="0,0,5,0" />
-                                <xctk:IntegerUpDown x:Name="numericUpDownSizeAtMost" Margin="0,0,2,0" DefaultValue="0" Width="39" Value="{Binding FindFilesBySizeAtMost}" />
+                                <xctk:IntegerUpDown x:Name="NumericUpDownSizeAtMost" Margin="0,0,2,0" DefaultValue="0" Width="39" Value="{Binding FindFilesBySizeAtMost}" />
                                 <Label Content="KB" Margin="0,0,5,0" />
                             </StackPanel>
                         </DockPanel>
@@ -148,7 +148,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="listViewIncFolders" ItemsSource="{Binding IncFoldersCollection}" Grid.Row="0" Margin="5,5,5,0" SelectionMode="Single">
+                    <ListView x:Name="ListViewIncFolders" ItemsSource="{Binding IncFoldersCollection}" Grid.Row="0" Margin="5,5,5,0" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="List of folders to include" DisplayMemberBinding="{Binding Folder}" Width="240" />
@@ -156,13 +156,13 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="5,5,5,5" Grid.Row="1">
-                        <Button x:Name="buttonAddIncFolder" Margin="0,0,5,0" Height="26" Padding="8,0,8,0" Click="buttonAddIncFolder_Click">
+                        <Button x:Name="ButtonAddIncFolder" Margin="0,0,5,0" Height="26" Padding="8,0,8,0" Click="buttonAddIncFolder_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
                                 <TextBlock VerticalAlignment="Center">Add...</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buttonRemIncFolder" Height="26" Padding="8,0,8,0" Click="buttonRemIncFolder_Click">
+                        <Button x:Name="ButtonRemIncFolder" Height="26" Padding="8,0,8,0" Click="buttonRemIncFolder_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
                                 <TextBlock VerticalAlignment="Center">Remove</TextBlock>
@@ -177,7 +177,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="listViewExcludeFolders" ItemsSource="{Binding ExcFoldersCollection}" Grid.Row="0" Margin="5,5,5,0" SelectionMode="Single">
+                    <ListView x:Name="ListViewExcludeFolders" ItemsSource="{Binding ExcFoldersCollection}" Grid.Row="0" Margin="5,5,5,0" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="List of folders to exclude" DisplayMemberBinding="{Binding Folder}" Width="240" />
@@ -185,13 +185,13 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="5,5,5,5" Grid.Row="1">
-                        <Button x:Name="buttonAddExcludeFolder" Margin="0,0,5,0" Padding="8,0,8,0" Height="26" Click="buttonAddExcludeFolder_Click">
+                        <Button x:Name="ButtonAddExcludeFolder" Margin="0,0,5,0" Padding="8,0,8,0" Height="26" Click="buttonAddExcludeFolder_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
                                 <TextBlock VerticalAlignment="Center">Add...</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buttonRemExcludeFolder" Padding="8,0,8,0" Height="26" Click="buttonRemExcludeFolder_Click">
+                        <Button x:Name="ButtonRemExcludeFolder" Padding="8,0,8,0" Height="26" Click="buttonRemExcludeFolder_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
                                 <TextBlock VerticalAlignment="Center">Remove</TextBlock>
@@ -206,7 +206,7 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="36" />
                     </Grid.RowDefinitions>
-                    <ListView x:Name="listViewFiles" ItemsSource="{Binding ExcFilesCollection}" Grid.Row="0" Margin="5,5,5,0" IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
+                    <ListView x:Name="ListViewFiles" ItemsSource="{Binding ExcFilesCollection}" Grid.Row="0" Margin="5,5,5,0" IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="List of files to exclude" DisplayMemberBinding="{Binding File}" Width="240" />
@@ -214,13 +214,13 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1"  Margin="5,5,5,5">
-                        <Button x:Name="buttonAddExcludeFile" Margin="0,0,5,0" Height="26" Padding="8,0,8,0" Click="buttonFilesAdd_Click">
+                        <Button x:Name="ButtonAddExcludeFile" Margin="0,0,5,0" Height="26" Padding="8,0,8,0" Click="buttonFilesAdd_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/add.png" />
                                 <TextBlock VerticalAlignment="Center">Add...</TextBlock>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buttonRemExcludeFile" Height="26" Padding="8,0,8,0" Click="buttonRemExcludeFile_Click">
+                        <Button x:Name="ButtonRemExcludeFile" Height="26" Padding="8,0,8,0" Click="buttonRemExcludeFile_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
                                 <TextBlock VerticalAlignment="Center">Remove</TextBlock>
@@ -230,7 +230,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" Click="buttonScan_Click" HorizontalAlignment="Center">
+        <Button x:Name="ButtonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" Click="buttonScan_Click" HorizontalAlignment="Center">
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
                 <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                 <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>

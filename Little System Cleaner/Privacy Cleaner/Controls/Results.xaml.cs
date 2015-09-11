@@ -39,16 +39,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             _scanBase = sb;
 
-            _tree.Model = ResultModel.CreateResultModel();
-            _tree.ExpandAll();
+            Tree.Model = ResultModel.CreateResultModel();
+            Tree.ExpandAll();
         }
 
         private void ShowDetails()
         {
-            if (_tree.SelectedNode == null)
+            if (Tree.SelectedNode == null)
                 return;
 
-            ResultNode resultNode = _tree.SelectedNode.Tag as ResultNode;
+            ResultNode resultNode = Tree.SelectedNode.Tag as ResultNode;
 
             if (resultNode is RootNode)
                 return;
@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (_tree.SelectedNode == null)
+            if (Tree.SelectedNode == null)
             {
                 MessageBox.Show(Application.Current.MainWindow, "Nothing is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -93,7 +93,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            foreach (ResultNode parent in (_tree.Model as ResultModel).Root.Children)
+            foreach (ResultNode parent in (Tree.Model as ResultModel).Root.Children)
             {
                 foreach (ResultNode n in parent.Children)
                 {

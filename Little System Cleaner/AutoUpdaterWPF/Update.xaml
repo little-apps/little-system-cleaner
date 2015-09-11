@@ -12,11 +12,11 @@
         <Image Height="66" Margin="12,14,0,0" VerticalAlignment="Top" Width="70" Source="/Little_System_Cleaner;component/Resources/update.png" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" >
 
         </Image>
-        <TextBlock x:Name="textBlockUpdate" HorizontalAlignment="Left" Margin="91,14,0,0" TextWrapping="Wrap" Text="A new version of {0} is available!" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-        <TextBlock x:Name="textBlockDescription" HorizontalAlignment="Left" Margin="91,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="538">{0} {1} is now available. You have version {2} installed. Would you like to download it now?</TextBlock>
-        <TextBlock x:Name="textBlockReleaseNotes" HorizontalAlignment="Left" Margin="91,90,0,0" TextWrapping="Wrap" Text="Release Notes :" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-        <WebBrowser x:Name="webBrowser" HorizontalAlignment="Left" Height="432" Margin="91,120,0,0" VerticalAlignment="Top" Width="538" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
-        <Button x:Name="buttonSkip" HorizontalAlignment="Left" Margin="91,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonSkip_Click">
+        <TextBlock x:Name="TextBlockUpdate" HorizontalAlignment="Left" Margin="91,14,0,0" TextWrapping="Wrap" Text="A new version of {0} is available!" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <TextBlock x:Name="TextBlockDescription" HorizontalAlignment="Left" Margin="91,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="538">{0} {1} is now available. You have version {2} installed. Would you like to download it now?</TextBlock>
+        <TextBlock x:Name="TextBlockReleaseNotes" HorizontalAlignment="Left" Margin="91,90,0,0" TextWrapping="Wrap" Text="Release Notes :" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <WebBrowser x:Name="WebBrowser" HorizontalAlignment="Left" Height="432" Margin="91,120,0,0" VerticalAlignment="Top" Width="538" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+        <Button x:Name="ButtonSkip" HorizontalAlignment="Left" Margin="91,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonSkip_Click">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <Image Width="16" Height="16" Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/hand_point.png" />
@@ -24,7 +24,7 @@
                 </StackPanel>
             </Button.Content>
         </Button>
-        <Button x:Name="buttonRemindLater" HorizontalAlignment="Left" Margin="321,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonRemindLater_Click">
+        <Button x:Name="ButtonRemindLater" HorizontalAlignment="Left" Margin="321,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonRemindLater_Click">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <Image Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/clock_go.png" />
@@ -32,7 +32,7 @@
                 </StackPanel>
             </Button.Content>
         </Button>
-        <Button x:Name="buttonUpdate" HorizontalAlignment="Left" Margin="478,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonUpdate_Click">
+        <Button x:Name="ButtonUpdate" HorizontalAlignment="Left" Margin="478,570,0,0" VerticalAlignment="Top" Width="153" Height="28" Click="buttonUpdate_Click">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <Image Width="16" Height="16" Source="/Little_System_Cleaner;component/Resources/download.png" />

@@ -506,7 +506,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonRemExcludeFile_Click(object sender, RoutedEventArgs e)
         {
-            if (listViewFiles.SelectedItems.Count == 0)
+            if (ListViewFiles.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No file was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
@@ -515,13 +515,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                ExcFilesCollection.Remove(listViewFiles.SelectedItems[0] as LviFile);
+                ExcFilesCollection.Remove(ListViewFiles.SelectedItems[0] as LviFile);
             }
         }
 
         private void buttonRemExcludeFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (listViewExcludeFolders.SelectedItems.Count == 0)
+            if (ListViewExcludeFolders.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No folder was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
@@ -530,13 +530,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                ExcFoldersCollection.Remove(listViewExcludeFolders.SelectedItems[0] as LviFolder);
+                ExcFoldersCollection.Remove(ListViewExcludeFolders.SelectedItems[0] as LviFolder);
             }
         }
 
         private void buttonRemIncFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (listViewIncFolders.SelectedItems.Count == 0)
+            if (ListViewIncFolders.SelectedItems.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "No folder was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
@@ -545,7 +545,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                IncFoldersCollection.Remove(listViewIncFolders.SelectedItems[0] as LviFolder);
+                IncFoldersCollection.Remove(ListViewIncFolders.SelectedItems[0] as LviFolder);
             }
         }
 

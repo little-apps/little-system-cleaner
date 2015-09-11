@@ -31,7 +31,7 @@
         </Border>
         <TabControl Margin="0,10,0,0" Grid.Row="1">
             <TabItem Header="Sections">
-                <tree:TreeList x:Name="_tree" MinHeight="290" MinWidth="563">
+                <tree:TreeList x:Name="Tree" MinHeight="290" MinWidth="563">
                     <tree:TreeList.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -48,32 +48,32 @@
                 <StackPanel>
                     <GroupBox Header="Select how files will be cleaned from the disk">
                         <StackPanel Margin="5,5,5,5">
-                            <RadioButton x:Name="radioButtonPerm" Content="Permanently remove files from hard disk (recommended)" Click="UpdateSettings" />
-                            <RadioButton x:Name="radioButtonMove" Content="Remove files and move them to the recycle bin" Click="UpdateSettings" />
+                            <RadioButton x:Name="RadioButtonPerm" Content="Permanently remove files from hard disk (recommended)" Click="UpdateSettings" />
+                            <RadioButton x:Name="RadioButtonMove" Content="Remove files and move them to the recycle bin" Click="UpdateSettings" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Search options">
                         <StackPanel Margin="5,5,5,5">
                             <DockPanel LastChildFill="False">
-                                <CheckBox x:Name="checkBoxReadOnly" Content="Include read-only files" DockPanel.Dock="Left" Click="UpdateSettings" />
-                                <CheckBox x:Name="checkBoxSystem" Content="Include system files" DockPanel.Dock="Right" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxReadOnly" Content="Include read-only files" DockPanel.Dock="Left" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxSystem" Content="Include system files" DockPanel.Dock="Right" Click="UpdateSettings" />
                             </DockPanel>
                             <DockPanel LastChildFill="False" Margin="0,5,0,0">
-                                <CheckBox x:Name="checkBoxHidden" Content="Include hidden files" DockPanel.Dock="Left" Click="UpdateSettings" />
-                                <CheckBox x:Name="checkBoxZeroByte" Content="Include zero-byte files" DockPanel.Dock="Right" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxHidden" Content="Include hidden files" DockPanel.Dock="Left" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxZeroByte" Content="Include zero-byte files" DockPanel.Dock="Right" Click="UpdateSettings" />
                             </DockPanel>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Log">
                         <StackPanel Margin="5,5,5,5">
-                            <CheckBox x:Name="checkBoxLogScan" Content="Log privacy scan and repairs" Click="UpdateSettings" />
-                            <CheckBox x:Name="checkBoxDisplayLog" Content="Show log after finished scanning" Click="UpdateSettings" Margin="0,5,0,0" />
+                            <CheckBox x:Name="CheckBoxLogScan" Content="Log privacy scan and repairs" Click="UpdateSettings" />
+                            <CheckBox x:Name="CheckBoxDisplayLog" Content="Show log after finished scanning" Click="UpdateSettings" Margin="0,5,0,0" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <Button x:Name="buttonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center"  Click="buttonScan_Click">
+        <Button x:Name="ButtonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center"  Click="buttonScan_Click">
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
                 <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                 <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>

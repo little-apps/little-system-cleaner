@@ -62,7 +62,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            progressBar.Value = e.ProgressPercentage;
+            ProgressBar.Value = e.ProgressPercentage;
         }
 
         private void OnDownloadComplete(object sender, AsyncCompletedEventArgs e)

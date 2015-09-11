@@ -145,7 +145,7 @@ namespace Little_System_Cleaner
             sb.AppendLine("StackTrace:");
             sb.AppendLine(_exception.StackTrace);
 
-            textBox1.Text = sb.ToString();
+            TextBoxInfo.Text = sb.ToString();
         }
 
         private void buttonDontSend_Click(object sender, RoutedEventArgs e)
@@ -163,7 +163,7 @@ namespace Little_System_Cleaner
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (checkBoxRestart.IsChecked.GetValueOrDefault())
+            if (CheckBoxRestart.IsChecked.GetValueOrDefault())
             {
                 Process.Start(Application.ResourceAssembly.Location, "/restart");
                 Application.Current.Shutdown();

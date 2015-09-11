@@ -87,17 +87,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            Utils.AutoResizeColumns(listView);
+            Utils.AutoResizeColumns(ListView);
         }
 
-        private void btnGoBack_Click(object sender, RoutedEventArgs e)
+        private void ButtonGoBack_Click(object sender, RoutedEventArgs e)
         {
             _scanBase.HideDetails();
         }
 
-        private void btnOpen_Click(object sender, RoutedEventArgs e)
+        private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
-            var detailItem = listView.SelectedItem as DetailItem;
+            var detailItem = ListView.SelectedItem as DetailItem;
             if (detailItem == null)
                 return;
 
@@ -118,9 +118,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
         }
 
-        private void btnLocate_Click(object sender, RoutedEventArgs e)
+        private void ButtonLocate_Click(object sender, RoutedEventArgs e)
         {
-            var detailItem = listView.SelectedItem as DetailItem;
+            var detailItem = ListView.SelectedItem as DetailItem;
             if (detailItem == null)
                 return;
 
@@ -129,9 +129,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             Process.Start("explorer", Path.GetDirectoryName(path));
         }
 
-        private void btnViewProperties_Click(object sender, RoutedEventArgs e)
+        private void ButtonViewProperties_Click(object sender, RoutedEventArgs e)
         {
-            var detailItem = listView.SelectedItem as DetailItem;
+            var detailItem = ListView.SelectedItem as DetailItem;
             if (detailItem == null)
                 return;
 

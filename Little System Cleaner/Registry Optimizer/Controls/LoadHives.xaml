@@ -28,7 +28,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 1 of 3</Label>
             </Grid>
         </Border>
-        <Image x:Name="loadingImg" Margin="3,10,3,0" Grid.Row="1" gif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader-big.gif" />
-        <TextBlock TextAlignment="Center" Grid.Row="3" Text="{Binding Path=Message}" Height="28" Name="label1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="294" FontWeight="Bold" FontSize="14">Loading...</TextBlock>
+        <Image x:Name="LoadingImg" Margin="3,10,3,0" Grid.Row="1" gif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader-big.gif" />
+        <TextBlock x:Name="Message" TextAlignment="Center" Grid.Row="3" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="294" FontWeight="Bold" FontSize="14">Loading...</TextBlock>
     </Grid>
 </UserControl>

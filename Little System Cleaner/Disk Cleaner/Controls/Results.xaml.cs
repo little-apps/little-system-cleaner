@@ -55,14 +55,14 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             ResetInfo();
 
-            Utils.AutoResizeColumns(listViewFiles);
+            Utils.AutoResizeColumns(ListViewFiles);
         }
 
         private void listViewFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (listViewFiles.SelectedItem != null)
+            if (ListViewFiles.SelectedItem != null)
             {
-                var problemFile = listViewFiles.SelectedItem as ProblemFile;
+                var problemFile = ListViewFiles.SelectedItem as ProblemFile;
 
                 if (problemFile == null)
                     return;
@@ -102,7 +102,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 lvi.Checked = true;
             }
 
-            listViewFiles.Items.Refresh();
+            ListViewFiles.Items.Refresh();
         }
 
         private void selectNone_Click(object sender, RoutedEventArgs e)
@@ -112,7 +112,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 lvi.Checked = false;
             }
 
-            listViewFiles.Items.Refresh();
+            ListViewFiles.Items.Refresh();
         }
 
         private void selectInvert_Click(object sender, RoutedEventArgs e)
@@ -122,7 +122,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 lvi.Checked = !(lvi.Checked);
             }
 
-            listViewFiles.Items.Refresh();
+            ListViewFiles.Items.Refresh();
         }
 
         private void buttonFix_Click(object sender, RoutedEventArgs e)

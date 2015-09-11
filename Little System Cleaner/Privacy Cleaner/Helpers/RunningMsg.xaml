@@ -5,10 +5,10 @@
     <Grid>
         <StackPanel>
             <TextBlock TextWrapping="Wrap" Margin="5,5,5,5">You must close the following processes in order for the scanning process to continue. Otherwise, it will be skipped.</TextBlock>
-            <ListBox x:Name="listBox" Height="69" Margin="5,5,5,5"></ListBox>
+            <ListBox x:Name="ListBox" Height="69" Margin="5,5,5,5"></ListBox>
             <DockPanel LastChildFill="False" Margin="5,5,5,5" Height="25">
-                <CheckBox x:Name="checkBoxDontShow" Content="Don't show this message again" DockPanel.Dock="Left" VerticalAlignment="Center" Checked="checkBoxDontShow_Checked" />
-                <Button x:Name="buttonCancel" Content="Cancel" DockPanel.Dock="Right" IsCancel="True" Width="60" />
+                <CheckBox x:Name="CheckBoxDontShow" Content="Don't show this message again" DockPanel.Dock="Left" VerticalAlignment="Center" Checked="checkBoxDontShow_Checked" />
+                <Button x:Name="ButtonCancel" Content="Cancel" DockPanel.Dock="Right" IsCancel="True" Width="60" />
             </DockPanel>
         </StackPanel>
     </Grid>

@@ -89,7 +89,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (_scanBase.Options.ExcludeFolderSelected.ReadOnly)
             {
                 MessageBox.Show(Application.Current.MainWindow, "This folder has been excluded in order to protect critical files from being deleted. Please uncheck the respective checkbox under Options in the Files tab to remove it.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                tabControl.SelectedIndex = 1;
+                TabControl.SelectedIndex = 1;
             }
             else
             {

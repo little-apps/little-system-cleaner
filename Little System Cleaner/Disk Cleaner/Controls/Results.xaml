@@ -32,12 +32,12 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <ListView x:Name="listViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.Column="0" Grid.ColumnSpan="2">
+        <ListView x:Name="ListViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.Column="0" Grid.ColumnSpan="2">
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="selectAll" Header="Select All" Click="selectAll_Click"  />
-                    <MenuItem x:Name="selectNone" Header="Select None" Click="selectNone_Click" />
-                    <MenuItem x:Name="selectInvert" Header="Invert Selection" Click="selectInvert_Click" />
+                    <MenuItem x:Name="SelectAll" Header="Select All" Click="selectAll_Click"  />
+                    <MenuItem x:Name="SelectNone" Header="Select None" Click="selectNone_Click" />
+                    <MenuItem x:Name="SelectInvert" Header="Invert Selection" Click="selectInvert_Click" />
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.View>
@@ -91,7 +91,7 @@
             </DockPanel>
         </Grid>
 
-        <Button Name="buttonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="3" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" Grid.Column="1" />
-        <Button Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="3" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
+        <Button Name="ButtonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="3" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" Grid.Column="1" />
+        <Button Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="3" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
     </Grid>
 </UserControl>

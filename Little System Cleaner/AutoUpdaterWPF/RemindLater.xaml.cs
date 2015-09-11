@@ -19,15 +19,15 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private void RemindLaterWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            comboBoxRemindLater.SelectedIndex = 0;
-            radioButtonYes.IsChecked = true;
+            ComboBoxRemindLater.SelectedIndex = 0;
+            RadioButtonYes.IsChecked = true;
         }
 
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            if (radioButtonYes.IsChecked.GetValueOrDefault())
+            if (RadioButtonYes.IsChecked.GetValueOrDefault())
             {
-                switch (comboBoxRemindLater.SelectedIndex)
+                switch (ComboBoxRemindLater.SelectedIndex)
                 {
                     case 0:
                         RemindLaterFormat = RemindLaterFormat.Minutes;
@@ -68,7 +68,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private void radioButtonYes_Checked(object sender, RoutedEventArgs e)
         {
-            comboBoxRemindLater.IsEnabled = radioButtonYes.IsChecked.GetValueOrDefault();
+            ComboBoxRemindLater.IsEnabled = RadioButtonYes.IsChecked.GetValueOrDefault();
         }
 
         
