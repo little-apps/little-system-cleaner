@@ -36,16 +36,19 @@ namespace Little_System_Cleaner.Misc
         {
             try
             {
-                PInvoke.TokPriv1Luid tp = new PInvoke.TokPriv1Luid();
+                
                 IntPtr hproc = Process.GetCurrentProcess().Handle;
                 IntPtr htok = IntPtr.Zero;
 
                 if (!PInvoke.OpenProcessToken(hproc, PInvoke.TOKEN_ADJUST_PRIVILEGES | PInvoke.TOKEN_QUERY, ref htok))
                     return false;
 
-                tp.Count = 1;
-                tp.Luid = 0;
-                tp.Attr = ((enabled) ? (PInvoke.SE_PRIVILEGE_ENABLED) : (PInvoke.SE_PRIVILEGE_REMOVED));
+                PInvoke.TokPriv1Luid tp = new PInvoke.TokPriv1Luid()
+                {
+                    Count = 1,
+                    Luid = 0,
+                    Attr = enabled ? PInvoke.SE_PRIVILEGE_ENABLED : PInvoke.SE_PRIVILEGE_REMOVED
+                };
 
                 if (!PInvoke.LookupPrivilegeValue(null, privilege, ref tp.Luid))
                     return false;
