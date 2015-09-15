@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
@@ -36,7 +37,9 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
         GridViewColumn _lastColumnClicked;
         ListSortDirection _lastDirection = ListSortDirection.Ascending;
 
-		public UninstallManager()
+	    public ObservableCollection<ProgramInfo> ProgramInfos { get; } = new ObservableCollection<ProgramInfo>();
+
+	    public UninstallManager()
 		{
 			InitializeComponent();
 		}
@@ -51,8 +54,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         public bool OnUnloaded(bool forceExit)
         {
-            if (ListViewProgs.Items.Count > 0)
-                ListViewProgs.Items.Clear();
+            if (ProgramInfos.Count > 0)
+                ProgramInfos.Clear();
 
             return true;
         }
@@ -63,7 +66,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             RegistryKey regKey = null;
 
             // Clear listview
-            ListViewProgs.Items.Clear();
+            ProgramInfos.Clear();
 
             // Turn textbox into regex pattern
             Regex regex = new Regex("", RegexOptions.IgnoreCase);
@@ -169,7 +172,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 {
 
                     if (regex.IsMatch(progInfo.Program))
-                        ListViewProgs.Items.Add(progInfo);
+                        ProgramInfos.Add(progInfo);
                 }
             }
 
@@ -204,12 +207,16 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void Sort(GridViewColumn column, ListSortDirection direction)
         {
-            ICollectionView dataView = CollectionViewSource.GetDefaultView(ListViewProgs.Items);
+            /*ICollectionView dataView = CollectionViewSource.GetDefaultView(ListViewProgs.Items);
             string sortBy = column.Header as string;
-            
+
             dataView.SortDescriptions.Clear();
             SortDescription sd = new SortDescription(sortBy, direction);
             dataView.SortDescriptions.Add(sd);
+            dataView.Refresh();*/
+
+            var dataView = (ListCollectionView)CollectionViewSource.GetDefaultView(ListViewProgs.ItemsSource);
+            dataView.CustomSort = new ProgramInfoSorter(column, direction);
             dataView.Refresh();
 
             if (direction == ListSortDirection.Ascending)

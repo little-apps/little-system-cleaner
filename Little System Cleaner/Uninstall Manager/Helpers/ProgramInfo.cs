@@ -127,6 +127,21 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 return string.Empty;
             }
         }
+
+        public long SizeBytes
+        {
+            get
+            {
+                if (InstallSize > 0)
+                    return (uint)InstallSize;
+
+                if (EstimatedSize.GetValueOrDefault(0) > 0)
+                    if (EstimatedSize != null)
+                        return EstimatedSize.Value * 1024;
+
+                return 0;
+            }
+        }
         #endregion
 
         public ProgramInfo(RegistryKey regKey)

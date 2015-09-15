@@ -78,6 +78,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Uninstall Manager\Helpers\ProgramInfoSorter.cs" />
     <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
