@@ -258,7 +258,7 @@ namespace Little_System_Cleaner
             bool? bUnload = null;
 
             UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
-            MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
+            MethodBase methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
                 bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
 
@@ -267,7 +267,7 @@ namespace Little_System_Cleaner
                 TabControl.SelectedIndex = index;
 
                 UserControl nextCtrl = (TabControl.SelectedContent as UserControl);
-                MethodBase methodLoad = nextCtrl.GetType().GetMethod("OnLoaded");
+                MethodBase methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
                 methodLoad?.Invoke(nextCtrl, new object[] { });
             }
             else
