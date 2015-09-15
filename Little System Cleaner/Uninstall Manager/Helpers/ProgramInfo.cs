@@ -114,19 +114,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public string Publisher => _publisher;
 
-        public string Size
-        {
-            get
-            {
-                if (InstallSize > 0)
-                    return Utils.ConvertSizeToString((uint)InstallSize);
-
-                if (EstimatedSize.GetValueOrDefault(0) > 0)
-                    return Utils.ConvertSizeToString(EstimatedSize.Value * 1024);
-
-                return string.Empty;
-            }
-        }
+        public string Size => SizeBytes > 0 ? Utils.ConvertSizeToString(SizeBytes) : string.Empty;
 
         public long SizeBytes
         {
