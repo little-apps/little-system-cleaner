@@ -400,7 +400,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// <returns>True if match found</returns>
         private static bool CompareWildcards(string wildString, string masks, bool ignoreCase = true)
         {
-            if (String.IsNullOrEmpty(masks))
+            if (string.IsNullOrEmpty(masks))
                 return false;
 
             if (masks == "*")
