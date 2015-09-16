@@ -55,9 +55,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            string message =
-                "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
-                "Example: *.old matches files that end with .old";
+            const string message = "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
+                                   "Example: *.old matches files that end with .old";
 
             MessageBox.Show(this, message, "Add Exclude File Type Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
