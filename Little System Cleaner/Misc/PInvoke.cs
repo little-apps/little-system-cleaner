@@ -59,6 +59,10 @@ namespace Little_System_Cleaner.Misc
         internal static extern int DestroyIcon(IntPtr hIcon);
         [DllImport("user32.dll")]
         internal static extern int GetSystemMetrics(int smIndex);
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("gdi32.dll")]
         internal static extern bool DeleteObject(IntPtr hObject);
@@ -172,6 +176,10 @@ namespace Little_System_Cleaner.Misc
         internal const int FO_DELETE = 3;
         internal const int FOF_ALLOWUNDO = 0x40;
         internal const int FOF_NOCONFIRMATION = 0x10;
+
+        // SetWindowLong
+        internal const int GWL_STYLE = -16;
+        internal const int WS_SYSMENU = 0x80000;
         #endregion
 
         #region Classes/Interfaces

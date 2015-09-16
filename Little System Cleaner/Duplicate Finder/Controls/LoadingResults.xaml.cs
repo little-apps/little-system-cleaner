@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Windows;
 using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
+using System.Windows.Interop;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -28,6 +30,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void LoadingResults_Loaded(object sender, RoutedEventArgs e)
         {
+            // Hide close button
+            var hwnd = new WindowInteropHelper(this).Handle;
+            PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE, PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
+
             _backgroundWorker.DoWork += backgroundWorker_DoWork;
             _backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
 
