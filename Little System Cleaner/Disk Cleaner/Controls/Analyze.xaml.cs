@@ -100,6 +100,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void AnalyzeDisk()
         {
+            bool completedSuccessfully = false;
+
             try
             {
                 // Show taskbar progress bar
@@ -113,11 +115,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
                 if (Wizard.FileList.Count > 0) {
-                    EnableContinueButton();
+                    completedSuccessfully = true;
                 }
                 else
                 {
-                    CurrentFile = "";
                     Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
@@ -128,24 +129,34 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 Thread.ResetAbort();
 
-                CurrentFile = "";
+                completedSuccessfully = false;
             }
             finally
             {
-                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
+                ResetInfo(completedSuccessfully);
             }
         }
 
-        private void EnableContinueButton()
+        private void ResetInfo(bool success)
         {
-            if (Dispatcher.Thread != Thread.CurrentThread)
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                Dispatcher.Invoke(new Action(EnableContinueButton));
-                return;
+                Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                ProgressBar.IsIndeterminate = false;
+            }));
+
+            CurrentFile = "";
+
+            if (success)
+            {
+                CurrentFile = "View the results by clicking \"Continue\" below.";
+                Dispatcher.Invoke(new Action(() => ButtonContinue.IsEnabled = true));
+            }
+            else
+            {
+                CurrentFile = "Click \"Cancel\" to go back to the previous screen.";
             }
 
-            CurrentFile = "View the results by clicking \"Continue\" below.";
-            ButtonContinue.IsEnabled = true;
         }
 
         private void ScanFiles(DirectoryInfo parentInfo)
