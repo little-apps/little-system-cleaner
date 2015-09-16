@@ -346,7 +346,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// </summary>
         /// <param name="fileInfo">FileInfo class</param>
         /// <returns>True if file is in use</returns>
-        private bool IsFileLocked(FileInfo fileInfo)
+        private static bool IsFileLocked(FileInfo fileInfo)
         {
             Stream stream = null;
             bool ret = false;
@@ -370,21 +370,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             return ret;
         }
 
-        private bool FolderIsIncluded(string dirPath)
+        private static bool FolderIsIncluded(string dirPath)
         {
             var includeDirsList = Settings.Default.diskCleanerIncludedFolders.Cast<string>();
 
             return (includeDirsList.Any(includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0));
         }
 
-        private bool FolderIsExcluded(string dirPath)
+        private static bool FolderIsExcluded(string dirPath)
         {
             var excludeDirsList = Settings.Default.diskCleanerExcludedDirs.Cast<string>();
 
             return (excludeDirsList.Any(excludeDir => Utils.CompareWildcard(dirPath, excludeDir)));
         }
 
-        private bool FileTypeIsExcluded(string fileName)
+        private static bool FileTypeIsExcluded(string fileName)
         {
             var excludeFileTypesList = Settings.Default.diskCleanerExcludedFileTypes.Cast<string>();
 
@@ -398,7 +398,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// <param name="masks">Wildcard masks seperated by a semicolon (;)</param>
         /// <param name="ignoreCase">Ignore case for comparison (default is true)</param>
         /// <returns>True if match found</returns>
-        private bool CompareWildcards(string wildString, string masks, bool ignoreCase = true)
+        private static bool CompareWildcards(string wildString, string masks, bool ignoreCase = true)
         {
             if (String.IsNullOrEmpty(masks))
                 return false;
