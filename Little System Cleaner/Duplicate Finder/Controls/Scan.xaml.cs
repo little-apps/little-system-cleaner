@@ -610,16 +610,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             ScanBase.FilesGroupedByFilename.Clear();
 
-            var query = from p in _fileList
+            /*var query = from p in _fileList
                         where p.IsDeleteable
                         group p by p.FileName into g
                         where g.Count() > 1
-                        select new { FileName = g.Key, Files = g };
+                        select new { FileName = g.Key, Files = g };*/
 
-            foreach (var group in query)
+            var groupedByFilename = _fileList
+                .Where(fileEntry => fileEntry.IsDeleteable)
+                .GroupBy(fileEntry => fileEntry.FileName)
+                .Where(g => g.Count() > 1)
+                .Select(g => new {FileName = g.Key, Files = g})
+                .Where(@group => !string.IsNullOrEmpty(@group.FileName) && @group.Files.Any());
+
+            foreach (var @group in groupedByFilename)
             {
-                if (!string.IsNullOrEmpty(group.FileName) && group.Files.Any())
-                    ScanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList());
+                ScanBase.FilesGroupedByFilename.Add(@group.FileName, @group.Files.ToList());
             }
         }
 
@@ -645,16 +651,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             ScanBase.FilesGroupedByHash.Clear();
             
-            var query2 = from p in _fileList
+            /*var query2 = from p in _fileList
                             where p.IsDeleteable
                             group p by p.FileSize into g
                             where g.Count() > 1
-                            select new { FileSize = g.Key, Files = g };
+                            select new { FileSize = g.Key, Files = g };*/
 
-            foreach (var group in query2)
+            var groupedByFileSize = _fileList
+                .Where(fileEntry => fileEntry.IsDeleteable)
+                .GroupBy(fileEntry => fileEntry.FileSize)
+                .Where(g => g.Count() > 1)
+                .Select(g => new {FileSize = g.Key, Files = g})
+                .Where(g => g.Files.Any());
+
+            foreach (var group in groupedByFileSize)
             {
-                if (!@group.Files.Any())
-                    continue;
+                /*if (!@group.Files.Any())
+                    continue;*/
                 
                 List<FileEntry> filesGroup = @group.Files.ToList();
 
@@ -670,9 +683,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             StatusText = "Getting checksums from files";
 
             // Sort file sizes from least to greatest
-            var fileSizesSorted = from p in filesGroupedBySize
+            /*var fileSizesSorted = from p in filesGroupedBySize
                         orderby p.Key ascending
-                        select p.Value;
+                        select p.Value;*/
+
+            var sortedByFileSize = filesGroupedBySize
+                .OrderBy(g => g.Key)
+                .Select(g => g.Value)
+                .Where(files => files.Count > 0);
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -685,44 +703,43 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 ProgressBar.Maximum = totalFiles;
             }));
 
-            foreach (List<FileEntry> files in fileSizesSorted)
+            foreach (List<FileEntry> files in sortedByFileSize)
             {
-                if (files.Count > 0)
+                foreach (FileEntry file in files)
                 {
-                    foreach (FileEntry file in files)
+                    CurrentFile = file.FilePath;
+
+                    file.GetChecksum(ScanBase.Options.HashAlgorithm.Algorithm, compareFilename);
+
+                    Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        CurrentFile = file.FilePath;
+                        ProgressBar.Value += 1;
+                        Main.TaskbarProgressValue = (ProgressBar.Value / ProgressBar.Maximum);
+                    }));
+                }
 
-                        file.GetChecksum(ScanBase.Options.HashAlgorithm.Algorithm, compareFilename);
-
-                        Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            ProgressBar.Value += 1;
-                            Main.TaskbarProgressValue = (ProgressBar.Value / ProgressBar.Maximum);
-                        }));
-                    }
-
-                    var query3 = from p in files
+                /*var query3 = from p in files
                                  group p by p.Checksum into g
                                  where g.Count() > 1
-                                 select new { Checksum = g.Key, Files = g.ToList() };
+                                 select new { Checksum = g.Key, Files = g.ToList() };*/
 
-                    foreach (var group in query3)
+                var groupedByChecksum = files
+                    .GroupBy(fileEntry => fileEntry.Checksum)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => new { Checksum = g.Key, Files = g.ToList() })
+                    .Where(group => !string.IsNullOrEmpty(@group.Checksum) && @group.Files.Any());
+
+                foreach (var @group in groupedByChecksum)
+                {
+                    if (!ScanBase.FilesGroupedByHash.ContainsKey(@group.Checksum))
+                        ScanBase.FilesGroupedByHash.Add(@group.Checksum, @group.Files);
+                    else
                     {
-                        if (!string.IsNullOrEmpty(group.Checksum) && group.Files.Any())
-                        {
-                            if (!ScanBase.FilesGroupedByHash.ContainsKey(group.Checksum))
-                                ScanBase.FilesGroupedByHash.Add(group.Checksum, group.Files);
-                            else
-                            {
-                                List<FileEntry> existingKey = ScanBase.FilesGroupedByHash[group.Checksum];
+                        List<FileEntry> existingKey = ScanBase.FilesGroupedByHash[@group.Checksum];
 
-                                var mergedList = existingKey.Union(group.Files).Distinct();
+                        var mergedList = existingKey.Union(@group.Files).Distinct();
 
-                                ScanBase.FilesGroupedByHash[group.Checksum] = mergedList.ToList();
-                            }
-                        }
-
+                        ScanBase.FilesGroupedByHash[@group.Checksum] = mergedList.ToList();
                     }
                 }
             }
@@ -763,14 +780,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             StatusText = "Grouping files by audio tags";
             CurrentFile = "Please wait...";
-
-            var query = from p in fileEntriesTags
+            
+            /*var query = from p in fileEntriesTags
                         where p.HasAudioTags
                         group p by p.TagsChecksum into g
                         where g.Count() > 1
-                        select new { Checksum = g.Key, Files = g.ToList() };
+                        select new { Checksum = g.Key, Files = g.ToList() };*/
 
-            foreach (var group in query)
+            var groupedByTagsChecksum = fileEntriesTags
+                .Where(fileEntry => fileEntry.HasAudioTags)
+                .GroupBy(fileEntry => fileEntry.TagsChecksum)
+                .Where(group => group.Count() > 1)
+                .Select(group => new {Checksum = group.Key, Files = group.ToList()});
+
+            foreach (var group in groupedByTagsChecksum)
             {
                 string checksum = group.Checksum;
                 List<FileEntry> files = group.Files;
