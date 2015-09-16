@@ -98,6 +98,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             _fileList = new List<FileEntry>();
 
+            // Clear previous results
+            ScanBase.FilesGroupedByFilename.Clear();
+            ScanBase.FilesGroupedByHash.Clear();
+
             // Increase total number of scans
             Settings.Default.totalScans++;
 
@@ -608,8 +612,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             Main.Watcher.Event("Duplicate Finder", "Group by filename");
 
-            ScanBase.FilesGroupedByFilename.Clear();
-
             /*var query = from p in _fileList
                         where p.IsDeleteable
                         group p by p.FileName into g
@@ -648,8 +650,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             CurrentFile = "Please wait...";
 
             Main.Watcher.Event("Duplicate Finder", "Group by checksum");
-
-            ScanBase.FilesGroupedByHash.Clear();
             
             /*var query2 = from p in _fileList
                             where p.IsDeleteable
