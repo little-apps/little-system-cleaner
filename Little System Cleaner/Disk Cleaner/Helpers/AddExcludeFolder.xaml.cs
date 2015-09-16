@@ -60,6 +60,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
             browserDlg.ShowDialog(new WindowWrapper(this));
             TextBox.Text = browserDlg.SelectedPath;
         }
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            string message =
+                "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
+                "Example: ?:\test matches a root folder named test";
+
+            MessageBox.Show(this, message, "Add Exclude Folder Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 
     public class AddExcludeFolderEventArgs : EventArgs
