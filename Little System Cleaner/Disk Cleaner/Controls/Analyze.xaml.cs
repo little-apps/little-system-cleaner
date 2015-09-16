@@ -29,6 +29,7 @@ using System.Windows.Shell;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
+using ThreadState = System.Threading.ThreadState;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
@@ -440,8 +441,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                return;
+            if (ThreadMain.IsAlive && ThreadMain.ThreadState == ThreadState.Running)
+            {
+                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    return;
+            }
             
             CancelAnalyze();
             ScanBase.MovePrev();
