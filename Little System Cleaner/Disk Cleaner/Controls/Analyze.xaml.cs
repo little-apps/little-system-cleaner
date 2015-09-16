@@ -144,9 +144,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Main.TaskbarProgressState = TaskbarItemProgressState.None;
                 ProgressBar.IsIndeterminate = false;
+                TextBlockPleaseWait.Visibility = Visibility.Hidden;
             }));
 
             CurrentFile = "";
+            
 
             if (success)
             {

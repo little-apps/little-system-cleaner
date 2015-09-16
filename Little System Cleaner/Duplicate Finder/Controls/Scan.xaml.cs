@@ -201,7 +201,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void ResetInfo(bool success)
         {
-            Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                ProgressBar.IsIndeterminate = false;
+                TextBlockPleaseWait.Visibility = Visibility.Hidden;
+            }));
             CurrentFile = "";
 
             if (success) 

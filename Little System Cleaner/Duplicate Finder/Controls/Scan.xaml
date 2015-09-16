@@ -29,7 +29,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 2 of 3</Label>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" Margin="0" Name="TextBlock1" HorizontalAlignment="Center" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24">Please wait until the scan finishes so that you can remove duplicate files</TextBlock>
+        <TextBlock Grid.Row="1" Margin="0" Name="TextBlockPleaseWait" HorizontalAlignment="Center" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center" Height="24">Please wait until the scan finishes so that you can remove duplicate files</TextBlock>
         <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Stretch" Height="43" Margin="0" Grid.Row="2" VerticalAlignment="Bottom" IsIndeterminate="True" />
         <TextBlock x:Name="CurrentStatus" HorizontalAlignment="Center" Margin="0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding StatusText}" />
         <TextBox Margin="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="{Binding CurrentFile}" IsReadOnly="True" />
