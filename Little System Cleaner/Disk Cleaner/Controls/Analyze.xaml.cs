@@ -278,12 +278,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             try
             {
-                if (Settings.Default.diskCleanerFindFilesMode == 0)
-                    dateTimeFile = fileInfo.CreationTime;
-                else if (Settings.Default.diskCleanerFindFilesMode == 1)
-                    dateTimeFile = fileInfo.LastWriteTime;
-                else if (Settings.Default.diskCleanerFindFilesMode == 2)
-                    dateTimeFile = fileInfo.LastAccessTime;
+                switch (Settings.Default.diskCleanerFindFilesMode)
+                {
+                    case 0:
+                        dateTimeFile = fileInfo.CreationTime;
+                        break;
+                    case 1:
+                        dateTimeFile = fileInfo.LastWriteTime;
+                        break;
+                    case 2:
+                        dateTimeFile = fileInfo.LastAccessTime;
+                        break;
+                }
             }
             catch (Exception ex)
             {
