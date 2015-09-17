@@ -144,7 +144,10 @@ namespace Little_System_Cleaner
             }
 
             if (!e.Cancel)
+            {
                 Watcher.Stop();
+                GarbageCollectAndFinalize();
+            }
         }
 
         private void imageHelp_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -262,6 +265,8 @@ namespace Little_System_Cleaner
             if (methodUnload != null)
                 bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
 
+            GarbageCollectAndFinalize();
+
             if (bUnload == true || !bUnload.HasValue)
             {
                 TabControl.SelectedIndex = index;
@@ -276,6 +281,15 @@ namespace Little_System_Cleaner
                 _ignoreSetTabControl = true;
                 ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
             }
+        }
+
+        /// <summary>
+        /// Calls GC.Collect() and GC.WaitForPendingFinalizers()
+        /// </summary>
+        private void GarbageCollectAndFinalize()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 	}
 }
