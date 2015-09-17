@@ -74,7 +74,7 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * [WPF TreeListView Control By Andrey Gliznetsov](http://www.codeproject.com/Articles/30721/WPF-TreeListView-Control)
  * [JumpTo RegEdit by Reto Ravasio](http://www.codeproject.com/Articles/20283/JumpTo-RegEdit)
  * [Task Scheduler Managed Wrapper by David Hall](http://taskscheduler.codeplex.com/)
- * [WPF GIF Animation by Artem S. Dmitriev](http://www.codeproject.com/Articles/71891/WPF-GIF-Animation)
+ * [WPF GIF Animation by Artem S. Dmitriev and Thomas Levesque](https://github.com/XamlAnimatedGif/WpfAnimatedGif)
  * [WPF Search Text Box by David Owens](http://davidowens.wordpress.com/2009/02/18/wpf-search-text-box/)
  * [TagLib by Scott Wheeler](http://taglib.github.io/)
  
