@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     internal class GifFrame : GifBlock
     {
@@ -17,7 +17,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind => GifBlockKind.GraphicRendering;
+        internal override GifBlockKind Kind
+        {
+            get { return GifBlockKind.GraphicRendering; }
+        }
 
         internal static GifFrame ReadFrame(Stream stream, IEnumerable<GifExtension> controlExtensions, bool metadataOnly)
         {

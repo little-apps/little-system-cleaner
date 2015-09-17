@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     internal class GifHeader : GifBlock
     {
@@ -12,7 +12,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind => GifBlockKind.Other;
+        internal override GifBlockKind Kind
+        {
+            get { return GifBlockKind.Other; }
+        }
 
         internal static GifHeader ReadHeader(Stream stream)
         {

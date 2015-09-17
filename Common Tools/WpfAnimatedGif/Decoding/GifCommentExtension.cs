@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     internal class GifCommentExtension : GifExtension
     {
@@ -13,7 +13,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind => GifBlockKind.SpecialPurpose;
+        internal override GifBlockKind Kind
+        {
+            get { return GifBlockKind.SpecialPurpose; }
+        }
 
         internal static GifCommentExtension ReadComment(Stream stream)
         {

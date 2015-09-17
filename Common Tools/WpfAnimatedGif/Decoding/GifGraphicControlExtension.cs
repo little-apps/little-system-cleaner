@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     // label 0xF9
     internal class GifGraphicControlExtension : GifExtension
@@ -20,7 +20,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
 
         }
 
-        internal override GifBlockKind Kind => GifBlockKind.Control;
+        internal override GifBlockKind Kind
+        {
+            get { return GifBlockKind.Control; }
+        }
 
         internal static GifGraphicControlExtension ReadGraphicsControl(Stream stream)
         {

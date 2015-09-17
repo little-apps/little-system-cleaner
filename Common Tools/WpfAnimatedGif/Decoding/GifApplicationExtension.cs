@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     // label 0xFF
     internal class GifApplicationExtension : GifExtension
@@ -18,7 +18,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind => GifBlockKind.SpecialPurpose;
+        internal override GifBlockKind Kind
+        {
+            get { return GifBlockKind.SpecialPurpose; }
+        }
 
         internal static GifApplicationExtension ReadApplication(Stream stream)
         {

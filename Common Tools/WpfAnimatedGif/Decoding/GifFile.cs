@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     internal class GifFile
     {
@@ -38,7 +38,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                                 .OfType<GifApplicationExtension>()
                                 .FirstOrDefault(GifHelpers.IsNetscapeExtension);
 
-            RepeatCount = netscapeExtension != null ? GifHelpers.GetRepeatCount(netscapeExtension) : (ushort)1;
+            if (netscapeExtension != null)
+                RepeatCount = GifHelpers.GetRepeatCount(netscapeExtension);
+            else
+                RepeatCount = 1;
         }
 
         private void ReadFrames(Stream stream, bool metadataOnly)
@@ -53,10 +56,9 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                 if (block.Kind == GifBlockKind.GraphicRendering)
                     controlExtensions = new List<GifExtension>();
 
-                var item = block as GifFrame;
-                if (item != null)
+                if (block is GifFrame)
                 {
-                    frames.Add(item);
+                    frames.Add((GifFrame)block);
                 }
                 else if (block is GifExtension)
                 {
@@ -69,7 +71,6 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                         case GifBlockKind.SpecialPurpose:
                             specialExtensions.Add(extension);
                             break;
-                        // Just ignore plain text extensions, as most software don't support them.
                     }
                 }
                 else if (block is GifTrailer)

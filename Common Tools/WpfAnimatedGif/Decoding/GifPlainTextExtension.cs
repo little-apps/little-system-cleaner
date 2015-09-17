@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     // label 0x01
     internal class GifPlainTextExtension : GifExtension
@@ -28,7 +28,10 @@ namespace CommonTools.WpfAnimatedGif.Decoding
         {
         }
 
-        internal override GifBlockKind Kind => GifBlockKind.GraphicRendering;
+        internal override GifBlockKind Kind
+        {
+            get { return GifBlockKind.GraphicRendering; }
+        }
 
         internal static GifPlainTextExtension ReadPlainText(Stream stream, IEnumerable<GifExtension> controlExtensions, bool metadataOnly)
         {

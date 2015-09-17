@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
-namespace CommonTools.WpfAnimatedGif
+namespace WpfAnimatedGif
 {
     static class AnimationCache
     {
@@ -21,14 +21,15 @@ namespace CommonTools.WpfAnimatedGif
 
             private bool Equals(CacheKey other)
             {
-                return ImageEquals(_source, other._source) && Equals(_repeatBehavior, other._repeatBehavior);
+                return ImageEquals(_source, other._source)
+                    && Equals(_repeatBehavior, other._repeatBehavior);
             }
 
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != GetType()) return false;
+                if (obj.GetType() != this.GetType()) return false;
                 return Equals((CacheKey)obj);
             }
 
@@ -50,20 +51,19 @@ namespace CommonTools.WpfAnimatedGif
                 }
                 return 0;
             }
+
             private static bool ImageEquals(ImageSource x, ImageSource y)
             {
                 if (Equals(x, y))
                     return true;
                 if ((x == null) != (y == null))
                     return false;
-
                 // They can't both be null or Equals would have returned true
                 // and if any is null, the previous would have detected it
                 // ReSharper disable PossibleNullReferenceException
                 if (x.GetType() != y.GetType())
                     return false;
                 // ReSharper restore PossibleNullReferenceException
-
                 var xUri = GetUri(x);
                 var yUri = GetUri(y);
                 return xUri != null && xUri == yUri;
@@ -72,9 +72,13 @@ namespace CommonTools.WpfAnimatedGif
             private static Uri GetUri(ImageSource image)
             {
                 var bmp = image as BitmapImage;
-                if (bmp?.BaseUri != null && bmp.UriSource != null && !bmp.UriSource.IsAbsoluteUri)
-                    return new Uri(bmp.BaseUri, bmp.UriSource);
-
+                if (bmp != null && bmp.UriSource != null)
+                {
+                    if (bmp.UriSource.IsAbsoluteUri)
+                        return bmp.UriSource;
+                    if (bmp.BaseUri != null)
+                        return new Uri(bmp.BaseUri, bmp.UriSource);
+                }
                 var frame = image as BitmapFrame;
                 if (frame != null)
                 {
@@ -93,39 +97,34 @@ namespace CommonTools.WpfAnimatedGif
                 }
                 return null;
             }
-
         }
 
         private static readonly Dictionary<CacheKey, ObjectAnimationUsingKeyFrames> _animationCache = new Dictionary<CacheKey, ObjectAnimationUsingKeyFrames>();
-
-        private static readonly Dictionary<CacheKey, int> ReferenceCount = new Dictionary<CacheKey, int>();
-
-        private static readonly Dictionary<CacheKey, AnimationClock> ClockCache = new Dictionary<CacheKey, AnimationClock>();
+        private static readonly Dictionary<CacheKey, int> _referenceCount = new Dictionary<CacheKey, int>();
 
         public static void IncrementReferenceCount(ImageSource source, RepeatBehavior repeatBehavior)
         {
             var cacheKey = new CacheKey(source, repeatBehavior);
             int count;
-            ReferenceCount.TryGetValue(cacheKey, out count);
+            _referenceCount.TryGetValue(cacheKey, out count);
             count++;
-            ReferenceCount[cacheKey] = count;
+            _referenceCount[cacheKey] = count;
         }
 
         public static void DecrementReferenceCount(ImageSource source, RepeatBehavior repeatBehavior)
         {
             var cacheKey = new CacheKey(source, repeatBehavior);
             int count;
-            ReferenceCount.TryGetValue(cacheKey, out count);
+            _referenceCount.TryGetValue(cacheKey, out count);
             if (count > 0)
             {
                 count--;
-                ReferenceCount[cacheKey] = count;
+                _referenceCount[cacheKey] = count;
             }
             if (count == 0)
             {
                 _animationCache.Remove(cacheKey);
-                ReferenceCount.Remove(cacheKey);
-                ClockCache.Remove(cacheKey);
+                _referenceCount.Remove(cacheKey);
             }
         }
 
@@ -147,20 +146,6 @@ namespace CommonTools.WpfAnimatedGif
             ObjectAnimationUsingKeyFrames animation;
             _animationCache.TryGetValue(key, out animation);
             return animation;
-        }
-
-        public static void AddClock(ImageSource source, RepeatBehavior repeatBehavior, AnimationClock clock)
-        {
-            var key = new CacheKey(source, repeatBehavior);
-            ClockCache[key] = clock;
-        }
-
-        public static AnimationClock GetClock(ImageSource source, RepeatBehavior repeatBehavior)
-        {
-            var key = new CacheKey(source, repeatBehavior);
-            AnimationClock clock;
-            ClockCache.TryGetValue(key, out clock);
-            return clock;
         }
     }
 }

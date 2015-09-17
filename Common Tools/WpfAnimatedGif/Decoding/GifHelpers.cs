@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace CommonTools.WpfAnimatedGif.Decoding
+namespace WpfAnimatedGif.Decoding
 {
     internal static class GifHelpers
     {
@@ -23,10 +23,12 @@ namespace CommonTools.WpfAnimatedGif.Decoding
                 {
                     byte[] bytes = new byte[len];
                     stream.ReadAll(bytes, 0, len);
-                    ms?.Write(bytes, 0, len);
+                    if (ms != null)
+                        ms.Write(bytes, 0, len);
                 }
-
-                return ms?.ToArray();
+                if (ms != null)
+                    return ms.ToArray();
+                return null;
             }
         }
 
@@ -78,7 +80,12 @@ namespace CommonTools.WpfAnimatedGif.Decoding
 
         public static Exception InvalidBlockSizeException(string blockName, int expectedBlockSize, int actualBlockSize)
         {
-            return new GifDecoderException($"Invalid block size for {blockName}. Expected {expectedBlockSize}, but was {actualBlockSize}");
+            return new GifDecoderException(
+                string.Format(
+                    "Invalid block size for {0}. Expected {1}, but was {2}",
+                    blockName,
+                    expectedBlockSize,
+                    actualBlockSize));
         }
 
         public static Exception InvalidSignatureException(string signature)
