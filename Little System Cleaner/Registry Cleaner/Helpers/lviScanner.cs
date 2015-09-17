@@ -49,27 +49,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         public void LoadGif()
         {
-            /*Image = new Image();
-
-            BitmapSource gif = Imaging.CreateBitmapSourceFromHBitmap(Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            ImageBehavior.SetAnimatedSource(Image, gif);*/
-
-            //Image = @"pack://application:,,,\Resources\ajax-loader.gif";
             AnimatedImage = "/Little_System_Cleaner;component/Resources/ajax-loader.gif";
         }
 
         public void UnloadGif()
         {
-            /*Image = null;
-
-            Image = new Image
-            {
-                Source =
-                    Imaging.CreateBitmapSourceFromHBitmap(
-                        Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-                        BitmapSizeOptions.FromEmptyOptions())
-            };*/
-
             AnimatedImage = "";
             Image = @"/Little_System_Cleaner;component/Resources/registry cleaner/finished-scanning.png";
         }
