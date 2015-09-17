@@ -347,9 +347,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
 
                 // Check for unused progid/extension
+                RegistryKey regKeyProgId = null;
                 try
                 {
-                    var regKeyProgId = regKey.OpenSubKey(subKey);
+                    regKeyProgId = regKey.OpenSubKey(subKey);
 
                     if (regKeyProgId?.ValueCount <= 0 && regKeyProgId.SubKeyCount <= 0)
                         Wizard.StoreInvalidKey(Strings.InvalidProgIDFileExt, regKeyProgId.Name);
@@ -360,7 +361,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 finally
                 {
-                    regKey?.Close();
+                    regKeyProgId?.Close();
                 }
             }
 
