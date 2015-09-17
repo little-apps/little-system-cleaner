@@ -1,11 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
-using WpfAnimatedGif;
-using Little_System_Cleaner.Properties;
+﻿using System.ComponentModel;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
