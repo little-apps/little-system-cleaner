@@ -233,9 +233,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        private Image _image;
+        private string _image;
 
-        public Image Image
+        public string Image
         {
             get { return _image; }
             set
@@ -250,6 +250,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
+        private string _animatedImage;
+
+        public string AnimatedImage
+        {
+            get { return _animatedImage; }
+            set
+            {
+                if (Parent != null)
+                    Parent.AnimatedImage = value;
+                else
+                {
+                    _animatedImage = value;
+                    OnPropertyChanged("AnimatedImage");
+                }
+            }
+        }
+
         public void LoadGif()
         {
             if (Parent != null)
@@ -258,10 +275,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 return;
             }
 
-            Image = new Image();
-
-            BitmapSource gif = Imaging.CreateBitmapSourceFromHBitmap(Resources.ajax_loader.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            ImageBehavior.SetAnimatedSource(Image, gif);
+            AnimatedImage = "/Little_System_Cleaner;component/Resources/ajax-loader.gif";
         }
 
         public void UnloadGif()
@@ -272,14 +286,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 return;
             }
 
-            Image = null;
-
-            Image = new Image
-            {
-                Source =
-                    Imaging.CreateBitmapSourceFromHBitmap(Resources.finished_scanning.GetHbitmap(), IntPtr.Zero,
-                        Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())
-            };
+            AnimatedImage = "";
+            Image = @"/Little_System_Cleaner;component/Resources/registry cleaner/finished-scanning.png";
         }
 
         public ResultNode Results;
