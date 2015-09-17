@@ -30,14 +30,11 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
-using WpfAnimatedGif;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Little_System_Cleaner.Properties;
 using Microsoft.Win32;
-using Image = System.Windows.Controls.Image;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
