@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:gif="clr-namespace:CommonTools.WpfAnimatedGif;assembly=CommonTools"
+             xmlns:gif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinHeight="384" MinWidth="579">
