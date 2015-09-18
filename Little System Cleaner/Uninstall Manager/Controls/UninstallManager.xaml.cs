@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -164,16 +165,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
 
             // Populate list view
-            foreach (ProgramInfo progInfo in listProgInfo)
+            foreach (ProgramInfo progInfo in listProgInfo.Where(progInfo => (!string.IsNullOrEmpty(progInfo.DisplayName))
+                                                                            && (string.IsNullOrEmpty(progInfo.ParentKeyName))
+                                                                            && (!progInfo.SystemComponent)).Where(progInfo => regex.IsMatch(progInfo.Program)))
             {
-                if ((!string.IsNullOrEmpty(progInfo.DisplayName))
-                    && (string.IsNullOrEmpty(progInfo.ParentKeyName))
-                    && (!progInfo.SystemComponent))
-                {
-
-                    if (regex.IsMatch(progInfo.Program))
-                        ProgramInfos.Add(progInfo);
-                }
+                ProgramInfos.Add(progInfo);
             }
 
             // Resize columns
