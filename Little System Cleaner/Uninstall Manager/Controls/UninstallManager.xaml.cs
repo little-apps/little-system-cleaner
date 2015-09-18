@@ -50,10 +50,10 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((ListViewProgs.View as GridView).Columns[0], ListSortDirection.Ascending);
+            Sort((ListViewProgs.View as GridView)?.Columns[0], _lastDirection);
         }
 
-        public bool OnUnloaded(bool forceExit)
+	    public bool OnUnloaded(bool forceExit)
         {
             if (ProgramInfos.Count > 0)
                 ProgramInfos.Clear();
@@ -241,12 +241,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Main.Watcher.Event("Uninstall Manager", "Remove from registry");
-                progInfo.RemoveFromRegistry();
+                progInfo?.RemoveFromRegistry();
 
                 PopulateListView();
 
                 // Manually sort listview
-                Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
+                Sort((ListViewProgs.View as GridView)?.Columns[0], _lastDirection);
             }
         }
 
@@ -263,12 +263,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Main.Watcher.Event("Uninstall Manager", "Uninstall");
-                progInfo.Uninstall();
+                progInfo?.Uninstall();
 
                 PopulateListView();
 
                 // Manually sort listview
-                Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
+                Sort((ListViewProgs.View as GridView)?.Columns[0], _lastDirection);
             }
         }
 
@@ -277,7 +277,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             PopulateListView();
 
             // Manually sort listview
-            Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
+            Sort((ListViewProgs.View as GridView)?.Columns[0], _lastDirection);
         }
 
 	}
