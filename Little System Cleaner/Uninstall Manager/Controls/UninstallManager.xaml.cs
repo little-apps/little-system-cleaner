@@ -246,12 +246,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             {
                 Main.Watcher.Event("Uninstall Manager", "Remove from registry");
                 progInfo.RemoveFromRegistry();
+
+                PopulateListView();
+
+                // Manually sort listview
+                Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
             }
-
-            PopulateListView();
-
-            // Manually sort listview
-            Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
         }
 
         private void buttonUninstall_Click(object sender, RoutedEventArgs e)
@@ -268,12 +268,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             {
                 Main.Watcher.Event("Uninstall Manager", "Uninstall");
                 progInfo.Uninstall();
-            }
-                    
-            PopulateListView();
 
-            // Manually sort listview
-            Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
+                PopulateListView();
+
+                // Manually sort listview
+                Sort((ListViewProgs.View as GridView).Columns[0], _lastDirection);
+            }
         }
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
