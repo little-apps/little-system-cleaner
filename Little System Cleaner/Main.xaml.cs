@@ -286,7 +286,7 @@ namespace Little_System_Cleaner
         /// <summary>
         /// Calls GC.Collect() and GC.WaitForPendingFinalizers()
         /// </summary>
-        private void GarbageCollectAndFinalize()
+        private static void GarbageCollectAndFinalize()
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
