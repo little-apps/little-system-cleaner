@@ -79,6 +79,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Misc\DynamicUserControl.cs" />
+    <Compile Include="Startup Manager\Helpers\LoadProgram.xaml.cs">
+      <DependentUpon>LoadProgram.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Uninstall Manager\Helpers\ProgramInfoSorter.cs" />
     <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
       <SubType>Designer</SubType>
@@ -133,6 +137,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Duplicate Finder\Controls\Start.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Startup Manager\Helpers\LoadProgram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

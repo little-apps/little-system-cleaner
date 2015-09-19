@@ -24,6 +24,7 @@ using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Startup_Manager.Helpers;
 using Microsoft.Win32;
+using LoadProgram = Little_System_Cleaner.Startup_Manager.Helpers.LoadProgram;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {
@@ -295,7 +296,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
             Main.Watcher.Event("Startup Manager", "Run");
 
-            string message;
+            /*string message;
 
             try
             {
@@ -322,7 +323,10 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     message = "The startup entry command (" + node.Command + ") could not be executed.\nThe following error occurred: " + ex.Message;
 
                 MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            }*/
+
+            LoadProgram loadProgram = new LoadProgram(node.Path, node.Args);
+            loadProgram.ShowDialog();
         }   
 	}
 }
