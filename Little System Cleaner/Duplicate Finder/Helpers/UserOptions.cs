@@ -29,7 +29,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private bool? _onlySelectedDrives = false;
         private bool? _onlySelectedFolders = false;
 
-        private bool? _compareMusicTags = false;
+        private int _scanMethod = 0;
 
         private bool? _skipTempFiles = false;
         private bool? _skipSysAppDirs = false;
@@ -101,34 +101,44 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         #endregion
 
         #region Files Properties
-        private bool? _compareChecksumFilename = false;
-        private bool? _compareChecksum = true;
-        private bool? _compareFileName = false;
-
         public bool? CompareChecksumFilename
         {
-            get { return _compareChecksumFilename; }
-            set { _compareChecksumFilename = value; }
+            get { return (_scanMethod == 0); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    _scanMethod = 0;
+            }
         }
 
         public bool? CompareChecksum
         {
-            get { return _compareChecksum; }
-            set { _compareChecksum = value; }
+            get { return (_scanMethod == 1); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    _scanMethod = 1;
+            }
         }
 
         public bool? CompareFilename
         {
-            get { return _compareFileName; }
-            set { _compareFileName = value; }
+            get { return (_scanMethod == 2); }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    _scanMethod = 2;
+            }
         }
 
         public bool? CompareMusicTags
         {
-            get { return _compareMusicTags.GetValueOrDefault(); }
+            get { return (_scanMethod == 3); }
             set
             {
-                _compareMusicTags = value;
+                if (value.GetValueOrDefault())
+                    _scanMethod = 3;
+
                 OnPropertyChanged("MusicTagsEnabled");
             }
         }
