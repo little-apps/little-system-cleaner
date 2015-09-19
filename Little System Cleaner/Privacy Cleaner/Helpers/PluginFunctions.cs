@@ -179,7 +179,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     case "IfSubKey":
                     {
                         string searchText = xmlChildren.GetAttribute("SearchText");
-                        bool recurse = ((xmlChildren.GetAttribute("Recursive") == "Y") ? (true) : (false));
+                        bool recurse = (xmlChildren.GetAttribute("Recursive") == "Y");
 
                         regexSubKeys.Add(searchText, recurse);
                     }

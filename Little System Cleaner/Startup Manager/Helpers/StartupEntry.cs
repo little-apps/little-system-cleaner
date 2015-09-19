@@ -5,19 +5,8 @@ using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
-    public class StartupEntry : INotifyPropertyChanged
+    public class StartupEntry
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
         private string _cmd;
 
         public ObservableCollection<StartupEntry> Children { get; } = new ObservableCollection<StartupEntry>();

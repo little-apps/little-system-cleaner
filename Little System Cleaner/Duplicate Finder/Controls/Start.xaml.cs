@@ -27,7 +27,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             DataContext = _scanBase.Options;
 
             // Get drives that are checked
-            var drivesChecked = _scanBase.Options.Drives.Where(includeDrive => includeDrive.IsChecked.GetValueOrDefault()).ToList<IncludeDrive>();
+            var drivesChecked = _scanBase.Options.Drives.Where(includeDrive => includeDrive.IsChecked.GetValueOrDefault()).ToList();
 
             // Clear drives
             _scanBase.Options.Drives.Clear();  

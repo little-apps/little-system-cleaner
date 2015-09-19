@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
 using System;
 using System.Windows;
 using Application = System.Windows.Forms.Application;

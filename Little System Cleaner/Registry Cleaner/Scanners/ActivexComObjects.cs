@@ -728,8 +728,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (string.IsNullOrEmpty(guid))
                 return true;
 
-            if (!ClsidExists(guid))
-                ret = false;
+            if (ClsidExists(guid))
+                ret = true;
 
             if (SafeInprocServerExists(Registry.ClassesRoot, "CLSID\\" + guid))
                 ret = true;

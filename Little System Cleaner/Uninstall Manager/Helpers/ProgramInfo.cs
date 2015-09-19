@@ -156,7 +156,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             NoModify = ConvertToNullableInt32(TryGetValue(regKey, "NoModify"));
             NoRepair = ConvertToNullableInt32(TryGetValue(regKey, "NoRepair"));
 
-            SystemComponent = ((ConvertToNullableInt32(TryGetValue(regKey, "SystemComponent", 0)).GetValueOrDefault() == 1) ? (true) : (false));
+            SystemComponent = (ConvertToNullableInt32(TryGetValue(regKey, "SystemComponent", 0)).GetValueOrDefault() == 1);
             _windowsInstaller = ConvertToNullableInt32(TryGetValue(regKey, "WindowsInstaller", 0));
             EstimatedSize = ConvertToNullableInt32(TryGetValue(regKey, "EstimatedSize", 0));
 

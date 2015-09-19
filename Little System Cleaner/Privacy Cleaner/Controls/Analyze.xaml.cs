@@ -35,19 +35,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
     /// <summary>
     /// Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class Analyze : INotifyPropertyChanged
+    public partial class Analyze
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-        
         readonly Wizard _scanBase;
         readonly Timer _timerUpdate = new Timer(200);
         int _currentListViewParentIndex = -1;
@@ -215,8 +204,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 return;
             }
 
-            if (_currentListViewParentIndex != parentSection)
-                _currentListViewParentIndex = parentSection;
+            _currentListViewParentIndex = parentSection;
 
             ProgressBar.Value++;
             _currentListViewIndex++;

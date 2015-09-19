@@ -1,26 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     [Serializable]
-    public class IncludeDrive : INotifyPropertyChanged
+    public class IncludeDrive
     {
-        #region INotifyPropertyChanged Members
-        [field: NonSerialized]
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
         public bool? IsChecked { get; set; } = true;
 
         public string Name { get; }
