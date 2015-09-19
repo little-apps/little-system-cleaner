@@ -101,20 +101,42 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         #endregion
 
         #region Files Properties
-        public bool? CompareChecksumFilename { get; set; } = false;
+        private bool? _compareChecksumFilename = false;
+        private bool? _compareChecksum = true;
+        private bool? _compareFileName = false;
 
-        public bool? CompareChecksum { get; set; } = true;
+        public bool? CompareChecksumFilename
+        {
+            get { return _compareChecksumFilename; }
+            set { _compareChecksumFilename = value; }
+        }
 
-        public bool? CompareFilename { get; set; } = false;
+        public bool? CompareChecksum
+        {
+            get { return _compareChecksum; }
+            set { _compareChecksum = value; }
+        }
+
+        public bool? CompareFilename
+        {
+            get { return _compareFileName; }
+            set { _compareFileName = value; }
+        }
 
         public bool? CompareMusicTags
         {
-            get { return _compareMusicTags; }
+            get { return _compareMusicTags.GetValueOrDefault(); }
             set
             {
                 _compareMusicTags = value;
                 OnPropertyChanged("MusicTagsEnabled");
             }
+        }
+
+        public string CompareChecksumFilenameString
+        {
+            get { return Convert.ToString(CompareChecksumFilename); }
+            set { CompareChecksumFilename = Convert.ToBoolean(value); }
         }
 
         public bool? SkipTempFiles
