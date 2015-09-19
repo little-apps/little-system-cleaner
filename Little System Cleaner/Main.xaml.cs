@@ -261,6 +261,10 @@ namespace Little_System_Cleaner
             bool? bUnload = null;
 
             UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
+
+            if (lastCtrl is DynamicUserControl)
+                lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
+
             MethodBase methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
                 bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
