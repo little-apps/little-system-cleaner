@@ -133,12 +133,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        public string CompareChecksumFilenameString
-        {
-            get { return Convert.ToString(CompareChecksumFilename); }
-            set { CompareChecksumFilename = Convert.ToBoolean(value); }
-        }
-
         public bool? SkipTempFiles
         {
             get { return _skipTempFiles; }
