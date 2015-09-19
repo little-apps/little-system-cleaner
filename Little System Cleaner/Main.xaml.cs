@@ -41,13 +41,10 @@ namespace Little_System_Cleaner
                 {
                     Main currentWindow = Application.Current.MainWindow as Main;
 
-                    if (currentWindow != null)
-                    {
-                        TaskbarItemInfo taskBarItemInfo = currentWindow.TaskBarItemInfo;
+                    TaskbarItemInfo taskBarItemInfo = currentWindow?.TaskBarItemInfo;
 
-                        if (taskBarItemInfo != null)
-                            taskBarItemInfo.ProgressState = value;
-                    }
+                    if (taskBarItemInfo != null)
+                        taskBarItemInfo.ProgressState = value;
                 }
                 
             }
@@ -55,13 +52,21 @@ namespace Little_System_Cleaner
 
         internal static double TaskbarProgressValue
         {
-            get { return (Application.Current.MainWindow as Main).TaskBarItemInfo.ProgressValue; }
+            get
+            {
+                var main = Application.Current.MainWindow as Main;
+                if (main != null)
+                    return main.TaskBarItemInfo.ProgressValue;
+
+                throw new NullReferenceException();
+            }
             set
             {
-                TaskbarItemInfo taskBarItemInfo = (Application.Current.MainWindow as Main).TaskBarItemInfo;
+                var main = Application.Current.MainWindow as Main;
+                TaskbarItemInfo taskBarItemInfo = main?.TaskBarItemInfo;
 
                 if (taskBarItemInfo != null)
-                    taskBarItemInfo.ProgressValue = value; 
+                    taskBarItemInfo.ProgressValue = value;
             }
         }
 
