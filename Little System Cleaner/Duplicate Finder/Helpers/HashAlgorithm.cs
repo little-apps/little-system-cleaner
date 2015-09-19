@@ -1,12 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
+    [Serializable]
     public class HashAlgorithm : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
-
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string prop)

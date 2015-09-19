@@ -25,7 +25,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public Wizard()
         {
-            Options = new UserOptions();
+            Options = UserOptions.GetUserOptions();
 
             Controls.Add(typeof(Start));
             Controls.Add(typeof(Scan));
@@ -60,6 +60,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
             return exit;
+        }
+
+        public override void MovePrev(bool autoMove = true)
+        {
+            UserOptions.StoreUserOptions(Options);
+
+            base.MovePrev(autoMove);
+        }
+
+        public override void MoveNext(bool autoMove = true)
+        {
+            UserOptions.StoreUserOptions(Options);
+
+            base.MoveNext(autoMove);
         }
 
         public void ShowFileInfo(FileEntry fileEntry)

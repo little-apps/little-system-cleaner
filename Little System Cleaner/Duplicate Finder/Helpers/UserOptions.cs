@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
+    [Serializable]
     public class UserOptions : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
-
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string prop)
@@ -40,7 +43,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         #region Drives/Folders Properties
         public ObservableCollection<IncludeDrive> Drives { get; } = new ObservableCollection<IncludeDrive>();
 
-        public ObservableCollection<IncludeFolder> IncFolders { get; } = new ObservableCollection<IncludeFolder>();
+        public ObservableCollection<IncludeFolder> IncFolders { get; set; } = new ObservableCollection<IncludeFolder>();
 
         public IncludeFolder IncludeFolderSelected
         {
@@ -323,5 +326,41 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
         #endregion
+
+        public static void StoreUserOptions(UserOptions userOptions)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(ms, userOptions);
+
+                ms.Position = 0;
+                byte[] buffer = new byte[(int)ms.Length];
+                ms.Read(buffer, 0, buffer.Length);
+
+                Properties.Settings.Default.duplicateFinderOptions = Convert.ToBase64String(buffer);
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        public static UserOptions GetUserOptions()
+        {
+            UserOptions userOptions;
+
+            try
+            {
+                using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(Properties.Settings.Default.duplicateFinderOptions)))
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    userOptions = (UserOptions)bf.Deserialize(ms); // Throws exception if stream is empty or cant be deserialized
+                }
+            }
+            catch
+            {
+                userOptions = new UserOptions();
+            }
+            
+            return userOptions;
+        }
     }
 }

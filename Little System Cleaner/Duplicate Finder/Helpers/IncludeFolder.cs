@@ -4,10 +4,11 @@ using System.IO;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
+    [Serializable]
     public class IncludeFolder : INotifyPropertyChanged, IEquatable<IncludeFolder>
     {
         #region INotifyPropertyChanged Members
-
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string prop)

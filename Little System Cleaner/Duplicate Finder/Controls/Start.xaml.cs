@@ -26,21 +26,31 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             DataContext = _scanBase.Options;
 
-            if (_scanBase.Options.Drives.Count > 0)
-                _scanBase.Options.Drives.Clear();
+            // Get drives that are checked
+            var drivesChecked = _scanBase.Options.Drives.Where(includeDrive => includeDrive.IsChecked.GetValueOrDefault()).ToList<IncludeDrive>();
 
-            if (_scanBase.Options.IncFolders.Count > 0)
-                _scanBase.Options.IncFolders.Clear();
+            // Clear drives
+            _scanBase.Options.Drives.Clear();  
 
             try {
-                foreach (DriveInfo di in DriveInfo.GetDrives())
+                // Iterate through drives and check drive if checked in previous list
+                foreach (IncludeDrive includeDriveToAdd in DriveInfo.GetDrives().Select(di => new IncludeDrive(di)))
                 {
-                    _scanBase.Options.Drives.Add(new IncludeDrive(di));
+                    var isChecked = drivesChecked.Contains(includeDriveToAdd);
+                    includeDriveToAdd.IsChecked = isChecked;
+
+                    _scanBase.Options.Drives.Add(includeDriveToAdd);
                 }
             }
             catch (UnauthorizedAccessException ex)
             {
                 Debug.WriteLine("The following error occurred: {0}\nUnable to get list of drives.", ex.Message);
+            }
+
+            // Only include directories that exist
+            if (_scanBase.Options.IncFolders.Count > 0)
+            {
+                _scanBase.Options.IncFolders = new System.Collections.ObjectModel.ObservableCollection<IncludeFolder>(_scanBase.Options.IncFolders.Where(includeFolder => Directory.Exists(includeFolder.Name)));
             }
 
             _scanBase.Options.SkipTempFiles = true;
