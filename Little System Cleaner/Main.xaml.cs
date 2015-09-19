@@ -269,9 +269,22 @@ namespace Little_System_Cleaner
 
             if (bUnload == true || !bUnload.HasValue)
             {
+                var prevContent = TabControl.SelectedContent;
+
+                // If DynamicUserControl -> clear Content
+                if (prevContent is DynamicUserControl)
+                {
+                    (prevContent as DynamicUserControl).ClearUserControl();
+                }
+
                 TabControl.SelectedIndex = index;
 
-                UserControl nextCtrl = (TabControl.SelectedContent as UserControl);
+                var selectedContent = TabControl.SelectedContent;
+
+                var nextCtrl = selectedContent is DynamicUserControl
+                    ? (selectedContent as DynamicUserControl).InitUserControl()
+                    : TabControl.SelectedContent as UserControl;
+                
                 MethodBase methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
                 methodLoad?.Invoke(nextCtrl, new object[] { });
             }

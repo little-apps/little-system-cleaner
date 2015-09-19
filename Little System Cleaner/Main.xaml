@@ -11,6 +11,7 @@
     xmlns:uninstallMgr="clr-namespace:Little_System_Cleaner.Uninstall_Manager.Controls"
     xmlns:options="clr-namespace:Little_System_Cleaner.Tab_Controls.Options"
     xmlns:tabControls="clr-namespace:Little_System_Cleaner.Tab_Controls"
+    xmlns:misc="clr-namespace:Little_System_Cleaner.Misc"
     x:Class="Little_System_Cleaner.Main"
 	x:Name="Window"
 	Title="Little System Cleaner" 
@@ -264,26 +265,27 @@
                 <tabControls:Welcome />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemScanWiz">
-                <regCleanCntrls:Wizard />
+                <!--<regCleanCntrls:Wizard />-->
+                <misc:DynamicUserControl Type="{x:Type regCleanCntrls:Wizard}" />
             </TabItem>
 
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemStartupMgr">
-                <startupMgr:StartupManager />
+                <misc:DynamicUserControl Type="{x:Type startupMgr:StartupManager}" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemUninstallMgr">
-                <uninstallMgr:UninstallManager />
+                <misc:DynamicUserControl Type="{x:Type uninstallMgr:UninstallManager}" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemRegOptimizer">
-                <regOptimizeCntrls:Wizard />
+                <misc:DynamicUserControl Type="{x:Type regOptimizeCntrls:Wizard}" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemDiskCleaner">
-                <diskCleanCntrls:Wizard />
+                <misc:DynamicUserControl Type="{x:Type diskCleanCntrls:Wizard}" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemPrivacyCleaner">
-                <privacyCleanCntrls:Wizard />
+                <misc:DynamicUserControl Type="{x:Type privacyCleanCntrls:Wizard}" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemDuplicateFinder">
-                <duplicateFinderCntrls:Wizard />
+                <misc:DynamicUserControl Type="{x:Type duplicateFinderCntrls:Wizard}" />
             </TabItem>
             <TabItem Style="{DynamicResource WindowTabItem}" Name="TabItemOptions">
                 <options:Options />
