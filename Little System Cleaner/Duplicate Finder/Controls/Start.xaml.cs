@@ -82,6 +82,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     else
                     {
                         _scanBase.Options.ExcludeFolders.Add(excFolder);
+
                         MessageBox.Show(Application.Current.MainWindow, "The selected folder has been excluded from the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
@@ -132,6 +133,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     else
                     {
                         _scanBase.Options.IncFolders.Add(incFolder);
+
                         MessageBox.Show(Application.Current.MainWindow, "The selected folder has been included in the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
@@ -201,6 +203,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return;
                 }
             }
+
+            UserOptions.StoreUserOptions(_scanBase.Options);
 
             _scanBase.MoveNext();
         }

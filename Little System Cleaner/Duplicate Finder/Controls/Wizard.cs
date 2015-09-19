@@ -41,6 +41,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             bool exit;
 
+            var start = CurrentControl as Start;
+            if (start != null)
+            {
+                UserOptions.StoreUserOptions(Options);
+
+                return true;
+            }
+
             var scan = CurrentControl as Scan;
             if (scan != null)
             {
@@ -60,20 +68,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
 
             return exit;
-        }
-
-        public override void MovePrev(bool autoMove = true)
-        {
-            UserOptions.StoreUserOptions(Options);
-
-            base.MovePrev(autoMove);
-        }
-
-        public override void MoveNext(bool autoMove = true)
-        {
-            UserOptions.StoreUserOptions(Options);
-
-            base.MoveNext(autoMove);
         }
 
         public void ShowFileInfo(FileEntry fileEntry)
