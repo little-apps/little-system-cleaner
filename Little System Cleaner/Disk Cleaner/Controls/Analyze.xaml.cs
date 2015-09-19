@@ -24,7 +24,6 @@ using System.Linq;
 using System.Threading;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Shell;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using Little_System_Cleaner.Misc;
