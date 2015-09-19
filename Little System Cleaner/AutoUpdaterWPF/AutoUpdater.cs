@@ -247,9 +247,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 reader.Close();
 
-                appCastStream?.Close();
+                appCastStream.Close();
 
-                webResponse?.Close();
+                webResponse.Close();
             }
 
             foreach (UpdateXml.Item item in updateXml.Items)
