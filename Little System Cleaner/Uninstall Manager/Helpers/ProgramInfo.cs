@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         public readonly string QuietDisplayName;
         public readonly string QuietUninstallString;
         public readonly string DisplayVersion;
-        public readonly string _publisher;
+        public readonly string Publisher;
         public readonly string UrlInfoAbout;
         public readonly string UrlUpdateInfo;
         public readonly string HelpLink;
@@ -112,8 +112,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             }
         }
 
-        public string Publisher => _publisher;
-
         public string Size => SizeBytes > 0 ? Utils.ConvertSizeToString(SizeBytes) : string.Empty;
 
         public long SizeBytes
@@ -140,7 +138,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             QuietDisplayName = Convert.ToString(TryGetValue(regKey, "QuietDisplayName", ""));
             UninstallString = Convert.ToString(TryGetValue(regKey, "UninstallString", ""));
             QuietUninstallString = Convert.ToString(TryGetValue(regKey, "QuietUninstallString", ""));
-            _publisher = Convert.ToString(TryGetValue(regKey, "Publisher", ""));
+            Publisher = Convert.ToString(TryGetValue(regKey, "Publisher", ""));
             DisplayVersion = Convert.ToString(TryGetValue(regKey, "DisplayVersion", ""));
             HelpLink = Convert.ToString(TryGetValue(regKey, "HelpLink", ""));
             UrlInfoAbout = Convert.ToString(TryGetValue(regKey, "URLInfoAbout", ""));
