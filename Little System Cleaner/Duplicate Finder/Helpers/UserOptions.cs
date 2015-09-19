@@ -29,7 +29,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private bool? _onlySelectedDrives = false;
         private bool? _onlySelectedFolders = false;
 
-        private int _scanMethod = 0;
+        private int _scanMethod;
 
         private bool? _skipTempFiles = false;
         private bool? _skipSysAppDirs = false;
