@@ -269,12 +269,10 @@ namespace Little_System_Cleaner
 
             if (bUnload == true || !bUnload.HasValue)
             {
-                var prevContent = TabControl.SelectedContent;
-
                 // If DynamicUserControl -> clear Content
-                if (prevContent is DynamicUserControl)
+                if (lastCtrl is DynamicUserControl)
                 {
-                    (prevContent as DynamicUserControl).ClearUserControl();
+                    (lastCtrl as DynamicUserControl).ClearUserControl();
                 }
 
                 TabControl.SelectedIndex = index;
