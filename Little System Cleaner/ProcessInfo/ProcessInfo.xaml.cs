@@ -10,12 +10,12 @@ using Little_System_Cleaner.Annotations;
 using Little_System_Cleaner.Misc;
 using WpfAnimatedGif;
 
-namespace Little_System_Cleaner.LoadProgram
+namespace Little_System_Cleaner.ProcessInfo
 {
     /// <summary>
     /// Interaction logic for LoadProgram.xaml
     /// </summary>
-    public partial class LoadProgram : INotifyPropertyChanged
+    public partial class ProcessInfo : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
@@ -163,7 +163,7 @@ namespace Little_System_Cleaner.LoadProgram
         public string ProcIsResponding => TryCatch(() => _process?.Responding.ToString(), nameof(ProcIsResponding));
 
 
-        public LoadProgram(string fileName, string args = "")
+        public ProcessInfo(string fileName, string args = "")
         {
             var procStartInfo = new ProcessStartInfo()
             {
@@ -173,7 +173,7 @@ namespace Little_System_Cleaner.LoadProgram
             Init(procStartInfo);
         }
 
-        public LoadProgram(ProcessStartInfo procStartInfo)
+        public ProcessInfo(ProcessStartInfo procStartInfo)
         {
             Init(procStartInfo);
         }
