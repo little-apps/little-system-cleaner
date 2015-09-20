@@ -6,22 +6,25 @@
         xmlns:wpfAnimatedGif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
         mc:Ignorable="d"
         Title="Loading Program..." Width="551" Height="Auto"
+        SizeToContent="Height"
         Closing="LoadProgram_OnClosing"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" ResizeMode="NoResize">
 
 
     <StackPanel Orientation="Vertical" Margin="5">
-        <StackPanel Orientation="Horizontal">
-            <Image x:Name="Image" wpfAnimatedGif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader.gif" Width="32" Height="32" HorizontalAlignment="Left"></Image>
-            <Border BorderBrush="{x:Null}" Width="504" Height="32">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Status}" />
-            </Border>
+        <StackPanel x:Name="StackPanelTop" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Image x:Name="Image" wpfAnimatedGif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader.gif" Width="32" Height="32" HorizontalAlignment="Left"></Image>
+                <Border BorderBrush="{x:Null}" Width="504" Height="32">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Status}" />
+                </Border>
+            </StackPanel>
+            <TextBlock>Error Stream:</TextBlock>
+            <TextBox Margin="0,5,0,0" Text="{Binding Path=ErrorStream, Mode=OneWay}" IsReadOnly="True" Height="75" />
+            <TextBlock>Output Stream:</TextBlock>
+            <TextBox Margin="0,5,0,0" Text="{Binding Path=OutputStream, Mode=OneWay}" IsReadOnly="True" Height="75" />
         </StackPanel>
-        <TextBlock>Error Stream:</TextBlock>
-        <TextBox Margin="0,5,0,0" Text="{Binding Path=ErrorStream, Mode=OneWay}" IsReadOnly="True" Height="75" />
-        <TextBlock>Output Stream:</TextBlock>
-        <TextBox Margin="0,5,0,0" Text="{Binding Path=OutputStream, Mode=OneWay}" IsReadOnly="True" Height="75" />
-        <Expander Header="More Details">
+        <Expander x:Name="ExpanderMoreDetails" Header="More Details">
             <StackPanel Orientation="Vertical">
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
@@ -125,7 +128,7 @@
                 </DockPanel>
             </StackPanel>
         </Expander>
-        <Expander Header="Modules">
+        <Expander x:Name="ExpanderModules" Header="Modules">
             <ListView ItemsSource="{Binding Path=ProcModules}" Height="139">
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
@@ -139,8 +142,8 @@
                 
             </ListView>
         </Expander>
-        <Expander Header="Threads" Height="179">
-            <ListView ItemsSource="{Binding Path=ProcThreads}">
+        <Expander x:Name="ExpanderThreads" Header="Threads">
+            <ListView Height="180" ItemsSource="{Binding Path=ProcThreads}">
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="25" />
@@ -153,7 +156,7 @@
 
             </ListView>
         </Expander>
-        <DockPanel>
+        <DockPanel x:Name="DockPanelBottom">
             <DockPanel DockPanel.Dock="Left" Width="397">
                 <DockPanel DockPanel.Dock="Left" LastChildFill="True" Width="195">
                     <Label VerticalContentAlignment="Center" DockPanel.Dock="Left">Start Time:</Label>

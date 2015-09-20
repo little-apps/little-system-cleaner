@@ -293,5 +293,6 @@ namespace Little_System_Cleaner.LoadProgram
                 return returnErrorMessage ? e.Message : origValue;
             }
         }
+        
     }
 }
