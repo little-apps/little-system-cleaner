@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpfAnimatedGif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
         mc:Ignorable="d"
+        ShowInTaskbar="False"
         Title="Loading Program..." Width="551" Height="Auto"
         SizeToContent="Height"
         Closing="LoadProgram_OnClosing"
