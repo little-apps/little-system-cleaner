@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Loading Program..." Height="266" Width="399"
         Loaded="LoadProgram_OnLoaded"
+        Closing="LoadProgram_OnClosing"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" ResizeMode="NoResize">
 
 

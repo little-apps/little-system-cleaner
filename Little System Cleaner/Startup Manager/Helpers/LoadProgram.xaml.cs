@@ -98,6 +98,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             if (_process.HasExited)
                 return;
+            
 
             try
             {
@@ -168,7 +169,20 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
+        }
+
+        private void LoadProgram_OnClosing(object sender, CancelEventArgs e)
+        {
+            if (
+                MessageBox.Show(this, "Are you sure you want to close this window?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            _timer.Stop();
         }
     }
 }
