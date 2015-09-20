@@ -78,8 +78,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="LoadProgram\ModuleInfo.cs" />
+    <Compile Include="LoadProgram\ThreadInfo.cs" />
     <Compile Include="Misc\DynamicUserControl.cs" />
-    <Compile Include="Startup Manager\Helpers\LoadProgram.xaml.cs">
+    <Compile Include="LoadProgram\LoadProgram.xaml.cs">
       <DependentUpon>LoadProgram.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
@@ -140,7 +142,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Startup Manager\Helpers\LoadProgram.xaml">
+    <Page Include="LoadProgram\LoadProgram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

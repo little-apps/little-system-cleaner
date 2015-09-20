@@ -24,7 +24,7 @@ using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Startup_Manager.Helpers;
 using Microsoft.Win32;
-using LoadProgram = Little_System_Cleaner.Startup_Manager.Helpers.LoadProgram;
+using LoadProgram = Little_System_Cleaner.LoadProgram.LoadProgram;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {
@@ -325,7 +325,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }*/
 
-            LoadProgram loadProgram = new LoadProgram(node.Path, node.Args);
+            LoadProgram.LoadProgram loadProgram = new LoadProgram.LoadProgram(node.Path, node.Args);
             loadProgram.ShowDialog();
         }   
 	}
