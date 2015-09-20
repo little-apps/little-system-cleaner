@@ -6,7 +6,7 @@
         xmlns:wpfAnimatedGif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
         mc:Ignorable="d"
         ShowInTaskbar="False"
-        Title="Loading Program..." Width="551" Height="Auto"
+        Title="Process Information" Width="551" Height="Auto"
         SizeToContent="Height"
         Closing="LoadProgram_OnClosing"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" ResizeMode="NoResize">
@@ -14,18 +14,15 @@
 
     <StackPanel Orientation="Vertical" Margin="5">
         <StackPanel x:Name="StackPanelTop" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <Image x:Name="Image" wpfAnimatedGif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader.gif" Width="32" Height="32" HorizontalAlignment="Left"></Image>
-                <Border BorderBrush="{x:Null}" Width="504" Height="32">
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Status}" />
-                </Border>
-            </StackPanel>
+            <Border BorderBrush="{x:Null}" Width="Auto" Height="32">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Status}" />
+            </Border>
             <TextBlock>Error Stream:</TextBlock>
             <TextBox Margin="0,5,0,0" Text="{Binding Path=ErrorStream, Mode=OneWay}" IsReadOnly="True" Height="75" />
             <TextBlock>Output Stream:</TextBlock>
             <TextBox Margin="0,5,0,0" Text="{Binding Path=OutputStream, Mode=OneWay}" IsReadOnly="True" Height="75" />
         </StackPanel>
-        <Expander x:Name="ExpanderMoreDetails" Header="More Details">
+        <Expander x:Name="ExpanderMoreDetails" Header="More Details" IsExpanded="{Binding MoreDetailsExpanded}">
             <StackPanel Orientation="Vertical">
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
@@ -129,7 +126,7 @@
                 </DockPanel>
             </StackPanel>
         </Expander>
-        <Expander x:Name="ExpanderModules" Header="Modules">
+        <Expander x:Name="ExpanderModules" Header="Modules" IsExpanded="{Binding ModulesExpanded}">
             <ListView ItemsSource="{Binding Path=ProcModules}" Height="139">
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
@@ -143,7 +140,7 @@
                 
             </ListView>
         </Expander>
-        <Expander x:Name="ExpanderThreads" Header="Threads">
+        <Expander x:Name="ExpanderThreads" Header="Threads" IsExpanded="{Binding ThreadsExpanded}">
             <ListView Height="180" ItemsSource="{Binding Path=ProcThreads}">
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">

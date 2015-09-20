@@ -33,8 +33,12 @@ namespace Little_System_Cleaner.ProcessInfo
         private Process _process = new Process();
         private IntPtr _mainWindowHandle = IntPtr.Zero;
         private readonly Timer _timer = new Timer();
-        private static readonly Dictionary<string, string> _props = new Dictionary<string,string>();  
+        private static readonly Dictionary<string, string> _props = new Dictionary<string,string>();
 
+        private bool _moreDetailsExpanded;
+        private bool _modulesExpanded;
+        private bool _threadsExpanded;
+        
         public string Status
         {
             get { return _status; }
@@ -146,22 +150,65 @@ namespace Little_System_Cleaner.ProcessInfo
         public string ProcId => TryCatch(() => _process?.Id.ToString(), nameof(ProcId));
         public string ProcHandle => TryCatch(() => _process?.Handle.ToString(), nameof(ProcHandle));
         public string ProcMainModuleName => TryCatch(() => _process.MainModule.ModuleName, nameof(ProcMainModuleName));
-        public string ProcBaseAddress => TryCatch(() => _process?.MainModule.BaseAddress.ToString("X8"), nameof(ProcBaseAddress));
-        public string ProcWindowHandle => TryCatch(() => _process?.MainWindowHandle.ToString(), nameof(ProcWindowHandle));
-        public string ProcWindowTitle => TryCatch(() => _process?.MainWindowTitle, nameof(ProcWindowTitle));
-        public string ProcNonPagedSysMemory => TryCatch(() => Utils.ConvertSizeToString(_process.NonpagedSystemMemorySize64), nameof(ProcNonPagedSysMemory));
-        public string ProcPrivateMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PrivateMemorySize64), nameof(ProcPrivateMemory));
-        public string ProcPagedMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PagedMemorySize64), nameof(ProcPagedMemory));
-        public string ProcPagedSysMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PagedSystemMemorySize64), nameof(ProcPagedSysMemory));
-        public string ProcPagedPeakMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PeakPagedMemorySize64), nameof(ProcPagedPeakMemory));
-        public string ProcPagedVirtualMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PeakVirtualMemorySize64), nameof(ProcPagedVirtualMemory));
-        public string ProcVirtMemory => TryCatch(() => Utils.ConvertSizeToString(_process.VirtualMemorySize64), nameof(ProcVirtMemory));
-        public string ProcWorkingSetPeak => TryCatch(() => Utils.ConvertSizeToString(_process.PeakWorkingSet64), nameof(ProcWorkingSetPeak));
-        public string ProcPriority => TryCatch(() => _process?.PriorityClass.ToString(), nameof(ProcPriority));
-        public string ProcPriorityBoostEnabled => TryCatch(() => _process?.PriorityBoostEnabled.ToString(), nameof(ProcPriorityBoostEnabled));
-        public string ProcHandlesCount => TryCatch(() => _process?.HandleCount.ToString(), nameof(ProcHandlesCount));
-        public string ProcIsResponding => TryCatch(() => _process?.Responding.ToString(), nameof(ProcIsResponding));
+        public string ProcBaseAddress => TryCatch(() => _process?.MainModule.BaseAddress.ToString("X8"), nameof(ProcBaseAddress), true);
+        public string ProcWindowHandle => TryCatch(() => _process?.MainWindowHandle.ToString(), nameof(ProcWindowHandle), true);
+        public string ProcWindowTitle => TryCatch(() => _process?.MainWindowTitle, nameof(ProcWindowTitle), true);
+        public string ProcNonPagedSysMemory => TryCatch(() => Utils.ConvertSizeToString(_process.NonpagedSystemMemorySize64), nameof(ProcNonPagedSysMemory), true);
+        public string ProcPrivateMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PrivateMemorySize64), nameof(ProcPrivateMemory), true);
+        public string ProcPagedMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PagedMemorySize64), nameof(ProcPagedMemory), true);
+        public string ProcPagedSysMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PagedSystemMemorySize64), nameof(ProcPagedSysMemory), true);
+        public string ProcPagedPeakMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PeakPagedMemorySize64), nameof(ProcPagedPeakMemory), true);
+        public string ProcPagedVirtualMemory => TryCatch(() => Utils.ConvertSizeToString(_process.PeakVirtualMemorySize64), nameof(ProcPagedVirtualMemory), true);
+        public string ProcVirtMemory => TryCatch(() => Utils.ConvertSizeToString(_process.VirtualMemorySize64), nameof(ProcVirtMemory), true);
+        public string ProcWorkingSetPeak => TryCatch(() => Utils.ConvertSizeToString(_process.PeakWorkingSet64), nameof(ProcWorkingSetPeak), true);
+        public string ProcPriority => TryCatch(() => _process?.PriorityClass.ToString(), nameof(ProcPriority), true);
+        public string ProcPriorityBoostEnabled => TryCatch(() => _process?.PriorityBoostEnabled.ToString(), nameof(ProcPriorityBoostEnabled), true);
+        public string ProcHandlesCount => TryCatch(() => _process?.HandleCount.ToString(), nameof(ProcHandlesCount), true);
+        public string ProcIsResponding => TryCatch(() => _process?.Responding.ToString(), nameof(ProcIsResponding), true);
 
+        public bool MoreDetailsExpanded
+        {
+            get { return _moreDetailsExpanded; }
+            set
+            {
+                _moreDetailsExpanded = value;
+
+                if (_moreDetailsExpanded)
+                    MessageBox.Show(this, "The process exited before any information could be retrieved.\nLimited information will be available.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                OnPropertyChanged(nameof(MoreDetailsExpanded));
+            }
+        }
+
+        public bool ModulesExpanded
+        {
+            get { return _modulesExpanded; }
+            set
+            {
+                _modulesExpanded = value;
+
+                if (_modulesExpanded)
+                    MessageBox.Show(this, "The process exited before any information could be retrieved.\nLimited information will be available.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                OnPropertyChanged(nameof(ModulesExpanded));
+            }
+        }
+
+        public bool ThreadsExpanded
+        {
+            get { return _threadsExpanded; }
+            set
+            {
+                _threadsExpanded = value;
+
+                if (_threadsExpanded)
+                    MessageBox.Show(this, "The process exited before any information could be retrieved.\nLimited information will be available.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                OnPropertyChanged(nameof(ThreadsExpanded));
+            }
+        }
+
+        public bool ProcessExitedWithoutInfo => (string.IsNullOrEmpty(ProcName) && _process.HasExited);
 
         public ProcessInfo(string fileName, string args = "")
         {
@@ -185,6 +232,8 @@ namespace Little_System_Cleaner.ProcessInfo
 
             _timer.Start();
             _process.Start();
+   
+            //TimerOnElapsed(this, (ElapsedEventArgs)EventArgs.Empty);
 
             Status = $"Process started with ID #{_process.Id}...";
 
@@ -196,8 +245,9 @@ namespace Little_System_Cleaner.ProcessInfo
             _process.ErrorDataReceived += (o, args) => OnPropertyChanged(nameof(ErrorStream));
             _process.Exited += (o, args) =>
             {
-                Dispatcher.Invoke(new Action(() => Image.SetValue(ImageBehavior.AnimatedSourceProperty, null)));
+                //Dispatcher.Invoke(new Action(() => Image.SetValue(ImageBehavior.AnimatedSourceProperty, null)));
                 Status = $"Process exited with exit code {_process.ExitCode}";
+                
                 EndTime = _process.ExitTime.ToLongTimeString();
             };
 
@@ -206,9 +256,6 @@ namespace Little_System_Cleaner.ProcessInfo
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (_process.HasExited)
-                return;
-            
             // Updates all properties
             OnPropertyChanged(string.Empty);
 
@@ -273,7 +320,7 @@ namespace Little_System_Cleaner.ProcessInfo
             return new ObservableCollection<T>(enumeration);
         }
 
-        public static string TryCatch(Func<string> action, string propName, bool returnErrorMessage = false, string defaultValue = "")
+        public static string TryCatch(Func<string> action, string propName, bool valueChanges = false, bool returnErrorMessage = false, string defaultValue = "")
         {
             try
             {
@@ -281,10 +328,10 @@ namespace Little_System_Cleaner.ProcessInfo
 
                 if (!_props.ContainsKey(propName))
                     _props.Add(propName, ret);
-                else
+                else if (valueChanges)
                     _props[propName] = ret;
 
-                return action();
+                return _props[propName];
             }
             catch (Exception e)
             {
