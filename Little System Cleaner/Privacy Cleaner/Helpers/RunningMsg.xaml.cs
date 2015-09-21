@@ -39,6 +39,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         public RunningMsg(string name, string proc)
         {
+            this.HideIcon();
+
             InitializeComponent();
 
             _procName = proc;

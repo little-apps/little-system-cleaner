@@ -34,6 +34,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         public AddIncludeFolder()
         {
+            this.HideIcon();
+
             InitializeComponent();
         }
 

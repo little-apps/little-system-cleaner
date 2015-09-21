@@ -22,6 +22,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public LoadingResults(Wizard scanBase, TreeList treeListView)
         {
+            this.HideIcon();
+
             InitializeComponent();
 
             _scanBase = scanBase;

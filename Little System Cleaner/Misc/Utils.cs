@@ -34,6 +34,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Little_System_Cleaner.Properties;
@@ -1203,6 +1204,49 @@ namespace Little_System_Cleaner.Misc
         {
             var hwnd = new WindowInteropHelper(window).Handle;
             PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE, PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
+        }
+
+        internal const int SWP_NOSIZE = 0x0001;
+        internal const int SWP_NOMOVE = 0x0002;
+        internal const int SWP_NOZORDER = 0x0004;
+        internal const int SWP_FRAMECHANGED = 0x0020;
+        internal const int GWL_EXSTYLE = -20;
+        internal const int WS_EX_DLGMODALFRAME = 0x0001;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll")]
+        internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int width, int height, uint flags);
+
+        /// <summary>
+        /// Hides icon for window.
+        /// If this is called before InitializeComponent() then the icon will be completely removed from the title bar
+        /// If this is called after InitializeComponent() then an empty image is used but there will be empty space between window border and title
+        /// </summary>
+        /// <param name="window">Window class</param>
+        internal static void HideIcon(this Window window)
+        {
+            if (window.IsInitialized)
+            {
+                window.Icon = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[] { 0, 0, 0, 0 }, 4);
+            }
+            else
+            {
+                window.SourceInitialized += delegate
+                {
+                    // Get this window's handle
+                    var hwnd = new WindowInteropHelper(window).Handle;
+
+                    // Change the extended window style to not show a window icon
+                    int extendedStyle = PInvoke.GetWindowLong(hwnd, PInvoke.GWL_EXSTYLE);
+                    PInvoke.SetWindowLong(hwnd, PInvoke.GWL_EXSTYLE, extendedStyle | PInvoke.WS_EX_DLGMODALFRAME);
+
+                    // Update the window's non-client area to reflect the changes
+                    PInvoke.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, PInvoke.SWP_NOMOVE | PInvoke.SWP_NOSIZE | PInvoke.SWP_NOZORDER | PInvoke.SWP_FRAMECHANGED);
+                };
+            }
         }
     }
 }

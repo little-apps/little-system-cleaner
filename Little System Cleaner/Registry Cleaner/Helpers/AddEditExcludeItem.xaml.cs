@@ -205,6 +205,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         public AddEditExcludeItem(ExcludeTypes excType)
         {
+            this.HideIcon();
+
             InitializeComponent();
 
             WindowTitle = "Add To Exclude List";

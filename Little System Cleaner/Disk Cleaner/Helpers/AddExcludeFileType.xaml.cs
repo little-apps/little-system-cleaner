@@ -18,6 +18,7 @@
 
 using System;
 using System.Windows;
+using Little_System_Cleaner.Misc;
 using Application = System.Windows.Forms.Application;
 
 //using System.Windows.Forms;
@@ -33,6 +34,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         public AddExcludeFileType()
         {
+            this.HideIcon();
+
             InitializeComponent();
         }
 

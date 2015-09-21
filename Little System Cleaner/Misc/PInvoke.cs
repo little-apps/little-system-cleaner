@@ -63,6 +63,8 @@ namespace Little_System_Cleaner.Misc
         internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         [DllImport("user32.dll")]
         internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll")]
+        internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int width, int height, uint flags);
 
         [DllImport("gdi32.dll")]
         internal static extern bool DeleteObject(IntPtr hObject);
@@ -177,9 +179,17 @@ namespace Little_System_Cleaner.Misc
         internal const int FOF_ALLOWUNDO = 0x40;
         internal const int FOF_NOCONFIRMATION = 0x10;
 
-        // SetWindowLong
+        // GetWindowLong + SetWindowLong
         internal const int GWL_STYLE = -16;
         internal const int WS_SYSMENU = 0x80000;
+        internal const int GWL_EXSTYLE = -20;
+        internal const int WS_EX_DLGMODALFRAME = 0x0001;
+
+        // SetWindowPos
+        internal const int SWP_NOSIZE = 0x0001;
+        internal const int SWP_NOMOVE = 0x0002;
+        internal const int SWP_NOZORDER = 0x0004;
+        internal const int SWP_FRAMECHANGED = 0x0020;
         #endregion
 
         #region Classes/Interfaces

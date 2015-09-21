@@ -251,6 +251,8 @@ namespace Little_System_Cleaner.ProcessInfo
                 EndTime = _process.ExitTime.ToLongTimeString();
             };
 
+            this.HideIcon();
+
             InitializeComponent();
         }
 

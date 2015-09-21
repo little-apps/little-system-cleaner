@@ -34,6 +34,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         public AddExcludeFolder()
         {
+            this.HideIcon();
+
             InitializeComponent();
         }
 
