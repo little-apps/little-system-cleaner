@@ -173,7 +173,7 @@ namespace Little_System_Cleaner.ProcessInfo
             {
                 _moreDetailsExpanded = value;
 
-                if (_moreDetailsExpanded)
+                if (_moreDetailsExpanded && ProcessExitedWithoutInfo)
                     MessageBox.Show(this, "The process exited before any information could be retrieved.\nLimited information will be available.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 OnPropertyChanged(nameof(MoreDetailsExpanded));
@@ -187,7 +187,7 @@ namespace Little_System_Cleaner.ProcessInfo
             {
                 _modulesExpanded = value;
 
-                if (_modulesExpanded)
+                if (_modulesExpanded && ProcessExitedWithoutInfo)
                     MessageBox.Show(this, "The process exited before any information could be retrieved.\nLimited information will be available.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 OnPropertyChanged(nameof(ModulesExpanded));
@@ -201,7 +201,7 @@ namespace Little_System_Cleaner.ProcessInfo
             {
                 _threadsExpanded = value;
 
-                if (_threadsExpanded)
+                if (_threadsExpanded && ProcessExitedWithoutInfo)
                     MessageBox.Show(this, "The process exited before any information could be retrieved.\nLimited information will be available.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 OnPropertyChanged(nameof(ThreadsExpanded));
