@@ -81,7 +81,5 @@ Little Apps would like to thank the following for helping Little System Cleaner:
 ### To do ###
 
  * Fix bugs related to Little Registry Cleaner ([listed here](http://bugs.little-apps.com/view_all_bug_page.php))
- * ~~Add cancel buttons to all scan functions~~
  * Add ability to save search settings
- * Fix animation in registry scan to be animated
  * Improve organization ability for Duplicate Finder results 
