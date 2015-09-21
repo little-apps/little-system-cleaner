@@ -1194,5 +1194,15 @@ namespace Little_System_Cleaner.Misc
 
             return System.Windows.Application.Current.Dispatcher.BeginInvoke(showMsgBox);
         }
+
+        /// <summary>
+        /// Hides close (X) button in top right window
+        /// </summary>
+        /// <param name="window"></param>
+        internal static void HideCloseButton(this Window window)
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+            PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE, PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
+        }
     }
 }

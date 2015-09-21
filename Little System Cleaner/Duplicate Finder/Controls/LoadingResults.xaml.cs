@@ -30,9 +30,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void LoadingResults_Loaded(object sender, RoutedEventArgs e)
         {
-            // Hide close button
-            var hwnd = new WindowInteropHelper(this).Handle;
-            PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE, PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
+            this.HideCloseButton();
 
             _backgroundWorker.DoWork += backgroundWorker_DoWork;
             _backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
