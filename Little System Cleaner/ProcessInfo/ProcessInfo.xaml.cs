@@ -105,7 +105,7 @@ namespace Little_System_Cleaner.ProcessInfo
                 }
                 catch
                 {
-                    return "No error data received";
+                    return "No output data received";
                 }
                 
             }
