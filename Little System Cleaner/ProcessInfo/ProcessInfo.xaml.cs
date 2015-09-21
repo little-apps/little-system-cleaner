@@ -258,30 +258,12 @@ namespace Little_System_Cleaner.ProcessInfo
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
+            if (_process.HasExited)
+                // Process exited so no need to keep updating
+                _timer.Stop();
+
             // Updates all properties
             OnPropertyChanged(string.Empty);
-
-            /*try
-            {
-                if (_process.MainWindowHandle != _mainWindowHandle)
-                {
-                    if (_mainWindowHandle == IntPtr.Zero)
-                    {
-                        _mainWindowHandle = _process.MainWindowHandle;
-                        AppendLine($"Process opened main window with handle #{_mainWindowHandle.ToInt64()}");
-                    }
-                    else
-                    {
-                        _mainWindowHandle = _process.MainWindowHandle;
-                        AppendLine($"Process changed main window to handle #{_mainWindowHandle.ToInt64()}");
-                    }
-
-                }
-            }
-            catch
-            {
-                // ignored
-            }*/
         }
 
         private void KillProcess_Click(object sender, RoutedEventArgs e)
