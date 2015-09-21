@@ -17,6 +17,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -1204,21 +1205,13 @@ namespace Little_System_Cleaner.Misc
         {
             var hwnd = new WindowInteropHelper(window).Handle;
             PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE, PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
+
+            // Cancel Closing event (if it occurs)
+            window.Closing += delegate(object sender, CancelEventArgs args)
+            {
+                args.Cancel = true;
+            };
         }
-
-        internal const int SWP_NOSIZE = 0x0001;
-        internal const int SWP_NOMOVE = 0x0002;
-        internal const int SWP_NOZORDER = 0x0004;
-        internal const int SWP_FRAMECHANGED = 0x0020;
-        internal const int GWL_EXSTYLE = -20;
-        internal const int WS_EX_DLGMODALFRAME = 0x0001;
-
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-        [DllImport("user32.dll")]
-        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-        [DllImport("user32.dll")]
-        internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int width, int height, uint flags);
 
         /// <summary>
         /// Hides icon for window.
