@@ -232,8 +232,6 @@ namespace Little_System_Cleaner.ProcessInfo
 
             _timer.Start();
             _process.Start();
-   
-            //TimerOnElapsed(this, (ElapsedEventArgs)EventArgs.Empty);
 
             Status = $"Process started with ID #{_process.Id}...";
 
@@ -245,7 +243,6 @@ namespace Little_System_Cleaner.ProcessInfo
             _process.ErrorDataReceived += (o, args) => OnPropertyChanged(nameof(ErrorStream));
             _process.Exited += (o, args) =>
             {
-                //Dispatcher.Invoke(new Action(() => Image.SetValue(ImageBehavior.AnimatedSourceProperty, null)));
                 Status = $"Process exited with exit code {_process.ExitCode}";
                 
                 EndTime = _process.ExitTime.ToLongTimeString();
