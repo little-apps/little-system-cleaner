@@ -1201,16 +1201,20 @@ namespace Little_System_Cleaner.Misc
         /// Hides close (X) button in top right window
         /// </summary>
         /// <param name="window"></param>
-        internal static void HideCloseButton(this Window window)
+        /// <param name="addClosingHook">If true, adds delegate to Closing event which sets Cancel to true causing Window to note close. Please note, calling Close() method will not close the window either.</param>
+        internal static void HideCloseButton(this Window window, bool addClosingHook = false)
         {
             var hwnd = new WindowInteropHelper(window).Handle;
             PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE, PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
 
-            // Cancel Closing event (if it occurs)
-            window.Closing += delegate(object sender, CancelEventArgs args)
+            if (addClosingHook)
             {
-                args.Cancel = true;
-            };
+                // Cancel Closing event (if it occurs)
+                window.Closing += delegate (object sender, CancelEventArgs args)
+                {
+                    args.Cancel = true;
+                };
+            }
         }
 
         /// <summary>
