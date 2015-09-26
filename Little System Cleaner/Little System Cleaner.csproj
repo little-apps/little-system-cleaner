@@ -78,6 +78,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Duplicate Finder\Helpers\CRC32.cs" />
     <Compile Include="ProcessInfo\ModuleInfo.cs" />
     <Compile Include="ProcessInfo\ThreadInfo.cs" />
     <Compile Include="Misc\DynamicUserControl.cs" />

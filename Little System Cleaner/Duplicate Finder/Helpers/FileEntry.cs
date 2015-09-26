@@ -378,7 +378,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             switch (algorithm)
             {
                 case HashAlgorithm.Algorithms.CRC32:
-                    checksum = CalculateCRC32(includeFilename);
+                    checksum = CalculateHash(includeFilename, new CRC32());
                     break;
                 case HashAlgorithm.Algorithms.MD5:
                     checksum = CalculateHash(includeFilename, MD5.Create());
