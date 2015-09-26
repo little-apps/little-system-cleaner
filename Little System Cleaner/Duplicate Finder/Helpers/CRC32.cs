@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -20,25 +19,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private static uint[] BuildTable()
         {
-            var table = new uint[256];
-            uint i;
-
-            // Initialize table
-            for (i = 0; i < 256; i++)
+            return Enumerable.Range(0, 256).Select(i =>
             {
-                uint entry = i;
-                for (int j = 0; j < 8; j++)
+                uint entry = (uint)i;
+                Enumerable.Range(0, 8).ToList().ForEach(j =>
                 {
                     if ((entry & 1) == 1)
                         entry = (entry >> 1) ^ Polynomial;
                     else
                         entry = entry >> 1;
-                }
+                });
 
-                table[i] = entry;
-            }
-
-            return table;
+                return entry;
+            }).ToArray();
         }
 
         public override void Initialize()
