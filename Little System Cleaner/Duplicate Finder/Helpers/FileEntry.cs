@@ -381,16 +381,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     checksum = CalculateCRC32(includeFilename);
                     break;
                 case HashAlgorithm.Algorithms.MD5:
-                    checksum = CalculateMD5(includeFilename);
+                    checksum = CalculateHash(includeFilename, MD5.Create());
                     break;
                 case HashAlgorithm.Algorithms.SHA1:
-                    checksum = CalculateSHA1(includeFilename);
+                    checksum = CalculateHash(includeFilename, SHA1.Create());
                     break;
                 case HashAlgorithm.Algorithms.SHA256:
-                    checksum = CalculateSHA256(includeFilename);
+                    checksum = CalculateHash(includeFilename, SHA256.Create());
                     break;
                 case HashAlgorithm.Algorithms.SHA512:
-                    checksum = CalculateSHA512(includeFilename);
+                    checksum = CalculateHash(includeFilename, SHA256.Create());
                     break;
             }
 
@@ -493,188 +493,56 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Calculate hash using MD5
-        /// </summary>
-        /// <param name="includeFilename">If true, the filename is including when computing the hash</param>
-        /// <returns>A string representation of the computed hash</returns>
-        private string CalculateMD5(bool includeFilename)
-        {
-            byte[] hashBytes;
-            string hash = string.Empty;
-
-            using (var md5 = MD5.Create())
-            {
-                using (MemoryStream memStream = new MemoryStream())
-                {
-                    if (includeFilename)
-                        AddFilenameHash(memStream, md5);
-
-                    try
-                    {
-                        using (FileStream fileStream = GetFileStream())
-                        {
-                            if (fileStream == null)
-                                return hash;
-
-                            byte[] hashFile = md5.ComputeHash(fileStream);
-
-                            memStream.Write(hashFile, 0, hashFile.Length);
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine("The following error occurred trying to compute hash of file contents:" + ex.Message);
-
-                        return hash;
-                    }
-
-                    memStream.Seek(0, SeekOrigin.Begin);
-
-                    hashBytes = md5.ComputeHash(memStream);
-                }
-            }
-
-            // Convert to hex
-            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
-        }
-
-        /// <summary>
-        /// Calculate hash using SHA1
-        /// </summary>
-        /// <param name="includeFilename">If true, the filename is including when computing the hash</param>
-        /// <returns>A string representation of the computed hash</returns>
-        private string CalculateSHA1(bool includeFilename)
-        {
-            string hash = string.Empty;
-            byte[] hashBytes;
-
-            using (var sha1 = new SHA1Managed())
-            {
-                using (MemoryStream memStream = new MemoryStream())
-                {
-                    if (includeFilename)
-                        AddFilenameHash(memStream, sha1);
-
-                    try
-                    {
-                        using (FileStream fileStream = GetFileStream())
-                        {
-                            if (fileStream == null)
-                                return hash;
-
-                            byte[] hashFile = sha1.ComputeHash(fileStream);
-
-                            memStream.Write(hashFile, 0, hashFile.Length);
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine("The following error occurred trying to compute hash of file contents:" + ex.Message);
-
-                        return hash;
-                    }
-
-                    memStream.Seek(0, SeekOrigin.Begin);
-                    
-                    hashBytes = sha1.ComputeHash(memStream);
-                }
-                
-            }
-
-            // Convert to hex
-            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
-        }
-
-        /// <summary>
-        /// Calculate hash using SHA256
-        /// </summary>
-        /// <param name="includeFilename">If true, the filename is including when computing the hash</param>
-        /// <returns>A string representation of the computed hash</returns>
-        private string CalculateSHA256(bool includeFilename)
-        {
-            string hash = string.Empty;
-            byte[] hashBytes;
-
-            using (var sha256 = new SHA256Managed())
-            {
-                using (MemoryStream memStream = new MemoryStream())
-                {
-                    if (includeFilename)
-                        AddFilenameHash(memStream, sha256);
-
-                    try
-                    {
-                        using (FileStream fileStream = GetFileStream())
-                        {
-                            if (fileStream == null)
-                                return hash;
-
-                            byte[] hashFile = sha256.ComputeHash(fileStream);
-
-                            memStream.Write(hashFile, 0, hashFile.Length);
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine("The following error occurred trying to compute hash of file contents:" + ex.Message);
-
-                        return hash;
-                    }
-
-                    memStream.Seek(0, SeekOrigin.Begin);
-
-                    hashBytes = sha256.ComputeHash(memStream);
-                }
-            }
-
-            // Convert to hex
-            return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
-        }
-
-        /// <summary>
         /// Calculate hash using SHA512
         /// </summary>
         /// <param name="includeFilename">If true, the filename is including when computing the hash</param>
         /// <returns>A string representation of the computed hash</returns>
-        private string CalculateSHA512(bool includeFilename)
+        private string CalculateHash(bool includeFilename, System.Security.Cryptography.HashAlgorithm algo)
         {
             string hash = string.Empty;
-            byte[] hashBytes;
 
-            using (var sha512 = new SHA512Managed())
+            using (MemoryStream memStream = new MemoryStream())
             {
-                using (MemoryStream memStream = new MemoryStream())
+                if (includeFilename)
+                    AddFilenameHash(memStream, algo);
+
+                try
                 {
-                    if (includeFilename)
-                        AddFilenameHash(memStream, sha512);
-
-                    try
+                    using (FileStream fileStream = GetFileStream())
                     {
-                        using (FileStream fileStream = GetFileStream())
-                        {
-                            if (fileStream == null)
-                                return hash;
+                        if (fileStream == null)
+                            return hash;
 
-                            byte[] hashFile = sha512.ComputeHash(fileStream);
+                        byte[] hashFile = algo.ComputeHash(fileStream);
 
-                            memStream.Write(hashFile, 0, hashFile.Length);
-                        }
+                        memStream.Write(hashFile, 0, hashFile.Length);
                     }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine("The following error occurred trying to compute hash of file contents:" + ex.Message);
-
-                        return hash;
-                    }
-
-                    memStream.Seek(0, SeekOrigin.Begin);
-
-                    hashBytes = sha512.ComputeHash(memStream);
                 }
-                
-            }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine("The following error occurred trying to compute hash of file contents:" + ex.Message);
 
-            // Convert to hex
+                    return hash;
+                }
+
+                memStream.Seek(0, SeekOrigin.Begin);
+
+                return CalculateHash(algo, memStream);
+            }
+        }
+
+        /// <summary>
+        /// Calculates hash and returns it in string format
+        /// </summary>
+        /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
+        /// <param name="stream">Stream to read from</param>
+        /// <returns>Hash in string format</returns>
+        private static string CalculateHash(System.Security.Cryptography.HashAlgorithm algo, Stream stream)
+        {
+            string hash = string.Empty;
+
+            var hashBytes = algo.ComputeHash(stream);
+
             return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
         }
 
