@@ -273,59 +273,60 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (!HasAudioTags)
                 return;
 
-            string md5String = string.Empty;
+            string hashString = string.Empty;
+            var hashAlgorithm = GetHashAlgorithm(options.HashAlgorithm.Algorithm);
 
             using (MemoryStream memStream = new MemoryStream())
             {
                 if (options.MusicTagAlbum.GetValueOrDefault() && !string.IsNullOrEmpty(Album))
                 {
-                    byte[] bufferHash = GetMD5Sum(Album);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Album));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagArtist.GetValueOrDefault() && !string.IsNullOrEmpty(Artist))
                 {
-                    byte[] bufferHash = GetMD5Sum(Artist);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Artist));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagBitRate.GetValueOrDefault() && Bitrate > 0)
                 {
                     string bitRate = Convert.ToString(Bitrate);
-                    byte[] bufferHash = GetMD5Sum(bitRate);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(bitRate));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagDuration.GetValueOrDefault() && Duration != TimeSpan.Zero)
                 {
                     string duration = Duration.ToString();
-                    byte[] bufferHash = GetMD5Sum(duration);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(duration));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagGenre.GetValueOrDefault() && !string.IsNullOrEmpty(Genre))
                 {
-                    byte[] bufferHash = GetMD5Sum(Genre);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Genre));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagTitle.GetValueOrDefault() && !string.IsNullOrEmpty(Title))
                 {
-                    byte[] bufferHash = GetMD5Sum(Title);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Title));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagTrackNo.GetValueOrDefault() && TrackNo > 0)
                 {
                     string trackNo = Convert.ToString(TrackNo);
-                    byte[] bufferHash = GetMD5Sum(trackNo);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(trackNo));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagYear.GetValueOrDefault() && Year > 0)
                 {
                     string year = Convert.ToString(Year);
-                    byte[] bufferHash = GetMD5Sum(year);
+                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(year));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
@@ -338,32 +339,39 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     return;
                 }
-
-                byte[] md5Bytes = GetMD5Sum(memStream.ToArray());
-                md5String = md5Bytes.Aggregate(md5String, (current, b) => current + b.ToString("x2"));
+                
+                hashString = CalculateHashString(hashAlgorithm, memStream);
             }
 
-            TagsChecksum = md5String;
+            TagsChecksum = hashString;
         }
 
-        private static byte[] GetMD5Sum(byte[] value)
+        private System.Security.Cryptography.HashAlgorithm GetHashAlgorithm(HashAlgorithm.Algorithms algorithm)
         {
-            byte[] hash = { };
+            System.Security.Cryptography.HashAlgorithm hashAlgorithm;
 
-            if (value.Length > 0)
+            switch (algorithm)
             {
-                using (var md5 = MD5.Create())
-                {
-                    hash = md5.ComputeHash(value);
-                }
+                case HashAlgorithm.Algorithms.CRC32:
+                    hashAlgorithm = new CRC32();
+                    break;
+                case HashAlgorithm.Algorithms.MD5:
+                    hashAlgorithm = MD5.Create();
+                    break;
+                case HashAlgorithm.Algorithms.SHA1:
+                    hashAlgorithm = SHA1.Create();
+                    break;
+                case HashAlgorithm.Algorithms.SHA256:
+                    hashAlgorithm = SHA256.Create();
+                    break;
+                case HashAlgorithm.Algorithms.SHA512:
+                    hashAlgorithm = SHA512.Create();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null);
             }
 
-            return hash;
-        }
-
-        private static byte[] GetMD5Sum(string value)
-        {
-            return GetMD5Sum(Encoding.UTF8.GetBytes(value));
+            return hashAlgorithm;
         }
 
         /// <summary>
@@ -373,26 +381,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <param name="includeFilename">If true, includes filename when calculating hash</param>
         public void GetChecksum(HashAlgorithm.Algorithms algorithm, bool includeFilename = false)
         {
-            string checksum = string.Empty;
-
-            switch (algorithm)
-            {
-                case HashAlgorithm.Algorithms.CRC32:
-                    checksum = CalculateHash(includeFilename, new CRC32());
-                    break;
-                case HashAlgorithm.Algorithms.MD5:
-                    checksum = CalculateHash(includeFilename, MD5.Create());
-                    break;
-                case HashAlgorithm.Algorithms.SHA1:
-                    checksum = CalculateHash(includeFilename, SHA1.Create());
-                    break;
-                case HashAlgorithm.Algorithms.SHA256:
-                    checksum = CalculateHash(includeFilename, SHA256.Create());
-                    break;
-                case HashAlgorithm.Algorithms.SHA512:
-                    checksum = CalculateHash(includeFilename, SHA256.Create());
-                    break;
-            }
+            var hashAlgorithm = GetHashAlgorithm(algorithm);
+            var checksum = CalculateHash(includeFilename, hashAlgorithm);
 
             if (!string.IsNullOrEmpty(checksum))
                 Checksum = checksum;
@@ -476,7 +466,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     for (i = 0; i < fileStream.Length; i++)
                     {
-                        byte b = (byte)fileStream.ReadByte();
+                        byte b = (byte) fileStream.ReadByte();
                         crc = (crc >> 8) ^ table[b ^ crc & 0xff];
                     }
                 }
@@ -487,7 +477,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                 return string.Empty;
             }
-            
+
 
             return (~(crc)).ToString();
         }
@@ -527,8 +517,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                 memStream.Seek(0, SeekOrigin.Begin);
 
-                return CalculateHash(algo, memStream);
+                return CalculateHashString(algo, memStream);
             }
+        }
+
+        /// <summary>
+        /// Calculates hash and returns as byte array
+        /// </summary>
+        /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
+        /// <param name="bytes">Bytes to generate hash from</param>
+        /// <returns>Hash in byte array</returns>
+        private static byte[] CalculateHashBytes(System.Security.Cryptography.HashAlgorithm algo, byte[] bytes)
+        {
+            return algo.ComputeHash(bytes);
         }
 
         /// <summary>
@@ -537,11 +538,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
         /// <param name="stream">Stream to read from</param>
         /// <returns>Hash in string format</returns>
-        private static string CalculateHash(System.Security.Cryptography.HashAlgorithm algo, Stream stream)
+        private static byte[] CalculateHashBytes(System.Security.Cryptography.HashAlgorithm algo, Stream stream)
+        {
+            return algo.ComputeHash(stream);
+        }
+
+        /// <summary>
+        /// Calculates hash and returns it in string format
+        /// </summary>
+        /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
+        /// <param name="stream">Stream to read from</param>
+        /// <returns>Hash in string format</returns>
+        private static string CalculateHashString(System.Security.Cryptography.HashAlgorithm algo, Stream stream)
         {
             string hash = string.Empty;
 
-            var hashBytes = algo.ComputeHash(stream);
+            var hashBytes = CalculateHashBytes(algo, stream);
 
             return hashBytes.Aggregate(hash, (current, b) => current + b.ToString("x2"));
         }
