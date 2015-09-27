@@ -19,19 +19,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private static uint[] BuildTable()
         {
-            return Enumerable.Range(0, 256).Select(i =>
+            var createTable = new uint[256];
+
+            for (var i = 0; i < 256; i++)
             {
-                uint entry = (uint)i;
-                Enumerable.Range(0, 8).ToList().ForEach(j =>
-                {
+                var entry = (uint)i;
+
+                for (var j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
                         entry = (entry >> 1) ^ Polynomial;
                     else
                         entry = entry >> 1;
-                });
 
-                return entry;
-            }).ToArray();
+                createTable[i] = entry;
+            }
+
+            return createTable;
         }
 
         public override void Initialize()
