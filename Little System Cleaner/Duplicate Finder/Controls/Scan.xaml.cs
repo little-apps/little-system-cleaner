@@ -8,6 +8,7 @@ using System.Security;
 using System.Threading;
 using System.Windows;
 using System.Windows.Shell;
+using System.Threading.Tasks;
 using Little_System_Cleaner.Duplicate_Finder.Helpers;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
@@ -33,6 +34,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         public Wizard ScanBase;
 
         private readonly Thread _threadScan;
+        private readonly Task _taskScan;
+        private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
 
         private readonly List<FileEntry> _fileList;
 
@@ -112,9 +115,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             // Set last scan date
             Settings.Default.lastScanDate = DateTime.Now.ToBinary();
+            
+            _taskScan = new Task(ScanDisk, _cancelTokenSource.Token);
+            _taskScan.Start();
 
-            _threadScan = new Thread(ScanDisk);
-            _threadScan.Start();
+            //_threadScan = new Thread(ScanDisk);
+            //_threadScan.Start();
         }
 
         private void ScanDisk()
@@ -123,6 +129,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             try
             {
+                _cancelTokenSource.Token.ThrowIfCancellationRequested();
+
                 DateTime dtStart = DateTime.Now;
                 Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
                 StatusText = "Building list of all files";
@@ -187,20 +195,25 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 SetLastScanElapsed(dtStart);
                 completedSucessfully = true;
             }
-            catch (ThreadAbortException)
+            catch (OperationCanceledException)
             {
-                Thread.ResetAbort();
+                //Thread.ResetAbort();
             }
             finally
             {
+                _cancelTokenSource.Dispose();
+                _cancelTokenSource = null;
+
                 ResetInfo(completedSucessfully);
             }
         }
 
         public void AbortScanThread()
         {
-            if ((_threadScan != null) && _threadScan.IsAlive)
-                _threadScan.Abort();
+            //if ((_threadScan != null) && _threadScan.IsAlive)
+            //    _threadScan.Abort();
+            if (_cancelTokenSource != null)
+                _cancelTokenSource.Cancel();
         }
 
         private void ResetInfo(bool success)
@@ -241,16 +254,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 bool driveSelected = false;
 
-                foreach (DriveInfo di in DriveInfo.GetDrives())
+                foreach (DriveInfo di in DriveInfo.GetDrives().Where(di => di.IsReady && di.TotalFreeSpace != 0 && (di.DriveType == DriveType.Fixed || di.DriveType == DriveType.Network || di.DriveType == DriveType.Removable)))
                 {
-                    if (di.IsReady && di.TotalFreeSpace != 0 && (di.DriveType == DriveType.Fixed || di.DriveType == DriveType.Network || di.DriveType == DriveType.Removable))
-                    {
-                        if (!driveSelected)
-                            driveSelected = true;
+                    if (!driveSelected)
+                        driveSelected = true;
 
-                        RecurseDirectory(di.RootDirectory);
-                    }
-
+                    RecurseDirectory(di.RootDirectory);
                 }
 
                 if (!driveSelected)
