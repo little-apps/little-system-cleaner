@@ -32,12 +32,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         #endregion
 
         public Wizard ScanBase;
-
-        private readonly Thread _threadScan;
+        
         private readonly Task _taskScan;
         private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
 
         private readonly List<FileEntry> _fileList;
+
+        private bool _statusTextCanChange = true;
 
         private string _statusText;
         private string _currentFile;
@@ -66,6 +67,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             get { return _statusText; }
             set
             {
+                if (!_statusTextCanChange)
+                    return;
+
                 if (Dispatcher.Thread != Thread.CurrentThread)
                 {
                     Dispatcher.BeginInvoke(new Action(() => StatusText = value));
@@ -129,8 +133,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             try
             {
-                _cancelTokenSource.Token.ThrowIfCancellationRequested();
-
                 DateTime dtStart = DateTime.Now;
                 Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
                 StatusText = "Building list of all files";
@@ -192,6 +194,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
+                _cancelTokenSource.Token.ThrowIfCancellationRequested();
+
                 SetLastScanElapsed(dtStart);
                 completedSucessfully = true;
             }
@@ -210,10 +214,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public void AbortScanThread()
         {
-            //if ((_threadScan != null) && _threadScan.IsAlive)
-            //    _threadScan.Abort();
             if (_cancelTokenSource != null)
                 _cancelTokenSource.Cancel();
+
+            StatusText = "Please wait while the scan operation is being cancelled...";
+            CurrentFile = "";
+
+            _statusTextCanChange = false;
         }
 
         private void ResetInfo(bool success)
@@ -262,6 +269,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     RecurseDirectory(di.RootDirectory);
                 }
 
+                _cancelTokenSource.Token.ThrowIfCancellationRequested();
+
                 if (!driveSelected)
                 {
                     Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -275,11 +284,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 bool driveSelected = false;
 
-                foreach (DriveInfo di in DriveInfo.GetDrives())
+                foreach (DriveInfo di in DriveInfo.GetDrives().Where(di => di.IsReady && di.TotalFreeSpace != 0 && di.DriveType != DriveType.NoRootDirectory))
                 {
-                    if (!di.IsReady || di.TotalFreeSpace == 0 || di.DriveType == DriveType.NoRootDirectory)
-                        continue;
-
                     if (ScanBase.Options.AllExceptSystem.GetValueOrDefault() && Environment.SystemDirectory[0] == di.RootDirectory.Name[0])
                         continue;
 
@@ -294,6 +300,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                     RecurseDirectory(di.RootDirectory);
                 }
+
+                _cancelTokenSource.Token.ThrowIfCancellationRequested();
 
                 if (!driveSelected)
                 {
@@ -329,6 +337,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
                 }
 
+                _cancelTokenSource.Token.ThrowIfCancellationRequested();
+
                 if (!driveSelected)
                 {
                     Utils.MessageBoxThreadSafe("No disk drives could be found to scan.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -350,6 +360,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     RecurseDirectory(dir.DirInfo);
                 }
 
+                _cancelTokenSource.Token.ThrowIfCancellationRequested();
+
                 if (!dirSelected)
                 {
                     Utils.MessageBoxThreadSafe("No folders are selected.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -370,6 +382,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void RecurseDirectory(DirectoryInfo di)
         {
+            if (_cancelTokenSource.IsCancellationRequested)
+                return;
+
             if (!di.Exists || di.FullName.Length > 248)
                 return;
 
@@ -627,6 +642,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         where g.Count() > 1
                         select new { FileName = g.Key, Files = g };*/
 
+            if (_cancelTokenSource.IsCancellationRequested)
+                return;
+
             var groupedByFilename = _fileList
                 .Where(fileEntry => fileEntry.IsDeleteable)
                 .GroupBy(fileEntry => fileEntry.FileName)
@@ -636,6 +654,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             foreach (var @group in groupedByFilename)
             {
+                if (_cancelTokenSource.IsCancellationRequested)
+                    break;
+
                 ScanBase.FilesGroupedByFilename.Add(@group.FileName, @group.Files.ToList());
             }
         }
@@ -654,6 +675,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!ProgressBar.IsIndeterminate)
                     ProgressBar.IsIndeterminate = true;
             }));
+
+            if (_cancelTokenSource.IsCancellationRequested)
+                return;
 
             StatusText = "Grouping files by size";
             CurrentFile = "Please wait...";
@@ -677,6 +701,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 /*if (!@group.Files.Any())
                     continue;*/
+
+                if (_cancelTokenSource.IsCancellationRequested)
+                    return;
                 
                 List<FileEntry> filesGroup = @group.Files.ToList();
 
@@ -716,6 +743,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 foreach (FileEntry file in files)
                 {
+                    if (_cancelTokenSource.IsCancellationRequested)
+                        return;
+
                     CurrentFile = file.FilePath;
 
                     file.GetChecksum(ScanBase.Options.HashAlgorithm.Algorithm, compareFilename);
@@ -740,6 +770,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 foreach (var @group in groupedByChecksum)
                 {
+                    if (_cancelTokenSource.IsCancellationRequested)
+                        return;
+
                     if (!ScanBase.FilesGroupedByHash.ContainsKey(@group.Checksum))
                         ScanBase.FilesGroupedByHash.Add(@group.Checksum, @group.Files);
                     else
@@ -774,6 +807,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             
             foreach (FileEntry fileEntry in _fileList)
             {
+                if (_cancelTokenSource.IsCancellationRequested)
+                    return;
+
                 if (fileEntry.IsDeleteable && fileEntry.HasAudioTags)
                 {
                     fileEntry.GetTagsChecksum(ScanBase.Options);
@@ -804,6 +840,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             foreach (var group in groupedByTagsChecksum)
             {
+                if (_cancelTokenSource.IsCancellationRequested)
+                    return;
+
                 string checksum = group.Checksum;
                 List<FileEntry> files = group.Files;
 
@@ -817,7 +856,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 AbortScanThread();
-                ScanBase.MovePrev();
+
+                var t = new Task(() =>
+                {
+                    _taskScan.Wait();
+                    ScanBase.MovePrev();
+                });
+
+                t.Start();
             }
         }
 
