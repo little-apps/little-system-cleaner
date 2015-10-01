@@ -313,20 +313,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             ScannerBase.CancellationToken?.Cancel();
         }
 
-        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        private async void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 AbortScanThread();
 
-                Task.Run(() =>
-                {
-                    _scanTask.Wait();
+                await _scanTask;
 
-                    _scanBase.MoveFirst();
-                });
-
-                
+                _scanBase.MoveFirst();
             }
         }
 

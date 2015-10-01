@@ -851,19 +851,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
         }
 
-        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        private async void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 AbortScanThread();
 
-                var t = new Task(() =>
-                {
-                    _taskScan.Wait();
-                    ScanBase.MovePrev();
-                });
-
-                t.Start();
+                await _taskScan;
+                ScanBase.MoveFirst();
             }
         }
 
