@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Controls;
@@ -135,10 +136,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             List<string> fileList = new List<string>();
 
-            foreach (string dirPath in Directory.GetDirectories(path))
+            foreach (string dirPath in Directory.GetDirectories(path).TakeWhile(dirPath => !CancellationToken.IsCancellationRequested))
+            {
                 fileList.AddRange(ParseDirectoryShortcuts(dirPath).ToArray());
+            }
 
-            foreach (string shortcutPath in Directory.GetFiles(path))
+            foreach (string shortcutPath in Directory.GetFiles(path).TakeWhile(shortcutPath => !CancellationToken.IsCancellationRequested))
             {
                 Wizard.CurrentFile = shortcutPath;
 
@@ -158,8 +161,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         if (MiscFunctions.IsFileValid(shortcutPath))
                             fileList.Add(shortcutPath);
                 }
-
-                // TODO: Check .url files
             }
 
             return fileList;

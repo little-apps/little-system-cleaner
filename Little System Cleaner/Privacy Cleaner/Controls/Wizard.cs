@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
@@ -64,8 +65,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
         }
-
-        internal static Thread ScanThread { get; set; }
 
         public SectionModel Model
         {

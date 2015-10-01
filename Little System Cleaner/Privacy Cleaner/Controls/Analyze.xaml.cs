@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
@@ -39,9 +40,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
     {
         readonly Wizard _scanBase;
         readonly Timer _timerUpdate = new Timer(200);
+
+        private readonly Task _scanTask;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+
         int _currentListViewParentIndex = -1;
         int _currentListViewIndex = -1;
-        Thread _threadScan;
 
         public ScannerBase CurrentListViewItem => SectionsCollection[_currentListViewParentIndex].Children[_currentListViewIndex];
 
@@ -83,8 +88,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             // Set the progress bar
             SetProgressBar();
 
-            Wizard.ScanThread = new Thread(StartScanning);
-            Wizard.ScanThread.Start();
+            _scanTask = new Task(StartScanning, _cancellationTokenSource.Token);
+            _scanTask.Start();
+
+            //Wizard.ScanThread = new Thread(StartScanning);
+            //Wizard.ScanThread.Start();
         }
 
         private void SetProgressBar()
@@ -103,7 +111,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void StartScanning()
         {
-            bool scanAborted = false;
             int currentParent = -1;
 
             DateTime dtStart = DateTime.Now;
@@ -115,6 +122,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
                 foreach (ScannerBase n in SectionsCollection)
                 {
+                    if (_cancellationTokenSource.IsCancellationRequested)
+                        break;
+
                     currentParent++;
                     _currentListViewIndex = -1;
 
@@ -127,6 +137,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     {
                         foreach (ScannerBase child in n.Children)
                         {
+                            if (_cancellationTokenSource.IsCancellationRequested)
+                                break;
+
                             InvokeCurrentSection(child.Section, currentParent);
 
                             StartScanner(n, child);
@@ -159,23 +172,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         n.UnloadGif();
                     }));
                 }
-
-                scanAborted = true;
-            }
-            catch (Exception ex)
-            {
-                if (ex is ThreadAbortException || ex is ThreadInterruptedException)
-                {
-                    scanAborted = false;
-
-                    if (_threadScan.IsAlive)
-                        _threadScan.Abort();
-
-                    if (ex is ThreadAbortException)
-                        Thread.ResetAbort();
-                }
-                else
-                    throw;
             }
             finally
             {
@@ -188,8 +184,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
                 Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
 
-                if (scanAborted)
+                if (!_cancellationTokenSource.IsCancellationRequested)
                     _scanBase.MoveNext();
+
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
             }
         }
 
@@ -247,19 +246,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            _threadScan = new Thread(() => TryScanMethod(() => parent.Scan(child)));
+            ScannerBase.CancellationToken = new CancellationTokenSource();
 
-            try
-            {
-                _threadScan.Start();
-                _threadScan.Join();
-            }
-            catch (ThreadInterruptedException)
-            {
+            Task scanTask = new Task(() => parent.Scan(child), ScannerBase.CancellationToken.Token);
+            scanTask.RunSynchronously();
 
-            }
-
-
+            ScannerBase.CancellationToken.Dispose();
+            ScannerBase.CancellationToken = null;
         }
 
         private void StartScanner(ScannerBase parent)
@@ -289,30 +282,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            _threadScan = new Thread(() => TryScanMethod(parent.Scan));
+            ScannerBase.CancellationToken = new CancellationTokenSource();
 
-            try
-            {
-                _threadScan.Start();
-                _threadScan.Join();
-            }
-            catch (ThreadInterruptedException)
-            {
+            Task scanTask = new Task(parent.Scan, _cancellationTokenSource.Token);
+            scanTask.RunSynchronously();
 
-            }
-        }
-
-        private void TryScanMethod(Action action)
-        {
-            try
-            {
-                action();
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
-            
+            ScannerBase.CancellationToken.Dispose();
+            ScannerBase.CancellationToken = null;
         }
 
         void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
@@ -333,14 +309,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         public void AbortScanThread()
         {
-            if (Wizard.ScanThread.IsAlive)
-            {
-                Wizard.ScanThread.Interrupt();
-                Wizard.ScanThread.Abort();
-            }
-
-            if (_threadScan.IsAlive)
-                _threadScan.Abort();
+            _cancellationTokenSource?.Cancel();
+            ScannerBase.CancellationToken?.Cancel();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
@@ -348,7 +318,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 AbortScanThread();
-                _scanBase.MoveFirst();
+
+                Task.Run(() =>
+                {
+                    _scanTask.Wait();
+
+                    _scanBase.MoveFirst();
+                });
+
+                
             }
         }
 

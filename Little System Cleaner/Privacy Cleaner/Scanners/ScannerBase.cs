@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -50,6 +51,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         }
 
         #endregion
+
+        public static CancellationTokenSource CancellationToken;
 
         public ObservableCollection<ScannerBase> Children { get; } = new ObservableCollection<ScannerBase>();
 
@@ -625,6 +628,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             foreach (ScannerBase n in Children)
             {
+                if (CancellationToken.IsCancellationRequested)
+                    break;
+
                 if (!string.IsNullOrEmpty(n.Name) && !string.IsNullOrEmpty(n.PluginPath))
                     ScanPlugin(n.Name, n.PluginPath);
             }
@@ -648,6 +654,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 {
                     while (xmlReader.ReadToFollowing("IsRunning"))
                     {
+                        if (CancellationToken.IsCancellationRequested)
+                            return;
+
                         string procName = xmlReader.ReadElementContentAsString();
 
                         if (RunningMsg.DisplayRunningMsg(name, procName).GetValueOrDefault() == false)
@@ -661,6 +670,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     {
                         while (xmlReader.Read())
                         {
+                            if (CancellationToken.IsCancellationRequested)
+                                return;
+
                             if (xmlReader.NodeType != XmlNodeType.Element)
                                 continue;
 
