@@ -232,18 +232,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void StartScanner(ScannerBase scanner)
         {
-            MethodInfo mi = scanner.GetType().GetMethod("Scan", BindingFlags.NonPublic | BindingFlags.Static);
-
-            if (mi == null)
-            {
-                Debug.WriteLine("Unable to get method info for " + scanner.ScannerName);
-                return;
-            }
-
-            Action objScan = (Action)Delegate.CreateDelegate(typeof(Action), mi);
-
             // Start thread
-            _threadScan = new Thread(new ThreadStart(objScan));
+            _threadScan = new Thread(scanner.Scan);
 
             try
             {

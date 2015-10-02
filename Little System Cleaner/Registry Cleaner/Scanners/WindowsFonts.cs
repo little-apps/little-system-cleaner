@@ -42,7 +42,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Finds invalid font references
         /// </summary>
-        internal static void Scan()
+        public override void Scan()
         {
             StringBuilder strPath = new StringBuilder(260);
 

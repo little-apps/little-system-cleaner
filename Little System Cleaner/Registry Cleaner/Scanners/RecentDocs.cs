@@ -31,7 +31,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
     {
         public override string ScannerName => Strings.RecentDocs;
 
-        internal static void Scan()
+        public override void Scan()
         {
             try
             {

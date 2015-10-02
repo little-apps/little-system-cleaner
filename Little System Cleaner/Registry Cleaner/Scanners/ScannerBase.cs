@@ -54,10 +54,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             return (string)ScannerName.Clone();
         }
 
+        public abstract void Scan();
+
         //public virtual void Scan()
         //{
         //    return;
         //}
- 
+
     }
 }

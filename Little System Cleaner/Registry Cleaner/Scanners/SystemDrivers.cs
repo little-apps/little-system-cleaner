@@ -31,7 +31,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Scans for invalid references to drivers
         /// </summary>
-        internal static void Scan()
+        public override void Scan()
         {
             try
             {

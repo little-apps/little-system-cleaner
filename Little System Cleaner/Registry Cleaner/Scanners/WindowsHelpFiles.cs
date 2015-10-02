@@ -29,7 +29,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
     {
         public override string ScannerName => Strings.WindowsHelpFiles;
 
-        internal static void Scan()
+        public override void Scan()
         {
             try
             {

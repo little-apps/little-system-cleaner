@@ -31,7 +31,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         /// Scan for missing links to DLLS
         /// </summary>
-        internal static void Scan()
+        public override void Scan()
         {
             try
             {
