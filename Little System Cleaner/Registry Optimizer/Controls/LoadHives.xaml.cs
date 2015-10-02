@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using Microsoft.Win32;
+using System.Threading.Tasks;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -18,9 +19,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             InitializeComponent();
 
             _scanBase = sb;
-
-            Thread t = new Thread(InitHives);
-            t.Start();
+            
+            Task.Run(new Action(InitHives));
         }
 
         private void InitHives()

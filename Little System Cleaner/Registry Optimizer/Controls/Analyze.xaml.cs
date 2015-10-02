@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Shell;
 using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using System.Threading.Tasks;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -30,8 +31,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// </summary>
     public partial class Analyze
     {
-        Thread _threadCurrent, _threadScan;
-
         public Analyze()
         {
             InitializeComponent();
@@ -59,14 +58,15 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             ProgressBar.Maximum = Wizard.RegistryHives.Count;
             ProgressBar.Value = 0;
 
-            _threadScan = new Thread(AnalyzeHives);
-            _threadScan.Start();
+            //_taskScanMain = new Task(AnalyzeHives, _cancellationTokenSource.Token);
+            //_taskScanMain.Start();
+            AnalyzeHives();
         }
 
-        private void AnalyzeHives()
+        private async void AnalyzeHives()
         {
             DateTime dtStart = DateTime.Now;
-
+            
             Thread.BeginCriticalRegion();
 
             foreach (Hive h in Wizard.RegistryHives)
@@ -74,9 +74,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 IncrementProgressBar(h.RegistryHive);
 
                 // Analyze Hive
-                _threadCurrent = new Thread(() => h.AnalyzeHive(this));
-                _threadCurrent.Start();
-                _threadCurrent.Join();
+                await Task.Run(() => h.AnalyzeHive(this));
             }
 
             Thread.EndCriticalRegion();
@@ -87,20 +85,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Settings.Default.lastScanElapsed = timeSpan.Ticks;
 
-            Dispatcher.BeginInvoke(new Action(() => {
-                Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
-                Close();
-            }));
+            Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
+            Close();
         }
 
         private void IncrementProgressBar(string currentHive)
         {
-            if (Dispatcher.Thread != Thread.CurrentThread)
-            {
-                Dispatcher.BeginInvoke(new Action<string>(IncrementProgressBar), currentHive);
-                return;
-            }
-
             ProgressBar.Value++;
             TextBlockStatus.Text = $"Analyzing: {currentHive}";
         }

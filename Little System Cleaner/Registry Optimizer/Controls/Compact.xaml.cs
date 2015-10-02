@@ -25,6 +25,7 @@ using System.Windows.Shell;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
+using System.Threading.Tasks;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -51,11 +52,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             ProgressBar.Maximum = Wizard.RegistryHives.Count;
             ProgressBar.Value = 0;
 
-            _threadScan = new Thread(CompactRegistry);
-            _threadScan.Start();
+            CompactRegistry();
         }
 
-        private void CompactRegistry()
+        private async void CompactRegistry()
         {
             long lSeqNum = 0;
 
@@ -79,18 +79,16 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             {
                 if (h.SkipCompact)
                 {
-                    SetStatusText($"Skipping: {h.RegistryHive}");
+                    TextBlockStatus.Text = $"Skipping: {h.RegistryHive}";
                 }
                 else
                 {
-                    SetStatusText($"Compacting: {h.RegistryHive}");
+                    TextBlockStatus.Text = $"Compacting: {h.RegistryHive}";
 
-                    _threadCurrent = new Thread(() => h.CompactHive(this));
-                    _threadCurrent.Start();
-                    _threadCurrent.Join();
+                    await Task.Run(() => h.CompactHive(this));
                 }
 
-                IncrementProgressBar();
+                ProgressBar.Value++;
             }
 
             if (lSeqNum != 0)
@@ -113,45 +111,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             // Set IsCompacted
             Main.IsCompacted = true;
 
-            SetDialogResult(true);
+            DialogResult = true;
 
-            Dispatcher.BeginInvoke(new Action(() => {
-                Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
-                Close();
-            }));
-        }
-
-        private void SetDialogResult(bool bResult)
-        {
-            if (Dispatcher.Thread != Thread.CurrentThread)
-            {
-                Dispatcher.BeginInvoke(new Action<bool>(SetDialogResult), bResult);
-                return;
-            }
-
-            DialogResult = bResult;
-        }
-
-        private void SetStatusText(string statusText)
-        {
-            if (Dispatcher.Thread != Thread.CurrentThread)
-            {
-                Dispatcher.BeginInvoke(new Action<string>(SetStatusText), statusText);
-                return;
-            }
-
-            TextBlockStatus.Text = statusText;
-        }
-
-        private void IncrementProgressBar()
-        {
-            if (Dispatcher.Thread != Thread.CurrentThread)
-            {
-                Dispatcher.BeginInvoke(new Action(IncrementProgressBar));
-                return;
-            }
-
-            ProgressBar.Value++;
+            Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
+            Close();
         }
 
         /// <summary>
