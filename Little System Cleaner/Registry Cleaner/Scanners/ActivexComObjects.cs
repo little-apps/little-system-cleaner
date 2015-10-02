@@ -37,48 +37,41 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// </summary>
         public override void Scan()
         {
-            try
+            // Scan all CLSID sub keys
+            Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.ClassesRoot.OpenSubKey("CLSID")));
+            Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
+            Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
+            if (Utils.Is64BitOs)
             {
-                // Scan all CLSID sub keys
-                Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.ClassesRoot.OpenSubKey("CLSID")));
-                Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
-                Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\CLSID")));
-                if (Utils.Is64BitOs)
-                {
-                    Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\CLSID")));
-                    Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
-                    Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
-                }
-
-                // Scan file extensions + progids
-                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot));
-                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes")));
-                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes")));
-                if (Utils.Is64BitOs)
-                {
-                    Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot.OpenSubKey("Wow6432Node")));
-                    Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
-                    Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
-                }
-
-                // Scan appids
-                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("AppID")));
-                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\AppID")));
-                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\AppID")));
-                if (Utils.Is64BitOs)
-                {
-                    Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\AppID")));
-                    Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
-                    Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
-                }
-
-                // Scan explorer subkey
-                ScanExplorer();
+                Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\CLSID")));
+                Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
+                Utils.SafeOpenRegistryKey(() => ScanClsidSubKey(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes\\CLSID")));
             }
-            catch (ThreadAbortException)
+
+            // Scan file extensions + progids
+            Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot));
+            Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes")));
+            Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes")));
+            if (Utils.Is64BitOs)
             {
-                Thread.ResetAbort();
+                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.ClassesRoot.OpenSubKey("Wow6432Node")));
+                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
+                Utils.SafeOpenRegistryKey(() => ScanClasses(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Classes")));
             }
+
+            // Scan appids
+            Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("AppID")));
+            Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\AppID")));
+            Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\AppID")));
+            if (Utils.Is64BitOs)
+            {
+                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.ClassesRoot.OpenSubKey("Wow6432Node\\AppID")));
+                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
+                Utils.SafeOpenRegistryKey(() => ScanAppIds(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\AppID")));
+            }
+
+            // Scan explorer subkey
+            ScanExplorer();
         }
 
         #region Scan functions
@@ -106,7 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
             }
 
-            foreach (string clsid in clsids)
+            foreach (string clsid in clsids.TakeWhile(clsid => !CancellationToken.IsCancellationRequested))
             {
                 RegistryKey regKeyClsid, regKeyDefaultIcon = null, regKeyInprocSrvr = null, regKeyInprocSrvr32 = null;
 
@@ -219,7 +212,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid AppID's");
 
-            foreach (string appId in regKey.GetSubKeyNames())
+            foreach (string appId in regKey.GetSubKeyNames().TakeWhile(appId => !CancellationToken.IsCancellationRequested))
             {
                 RegistryKey regKeyAppId = null;
 
@@ -269,7 +262,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
             }
 
-            foreach (string subKey in classList.Where(strSubKey => strSubKey != "*"))
+            foreach (string subKey in classList.Where(strSubKey => strSubKey != "*").TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
                 if (subKey[0] == '.')
                 {
@@ -384,7 +377,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string guid in regKey.GetSubKeyNames())
+                    foreach (string guid in regKey.GetSubKeyNames().TakeWhile(guid => !CancellationToken.IsCancellationRequested))
                     {
                         try
                         {
@@ -423,7 +416,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string guid in regKey.GetValueNames().Where(guid => !IeToolbarIsValid(guid)))
+                    foreach (string guid in regKey.GetValueNames().Where(guid => !IeToolbarIsValid(guid)).TakeWhile(guid => !CancellationToken.IsCancellationRequested))
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidToolbar, regKey.ToString(), guid);
                     }
@@ -447,7 +440,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string guid in regKey.GetSubKeyNames())
+                    foreach (string guid in regKey.GetSubKeyNames().TakeWhile(guid => !CancellationToken.IsCancellationRequested))
                     {
                         try
                         {
@@ -483,7 +476,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string fileExt in regKey.GetSubKeyNames())
+                    foreach (string fileExt in regKey.GetSubKeyNames().TakeWhile(fileExt => !CancellationToken.IsCancellationRequested))
                     {
                         try
                         {
@@ -777,7 +770,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList)
+                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;
@@ -832,7 +825,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList)
+                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;
@@ -887,7 +880,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList)
+                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;
@@ -942,7 +935,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList)
+                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;

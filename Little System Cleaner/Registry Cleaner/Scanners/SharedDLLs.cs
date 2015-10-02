@@ -43,7 +43,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 Wizard.Report.WriteLine("Scanning for missing shared DLLs");
 
                 // Validate Each DLL from the value names
-                foreach (string strFilePath in regKey.GetValueNames().Where(strFilePath => !string.IsNullOrWhiteSpace(strFilePath)).Where(strFilePath => !Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath)))
+                foreach (string strFilePath in regKey.GetValueNames()
+                    .Where(strFilePath => !string.IsNullOrWhiteSpace(strFilePath))
+                    .Where(strFilePath => !Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
+                    .TakeWhile(strFilePath => !CancellationToken.IsCancellationRequested))
                 {
                     Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
                 }
@@ -53,10 +56,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             catch (System.Security.SecurityException ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
             }
         }
     }

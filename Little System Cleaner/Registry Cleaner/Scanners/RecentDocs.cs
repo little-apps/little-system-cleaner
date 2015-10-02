@@ -33,15 +33,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
         public override void Scan()
         {
-            try
-            {
-                ScanMuiCache();
-                ScanExplorerDocs();
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
+            ScanMuiCache();
+            ScanExplorerDocs();
         }
 
         /// <summary>
@@ -56,7 +49,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    foreach (string valueName in from valueName in regKey.GetValueNames() where !string.IsNullOrWhiteSpace(valueName) where !valueName.StartsWith("@") && valueName != "LangID" where !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName) select valueName)
+                    foreach (string valueName in regKey.GetValueNames()
+                        .Where(valueName => !string.IsNullOrWhiteSpace(valueName))
+                        .Where(valueName => !valueName.StartsWith("@") && valueName != "LangID")
+                        .Where(valueName => !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName))
+                        .TakeWhile(valueName => !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName)))
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
                     }
@@ -84,7 +81,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     EnumMruList(regKey);
 
-                    foreach (RegistryKey subKey in regKey.GetSubKeyNames().Select(strSubKey => regKey.OpenSubKey(strSubKey)).Where(subKey => subKey != null))
+                    foreach (RegistryKey subKey in regKey.GetSubKeyNames()
+                        .Select(strSubKey => regKey.OpenSubKey(strSubKey))
+                        .Where(subKey => subKey != null)
+                        .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
                     {
                         EnumMruList(subKey);
                     }

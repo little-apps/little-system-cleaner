@@ -40,10 +40,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
         }
 
         /// <summary>
@@ -61,6 +57,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     .Select(helpFile => new {Name = helpFile, Value = regKey.GetValue(helpFile) as string})
                     .Where(o => !HelpFileExists(o.Name, o.Value))
                     .Select(o => o.Name)
+                    .TakeWhile(helpFile => !CancellationToken.IsCancellationRequested)
                 )
             {
                 // (Won't include default value name as strHelpFile must not be null/empty)

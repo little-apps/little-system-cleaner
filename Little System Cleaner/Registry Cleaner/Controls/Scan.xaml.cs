@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
@@ -30,7 +31,6 @@ using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using ThreadState = System.Threading.ThreadState;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
@@ -40,15 +40,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 	    readonly Wizard _scanBase;
 	    readonly Timer _timerUpdate = new Timer(200);
         DateTime _dateTimeStart = DateTime.MinValue;
-        Thread _threadScan;
         int _currentListViewIndex = -1;
 	    readonly ObservableCollection<lviScanner> _sectionCollection = new ObservableCollection<lviScanner>();
-        private static bool _abortScan;
+
+        private readonly Task _mainTaskScan;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         private static string _currentItemScanned;
         internal static int TotalItemsScanned = -1;
 
-        /// <summary>
+	    /// <summary>
         /// Gets the enabled scanners
         /// </summary>
         internal static List<ScannerBase> EnabledScanners { get; } = new List<ScannerBase>();
@@ -77,14 +78,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
 	    public Scan(Wizard sb)
         {
-            InitializeComponent();
+	        InitializeComponent();
 
             Focus();
 
             _scanBase = sb;
-
-            // Reset AbortScan
-            _abortScan = false;
 
             // Zero last scan errors found + fixed and elapsed
             Settings.Default.lastScanErrors = 0;
@@ -114,21 +112,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 _sectionCollection.Add(lvi);
             }
 
-            Wizard.ScanThread = new Thread(StartScanning);
-            Wizard.ScanThread.Start();
+            _mainTaskScan = new Task(StartScanning, _cancellationTokenSource.Token);
+            _mainTaskScan.Start();
         }
 
         public void AbortScanThread()
         {
-            if (Wizard.ScanThread.IsAlive)
-            {
-                Wizard.ScanThread.Interrupt();
-                Wizard.ScanThread.Abort();
-            }
-
-            // In case ScanThread failed to abort the child thread
-            if (_threadScan.IsAlive)
-                _threadScan.Abort();
+            _cancellationTokenSource?.Cancel();
+            ScannerBase.CancellationToken?.Cancel();
         }
 
         void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
@@ -174,26 +165,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                     StartScanner(scanner);
 
-                    if (_abortScan)
-                        break;
+                    if (_cancellationTokenSource.IsCancellationRequested)
+                        _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                     Wizard.Report.WriteLine("Finished scanning: " + scanner.ScannerName);
                     Wizard.Report.WriteLine();
                 }
             }
-            catch (ThreadAbortException )
+            catch (OperationCanceledException)
             {
                 // Scanning was aborted
-                _abortScan = true;
-
                 Wizard.Report.Write("User aborted scan... ");
 
-                if (_threadScan.IsAlive && _threadScan.ThreadState != ThreadState.AbortRequested)
-                    _threadScan.Abort();
-
                 Wizard.Report.WriteLine("Exiting.\r\n");
-
-                Thread.ResetAbort();
             }
             finally
             {
@@ -225,37 +209,24 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 // Reset taskbar progress bar
                 Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
 
-                if (!_abortScan)
+                if (!_cancellationTokenSource.IsCancellationRequested)
                     _scanBase.MoveNext();
+
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
             }
         }
 
         private void StartScanner(ScannerBase scanner)
         {
-            // Start thread
-            _threadScan = new Thread(scanner.Scan);
+            // Start task
+            ScannerBase.CancellationToken = new CancellationTokenSource();
 
-            try
-            {
-                _threadScan.Start();
-                _threadScan.Join();
-            }
-            catch (Exception ex)
-            {
-                if (ex is ThreadInterruptedException)
-                {
-                    if (!_abortScan)
-                        _abortScan = true;
+            var childScanTask = new Task(scanner.Scan, ScannerBase.CancellationToken.Token);
+            childScanTask.RunSynchronously();
 
-                    if (_threadScan.IsAlive)
-                        _threadScan.Abort();
-                }
-                else
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-                
-            }
+            ScannerBase.CancellationToken.Dispose();
+            ScannerBase.CancellationToken = null;
         }
 
         /// <summary>
@@ -292,18 +263,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             ListView.Items.Refresh();
         }
 
-        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        private async void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                // AbortScanThread will be called via Unloaded event
+                AbortScanThread();
+
+                await _mainTaskScan;
+
                 _scanBase.MoveFirst();
             }
-        }
-
-        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            AbortScanThread();
         }
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

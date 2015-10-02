@@ -45,10 +45,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
         }
 
         private static void ScanRegistryKey(RegistryKey baseRegKey)
@@ -58,7 +54,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
 
-            foreach (string strSubKey in baseRegKey.GetSubKeyNames().Where(strSubKey => IsEmptyRegistryKey(baseRegKey.OpenSubKey(strSubKey, true))))
+            foreach (string strSubKey in baseRegKey.GetSubKeyNames()
+                .Where(strSubKey => IsEmptyRegistryKey(baseRegKey.OpenSubKey(strSubKey, true)))
+                .TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
                 Wizard.StoreInvalidKey(Strings.NoRegKey, baseRegKey.Name + "\\" + strSubKey);
             }

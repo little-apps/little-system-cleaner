@@ -48,7 +48,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 .Select(driverName => new { Name = driverName, Value = regKey.GetValue(driverName) as string })
                                 .Where(o => !string.IsNullOrEmpty(o.Value))
                                 .Where(o => !Utils.FileExists(o.Value) && !Wizard.IsOnIgnoreList(o.Value))
-                                .Select(o => o.Name))
+                                .Select(o => o.Name)
+                                .TakeWhile(driverName => !CancellationToken.IsCancellationRequested))
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(driverName) ? "(default)" : driverName));
                     }
@@ -57,10 +58,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             catch (System.Security.SecurityException ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
             }
         }
     }

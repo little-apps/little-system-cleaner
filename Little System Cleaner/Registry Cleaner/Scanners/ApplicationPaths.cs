@@ -47,10 +47,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
         }
 
         private static void ScanInstallFolders()
@@ -60,7 +56,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (string strFolder in regKey.GetValueNames().Where(strFolder => !string.IsNullOrWhiteSpace(strFolder)).Where(strFolder => !ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder)))
+            foreach (string strFolder in regKey.GetValueNames()
+                .Where(strFolder => !string.IsNullOrWhiteSpace(strFolder))
+                .Where(strFolder => !ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder))
+                .TakeWhile(strFolder => !CancellationToken.IsCancellationRequested))
             {
                 Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
             }
@@ -73,7 +72,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (string strSubKey in regKey.GetSubKeyNames())
+            foreach (string strSubKey in regKey.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
                 RegistryKey regKey2 = regKey.OpenSubKey(strSubKey);
 

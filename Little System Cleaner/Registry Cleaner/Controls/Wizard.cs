@@ -70,8 +70,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         internal static DateTime ScanStartTime { get; set; }
-
-        internal static Thread ScanThread { get; set; }
+        
 
         public Wizard()
         {

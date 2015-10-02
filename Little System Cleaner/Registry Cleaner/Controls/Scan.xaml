@@ -10,7 +10,6 @@
 	x:Name="UserControl"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
 	MinWidth="579" MinHeight="384"
-    Unloaded="UserControl_Unloaded"
     >
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>

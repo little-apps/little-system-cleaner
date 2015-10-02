@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Linq;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
@@ -44,10 +45,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
         }
 
         /// <summary>
@@ -56,7 +53,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <param name="rk">Registry subkey</param>
         private static void ParseSoundKeys(RegistryKey rk)
         {
-            foreach (string strSubKey in rk.GetSubKeyNames())
+            foreach (string strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
 
                 // Ignores ".Default" Subkey

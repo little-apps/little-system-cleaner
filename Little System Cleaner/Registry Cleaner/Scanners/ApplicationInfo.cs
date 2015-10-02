@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (regKey == null)
                         return;
 
-                    foreach (string strProgName in regKey.GetSubKeyNames())
+                    foreach (string strProgName in regKey.GetSubKeyNames().TakeWhile(strProgName => !CancellationToken.IsCancellationRequested))
                     {
                         using (RegistryKey regKey2 = regKey.OpenSubKey(strProgName))
                         {
@@ -107,10 +107,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
         }
 
         /// <summary>
@@ -122,7 +118,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (string subKey in regKey.GetSubKeyNames().Where(subKey => Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + subKey) == null))
+            foreach (string subKey in regKey.GetSubKeyNames()
+                .Where(subKey => Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + subKey) == null)
+                .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
                 Wizard.StoreInvalidKey(Strings.ObsoleteRegKey, $"{regKey.Name}/{subKey}");
             }

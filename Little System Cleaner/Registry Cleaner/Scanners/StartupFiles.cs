@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Linq;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
@@ -78,10 +79,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
             }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
         }
 
         /// <summary>
@@ -95,7 +92,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Checking for invalid files in " + regKey.Name);
 
-            foreach (string progName in regKey.GetValueNames())
+            foreach (string progName in regKey.GetValueNames().TakeWhile(progName => !CancellationToken.IsCancellationRequested))
             {
                 string runPath = regKey.GetValue(progName) as string;
 

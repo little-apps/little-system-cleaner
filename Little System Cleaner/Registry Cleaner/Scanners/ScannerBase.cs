@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Threading;
 using System.Windows.Media.Imaging;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
@@ -53,6 +54,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             return (string)ScannerName.Clone();
         }
+
+        public static CancellationTokenSource CancellationToken;
 
         public abstract void Scan();
 

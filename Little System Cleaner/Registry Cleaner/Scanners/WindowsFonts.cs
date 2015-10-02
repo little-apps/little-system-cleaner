@@ -59,17 +59,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         return;
 
                     foreach (var fontName in 
-                        regKey.GetValueNames()
-                        .Select(valueName => new { Name = valueName, Value = regKey.GetValue(valueName) as string })
-                        // Skip if value is empty
-                        .Where(o => !string.IsNullOrEmpty(o.Value))
-                        // Check value by itself
-                        .Where(o => !Utils.FileExists(o.Value))
-                        .Where(o => !Wizard.IsOnIgnoreList(o.Value))
-                        .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}" })
-                        // Check for font in fonts folder
-                        .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
-                        .Select(o => o.Name)
+                            regKey.GetValueNames()
+                                .Select(valueName => new { Name = valueName, Value = regKey.GetValue(valueName) as string })
+                                // Skip if value is empty
+                                .Where(o => !string.IsNullOrEmpty(o.Value))
+                                // Check value by itself
+                                .Where(o => !Utils.FileExists(o.Value))
+                                .Where(o => !Wizard.IsOnIgnoreList(o.Value))
+                                .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}" })
+                                // Check for font in fonts folder
+                                .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
+                                .Select(o => o.Name)
+                                .TakeWhile(fontName => !CancellationToken.IsCancellationRequested)
                         )
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(fontName) ? "(default)" : fontName));
@@ -80,10 +81,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             catch (SecurityException ex)
             {
                 Debug.WriteLine(ex.Message);
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
             }
         }
     }
