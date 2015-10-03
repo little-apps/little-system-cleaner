@@ -184,23 +184,23 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     if (!fileInfo.Exists)
                         continue;
 
-                    if (Settings.Default.diskCleanerRemoveMode == 0)
+                    switch (Settings.Default.diskCleanerRemoveMode)
                     {
-                        // Remove permanately
-                        fileInfo.Delete();
-                    }
-                    else if (Settings.Default.diskCleanerRemoveMode == 1)
-                    {
-                        // Recycle file
-                        SendFileToRecycleBin(fileInfo.FullName);
-                    }
-                    else
-                    {
-                        // Move file to specified directory
-                        if (!Directory.Exists(Settings.Default.diskCleanerMoveFolder))
-                            Directory.CreateDirectory(Settings.Default.diskCleanerMoveFolder);
+                        case 0:
+                            // Remove permanately
+                            fileInfo.Delete();
+                            break;
+                        case 1:
+                            // Recycle file
+                            SendFileToRecycleBin(fileInfo.FullName);
+                            break;
+                        default:
+                            // Move file to specified directory
+                            if (!Directory.Exists(Settings.Default.diskCleanerMoveFolder))
+                                Directory.CreateDirectory(Settings.Default.diskCleanerMoveFolder);
 
-                        File.Move(fileInfo.FullName, $@"{Settings.Default.diskCleanerMoveFolder}\{fileInfo.Name}");
+                            File.Move(fileInfo.FullName, $@"{Settings.Default.diskCleanerMoveFolder}\{fileInfo.Name}");
+                            break;
                     }
                 }
                 catch (Exception)
