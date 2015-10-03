@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
@@ -41,11 +42,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         internal Timer TimerUpdate = new Timer(100);
         public Wizard ScanBase;
 
-        public Thread ThreadMain
-        {
-            get;
-            set;
-        }
+        private readonly Task _taskMain;
+        private CancellationTokenSource _cancellationTokenSource;
 
         internal static string CurrentFile
         {
@@ -82,8 +80,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             TimerUpdate.Elapsed += timerUpdate_Elapsed;
             TimerUpdate.Start();
 
-            ThreadMain = new Thread(AnalyzeDisk);
-            ThreadMain.Start();
+            _cancellationTokenSource = new CancellationTokenSource();
+            _taskMain = new Task(AnalyzeDisk, _cancellationTokenSource.Token);
+            _taskMain.Start();
         }
 
         void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
@@ -109,6 +108,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 foreach (DriveInfo driveInfo in ScanBase.SelectedDrives)
                 {
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
                     ScanFiles(driveInfo.RootDirectory);
                 }
 
@@ -122,18 +123,19 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
-            catch (ThreadAbortException)
+            catch (OperationCanceledException)
             {
                 // Will end up here if user accepts to change tab
                 // No need to change tab
-
-                Thread.ResetAbort();
 
                 completedSuccessfully = false;
             }
             finally
             {
                 ResetInfo(completedSuccessfully);
+
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
             }
         }
 
@@ -165,7 +167,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             try
             {
-                foreach (FileInfo fileInfo in parentInfo.GetFiles())
+                foreach (FileInfo fileInfo in parentInfo.GetFiles().TakeWhile(fileInfo => !_cancellationTokenSource.IsCancellationRequested))
                 {
                     try
                     {
@@ -226,7 +228,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
 
             try {
-                foreach (DirectoryInfo childInfo in parentInfo.GetDirectories())
+                foreach (DirectoryInfo childInfo in parentInfo.GetDirectories().TakeWhile(childInfo => !_cancellationTokenSource.IsCancellationRequested))
                 {
                     try
                     {
@@ -437,18 +439,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             TimerUpdate.Stop();
 
-            ThreadMain?.Abort();
+            _cancellationTokenSource?.Cancel();
         }
 
-        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        private async void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (ThreadMain.IsAlive && ThreadMain.ThreadState == ThreadState.Running)
+            if (!_taskMain.IsCompleted)
             {
                 if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
             }
             
             CancelAnalyze();
+
+            await _taskMain;
+
             ScanBase.MovePrev();
         }
 
