@@ -8,7 +8,6 @@ using System.Timers;
 using System.Windows;
 using Little_System_Cleaner.Annotations;
 using Little_System_Cleaner.Misc;
-using WpfAnimatedGif;
 
 namespace Little_System_Cleaner.ProcessInfo
 {

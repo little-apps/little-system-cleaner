@@ -366,26 +366,6 @@
     <Compile Include="TreeListView\Tree\TreeList.cs" />
     <Compile Include="TreeListView\Tree\TreeListItem.cs" />
     <Compile Include="TreeListView\Tree\TreeNode.cs" />
-    <Compile Include="WpfAnimatedGif\AnimationCache.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifApplicationExtension.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifBlock.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifBlockKind.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifColor.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifCommentExtension.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifDecoderException.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifExtension.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifFile.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifFrame.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifGraphicControlExtension.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifHeader.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifHelpers.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifImageData.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifImageDescriptor.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifLogicalScreenDescriptor.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifPlainTextExtension.cs" />
-    <Compile Include="WpfAnimatedGif\Decoding\GifTrailer.cs" />
-    <Compile Include="WpfAnimatedGif\ImageAnimationController.cs" />
-    <Compile Include="WpfAnimatedGif\ImageBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml">

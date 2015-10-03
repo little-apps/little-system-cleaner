@@ -4,7 +4,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ct="clr-namespace:CommonTools;assembly=CommonTools"
-    xmlns:wpfAnimatedGif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
+    xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
     mc:Ignorable="d"
 	x:Class="Little_System_Cleaner.Registry_Cleaner.Controls.Scan"
 	x:Name="UserControl"
@@ -50,7 +50,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding Image}" wpfAnimatedGif:ImageBehavior.AnimatedSource="{Binding Path=AnimatedImage}" />
+                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding Image}" gif:AnimationBehavior.SourceUri="{Binding Path=AnimatedImage}" />
                                     <TextBlock Text="{Binding Path=Section}"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>

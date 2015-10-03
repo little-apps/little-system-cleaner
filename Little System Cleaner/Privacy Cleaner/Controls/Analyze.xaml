@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:wpfAnimatedGif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
+             xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinWidth="579" MinHeight="384">
@@ -40,7 +40,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding Image}" wpfAnimatedGif:ImageBehavior.AnimatedSource="{Binding Path=AnimatedImage}" />
+                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding Image}" gif:AnimationBehavior.SourceUri="{Binding Path=AnimatedImage}" />
                                     <TextBlock Text="{Binding Section}"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:gif="clr-namespace:WpfAnimatedGif;assembly=CommonTools"
+             xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinHeight="384" MinWidth="579">
@@ -28,7 +28,7 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 1 of 3</Label>
             </Grid>
         </Border>
-        <Image x:Name="LoadingImg" Margin="3,10,3,0" Grid.Row="1" gif:ImageBehavior.AnimatedSource="/Little_System_Cleaner;component/Resources/ajax-loader-big.gif" />
+        <Image x:Name="LoadingImg" Margin="3,10,3,0" Grid.Row="1" gif:AnimationBehavior.SourceUri="/Little_System_Cleaner;component/Resources/ajax-loader-big.gif" />
         <TextBlock x:Name="Message" TextAlignment="Center" Grid.Row="3" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="294" FontWeight="Bold" FontSize="14">Loading...</TextBlock>
     </Grid>
 </UserControl>
