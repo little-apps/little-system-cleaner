@@ -30,7 +30,6 @@ using System.Windows.Media.Imaging;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
-using Application = System.Windows.Forms.Application;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -127,12 +126,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (uncheckedFiles == ProblemsCollection.Count)
             {
-                MessageBox.Show(Window.GetWindow(this), "No files are selected", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No files are selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (!Settings.Default.diskCleanerAutoClean)
-                if (MessageBox.Show(Window.GetWindow(this), "Are you sure you want to remove these files?", Application.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove these files?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
 
             Main.Watcher.Event("Disk Cleaner", "Remove Files");
@@ -140,7 +139,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             _fixTask.Start();
             await _fixTask;
 
-            MessageBox.Show(Window.GetWindow(this), "Successfully cleaned files from disk", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Application.Current.MainWindow, "Successfully cleaned files from disk", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             ScanBase.MoveFirst();
         }
