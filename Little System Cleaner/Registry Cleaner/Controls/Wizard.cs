@@ -118,7 +118,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             var results = CurrentControl as Results;
             if (results != null)
             {
-                if ((!forceExit && ((Results) CurrentControl).FixThread != null) && ((Results) CurrentControl).FixThread.IsAlive)
+                if ((!forceExit && ((Results) CurrentControl).FixProblemsRunning))
                     return false;
 
                 exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
@@ -126,9 +126,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (!exit)
                     return false;
 
-                // Forced to exit -> abort fix thread
-                if ((((Results) CurrentControl).FixThread != null) && ((Results) CurrentControl).FixThread.IsAlive)
-                    ((Results) CurrentControl).FixThread.Abort();
+                // Forced to exit -> abort fix task
+                ((Results) CurrentControl).CancelFixIfRunning();
 
                 badRegKeyArray.Clear();
                 Scan.EnabledScanners.Clear();

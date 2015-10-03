@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -48,6 +49,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         #endregion
 
         private readonly Wizard _scanWiz;
+        private Task<bool> _taskClean;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private int _progressBarValue;
         private string _progressBarText;
         private BitmapSource _bMapSrcFinishedScanning;
@@ -90,8 +93,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        public Thread FixThread { get; private set; }
-
+        public bool FixProblemsRunning => ((_taskClean != null) &&_taskClean.Status == TaskStatus.Running);
 
         /// <summary>
         /// The finished scanning bitmap is converted once to a BitmapSource and stored so it can be used again in order to save resources
@@ -111,8 +113,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             Tree.Model = ResultModel.CreateResultModel();
             Tree.ExpandAll();
-
-
+            
             if ((Tree.Model as ResultModel).Root.Children.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "There were no errors found!", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -159,7 +160,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             _scanWiz.MoveFirst();
         }
 
-        private void buttonFix_Click(object sender, RoutedEventArgs e)
+        private async void buttonFix_Click(object sender, RoutedEventArgs e)
         {
             int selectedCount = GetSelectedRegKeys().Count;
 
@@ -190,11 +191,51 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             ProgressBar.Maximum = selectedCount;
             ProgressBarValue = 0;
 
-            FixThread = new Thread(FixProblems);
-            FixThread.Start();
+            _taskClean = new Task<bool>(FixProblems, _cancellationTokenSource.Token);
+            _taskClean.Start();
+            if (await _taskClean)
+            {
+                Main.TaskbarProgressState = TaskbarItemProgressState.None;
+
+                // If power user option selected -> automatically exit program
+                if (Settings.Default.registryCleanerOptionsAutoExit)
+                {
+                    Application.Current.Shutdown();
+                }
+                else
+                {
+                    // Display message box and go back to first control
+                    MessageBox.Show(Application.Current.MainWindow, "Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    if (Settings.Default.registryCleanerOptionsAutoRescan)
+                        _scanWiz.Rescan();
+                    else
+                        _scanWiz.MoveFirst();
+                }
+            }
+            else
+            {
+                // Enable buttons
+                ButtonCancel.IsEnabled = true;
+                ButtonFix.IsEnabled = true;
+
+                // Reset taskbar progress bar
+                Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                Main.TaskbarProgressValue = 0;
+
+                // Reset progress bar
+                ProgressBarValue = 0;
+                ProgressBarText = "";
+            }
+
+
         }
 
-        private void FixProblems()
+        /// <summary>
+        /// Fixes registry problems
+        /// </summary>
+        /// <returns>Returns true if fix was successful</returns>
+        private bool FixProblems()
         {
             bool cancelled = false;
 
@@ -216,14 +257,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     }
                     catch (Win32Exception ex)
                     {
-                        string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                        Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        string message =
+                            $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                        Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                     }
                 }
 
                 // Generate filename to backup registry
                 ProgressBarText = "Creating backup file";
-                string strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx", Settings.Default.OptionsBackupDir, DateTime.Now);
+                string strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx",
+                    Settings.Default.OptionsBackupDir, DateTime.Now);
 
                 try
                 {
@@ -234,7 +278,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 {
                     string message = $"Unable to create backup file ({strBackupFile}).\nError: {ex.Message}";
                     Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    return false;
                 }
 
                 Settings.Default.lastScanErrorsFixed = 0;
@@ -243,14 +287,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 {
                     bool skip = false;
 
+                    if (_cancellationTokenSource.IsCancellationRequested)
+                        break;
+
                     // Backup key
                     if (!backupReg.Store(brk))
                     {
                         if (Settings.Default.registryCleanerOptionsShowErrors)
                         {
-                            string message = $"An error occurred trying to backup registry key ({brk.RegKeyPath}).\nWould you like to remove it (not recommended)?";
+                            string message =
+                                $"An error occurred trying to backup registry key ({brk.RegKeyPath}).\nWould you like to remove it (not recommended)?";
 
-                            if (Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                            if (
+                                Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.YesNo,
+                                    MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                                 skip = true;
                         }
                         else
@@ -267,7 +317,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                             if (Settings.Default.registryCleanerOptionsShowErrors)
                             {
                                 string message = $"An error occurred trying to remove registry key {brk.RegKeyPath}";
-                                Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                                Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
                             }
                         }
                         else
@@ -276,22 +327,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                             Settings.Default.lastScanErrorsFixed++;
                         }
                     }
-                    
-                    Dispatcher.Invoke(new Action(() =>
+
+                    Dispatcher.Invoke(() =>
                     {
                         // Set icon to check mark
-                        brk.bMapImg = new Image { Source = bMapSrcFinishedScanning };
+                        brk.bMapImg = new Image {Source = bMapSrcFinishedScanning};
 
                         Tree.Items.Refresh();
 
                         // Increase & Update progress bar
                         ProgressBarValue++;
                         ProgressBarText = $"Items Repaired: {ProgressBarValue}/{ProgressBar.Maximum}";
-                    }));
+                    });
                 }
 
-                // Store data as file
-                backupReg.Serialize();
+                if (!_cancellationTokenSource.IsCancellationRequested)
+                    // Store data as file
+                    backupReg.Serialize();
 
                 // Set total errors fixed
                 Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
@@ -303,60 +355,40 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     {
                         try
                         {
-                            SysRestore.EndRestore(lSeqNum);
+                            if (!_cancellationTokenSource.IsCancellationRequested)
+                                SysRestore.EndRestore(lSeqNum);
+                            else
+                                SysRestore.CancelRestore(lSeqNum);
                         }
                         catch (Win32Exception ex)
                         {
-                            string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                            Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            string message =
+                                $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                            Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                         }
                     }
                 }
+
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
             }
-            catch (ThreadAbortException)
+            catch (OperationCanceledException)
             {
                 cancelled = true;
             }
             finally
             {
-                if (cancelled)
-                {
-                    Dispatcher.BeginInvoke(new Action(() => {
-                        // Enable buttons
-                        ButtonCancel.IsEnabled = true;
-                        ButtonFix.IsEnabled = true;
-
-                        // Reset taskbar progress bar
-                        Main.TaskbarProgressState = TaskbarItemProgressState.None;
-                        Main.TaskbarProgressValue = 0;
-
-                        // Reset progress bar
-                        ProgressBarValue = 0;
-                        ProgressBarText = "";
-                    }));
-                }
-                else
-                {
-                    Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.None));
-
-                    // If power user option selected -> automatically exit program
-                    if (Settings.Default.registryCleanerOptionsAutoExit)
-                    {
-                        Application.Current.Shutdown();
-                    }
-                    else
-                    {
-                        // Display message box and go back to first control
-                        Utils.MessageBoxThreadSafeAsync("Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        if (Settings.Default.registryCleanerOptionsAutoRescan)
-                            _scanWiz.Rescan();
-                        else
-                            _scanWiz.MoveFirst();
-                    }
-                }
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
             }
-            
+
+            return !cancelled;
+        }
+
+        public void CancelFixIfRunning()
+        {
+            if (FixProblemsRunning)
+                _cancellationTokenSource?.Cancel();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
