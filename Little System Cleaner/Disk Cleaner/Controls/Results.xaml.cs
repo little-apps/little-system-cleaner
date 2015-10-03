@@ -207,7 +207,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 catch (Win32Exception ex)
                 {
                     string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(System.Windows.Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -216,11 +216,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (_fixTask.Status == TaskStatus.Running)
             {
-                MessageBox.Show(System.Windows.Application.Current.MainWindow, "Please wait for the problems to be fixed.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Please wait for the problems to be fixed.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (MessageBox.Show(System.Windows.Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
             ResetInfo();
