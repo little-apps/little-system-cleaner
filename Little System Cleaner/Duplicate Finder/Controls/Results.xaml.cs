@@ -250,15 +250,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (resultModel == null)
                 return;
-            foreach (Result root in resultModel.Root.Children)
+
+            foreach (Result child in resultModel.Root.Children.SelectMany(root => root.Children))
             {
-                foreach (Result child in root.Children)
-                {
-                    if (!isChecked.HasValue)
-                        child.IsChecked = !child.IsChecked;
-                    else
-                        child.IsChecked = isChecked.Value;
-                }
+                if (!isChecked.HasValue)
+                    child.IsChecked = !child.IsChecked;
+                else
+                    child.IsChecked = isChecked.Value;
             }
         }
 
