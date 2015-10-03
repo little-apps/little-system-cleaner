@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
@@ -28,6 +30,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         #endregion
 
         private readonly Wizard _scanBase;
+        private Task _taskScan;
         private string _progressBarText;
 
         public string ProgressBarText
@@ -35,6 +38,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             get { return _progressBarText; }
             set
             {
+                if (Dispatcher.Thread != Thread.CurrentThread)
+                {
+                    Dispatcher.Invoke(() => ProgressBarText = value);
+                    return;
+                }
+
                 _progressBarText = value;
                 OnPropertyChanged("ProgressBarText");
             }
@@ -68,7 +77,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             //Utils.AutoResizeColumns(this._tree);
         }
 
-        private void buttonFix_Click(object sender, RoutedEventArgs e)
+        private async void buttonFix_Click(object sender, RoutedEventArgs e)
         {
             //List<FileEntry> files = (from resParent in (this._tree.Model as ResultModel).Root.Children where resParent.Children.Count > 0 from resChild in resParent.Children where resChild.IsChecked.GetValueOrDefault() select resChild.FileEntry).ToList();
 
@@ -95,9 +104,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            long seqNum = 0;
-            bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
-
             Main.Watcher.Event("Duplicate Finder", "Remove Duplicates");
 
             Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
@@ -105,7 +111,24 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             ProgressBar.Value = 0;
             ProgressBar.Minimum = 0;
-            ProgressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
+            ProgressBar.Maximum = (SysRestore.SysRestoreAvailable() ? files.Count + 2 : files.Count);
+
+            _taskScan = new Task(() => FixDuplicates(files));
+            _taskScan.Start();
+            await _taskScan;
+
+            MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+            Main.TaskbarProgressState = TaskbarItemProgressState.None;
+            Main.TaskbarProgressValue = 0;
+
+            _scanBase.MoveFirst();
+        }
+
+        private void FixDuplicates(List<FileEntry> files)
+        {
+            long seqNum = 0;
+            bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
             if (sysRestoreAvailable)
             {
@@ -117,18 +140,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                ProgressBar.Value++;
+                Dispatcher.Invoke(() => ProgressBar.Value++);
             }
-                
+
             foreach (FileEntry fileEntry in files)
             {
                 string filePath = fileEntry.FilePath;
 
-                double percent = ((ProgressBar.Value / ProgressBar.Maximum) * 100);
-                ProgressBarText = $"{ProgressBar.Value}/{ProgressBar.Maximum} ({percent:0.##}%)";
+                double percent = Dispatcher.Invoke(() => (ProgressBar.Value/ProgressBar.Maximum)*100);
+                ProgressBarText = Dispatcher.Invoke(() => $"{ProgressBar.Value}/{ProgressBar.Maximum} ({percent:0.##}%)");
 
                 try
                 {
@@ -137,10 +160,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 catch (Exception ex)
                 {
                     string message = $"Unable to remove file ({filePath}).\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                ProgressBar.Value++;
+                Dispatcher.Invoke(() => ProgressBar.Value++);
                 Settings.Default.lastScanErrorsFixed++;
             }
 
@@ -158,23 +181,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
                     catch (Win32Exception ex)
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        Utils.MessageBoxThreadSafe(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
 
-                ProgressBar.Value++;
+                Dispatcher.Invoke(() => ProgressBar.Value++);
             }
-
-            MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
-            Main.TaskbarProgressState = TaskbarItemProgressState.None;
-            Main.TaskbarProgressValue = 0;
-
-            _scanBase.MoveFirst();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
+            if (_taskScan.Status == TaskStatus.Running)
+            {
+                MessageBox.Show(Application.Current.MainWindow, "Please wait for duplicate files to be fixed.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 _scanBase.MoveFirst();
