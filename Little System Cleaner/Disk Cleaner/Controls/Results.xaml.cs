@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -38,6 +39,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
     /// </summary>
     public partial class Results
     {
+        private readonly Task _fixTask;
+
         public Wizard ScanBase;
 
         public ObservableCollection<ProblemFile> ProblemsCollection => Wizard.FileList;
@@ -45,6 +48,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         public Results(Wizard sb)
         {
             InitializeComponent();
+
+            _fixTask = new Task(FixProblems);
 
             ScanBase = sb;
 
@@ -125,7 +130,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             ListViewFiles.Items.Refresh();
         }
 
-        private void buttonFix_Click(object sender, RoutedEventArgs e)
+        private async void buttonFix_Click(object sender, RoutedEventArgs e)
         {
             int uncheckedFiles = ProblemsCollection.Count(lvi => !lvi.Checked.GetValueOrDefault());
 
@@ -141,6 +146,16 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             Main.Watcher.Event("Disk Cleaner", "Remove Files");
 
+            _fixTask.Start();
+            await _fixTask;
+
+            MessageBox.Show(Window.GetWindow(this), "Successfully cleaned files from disk", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+            ScanBase.MoveFirst();
+        }
+
+        private void FixProblems()
+        {
             long lSeqNum = 0;
 
             try
@@ -188,7 +203,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                         File.Move(fileInfo.FullName, $@"{Settings.Default.diskCleanerMoveFolder}\{fileInfo.Name}");
                     }
                 }
-                catch (Exception )
+                catch (Exception)
                 {
                     //this.m_watcher.Exception(ex);
                 }
@@ -208,14 +223,19 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     MessageBox.Show(System.Windows.Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
-            MessageBox.Show(Window.GetWindow(this), "Successfully cleaned files from disk", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
-            ScanBase.MoveFirst();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
+            if (_fixTask.Status == TaskStatus.Running)
+            {
+                MessageBox.Show(System.Windows.Application.Current.MainWindow, "Please wait for the problems to be fixed.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (MessageBox.Show(System.Windows.Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return;
+
             ResetInfo();
             Wizard.FileList.Clear();
 
