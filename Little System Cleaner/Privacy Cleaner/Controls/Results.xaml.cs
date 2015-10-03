@@ -18,6 +18,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Little_System_Cleaner.Misc;
@@ -32,6 +33,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
     public partial class Results
     {
         readonly Wizard _scanBase;
+
+        private Task _cleanTask;
 
         public Results(Wizard sb)
         {
@@ -71,15 +74,25 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
         }
 
-        private void buttonClean_Click(object sender, RoutedEventArgs e)
+        private async void buttonClean_Click(object sender, RoutedEventArgs e)
         {
-            long lSeqNum = 0;
-
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
             Main.Watcher.Event("Privacy Cleaner", "Clean Files");
 
+            _cleanTask = new Task(Clean);
+            _cleanTask.Start();
+            await _cleanTask;
+
+            MessageBox.Show(Application.Current.MainWindow, "Successfully Cleaned Disk", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+            _scanBase.MoveFirst();
+        }
+
+        private void Clean()
+        {
+            long lSeqNum = 0;
             Report report = Report.CreateReport(Settings.Default.privacyCleanerLog);
 
             // Create system restore point
@@ -90,7 +103,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             catch (Win32Exception ex)
             {
                 string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             foreach (ResultNode parent in (Tree.Model as ResultModel).Root.Children)
@@ -120,17 +133,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 catch (Win32Exception ex)
                 {
                     string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
-            MessageBox.Show(Application.Current.MainWindow, "Successfully Cleaned Disk", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
-            _scanBase.MoveFirst();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
+            if (_cleanTask.Status == TaskStatus.Running)
+            {
+                MessageBox.Show(Application.Current.MainWindow, "Please wait for privacy cleaning to finish.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 _scanBase.MoveFirst();
