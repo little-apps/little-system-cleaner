@@ -158,11 +158,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 MessageBox.Show(System.Windows.Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            foreach (ProblemFile lvi in ProblemsCollection)
+            foreach (ProblemFile lvi in ProblemsCollection.Where(lvi => lvi.Checked.GetValueOrDefault()))
             {
-                if (!lvi.Checked.GetValueOrDefault())
-                    continue;
-
                 try
                 {
                     FileInfo fileInfo = lvi.FileInfo;
