@@ -212,10 +212,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
         }
 
-        public void AbortScanThread()
+        public void AbortScanTask()
         {
-            if (_cancelTokenSource != null)
-                _cancelTokenSource.Cancel();
+            _cancelTokenSource?.Cancel();
 
             StatusText = "Please wait while the scan operation is being cancelled...";
             CurrentFile = "";
@@ -855,7 +854,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                AbortScanThread();
+                AbortScanTask();
 
                 await _taskScan;
                 ScanBase.MoveFirst();

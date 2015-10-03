@@ -57,7 +57,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!exit)
                     return false;
 
-                scan.AbortScanThread();
+                scan.AbortScanTask();
 
                 return true;
             }
