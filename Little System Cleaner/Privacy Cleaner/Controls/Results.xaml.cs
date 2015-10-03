@@ -86,7 +86,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             _cleanTask.Start();
             await _cleanTask;
 
-            MessageBox.Show(Application.Current.MainWindow, "Successfully Cleaned Disk", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Application.Current.MainWindow, "Successfully Cleaned Disk", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Information);
 
             _scanBase.MoveFirst();
         }
