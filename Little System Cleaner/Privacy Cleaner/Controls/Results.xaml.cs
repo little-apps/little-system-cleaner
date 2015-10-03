@@ -18,6 +18,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -108,11 +109,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             foreach (ResultNode parent in (Tree.Model as ResultModel).Root.Children)
             {
-                foreach (ResultNode n in parent.Children)
+                foreach (ResultNode n in parent.Children.Where(n => n.IsChecked.GetValueOrDefault()))
                 {
-                    if (n.IsChecked.GetValueOrDefault() != true)
-                        continue;
-
                     report.WriteLine("Section: {0}", parent.Section);
 
                     n.Clean(report);
