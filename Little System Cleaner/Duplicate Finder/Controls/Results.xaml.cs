@@ -89,85 +89,88 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove the selected files?\nYou may not be able to get them back once they're deleted.", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow,
+                    "Are you sure you want to remove the selected files?\nYou may not be able to get them back once they're deleted.",
+                    Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
+            long seqNum = 0;
+            bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
+
+            Main.Watcher.Event("Duplicate Finder", "Remove Duplicates");
+
+            Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
+            Main.TaskbarProgressValue = 0;
+
+            ProgressBar.Value = 0;
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
+
+            if (sysRestoreAvailable)
             {
-                long seqNum = 0;
-                bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
+                ProgressBarText = "Creating System Restore Point";
 
-                Main.Watcher.Event("Duplicate Finder", "Remove Duplicates");
-
-                Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
-                Main.TaskbarProgressValue = 0;
-
-                ProgressBar.Value = 0;
-                ProgressBar.Minimum = 0;
-                ProgressBar.Maximum = (sysRestoreAvailable ? files.Count + 2 : files.Count);
-
-                if (sysRestoreAvailable)
+                try
                 {
-                    ProgressBarText = "Creating System Restore Point";
+                    SysRestore.StartRestore("Before Little System Cleaner (Duplicate Finder) Clean", out seqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
+                ProgressBar.Value++;
+            }
+                
+            foreach (FileEntry fileEntry in files)
+            {
+                string filePath = fileEntry.FilePath;
+
+                double percent = ((ProgressBar.Value / ProgressBar.Maximum) * 100);
+                ProgressBarText = $"{ProgressBar.Value}/{ProgressBar.Maximum} ({percent:0.##}%)";
+
+                try
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    string message = $"Unable to remove file ({filePath}).\nThe following error occurred: {ex.Message}";
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                ProgressBar.Value++;
+                Settings.Default.lastScanErrorsFixed++;
+            }
+
+            Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
+
+            if (sysRestoreAvailable)
+            {
+                ProgressBarText = "Finalizing system restore point";
+
+                if (seqNum != 0)
+                {
                     try
                     {
-                        SysRestore.StartRestore("Before Little System Cleaner (Duplicate Finder) Clean", out seqNum);
+                        SysRestore.EndRestore(seqNum);
                     }
                     catch (Win32Exception ex)
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
-
-                    ProgressBar.Value++;
-                }
-                
-                foreach (FileEntry fileEntry in files)
-                {
-                    string filePath = fileEntry.FilePath;
-
-                    double percent = ((ProgressBar.Value / ProgressBar.Maximum) * 100);
-                    ProgressBarText = $"{ProgressBar.Value}/{ProgressBar.Maximum} ({percent:0.##}%)";
-
-                    try
-                    {
-                        System.IO.File.Delete(filePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = $"Unable to remove file ({filePath}).\nThe following error occurred: {ex.Message}";
-                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-
-                    ProgressBar.Value++;
-                    Settings.Default.lastScanErrorsFixed++;
                 }
 
-                Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
-
-                if (sysRestoreAvailable)
-                {
-                    ProgressBarText = "Finalizing system restore point";
-
-                    if (seqNum != 0)
-                    {
-                        try
-                        {
-                            SysRestore.EndRestore(seqNum);
-                        }
-                        catch (Win32Exception ex)
-                        {
-                            MessageBox.Show(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-
-                    ProgressBar.Value++;
-                }
-
-                MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
-                Main.TaskbarProgressState = TaskbarItemProgressState.None;
-                Main.TaskbarProgressValue = 0;
-
-                _scanBase.MoveFirst();
+                ProgressBar.Value++;
             }
+
+            MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+            Main.TaskbarProgressState = TaskbarItemProgressState.None;
+            Main.TaskbarProgressValue = 0;
+
+            _scanBase.MoveFirst();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
