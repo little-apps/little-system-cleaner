@@ -102,30 +102,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void selectAll_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ProblemFile lvi in ProblemsCollection)
-            {
-                lvi.Checked = true;
-            }
+            ProblemsCollection.ToList().ForEach(lvi => lvi.Checked = true);
 
             ListViewFiles.Items.Refresh();
         }
 
         private void selectNone_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ProblemFile lvi in ProblemsCollection)
-            {
-                lvi.Checked = false;
-            }
+            ProblemsCollection.ToList().ForEach(lvi => lvi.Checked = false);
 
             ListViewFiles.Items.Refresh();
         }
 
         private void selectInvert_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ProblemFile lvi in ProblemsCollection)
-            {
-                lvi.Checked = !(lvi.Checked);
-            }
+            ProblemsCollection.ToList().ForEach(lvi => lvi.Checked = !(lvi.Checked));
 
             ListViewFiles.Items.Refresh();
         }
