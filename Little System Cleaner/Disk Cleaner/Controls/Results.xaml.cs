@@ -242,7 +242,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             ScanBase.MoveFirst();
         }
 
-        private void SendFileToRecycleBin(string filePath)
+        private static void SendFileToRecycleBin(string filePath)
         {
             PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT { wFunc = PInvoke.FO_DELETE, fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION, pFrom = filePath };
             PInvoke.SHFileOperation(ref shf);
