@@ -155,7 +155,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             catch (Win32Exception ex)
             {
                 string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                MessageBox.Show(System.Windows.Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             foreach (ProblemFile lvi in ProblemsCollection.Where(lvi => lvi.Checked.GetValueOrDefault()))
@@ -207,7 +207,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 catch (Win32Exception ex)
                 {
                     string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
