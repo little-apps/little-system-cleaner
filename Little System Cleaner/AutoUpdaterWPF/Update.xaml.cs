@@ -44,11 +44,30 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         private void UpdateWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            WebBrowser.Navigate(AutoUpdater.ChangeLogUrl);
+            if (string.IsNullOrEmpty(AutoUpdater.ChangeLogUrl))
+            {
+                Dispatcher.InvokeAsync(() => MessageBox.Show(this, $"The change log cannot be displayed as the URL is empty.", AutoUpdater.DialogTitle, MessageBoxButton.OK, MessageBoxImage.Error));
+                return;
+            }
+
+            try
+            {
+                WebBrowser.Navigate(AutoUpdater.ChangeLogUrl);
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.InvokeAsync(() => MessageBox.Show(this, $"The following error occurred trying to navigate to the change log: {ex.Message}", AutoUpdater.DialogTitle, MessageBoxButton.OK, MessageBoxImage.Error));
+            }
         }
 
         private void buttonUpdate_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(AutoUpdater.DownloadUrl))
+            {
+                MessageBox.Show(this, $"The update cannot be done as the download URL is empty.", AutoUpdater.DialogTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (AutoUpdater.OpenDownloadPage)
             {
                 var processStartInfo = new ProcessStartInfo(AutoUpdater.DownloadUrl);
