@@ -28,23 +28,23 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     /// </summary>
     internal static class AutoUpdater
     {
-        internal static String DialogTitle;
+        internal static string DialogTitle;
 
-        internal static String ChangeLogUrl;
+        internal static string ChangeLogUrl;
 
-        internal static String DownloadUrl;
+        internal static string DownloadUrl;
 
         internal static string LocalFileName;
 
-        internal static String RegistryLocation;
+        internal static string RegistryLocation;
 
-        internal static String AppTitle;
+        internal static string AppTitle;
 
         internal static Version CurrentVersion;
 
         internal static Version InstalledVersion;
 
-        internal static Boolean ForceCheck;
+        internal static bool ForceCheck;
 
         internal static Dispatcher MainDispatcher;
 
@@ -56,7 +56,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// URL of the xml file that contains information about latest version of the application.
         /// </summary>
         /// 
-        internal static String AppCastUrl;
+        internal static string AppCastUrl;
 
         /// <summary>
         /// Opens the download url in default browser if true. Very usefull if you have portable application.
@@ -71,7 +71,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// <summary>
         /// If this is true users see dialog where they can set remind later interval otherwise it will take the interval from RemindLaterAt and RemindLaterTimeSpan fields.
         /// </summary>
-        internal static Boolean LetUserSelectRemindLater = true;
+        internal static bool LetUserSelectRemindLater = true;
 
         /// <summary>
         /// Remind Later interval after user should be reminded of update.
@@ -97,7 +97,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// </summary>
         /// <param name="appCast">URL of the xml file that contains information about latest version of the application.</param>
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
-        internal static void Start(String appCast, bool forceUpdate = false)
+        internal static void Start(string appCast, bool forceUpdate = false)
         {
             if (BackgroundWorkerRunning)
             {
