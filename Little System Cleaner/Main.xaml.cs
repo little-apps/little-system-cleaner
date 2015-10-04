@@ -130,12 +130,8 @@ namespace Little_System_Cleaner
         {
             if (MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                bool? canExit = null;
-
-                UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
-                MethodBase methodUnload = lastCtrl.GetType().GetMethod("OnUnloaded");
-                if (methodUnload != null)
-                    canExit = (bool)methodUnload.Invoke(lastCtrl, new object[] { true });
+                var lastCtrl = GetLastControl();
+                var canExit = CallOnUnloaded(lastCtrl, true);
 
                 if ((canExit.HasValue) && canExit.Value == false)
                 {
@@ -263,20 +259,13 @@ namespace Little_System_Cleaner
             if (TabControl == null)
                 return;
 
-            bool? bUnload = null;
+            var lastCtrl = GetLastControl();
 
-            UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
-
-            if (lastCtrl is DynamicUserControl)
-                lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
-
-            MethodBase methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
-            if (methodUnload != null)
-                bUnload = (bool?)methodUnload.Invoke(lastCtrl, new object[] { false });
+            var canExit = CallOnUnloaded(lastCtrl, false);
 
             GarbageCollectAndFinalize();
 
-            if (bUnload == true || !bUnload.HasValue)
+            if (canExit == true || !canExit.HasValue)
             {
                 // If DynamicUserControl -> clear Content
                 (lastCtrl as DynamicUserControl)?.ClearUserControl();
@@ -298,6 +287,27 @@ namespace Little_System_Cleaner
                 _ignoreSetTabControl = true;
                 ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
             }
+        }
+
+        private UserControl GetLastControl()
+        {
+            UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
+
+            if (lastCtrl is DynamicUserControl)
+                lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
+
+            return lastCtrl;
+        }
+
+        private bool? CallOnUnloaded(UserControl lastCtrl, bool forceExit)
+        {
+            bool? canExit = null;
+
+            MethodBase methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
+            if (methodUnload != null)
+                canExit = (bool?)methodUnload.Invoke(lastCtrl, new object[] { forceExit });
+
+            return canExit;
         }
 
         /// <summary>
