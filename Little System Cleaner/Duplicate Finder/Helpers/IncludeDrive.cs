@@ -1,15 +1,21 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
-    [Serializable]
+    [XmlInclude(typeof(IncludeDrive))]
     public class IncludeDrive
     {
         public bool? IsChecked { get; set; } = true;
 
-        public string Name { get; }
+        public string Name { get; set; }
+
+        public IncludeDrive()
+        {
+
+        }
 
         public IncludeDrive(DriveInfo drive)
         {

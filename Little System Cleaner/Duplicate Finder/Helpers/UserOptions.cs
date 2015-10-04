@@ -3,14 +3,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
-    [Serializable]
+    [XmlRoot("Options")]
     public class UserOptions : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Members
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string prop)
@@ -297,6 +298,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool SkipFilesGreaterEnabled => (SkipFilesGreaterThan.GetValueOrDefault());
 
+        [XmlIgnore]
         public HashAlgorithm HashAlgorithm
         {
             get { return _hashAlgorithm; }
@@ -307,6 +309,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
+        [XmlIgnore]
         public ObservableCollection<HashAlgorithm> HashAlgorithms
         {
             get { return _hashAlgorithms; }
@@ -357,16 +360,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, userOptions);
+                XmlSerializer serializer = new XmlSerializer(typeof(UserOptions));
+                serializer.Serialize(ms, userOptions);
 
-                ms.Position = 0;
-                byte[] buffer = new byte[(int)ms.Length];
-                ms.Read(buffer, 0, buffer.Length);
-
-                Properties.Settings.Default.duplicateFinderOptions = Convert.ToBase64String(buffer);
+                var xml = Convert.ToBase64String(ms.ToArray());
+                Properties.Settings.Default.duplicateFinderOptions = xml;
                 Properties.Settings.Default.Save();
             }
+                
         }
 
         public static UserOptions GetUserOptions()
@@ -377,8 +378,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(Properties.Settings.Default.duplicateFinderOptions)))
                 {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    userOptions = (UserOptions)bf.Deserialize(ms); // Throws exception if stream is empty or cant be deserialized
+                    XmlSerializer serializer = new XmlSerializer(typeof(UserOptions));
+                    userOptions = (UserOptions)serializer.Deserialize(ms);
                 }
             }
             catch
