@@ -47,7 +47,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         public void UnloadGif()
         {
-            AnimatedImage = "";
+            AnimatedImage = null;
             Image = @"/Little_System_Cleaner;component/Resources/registry cleaner/finished-scanning.png";
         }
 

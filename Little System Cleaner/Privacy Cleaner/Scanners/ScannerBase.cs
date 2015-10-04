@@ -286,7 +286,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 return;
             }
 
-            AnimatedImage = "";
+            AnimatedImage = null;
             Image = @"/Little_System_Cleaner;component/Resources/registry cleaner/finished-scanning.png";
         }
 
