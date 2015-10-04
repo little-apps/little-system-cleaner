@@ -155,5 +155,10 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             _timer.Stop();
             AutoUpdater.Start();
         }
+
+        private void UpdateWindow_Closed(object sender, EventArgs e)
+        {
+            AutoUpdater.Running = false;
+        }
     }
 }

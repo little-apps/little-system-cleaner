@@ -7,7 +7,7 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Icon="/Little_System_Cleaner;component/Resources/update.png" 
-        Loaded="UpdateWindow_Loaded">
+        Loaded="UpdateWindow_Loaded" Closed="UpdateWindow_Closed">
     <Grid>
         <Image Height="66" Margin="12,14,0,0" VerticalAlignment="Top" Width="70" Source="/Little_System_Cleaner;component/Resources/update.png" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" >
 

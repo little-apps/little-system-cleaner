@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
@@ -28,17 +29,17 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     /// </summary>
     internal static class AutoUpdater
     {
-        internal static string DialogTitle;
+        internal static string DialogTitle = string.Empty;
 
-        internal static string ChangeLogUrl;
+        internal static string ChangeLogUrl = string.Empty;
 
-        internal static string DownloadUrl;
+        internal static string DownloadUrl = string.Empty;
 
-        internal static string LocalFileName;
+        internal static string LocalFileName = string.Empty;
 
-        internal static string RegistryLocation;
+        internal static string RegistryLocation = string.Empty;
 
-        internal static string AppTitle;
+        internal static string AppTitle = string.Empty;
 
         internal static Version CurrentVersion;
 
@@ -48,9 +49,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         internal static Dispatcher MainDispatcher;
 
-        internal static bool BackgroundWorkerRunning;
-
-        //internal static CultureInfo CurrentCulture;
+        internal static bool Running;
 
         /// <summary>
         /// URL of the xml file that contains information about latest version of the application.
@@ -62,11 +61,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// Opens the download url in default browser if true. Very usefull if you have portable application.
         /// </summary>
         internal static bool OpenDownloadPage = false;
-
-        /// <summary>
-        /// Sets the current culture of the auto update notification window. Set this value if your application supports functionalty to change the languge of the application.
-        /// </summary>
-        internal static CultureInfo CurrentCulture;
 
         /// <summary>
         /// If this is true users see dialog where they can set remind later interval otherwise it will take the interval from RemindLaterAt and RemindLaterTimeSpan fields.
@@ -99,7 +93,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
         internal static void Start(string appCast, bool forceUpdate = false)
         {
-            if (BackgroundWorkerRunning)
+            if (Running)
             {
                 MessageBox.Show(Application.Current.MainWindow, "An update check is already in progress.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -108,31 +102,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             AppCastUrl = appCast;
             ForceCheck = forceUpdate;
 
-            CultureInfo ci = Thread.CurrentThread.CurrentUICulture;
+            CheckForUpdate();
 
-            if (ci.Name == "zh-CHS")
-                CurrentCulture = new CultureInfo(0x0804); // zh-CN Chinese (People's Republic of China)
-            else if (ci.Name == "zh-CHT")
-                CurrentCulture = new CultureInfo(0x0404); // zh-TW Chinese (Taiwan)
-            else
-                CurrentCulture = CultureInfo.CreateSpecificCulture(ci.Name);
-
-            var backgroundWorker = new BackgroundWorker();
-
-            backgroundWorker.DoWork += BackgroundWorkerDoWork;
-            backgroundWorker.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
-
-            backgroundWorker.RunWorkerAsync();
-
-            BackgroundWorkerRunning = true;
+            Running = true;
         }
 
-        static void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            BackgroundWorkerRunning = false;
-        }
-
-        private static void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
+        private async static void CheckForUpdate()
         {
             var mainAssembly = Assembly.GetEntryAssembly();
             var companyAttribute = (AssemblyCompanyAttribute)GetAttribute(mainAssembly, typeof(AssemblyCompanyAttribute));
@@ -193,7 +168,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-                webResponse = webRequest.GetResponse();
+                webResponse = await Task.Run(() => webRequest.GetResponse());
             }
             catch (Exception ex)
             {
@@ -220,7 +195,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-                appCastStream = webResponse.GetResponseStream();
+                appCastStream = await Task.Run(() => webResponse.GetResponseStream());
 
                 if (appCastStream == null)
                     throw new Exception("Response stream from update server was null.");
@@ -269,7 +244,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 DownloadUrl = item.Url;
                 LocalFileName = item.FileName;
             }
-            
+
             if (CurrentVersion != null && CurrentVersion > InstalledVersion)
             {
                 if (skip != null && applicationVersion != null)
@@ -284,7 +259,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     {
                         RegistryKey updateKeyWrite = null;
 
-                        try 
+                        try
                         {
                             updateKeyWrite = Registry.CurrentUser.CreateSubKey(RegistryLocation);
 
@@ -308,10 +283,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                     }
                 }
 
-                var thread = new Thread(ShowUI);
-                thread.CurrentCulture = thread.CurrentUICulture = CurrentCulture ?? System.Windows.Forms.Application.CurrentCulture;
-                thread.SetApartmentState(ApartmentState.STA);
-                thread.Start();
+                await Application.Current.Dispatcher.InvokeAsync(ShowUI);
             }
             else if (ForceCheck)
             {
@@ -324,7 +296,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             var updateForm = new Update();
 
-            updateForm.ShowDialog();
+            updateForm.Show();
 
             // Focus window (so it's not hidden behind main window)
             updateForm.Topmost = true;
