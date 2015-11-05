@@ -83,7 +83,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         }
 
         #region ICloneable Members
-        public Object Clone()
+        public object Clone()
         {
             return MemberwiseClone();
         }
@@ -92,12 +92,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         #region IEquatable Members
         public bool Equals(ExcludeItem other)
         {
-            return (other != null && ToString() == other.ToString());
+            return other != null && ToString() == other.ToString();
         }
 
         public bool Equals(string other)
         {
-            return (!string.IsNullOrEmpty(other) && FolderPath == other);
+            return !string.IsNullOrEmpty(other) && FolderPath == other;
         }
 
         public override bool Equals(object obj)
@@ -107,10 +107,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 return Equals(a);
 
             var s = obj as string;
-            if (s != null)
-                return Equals(s);
-
-            return false;
+            return s != null && Equals(s);
         }
 
         public override int GetHashCode()

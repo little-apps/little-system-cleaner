@@ -48,7 +48,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
             }
             if (AddFileType != null)
             {
-                AddFileTypeEventArgs eventArgs = new AddFileTypeEventArgs { FileType =  TextBox.Text.Trim() };
+                var eventArgs = new AddFileTypeEventArgs { FileType =  TextBox.Text.Trim() };
                 AddFileType(this, eventArgs);
             }
 

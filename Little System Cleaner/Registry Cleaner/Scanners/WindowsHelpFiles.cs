@@ -82,7 +82,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (Utils.FileExists(helpFile) || Wizard.IsOnIgnoreList(helpFile))
                 return true;
 
-            string combinedPath = Path.Combine(helpPath, helpFile);
+            var combinedPath = Path.Combine(helpPath, helpFile);
 
             if (Utils.FileExists(combinedPath) || Wizard.IsOnIgnoreList(combinedPath))
                 return true;

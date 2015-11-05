@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog browserDlg = new FolderBrowserDialog();
+            var browserDlg = new FolderBrowserDialog();
             browserDlg.ShowDialog(new WindowWrapper(this));
             TextBox.Text = browserDlg.SelectedPath;
         }

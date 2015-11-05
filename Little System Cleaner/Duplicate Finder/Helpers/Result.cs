@@ -167,7 +167,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private bool? _bIsChecked = false;
 
         #region IsChecked Methods
-        void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
+
+        private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
             if (value == _bIsChecked)
                 return;
@@ -183,12 +184,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             OnPropertyChanged("IsChecked");
         }
 
-        void VerifyCheckState()
+        private void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < Children.Count; ++i)
+            for (var i = 0; i < Children.Count; ++i)
             {
-                bool? current = Children[i].IsChecked;
+                var current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -216,23 +217,21 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             get
             {
                 if (_fileEntry != null) 
-                {
                     return FileEntry.FileName;
-                }
 
                 if (!IsParent)
                     return string.Empty;
 
-                string firstFileName = Children.First().FileName;
+                var firstFileName = Children.First().FileName;
 
-                if (Children.All(s => string.Equals(s.FileName, firstFileName, StringComparison.CurrentCultureIgnoreCase)))
-                {
+                if (
+                    Children.All(
+                        s => string.Equals(s.FileName, firstFileName, StringComparison.CurrentCultureIgnoreCase)))
                     return firstFileName;
-                }
 
                 var groupedByFilenames = Children.GroupBy(s => s.FileName.ToLower()).Select(g => g.Key).ToArray();
 
-                string fileNames = string.Join(", ", groupedByFilenames);
+                var fileNames = string.Join(", ", groupedByFilenames);
 
                 return ShortenStringForDisplay(fileNames);
             }
@@ -243,25 +242,21 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             get
             {
                 if (_fileEntry != null)
-                {
                     return Utils.ConvertSizeToString(FileEntry.FileSize, false);
-                }
-                if (IsParent)
-                {
-                    string firstFileSize = Children.First().FileSize;
 
-                    if (Children.All(s => s.FileSize == firstFileSize)) 
-                    {
-                        return firstFileSize;
-                    }
-                    var groupedByFileSizes = Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray();
+                if (!IsParent)
+                    return string.Empty;
 
-                    string fileSizes = string.Join(", ", groupedByFileSizes);
+                string firstFileSize = Children.First().FileSize;
 
-                    return ShortenStringForDisplay(fileSizes);
-                }
+                if (Children.All(s => s.FileSize == firstFileSize)) 
+                    return firstFileSize;
 
-                return string.Empty;
+                var groupedByFileSizes = Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray();
+
+                var fileSizes = string.Join(", ", groupedByFileSizes);
+
+                return ShortenStringForDisplay(fileSizes);
             }
         }
 
@@ -271,7 +266,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 if (_fileEntry != null)
                 {
-                    string fileExt = Path.GetExtension(FileEntry.FilePath);
+                    var fileExt = Path.GetExtension(FileEntry.FilePath);
 
                     if (string.IsNullOrEmpty(fileExt))
                         return "(No Extension)";
@@ -287,21 +282,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     return ext;
                 }
-                if (IsParent)
-                {
-                    string firstFileFormat = Children.First().FileFormat;
 
-                    if (Children.All(s => s.FileFormat == firstFileFormat)) 
-                    {
-                        return firstFileFormat;
-                    }
-                    var groupedByFileFormats = Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray();
+                if (!IsParent)
+                    return string.Empty;
 
-                    string fileFormats = string.Join(", ", groupedByFileFormats);
+                var firstFileFormat = Children.First().FileFormat;
 
-                    return ShortenStringForDisplay(fileFormats);
-                }
-                return string.Empty;
+                if (Children.All(s => s.FileFormat == firstFileFormat)) 
+                    return firstFileFormat;
+
+                var groupedByFileFormats = Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray();
+
+                var fileFormats = string.Join(", ", groupedByFileFormats);
+
+                return ShortenStringForDisplay(fileFormats);
             }
         }
 
@@ -322,8 +316,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private string ShortenStringForDisplay(string str)
         {
-            int maxLength = 30;
-            string appendText = "...";
+            var maxLength = 30;
+            var appendText = "...";
 
             if (string.IsNullOrEmpty(str))
                 return string.Empty;

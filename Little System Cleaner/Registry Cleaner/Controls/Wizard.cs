@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using Little_System_Cleaner.Misc;
@@ -32,9 +33,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {
-        readonly List<ScannerBase> _arrayScanners = new List<ScannerBase>();
-        SectionModel _model;
-        static readonly BadRegKeyArray BadRegKeyArray = new BadRegKeyArray();
+        private readonly List<ScannerBase> _arrayScanners = new List<ScannerBase>();
+        private SectionModel _model;
+        private static readonly BadRegKeyArray BadRegKeyArray = new BadRegKeyArray();
 
         public SectionModel Model
         {
@@ -103,7 +104,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             var scan = CurrentControl as Scan;
             if (scan != null)
             {
-                exit = (forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                 if (!exit)
                     return false;
@@ -116,25 +117,22 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
 
             var results = CurrentControl as Results;
-            if (results != null)
-            {
-                if ((!forceExit && ((Results) CurrentControl).FixProblemsRunning))
-                    return false;
-
-                exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
-
-                if (!exit)
-                    return false;
-
-                // Forced to exit -> abort fix task
-                ((Results) CurrentControl).CancelFixIfRunning();
-
-                badRegKeyArray.Clear();
-                Scan.EnabledScanners.Clear();
-
+            if (results == null)
                 return true;
-            }
-            
+
+            if (!forceExit && ((Results) CurrentControl).FixProblemsRunning)
+                return false;
+
+            exit = forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+            if (!exit)
+                return false;
+
+            // Forced to exit -> abort fix task
+            ((Results) CurrentControl).CancelFixIfRunning();
+
+            badRegKeyArray.Clear();
+            Scan.EnabledScanners.Clear();
 
             return true;
         }
@@ -162,21 +160,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (model.Root.Children[0].Children.Count <= 0)
                 throw new ArgumentException("model must contain children", nameof(model));
 
-            foreach (Section child in model.Root.Children[0].Children)
+            foreach (var child in model.Root.Children[0].Children)
             {
-                foreach (ScannerBase scanner in _arrayScanners)
+                foreach (var scanner in _arrayScanners.Where(scanner => child.SectionName == scanner.ScannerName))
                 {
-                    if (child.SectionName == scanner.ScannerName)
+                    if (child.IsChecked.HasValue && child.IsChecked.Value)
                     {
-                        if (child.IsChecked.HasValue && child.IsChecked.Value)
-                        {
-                            scanner.bMapImg = child.bMapImg;
-                            scanner.IsEnabled = true;
-                            Scan.EnabledScanners.Add(scanner);
-                        }
-                        else
-                            scanner.IsEnabled = false;
+                        scanner.bMapImg = child.bMapImg;
+                        scanner.IsEnabled = true;
+                        Scan.EnabledScanners.Add(scanner);
                     }
+                    else
+                        scanner.IsEnabled = false;
                 }
             }
         }
@@ -226,7 +221,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (IsOnIgnoreList(regPath))
                 return false;
 
-            using (RegistryKey regKey = Utils.RegOpenKey(regPath, false))
+            using (var regKey = Utils.RegOpenKey(regPath, false))
             {
                 // Can we get write access?
                 if (regKey == null)
@@ -242,7 +237,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (!ScanFunctions.ValueNameExists(baseKey, subKey, valueName))
                     return false;
 
-            int severity = 1;
+            var severity = 1;
 
             if (problem == Strings.InvalidFile)
             {
@@ -311,10 +306,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (string.IsNullOrEmpty(path) || Settings.Default.ArrayExcludeList.Count <= 0)
                 return false;
 
-            string expandedPath = string.Empty;
-            bool isPath = (!path.ToUpper().StartsWith("HKEY"));
+            var expandedPath = string.Empty;
+            var isPath = (!path.ToUpper().StartsWith("HKEY"));
 
-            foreach (ExcludeItem i in Settings.Default.ArrayExcludeList)
+            foreach (var i in Settings.Default.ArrayExcludeList)
             {
                 if (isPath && i.IsPath)
                 {

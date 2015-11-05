@@ -44,11 +44,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// </summary>
         public override void Scan()
         {
-            StringBuilder strPath = new StringBuilder(260);
+            var strPath = new StringBuilder(260);
 
             try
             {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"))
+                using (var regKey = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"))
                 {
                     if (regKey == null)
                         return;

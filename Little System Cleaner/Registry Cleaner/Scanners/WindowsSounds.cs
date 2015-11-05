@@ -32,7 +32,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey("AppEvents\\Schemes\\Apps"))
+                using (var regKey = Registry.CurrentUser.OpenSubKey("AppEvents\\Schemes\\Apps"))
                 {
                     if (regKey == null)
                         return;
@@ -53,16 +53,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <param name="rk">Registry subkey</param>
         private static void ParseSoundKeys(RegistryKey rk)
         {
-            foreach (string strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+            foreach (var strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
 
                 // Ignores ".Default" Subkey
                 if ((strSubKey.CompareTo(".Current") == 0) || (strSubKey.CompareTo(".Modified") == 0))
                 {
                     // Gets the (default) key and sees if the file exists
-                    RegistryKey rk2 = rk.OpenSubKey(strSubKey);
+                    var rk2 = rk.OpenSubKey(strSubKey);
 
-                    string strSoundPath = rk2?.GetValue("") as string;
+                    var strSoundPath = rk2?.GetValue("") as string;
 
                     if (string.IsNullOrEmpty(strSoundPath))
                         continue;
@@ -72,7 +72,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 else if (!string.IsNullOrEmpty(strSubKey))
                 {
-                    RegistryKey rk2 = rk.OpenSubKey(strSubKey);
+                    var rk2 = rk.OpenSubKey(strSubKey);
                     if (rk2 != null)
                     {
                         ParseSoundKeys(rk2);

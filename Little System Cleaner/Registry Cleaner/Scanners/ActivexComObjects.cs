@@ -99,7 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
             }
 
-            foreach (string clsid in clsids.TakeWhile(clsid => !CancellationToken.IsCancellationRequested))
+            foreach (var clsid in clsids.TakeWhile(clsid => !CancellationToken.IsCancellationRequested))
             {
                 RegistryKey regKeyClsid, regKeyDefaultIcon = null, regKeyInprocSrvr = null, regKeyInprocSrvr32 = null;
 
@@ -119,7 +119,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // Check for valid AppID
                 try
                 {
-                    string appId = regKey.GetValue("AppID") as string;
+                    var appId = regKey.GetValue("AppID") as string;
                     if (!string.IsNullOrEmpty(appId))
                         if (!AppidExists(appId))
                             Wizard.StoreInvalidKey(Strings.MissingAppID, regKeyClsid.ToString(), "AppID");
@@ -133,7 +133,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 try
                 {
                     regKeyDefaultIcon = regKeyClsid.OpenSubKey("DefaultIcon");
-                    string iconPath = regKeyDefaultIcon?.GetValue("") as string;
+                    var iconPath = regKeyDefaultIcon?.GetValue("") as string;
 
                     if (!string.IsNullOrEmpty(iconPath))
                         if (!ScanFunctions.IconExists(iconPath))
@@ -155,7 +155,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     regKeyInprocSrvr = regKeyClsid.OpenSubKey("InprocServer");
                     if (regKeyInprocSrvr != null)
                     {
-                        string strInprocServer = regKeyInprocSrvr.GetValue("") as string;
+                        var strInprocServer = regKeyInprocSrvr.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer))
                             if (!Utils.FileExists(strInprocServer) && !Wizard.IsOnIgnoreList(strInprocServer))
@@ -178,7 +178,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     regKeyInprocSrvr32 = regKeyClsid.OpenSubKey("InprocServer32");
                     if (regKeyInprocSrvr32 != null)
                     {
-                        string strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
+                        var strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer32))
                             if (!Utils.FileExists(strInprocServer32) && !Wizard.IsOnIgnoreList(strInprocServer32))
@@ -212,7 +212,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Scanning " + regKey.Name + " for invalid AppID's");
 
-            foreach (string appId in regKey.GetSubKeyNames().TakeWhile(appId => !CancellationToken.IsCancellationRequested))
+            foreach (var appId in regKey.GetSubKeyNames().TakeWhile(appId => !CancellationToken.IsCancellationRequested))
             {
                 RegistryKey regKeyAppId = null;
 
@@ -221,7 +221,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     regKeyAppId = regKey.OpenSubKey(appId);
 
                     // Check for reference to AppID
-                    string clsid = regKeyAppId?.GetValue("AppID") as string;
+                    var clsid = regKeyAppId?.GetValue("AppID") as string;
 
                     if (!string.IsNullOrEmpty(clsid))
                         if (!AppidExists(clsid))
@@ -262,7 +262,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
             }
 
-            foreach (string subKey in classList.Where(strSubKey => strSubKey != "*").TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
+            foreach (
+                var subKey in
+                    classList.Where(strSubKey => strSubKey != "*")
+                        .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
                 if (subKey[0] == '.')
                 {
@@ -274,7 +277,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         regKeyFileExt = regKey.OpenSubKey(subKey);
 
                         // Find reference to ProgID
-                        string progId = regKeyFileExt?.GetValue("") as string;
+                        var progId = regKeyFileExt?.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(progId))
                             if (!ProgIdExists(progId))
@@ -300,7 +303,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     {
                         regKeyDefaultIcon = regKey.OpenSubKey($"{subKey}\\DefaultIcon");
 
-                        string iconPath = regKeyDefaultIcon?.GetValue("") as string;
+                        var iconPath = regKeyDefaultIcon?.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(iconPath))
                             if (!ScanFunctions.IconExists(iconPath))
@@ -323,7 +326,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     {
                         regKeyClsid = regKey.OpenSubKey($"{subKey}\\CLSID");
 
-                        string guid = regKeyClsid?.GetValue("") as string;
+                        var guid = regKeyClsid?.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(guid))
                             if (!ClsidExists(guid))
@@ -377,11 +380,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string guid in regKey.GetSubKeyNames().TakeWhile(guid => !CancellationToken.IsCancellationRequested))
+                    foreach (
+                        var guid in
+                            regKey.GetSubKeyNames().TakeWhile(guid => !CancellationToken.IsCancellationRequested))
                     {
                         try
                         {
-                            RegistryKey regKeyBrowserHelperObject = regKey.OpenSubKey(guid);
+                            var regKeyBrowserHelperObject = regKey.OpenSubKey(guid);
 
                             if (regKeyBrowserHelperObject == null)
                                 continue;
@@ -416,7 +421,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string guid in regKey.GetValueNames().Where(guid => !IeToolbarIsValid(guid)).TakeWhile(guid => !CancellationToken.IsCancellationRequested))
+                    foreach (var guid in regKey.GetValueNames().Where(guid => !IeToolbarIsValid(guid)).TakeWhile(guid => !CancellationToken.IsCancellationRequested))
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidToolbar, regKey.ToString(), guid);
                     }
@@ -440,7 +445,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (regKey != null)
                 {
-                    foreach (string guid in regKey.GetSubKeyNames().TakeWhile(guid => !CancellationToken.IsCancellationRequested))
+                    foreach (var guid in regKey.GetSubKeyNames().TakeWhile(guid => !CancellationToken.IsCancellationRequested))
                     {
                         try
                         {
@@ -474,25 +479,25 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 Wizard.Report.WriteLine("Checking for invalid explorer file extensions");
 
-                if (regKey != null)
+                if (regKey == null)
+                    return;
+
+                foreach (var fileExt in regKey.GetSubKeyNames().TakeWhile(fileExt => !CancellationToken.IsCancellationRequested))
                 {
-                    foreach (string fileExt in regKey.GetSubKeyNames().TakeWhile(fileExt => !CancellationToken.IsCancellationRequested))
+                    try
                     {
-                        try
-                        {
-                            var regKeyFileExt = regKey.OpenSubKey(fileExt);
+                        var regKeyFileExt = regKey.OpenSubKey(fileExt);
 
-                            if (regKeyFileExt == null || fileExt[0] != '.')
-                                continue;
+                        if (regKeyFileExt == null || fileExt[0] != '.')
+                            continue;
 
-                            ValidateFileExt(regKeyFileExt);
+                        ValidateFileExt(regKeyFileExt);
 
-                            regKeyFileExt?.Close();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                        regKeyFileExt?.Close();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
                 }
             }
@@ -571,7 +576,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             // Sees if icon file exists
             try
             {
-                string hotIcon = regKey.GetValue("HotIcon") as string;
+                var hotIcon = regKey.GetValue("HotIcon") as string;
                 if (!string.IsNullOrEmpty(hotIcon))
                     if (!ScanFunctions.IconExists(hotIcon))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "HotIcon");
@@ -583,7 +588,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                string icon = regKey.GetValue("Icon") as string;
+                var icon = regKey.GetValue("Icon") as string;
                 if (!string.IsNullOrEmpty(icon))
                     if (!ScanFunctions.IconExists(icon))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Icon");
@@ -596,7 +601,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             try
             {
                 // Lookup CLSID extension
-                string clsidExit = regKey.GetValue("ClsidExtension") as string;
+                var clsidExit = regKey.GetValue("ClsidExtension") as string;
                 if (!string.IsNullOrEmpty(clsidExit))
                     Wizard.StoreInvalidKey(Strings.MissingCLSID, regKey.ToString(), "ClsidExtension");
             }
@@ -608,7 +613,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             try
             {
                 // See if files exist
-                string exec = regKey.GetValue("Exec") as string;
+                var exec = regKey.GetValue("Exec") as string;
                 if (!string.IsNullOrEmpty(exec))
                     if (!Utils.FileExists(exec) && !Wizard.IsOnIgnoreList(exec))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Exec");
@@ -620,7 +625,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                string script = regKey.GetValue("Script") as string;
+                var script = regKey.GetValue("Script") as string;
                 if (!string.IsNullOrEmpty(script))
                     if (!Utils.FileExists(script) && !Wizard.IsOnIgnoreList(script))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Script");
@@ -673,7 +678,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 regKeyInprocSrvr = regKey.OpenSubKey("InprocServer");
 
-                string inprocServer = regKeyInprocSrvr?.GetValue("") as string;
+                var inprocServer = regKeyInprocSrvr?.GetValue("") as string;
 
                 if (!string.IsNullOrEmpty(inprocServer))
                     if (Utils.FileExists(inprocServer) || Wizard.IsOnIgnoreList(inprocServer))
@@ -692,7 +697,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 regKeyInprocSrvr32 = regKey.OpenSubKey("InprocServer32");
 
-                string inprocServer32 = regKeyInprocSrvr32?.GetValue("") as string;
+                var inprocServer32 = regKeyInprocSrvr32?.GetValue("") as string;
 
                 if (!string.IsNullOrEmpty(inprocServer32))
                     if (Utils.FileExists(inprocServer32) || Wizard.IsOnIgnoreList(inprocServer32))
@@ -715,7 +720,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// </summary>
         private static bool IeToolbarIsValid(string guid)
         {
-            bool ret = false;
+            var ret = false;
 
             // Guid cannot be null/empty
             if (string.IsNullOrEmpty(guid))
@@ -733,17 +738,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (SafeInprocServerExists(Registry.CurrentUser, "Software\\Classes\\CLSID\\" + guid))
                 ret = true;
 
-            if (Utils.Is64BitOs)
-            {
-                if (SafeInprocServerExists(Registry.ClassesRoot, "Wow6432Node\\CLSID\\" + guid))
-                    ret = true;
+            if (!Utils.Is64BitOs)
+                return ret;
 
-                if (SafeInprocServerExists(Registry.LocalMachine, "Software\\Wow6432Node\\Classes\\CLSID\\" + guid))
-                    ret = true;
+            if (SafeInprocServerExists(Registry.ClassesRoot, "Wow6432Node\\CLSID\\" + guid))
+                ret = true;
 
-                if (SafeInprocServerExists(Registry.CurrentUser, "Software\\Wow6432Node\\Classes\\CLSID\\" + guid))
-                    ret = true;
-            }
+            if (SafeInprocServerExists(Registry.LocalMachine, "Software\\Wow6432Node\\Classes\\CLSID\\" + guid))
+                ret = true;
+
+            if (SafeInprocServerExists(Registry.CurrentUser, "Software\\Wow6432Node\\Classes\\CLSID\\" + guid))
+                ret = true;
 
             return ret;
         }
@@ -755,7 +760,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <returns>True if it exists</returns>
         private static bool AppExists(string appName)
         {
-            List<RegistryKey> regKeysList = new List<RegistryKey>();
+            var regKeysList = new List<RegistryKey>();
 
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.ClassesRoot.OpenSubKey("Applications")));
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.LocalMachine.OpenSubKey(@"Software\Classes\Applications")));
@@ -770,7 +775,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
+                foreach (var rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;
@@ -810,7 +815,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <returns>True if it exists</returns>
         private static bool ClsidExists(string clsid)
         {
-            List<RegistryKey> regKeysList = new List<RegistryKey>();
+            var regKeysList = new List<RegistryKey>();
 
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.ClassesRoot.OpenSubKey("CLSID")));
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.LocalMachine.OpenSubKey(@"Software\Classes\CLSID")));
@@ -825,7 +830,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
+                foreach (var rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;
@@ -865,7 +870,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <returns>True if it exists</returns>
         private static bool ProgIdExists(string progId)
         {
-            List<RegistryKey> regKeysList = new List<RegistryKey>();
+            var regKeysList = new List<RegistryKey>();
 
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.ClassesRoot));
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.LocalMachine.OpenSubKey(@"Software\Classes")));
@@ -880,7 +885,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
+                foreach (var rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;
@@ -920,7 +925,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <returns>True if it exists</returns>
         private static bool AppidExists(string appId)
         {
-            List<RegistryKey> regKeysList = new List<RegistryKey>();
+            var regKeysList = new List<RegistryKey>();
 
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.ClassesRoot.OpenSubKey(@"AppID")));
             Utils.SafeOpenRegistryKey(() => regKeysList.Add(Registry.LocalMachine.OpenSubKey(@"Software\Classes\AppID")));
@@ -935,7 +940,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                foreach (RegistryKey rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
+                foreach (var rk in regKeysList.TakeWhile(rk => !CancellationToken.IsCancellationRequested))
                 {
                     if (rk == null)
                         continue;

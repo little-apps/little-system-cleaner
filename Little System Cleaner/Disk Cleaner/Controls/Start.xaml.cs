@@ -378,10 +378,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             ScanBase.SelectedDrives.Clear();
 
-            foreach (LviDrive lvi in Wizard.DiskDrives)
+            foreach (var lvi in Wizard.DiskDrives.Where(lvi => lvi.Checked.GetValueOrDefault()))
             {
-                if (lvi.Checked.GetValueOrDefault())
-                    ScanBase.SelectedDrives.Add(lvi.Tag as DriveInfo);
+                ScanBase.SelectedDrives.Add(lvi.Tag as DriveInfo);
             }
 
             if (ScanBase.SelectedDrives.Count == 0)
@@ -405,19 +404,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Wizard.DiskDrives = new ObservableCollection<LviDrive>();
 
-                string winDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
-                foreach (DriveInfo driveInfo in DriveInfo.GetDrives())
+                var winDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
+
+                foreach (
+                    var listViewItem in
+                        DriveInfo.GetDrives()
+                            .Where(driveInfo => driveInfo.IsReady && driveInfo.DriveType == DriveType.Fixed)
+                            .Select(
+                                driveInfo =>
+                                    new LviDrive(winDir.Contains(driveInfo.Name), driveInfo.Name, driveInfo.DriveFormat,
+                                        Utils.ConvertSizeToString(driveInfo.TotalSize),
+                                        Utils.ConvertSizeToString(driveInfo.TotalFreeSpace), driveInfo)))
                 {
-                    if (!driveInfo.IsReady || driveInfo.DriveType != DriveType.Fixed)
-                        continue;
-
-                    string freeSpace = Utils.ConvertSizeToString(driveInfo.TotalFreeSpace);
-                    string totalSpace = Utils.ConvertSizeToString(driveInfo.TotalSize);
-
-                    bool isChecked = winDir.Contains(driveInfo.Name);
-
-                    LviDrive listViewItem = new LviDrive(isChecked, driveInfo.Name, driveInfo.DriveFormat, totalSpace, freeSpace, driveInfo);
-
                     DrivesCollection.Add(listViewItem);
                 }
 
@@ -436,17 +434,17 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             OnPropertyChanged("DrivesCollection");
 
             // Excluded Dirs
-            foreach (string excludeDir in Settings.Default.diskCleanerExcludedDirs)
+            foreach (var excludeDir in Settings.Default.diskCleanerExcludedDirs)
                 ExcFoldersCollection.Add(new LviFolder { Folder = excludeDir });
             //this.listViewExcludeFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Excluded Files
-            foreach (string excludeFile in Settings.Default.diskCleanerExcludedFileTypes)
+            foreach (var excludeFile in Settings.Default.diskCleanerExcludedFileTypes)
                 ExcFilesCollection.Add(new LviFile { File = excludeFile });
             //this.listViewFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Included Folders
-            foreach (string includedFolder in Settings.Default.diskCleanerIncludedFolders)
+            foreach (var includedFolder in Settings.Default.diskCleanerIncludedFolders)
                 IncFoldersCollection.Add(new LviFolder { Folder = includedFolder });
             //this.listViewIncFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
@@ -455,34 +453,35 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             // Included Folders
             Settings.Default.diskCleanerIncludedFolders.Clear();
-            foreach (LviFolder lvi in IncFoldersCollection)
+            foreach (var lvi in IncFoldersCollection)
                 Settings.Default.diskCleanerIncludedFolders.Add(lvi.Folder);
 
             // Excluded Folders
             Settings.Default.diskCleanerExcludedDirs.Clear();
-            foreach (LviFolder lvi in ExcFoldersCollection)
+            foreach (var lvi in ExcFoldersCollection)
                 Settings.Default.diskCleanerExcludedDirs.Add(lvi.Folder);
 
             // Excluded Files
             Settings.Default.diskCleanerExcludedFileTypes.Clear();
-            foreach (LviFile lvi in ExcFilesCollection)
+            foreach (var lvi in ExcFilesCollection)
                 Settings.Default.diskCleanerExcludedFileTypes.Add(lvi.File);
         }
 
         private void buttonAddIncFolder_Click(object sender, RoutedEventArgs e)
         {
-            AddIncludeFolder addIncFolder = new AddIncludeFolder();
+            var addIncFolder = new AddIncludeFolder();
             addIncFolder.AddIncFolder += addIncFolder_AddIncFolder;
             addIncFolder.ShowDialog();
         }
-        void addIncFolder_AddIncFolder(object sender, AddIncFolderEventArgs e)
+
+        private void addIncFolder_AddIncFolder(object sender, AddIncFolderEventArgs e)
         {
             IncFoldersCollection.Add(new LviFolder { Folder = e.FolderPath });
         }
 
         private void buttonAddExcludeFolder_Click(object sender, RoutedEventArgs e)
         {
-            AddExcludeFolder addExcFolder = new AddExcludeFolder();
+            var addExcFolder = new AddExcludeFolder();
             addExcFolder.AddExcludeFolderDelegate += addFolder_AddExcludeFolder;
             addExcFolder.ShowDialog();
         }
@@ -494,12 +493,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonFilesAdd_Click(object sender, RoutedEventArgs e)
         {
-            AddExcludeFileType addFileType = new AddExcludeFileType();
+            var addFileType = new AddExcludeFileType();
             addFileType.AddFileType += addFileType_AddFileType;
             addFileType.ShowDialog();
         }
 
-        void addFileType_AddFileType(object sender, AddFileTypeEventArgs e)
+        private void addFileType_AddFileType(object sender, AddFileTypeEventArgs e)
         {
             ExcFilesCollection.Add(new LviFile { File = e.FileType });
         }
@@ -551,7 +550,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void SearchFilterChange()
         {
-            List<string> masks = new List<string>();
+            var masks = new List<string>();
             string[] allFilters = { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous" };
             string[] filters = { };
 
@@ -575,17 +574,17 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonSelectMoveFolder_Click(object sender, RoutedEventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog())
+            using (var folderBrowserDlg = new FolderBrowserDialog())
             {
                 if (!string.IsNullOrEmpty(MoveFolder))
                     folderBrowserDlg.SelectedPath = MoveFolder;
 
-                if (folderBrowserDlg.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) == DialogResult.OK)
-                {
-                    MoveFolder = folderBrowserDlg.SelectedPath;
+                if (folderBrowserDlg.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) != DialogResult.OK)
+                    return;
 
-                    MessageBox.Show(Application.Current.MainWindow, "Folder to move junk files to has been updated", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                MoveFolder = folderBrowserDlg.SelectedPath;
+
+                MessageBox.Show(Application.Current.MainWindow, "Folder to move junk files to has been updated", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

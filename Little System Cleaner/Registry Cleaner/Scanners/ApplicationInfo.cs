@@ -39,19 +39,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 Wizard.Report.WriteLine("Verifying programs in Add/Remove list");
 
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
+                using (var regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
                 {
                     if (regKey == null)
                         return;
 
-                    foreach (string strProgName in regKey.GetSubKeyNames().TakeWhile(strProgName => !CancellationToken.IsCancellationRequested))
+                    foreach (var strProgName in regKey.GetSubKeyNames().TakeWhile(strProgName => !CancellationToken.IsCancellationRequested))
                     {
-                        using (RegistryKey regKey2 = regKey.OpenSubKey(strProgName))
+                        using (var regKey2 = regKey.OpenSubKey(strProgName))
                         {
                             if (regKey2 == null)
                                 continue;
 
-                            ProgramInfo progInfo = new ProgramInfo(regKey2);
+                            var progInfo = new ProgramInfo(regKey2);
 
                             if (regKey2.ValueCount <= 0)
                             {
@@ -118,7 +118,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (string subKey in regKey.GetSubKeyNames()
+            foreach (var subKey in regKey.GetSubKeyNames()
                 .Where(subKey => Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + subKey) == null)
                 .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {

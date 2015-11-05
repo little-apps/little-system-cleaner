@@ -21,7 +21,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if it exists</returns>
         internal static bool IconExists(string iconPath)
         {
-            string strFileName = string.Copy(iconPath.Trim().ToLower());
+            var strFileName = string.Copy(iconPath.Trim().ToLower());
 
             // Remove quotes
             strFileName = Utils.UnqouteSpaces(strFileName);
@@ -35,20 +35,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 return true;
 
             // Get icon path
-            int nSlash = strFileName.IndexOf(',');
+            var nSlash = strFileName.IndexOf(',');
             if (nSlash > -1)
             {
                 strFileName = strFileName.Substring(0, nSlash);
 
-                return (Utils.FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName));
+                return Utils.FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName);
             }
 
-            StringBuilder sb = new StringBuilder(strFileName);
+            var sb = new StringBuilder(strFileName);
             if (PInvoke.PathParseIconLocation(sb) < 0)
                 return false;
 
             if (!string.IsNullOrEmpty(sb.ToString()))
-                return (Utils.FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName));
+                return Utils.FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName);
 
             return false;
         }
@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if it exists or if the path should be skipped. Otherwise, false if the file path is empty or doesnt exist</returns>
         internal static bool DirExists(string dirPath)
         {
-            string strDirectory = string.Copy(dirPath.Trim().ToLower());
+            var strDirectory = string.Copy(dirPath.Trim().ToLower());
 
             // Remove quotes
             strDirectory = Utils.UnqouteSpaces(strDirectory);
@@ -70,13 +70,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             strDirectory = Environment.ExpandEnvironmentVariables(strDirectory);
 
             // Check drive type
-            Utils.VDTReturn ret = Utils.ValidDriveType(strDirectory);
+            var ret = Utils.ValidDriveType(strDirectory);
             switch (ret)
             {
                 case Utils.VDTReturn.InvalidDrive:
                     return false;
                 case Utils.VDTReturn.SkipCheck:
                     return true;
+                case Utils.VDTReturn.ValidDrive:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             // Check for illegal chars
@@ -84,15 +88,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 return false;
 
             // Remove filename.ext and trailing backslash from path
-            StringBuilder sb = new StringBuilder(strDirectory);
-            if (PInvoke.PathRemoveFileSpec(sb))
-                if (Directory.Exists(sb.ToString()))
-                    return true;
+            var sb = new StringBuilder(strDirectory);
+            if (!PInvoke.PathRemoveFileSpec(sb))
+                return Directory.Exists(strDirectory);
 
-            if (Directory.Exists(strDirectory))
-                return true;
-
-            return false;
+            return Directory.Exists(sb.ToString()) || Directory.Exists(strDirectory);
         }
 
         /// <summary>
@@ -117,21 +117,21 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if value name exists in registry key</returns>
         internal static bool ValueNameExists(string mainKey, string subKey, string valueName)
         {
-            bool bKeyExists = false;
-            RegistryKey reg = Utils.RegOpenKey(mainKey, subKey);
+            var bKeyExists = false;
+            var reg = Utils.RegOpenKey(mainKey, subKey);
 
             try
             {
-                if (reg != null)
-                {
-                    if (reg.GetValue(valueName) != null)
-                        bKeyExists = true;
-                    reg.Close();
-                }
+                if (reg?.GetValue(valueName) != null)
+                    bKeyExists = true;
             }
             catch
             {
-                return false;
+                bKeyExists = false;
+            }
+            finally
+            {
+                reg?.Close();
             }
 
             return bKeyExists;
@@ -151,10 +151,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             try
             {
-                RegistrySecurity regSecurity = regKey.GetAccessControl();
-                string user = Environment.UserDomainName + "\\" + Environment.UserName;
+                var regSecurity = regKey.GetAccessControl();
+                var user = Environment.UserDomainName + "\\" + Environment.UserName;
 
-                RegistryAccessRule rule = new RegistryAccessRule(user, registryRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly, AccessControlType.Allow);
+                var rule = new RegistryAccessRule(user, registryRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly, AccessControlType.Allow);
 
                 regSecurity.AddAccessRule(rule);
                 regKey.SetAccessControl(regSecurity);
@@ -172,53 +172,59 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>Registry value formatted to a string</returns>
         internal static string RegConvertXValueToString(RegistryKey regKey, string valueName)
         {
-            string strRet = "";
+            var strRet = "";
 
             if (regKey == null)
                 return strRet;
 
             try
             {
-
                 switch (regKey.GetValueKind(valueName))
                 {
                     case RegistryValueKind.MultiString:
+                    {
+                        string strValue = "";
+                        string[] strValues = (string[]) regKey.GetValue(valueName);
+
+                        for (int i = 0; i < strValues.Length; i++)
                         {
-                            string strValue = "";
-                            string[] strValues = (string[])regKey.GetValue(valueName);
+                            if (i != 0)
+                                strValue = string.Concat(strValue, ",");
 
-                            for (int i = 0; i < strValues.Length; i++)
-                            {
-                                if (i != 0)
-                                    strValue = string.Concat(strValue, ",");
-
-                                strValue = $"{strValue} {strValues[i]}";
-                            }
-
-                            strRet = string.Copy(strValue);
-
-                            break;
+                            strValue = $"{strValue} {strValues[i]}";
                         }
+
+                        strRet = string.Copy(strValue);
+
+                        break;
+                    }
                     case RegistryValueKind.Binary:
-                        {
-                            string strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("", (current, b) => $"{current} {b:X2}");
+                    {
+                        string strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("", (current, b) => $"{current} {b:X2}");
 
-                            strRet = string.Copy(strValue);
+                        strRet = string.Copy(strValue);
 
-                            break;
-                        }
+                        break;
+                    }
                     case RegistryValueKind.DWord:
                     case RegistryValueKind.QWord:
-                        {
-                            strRet = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
-                            break;
-                        }
-                    default:
-                        {
-                            strRet = $"{regKey.GetValue(valueName)}";
-                            break;
-                        }
+                    {
+                        strRet = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
+                        break;
+                    }
+                    case RegistryValueKind.String:
+                    case RegistryValueKind.ExpandString:
+                    case RegistryValueKind.Unknown:
+                    case RegistryValueKind.None:
+                    {
+                        strRet = $"{regKey.GetValue(valueName)}";
+                        break;
+                    }
 
+                    default:
+                    {
+                        throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
             catch
@@ -240,9 +246,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 if (key.SubKeyCount > 0)
                 {
-                    bool ret = false;
+                    var ret = false;
 
-                    foreach (RegistryKey subRegKey in key.GetSubKeyNames().Select(key.OpenSubKey))
+                    foreach (var subRegKey in key.GetSubKeyNames().Select(key.OpenSubKey))
                     {
                         ret = subRegKey != null && CanDeleteKey(subRegKey);
 
@@ -253,7 +259,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     return ret;
                 }
 
-                RegistrySecurity regSecurity = key.GetAccessControl();
+                var regSecurity = key.GetAccessControl();
 
                 return regSecurity.GetAccessRules(true, false, typeof (NTAccount)).Cast<AuthorizationRule>().All(rule => (RegistryRights.Delete & ((RegistryAccessRule) (rule)).RegistryRights) == RegistryRights.Delete);
             }

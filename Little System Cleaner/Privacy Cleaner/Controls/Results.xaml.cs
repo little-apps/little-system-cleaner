@@ -52,7 +52,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (Tree.SelectedNode == null)
                 return;
 
-            ResultNode resultNode = Tree.SelectedNode.Tag as ResultNode;
+            var resultNode = Tree.SelectedNode.Tag as ResultNode;
 
             if (resultNode is RootNode)
                 return;
@@ -95,7 +95,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         private void Clean()
         {
             long lSeqNum = 0;
-            Report report = Report.CreateReport(Settings.Default.privacyCleanerLog);
+            var report = Report.CreateReport(Settings.Default.privacyCleanerLog);
 
             // Create system restore point
             try
@@ -108,9 +108,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            foreach (ResultNode parent in (Tree.Model as ResultModel).Root.Children)
+            foreach (var parent in (Tree.Model as ResultModel).Root.Children)
             {
-                foreach (ResultNode n in parent.Children.Where(n => n.IsChecked.GetValueOrDefault()))
+                foreach (var n in parent.Children.Where(n => n.IsChecked.GetValueOrDefault()))
                 {
                     report.WriteLine("Section: {0}", parent.Section);
 
@@ -123,17 +123,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             report.WriteLine("Successfully Cleaned Disk @ " + DateTime.Now.ToLongTimeString());
             report.DisplayLogFile(Settings.Default.privacyCleanerDisplayLog);
 
-            if (lSeqNum != 0)
+            if (lSeqNum == 0)
+                return;
+
+            try
             {
-                try
-                {
-                    SysRestore.EndRestore(lSeqNum);
-                }
-                catch (Win32Exception ex)
-                {
-                    string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                SysRestore.EndRestore(lSeqNum);
+            }
+            catch (Win32Exception ex)
+            {
+                string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

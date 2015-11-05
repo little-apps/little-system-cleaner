@@ -72,19 +72,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 {
                     try
                     {
-                        if (RootKey.CompareTo("HKEY_CLASSES_ROOT") == 0)
+                        if (string.Compare(RootKey, "HKEY_CLASSES_ROOT", StringComparison.Ordinal) == 0)
                             _regKey = Registry.ClassesRoot;
-                        else if (RootKey.CompareTo("HKEY_CURRENT_USER") == 0)
+                        else if (string.Compare(RootKey, "HKEY_CURRENT_USER", StringComparison.Ordinal) == 0)
                             _regKey = Registry.CurrentUser;
-                        else if (RootKey.CompareTo("HKEY_LOCAL_MACHINE") == 0)
+                        else if (string.Compare(RootKey, "HKEY_LOCAL_MACHINE", StringComparison.Ordinal) == 0)
                             _regKey = Registry.LocalMachine;
-                        else if (RootKey.ToUpper().CompareTo("HKEY_USERS") == 0)
+                        else if (string.Compare(RootKey, "HKEY_USERS", StringComparison.Ordinal) == 0)
                             _regKey = Registry.Users;
-                        else if (RootKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
+                        else if (string.Compare(RootKey, "HKEY_CURRENT_CONFIG", StringComparison.Ordinal) == 0)
                             _regKey = Registry.CurrentConfig;
 
                         if (!string.IsNullOrEmpty(SubKey))
-                            _regKey = _regKey.OpenSubKey(SubKey);
+                            _regKey = _regKey?.OpenSubKey(SubKey);
                     }
                     catch (Exception ex)
                     {
@@ -107,7 +107,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         {
             Values = new List<RegistryValue>();
 
-            int slashIndex = regPath.IndexOf('\\');
+            var slashIndex = regPath.IndexOf('\\');
 
             if (slashIndex >= 0)
             {
@@ -127,16 +127,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         public RegistryKey CreateSubKey()
         {
             RegistryKey regKey = null;
-
-            if (RootKey.CompareTo("HKEY_CLASSES_ROOT") == 0)
+            
+            if (string.Compare(RootKey, "HKEY_CLASSES_ROOT", StringComparison.Ordinal) == 0)
                 regKey = Registry.ClassesRoot;
-            else if (RootKey.CompareTo("HKEY_CURRENT_USER") == 0)
+            else if (string.Compare(RootKey, "HKEY_CURRENT_USER", StringComparison.Ordinal) == 0)
                 regKey = Registry.CurrentUser;
-            else if (RootKey.CompareTo("HKEY_LOCAL_MACHINE") == 0)
+            else if (string.Compare(RootKey, "HKEY_LOCAL_MACHINE", StringComparison.Ordinal) == 0)
                 regKey = Registry.LocalMachine;
-            else if (RootKey.ToUpper().CompareTo("HKEY_USERS") == 0)
+            else if (string.Compare(RootKey, "HKEY_USERS", StringComparison.Ordinal) == 0)
                 regKey = Registry.Users;
-            else if (RootKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
+            else if (string.Compare(RootKey, "HKEY_CURRENT_CONFIG", StringComparison.Ordinal) == 0)
                 regKey = Registry.CurrentConfig;
 
             if (string.IsNullOrEmpty(SubKey))
@@ -144,11 +144,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
             if (SubKey.IndexOf('\\') > 0)
             {
-                foreach (string subKey in SubKey.Split('\\'))
+                foreach (var subKey in SubKey.Split('\\'))
                 {
                     try
                     {
-                        regKey = regKey.CreateSubKey(subKey);
+                        regKey = regKey?.CreateSubKey(subKey);
                     }
                     catch (Exception ex)
                     {
@@ -164,7 +164,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             {
                 try
                 {
-                    regKey = regKey.CreateSubKey(SubKey);
+                    regKey = regKey?.CreateSubKey(SubKey);
                 }
                 catch (Exception ex)
                 {
@@ -189,25 +189,25 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 return false;
             }
 
-            if (RegistryKey.ValueCount > 0)
+            if (RegistryKey.ValueCount <= 0)
+                return true;
+
+            string[] valueNames;
+
+            try
             {
-                string[] valueNames;
+                valueNames = RegistryKey.GetValueNames();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to get value names from registry key ({0}).\nError: {1}", RegistryKeyPath, ex.Message);
+                return false;
+            }
 
-                try
-                {
-                    valueNames = RegistryKey.GetValueNames();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Failed to get value names from registry key ({0}).\nError: {1}", RegistryKeyPath, ex.Message);
-                    return false;
-                }
-
-                // Add values
-                foreach (string valueName in valueNames)
-                {
-                    AddValue(valueName);
-                }
+            // Add values
+            foreach (var valueName in valueNames)
+            {
+                AddValue(valueName);
             }
 
             return true;
@@ -243,7 +243,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 return false;
             }
 
-            RegistryValue regValue = new RegistryValue(valueName, regValueKind, value);
+            var regValue = new RegistryValue(valueName, regValueKind, value);
 
             if (!Values.Contains(regValue))
                 Values.Add(regValue);
@@ -254,9 +254,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         #region IEquatable Methods
         public bool Equals(RegistryEntry regEntry)
         {
-            if (regEntry.RegistryKeyPath == RegistryKeyPath)
-                return true;
-            return false;
+            return regEntry.RegistryKeyPath == RegistryKeyPath;
         }
 
         public override bool Equals(object obj)
@@ -283,7 +281,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             if (regEntry1 == null || regEntry2 == null)
                 return !Equals(regEntry1, regEntry2);
 
-            return !(regEntry1.Equals(regEntry2));
+            return !regEntry1.Equals(regEntry2);
         }
         #endregion
     }

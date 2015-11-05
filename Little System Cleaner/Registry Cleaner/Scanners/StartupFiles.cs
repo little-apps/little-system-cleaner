@@ -92,9 +92,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Checking for invalid files in " + regKey.Name);
 
-            foreach (string progName in regKey.GetValueNames().TakeWhile(progName => !CancellationToken.IsCancellationRequested))
+            foreach (var progName in regKey.GetValueNames().TakeWhile(progName => !CancellationToken.IsCancellationRequested))
             {
-                string runPath = regKey.GetValue(progName) as string;
+                var runPath = regKey.GetValue(progName) as string;
 
                 if (!string.IsNullOrEmpty(runPath))
                 {

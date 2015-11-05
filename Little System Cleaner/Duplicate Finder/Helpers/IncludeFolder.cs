@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool Equals(IncludeFolder other)
         {
-            return (other != null && Name == other.Name);
+            return other != null && Name == other.Name;
         }
         public override bool Equals(object obj)
         {

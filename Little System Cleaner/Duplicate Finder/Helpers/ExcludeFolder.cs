@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -43,12 +44,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool Equals(ExcludeFolder other)
         {
-            return (other != null && FolderPath == other.FolderPath);
+            return other != null && FolderPath == other.FolderPath;
         }
 
         public bool Equals(string other)
         {
-            return (!string.IsNullOrEmpty(other) && FolderPath == other);
+            return !string.IsNullOrEmpty(other) && FolderPath == other;
         }
 
         public override bool Equals(object obj)
@@ -69,23 +70,25 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         [Obsolete]
         internal static ObservableCollection<ExcludeFolder> GetDefaultExcFolders()
         {
-            ObservableCollection<ExcludeFolder> excFolders = new ObservableCollection<ExcludeFolder>();
+            var excFolders = new ObservableCollection<ExcludeFolder>();
 
-            string[] folderPaths = {
-                                       Environment.GetFolderPath(Environment.SpecialFolder.Windows), // Windows directory
-                                       Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), // Program files directory
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), 
-                                       Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), // Program files (x86) directory
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86),
-                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), // Programdata directory
-                                       Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) // AppData directory
-                                   };
-
-            foreach (string folderPath in folderPaths)
+            string[] folderPaths =
             {
-                ExcludeFolder excFolder = new ExcludeFolder(folderPath, true);
-                if (!excFolders.Contains(excFolder))
-                    excFolders.Add(excFolder);
+                Environment.GetFolderPath(Environment.SpecialFolder.Windows), // Windows directory
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), // Program files directory
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles),
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), // Program files (x86) directory
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86),
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), // Programdata directory
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) // AppData directory
+            };
+
+            foreach (
+                var excFolder in
+                    folderPaths.Select(folderPath => new ExcludeFolder(folderPath, true))
+                        .Where(excFolder => !excFolders.Contains(excFolder)))
+            {
+                excFolders.Add(excFolder);
             }
 
             return excFolders;

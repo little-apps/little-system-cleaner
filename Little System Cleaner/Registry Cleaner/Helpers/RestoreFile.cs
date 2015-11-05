@@ -1,5 +1,6 @@
 ﻿using Little_System_Cleaner.Misc;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
@@ -18,7 +19,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
             FileInfo = fileInfo;
             File = fileInfo.Name;
-            Date = fileDateTime.ToString();
+            Date = fileDateTime.ToString(CultureInfo.InvariantCulture);
             Size = Utils.ConvertSizeToString((uint)fileInfo.Length);
         }
     }

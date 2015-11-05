@@ -65,11 +65,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     return false;
                 }
 
-                AuthorizationRuleCollection accessRules = accessControlList?.GetAccessRules(true, true, typeof(SecurityIdentifier));
+                var accessRules = accessControlList?.GetAccessRules(true, true, typeof(SecurityIdentifier));
                 if (accessRules == null)
                     return false;
 
-                foreach (FileSystemAccessRule rule in accessRules.Cast<FileSystemAccessRule>().Where(rule => (rule.FileSystemRights & FileSystemRights.Delete) == FileSystemRights.Delete))
+                foreach (
+                    var rule in
+                        accessRules.Cast<FileSystemAccessRule>()
+                            .Where(rule => (rule.FileSystemRights & FileSystemRights.Delete) == FileSystemRights.Delete)
+                    )
                 {
                     switch (rule.AccessControlType)
                     {
@@ -110,9 +114,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (!compareMusicTags)
                 return;
 
-            File file = GetTags();
+            var file = GetTags();
 
-            if ((HasAudioTags) && file.Tag.IsEmpty)
+            if (HasAudioTags && file.Tag.IsEmpty)
                 HasAudioTags = false;
 
             if (!HasAudioTags)
@@ -165,7 +169,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private File GetTags()
         {
             File file = null;
-            string ext = Path.GetExtension(FilePath);
+            var ext = Path.GetExtension(FilePath);
 
             if (string.IsNullOrEmpty(ext))
                 return null;
@@ -177,8 +181,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             try
             {
-                File.LocalFileAbstraction abstraction = new File.LocalFileAbstraction(FilePath);
-                ReadStyle propertiesStyle = ReadStyle.Average;
+                var abstraction = new File.LocalFileAbstraction(FilePath);
+                var propertiesStyle = ReadStyle.Average;
 
                 switch (ext)
                 {
@@ -273,60 +277,60 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (!HasAudioTags)
                 return;
 
-            string hashString = string.Empty;
+            string hashString;
             var hashAlgorithm = GetHashAlgorithm(options.HashAlgorithm.Algorithm);
 
-            using (MemoryStream memStream = new MemoryStream())
+            using (var memStream = new MemoryStream())
             {
                 if (options.MusicTagAlbum.GetValueOrDefault() && !string.IsNullOrEmpty(Album))
                 {
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Album));
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Album));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagArtist.GetValueOrDefault() && !string.IsNullOrEmpty(Artist))
                 {
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Artist));
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Artist));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagBitRate.GetValueOrDefault() && Bitrate > 0)
                 {
-                    string bitRate = Convert.ToString(Bitrate);
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(bitRate));
+                    var bitRate = Convert.ToString(Bitrate);
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(bitRate));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagDuration.GetValueOrDefault() && Duration != TimeSpan.Zero)
                 {
-                    string duration = Duration.ToString();
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(duration));
+                    var duration = Duration.ToString();
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(duration));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagGenre.GetValueOrDefault() && !string.IsNullOrEmpty(Genre))
                 {
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Genre));
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Genre));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagTitle.GetValueOrDefault() && !string.IsNullOrEmpty(Title))
                 {
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Title));
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(Title));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagTrackNo.GetValueOrDefault() && TrackNo > 0)
                 {
-                    string trackNo = Convert.ToString(TrackNo);
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(trackNo));
+                    var trackNo = Convert.ToString(TrackNo);
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(trackNo));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
                 if (options.MusicTagYear.GetValueOrDefault() && Year > 0)
                 {
-                    string year = Convert.ToString(Year);
-                    byte[] bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(year));
+                    var year = Convert.ToString(Year);
+                    var bufferHash = CalculateHashBytes(hashAlgorithm, Encoding.UTF8.GetBytes(year));
                     memStream.Write(bufferHash, 0, bufferHash.Length);
                 }
 
@@ -420,21 +424,21 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <returns>A string representation of the computed hash</returns>
         private string CalculateHash(bool includeFilename, System.Security.Cryptography.HashAlgorithm algo)
         {
-            string hash = string.Empty;
+            var hash = string.Empty;
 
-            using (MemoryStream memStream = new MemoryStream())
+            using (var memStream = new MemoryStream())
             {
                 if (includeFilename)
                     AddFilenameHash(memStream, algo);
 
                 try
                 {
-                    using (FileStream fileStream = GetFileStream())
+                    using (var fileStream = GetFileStream())
                     {
                         if (fileStream == null)
                             return hash;
 
-                        byte[] hashFile = algo.ComputeHash(fileStream);
+                        var hashFile = algo.ComputeHash(fileStream);
 
                         memStream.Write(hashFile, 0, hashFile.Length);
                     }
@@ -482,7 +486,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <returns>Hash in string format</returns>
         private static string CalculateHashString(System.Security.Cryptography.HashAlgorithm algo, Stream stream)
         {
-            string hash = string.Empty;
+            var hash = string.Empty;
 
             var hashBytes = CalculateHashBytes(algo, stream);
 
@@ -494,19 +498,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// </summary>
         /// <param name="memStream">MemoryStream containing hash bytes</param>
         /// <param name="algo">HashAlgorithm to compute hash (MD5, SHA1, SHA256, etc)</param>
-        private void AddFilenameHash(MemoryStream memStream, System.Security.Cryptography.HashAlgorithm algo)
+        private void AddFilenameHash(Stream memStream, System.Security.Cryptography.HashAlgorithm algo)
         {
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(FilePath);
 
             if (fileNameWithoutExtension == null)
                 return;
 
-            byte[] fileNameNoExt = Encoding.UTF8.GetBytes(fileNameWithoutExtension.ToLower());
+            var fileNameNoExt = Encoding.UTF8.GetBytes(fileNameWithoutExtension.ToLower());
 
             if (fileNameNoExt.Length <= 0)
                 return;
 
-            byte[] hashFileName = algo.ComputeHash(fileNameNoExt);
+            var hashFileName = algo.ComputeHash(fileNameNoExt);
 
             if (hashFileName.Length > 0)
                 memStream.Write(hashFileName, 0, hashFileName.Length);

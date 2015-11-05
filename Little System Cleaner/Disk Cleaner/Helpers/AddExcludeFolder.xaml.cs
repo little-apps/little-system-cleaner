@@ -49,7 +49,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
             if (AddExcludeFolderDelegate != null)
             {
-                AddExcludeFolderEventArgs eventArgs = new AddExcludeFolderEventArgs { FolderPath = TextBox.Text.Trim() };
+                var eventArgs = new AddExcludeFolderEventArgs { FolderPath = TextBox.Text.Trim() };
                 AddExcludeFolderDelegate(this, eventArgs);
             }
 
@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog browserDlg = new FolderBrowserDialog();
+            var browserDlg = new FolderBrowserDialog();
             browserDlg.ShowDialog(new WindowWrapper(this));
             TextBox.Text = browserDlg.SelectedPath;
         }

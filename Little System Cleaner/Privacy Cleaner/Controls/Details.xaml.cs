@@ -64,10 +64,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             if (resultNode.FilePaths != null)
             {
-                foreach (string filePath in resultNode.FilePaths)
+                foreach (var filePath in resultNode.FilePaths)
                 {
-                    string fileSize = Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath));
-                    string lastAccessDate = Directory.GetLastAccessTime(filePath).ToString();
+                    var fileSize = Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath));
+                    var lastAccessDate = Directory.GetLastAccessTime(filePath).ToString();
 
                     DetailItemCollection.Add(new DetailItem { Name = filePath, Size = fileSize, AccessDate = lastAccessDate });
                 }
@@ -75,13 +75,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             if (resultNode.FolderPaths != null)
             {
-                foreach (KeyValuePair<string, bool> kvp in resultNode.FolderPaths)
+                foreach (var kvp in resultNode.FolderPaths)
                 {
-                    string folderPath = kvp.Key;
+                    var folderPath = kvp.Key;
                     //SearchOption recurse = ((kvp.Value)?(SearchOption.AllDirectories):(SearchOption.TopDirectoryOnly));
 
-                    string folderSize = Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false));
-                    string lastAccessDate = Directory.GetLastAccessTime(folderPath).ToString();
+                    var folderSize = Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false));
+                    var lastAccessDate = Directory.GetLastAccessTime(folderPath).ToString();
 
                     DetailItemCollection.Add(new DetailItem { Name = folderPath, Size = folderSize, AccessDate = lastAccessDate });
                 }
@@ -101,21 +101,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (detailItem == null)
                 return;
 
-            string path = detailItem.Name;
+            var path = detailItem.Name;
 
             if (!File.Exists(path))
                 return;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    ErrorDialog = true,
-                    FileName = path
-                };
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
 
-                Process.Start(startInfo);
-            }
+            var startInfo = new ProcessStartInfo
+            {
+                ErrorDialog = true,
+                FileName = path
+            };
+
+            Process.Start(startInfo);
         }
 
         private void ButtonLocate_Click(object sender, RoutedEventArgs e)
@@ -124,7 +126,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (detailItem == null)
                 return;
 
-            string path = detailItem.Name;
+            var path = detailItem.Name;
 
             Process.Start("explorer", Path.GetDirectoryName(path));
         }
@@ -135,9 +137,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (detailItem == null)
                 return;
 
-            string path = detailItem.Name;
+            var path = detailItem.Name;
 
-            SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
+            var info = new SHELLEXECUTEINFO();
             info.cbSize = Marshal.SizeOf(info);
             info.lpVerb = "properties";
             info.lpFile = (string)path.Clone();

@@ -29,7 +29,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool Equals(IncludeDrive other)
         {
-            return (other != null && Name == other.Name);
+            return other != null && Name == other.Name;
         }
 
         public override int GetHashCode()

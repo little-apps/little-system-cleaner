@@ -157,7 +157,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 Wizard.Report.WriteLine();
 
                 // Begin Scanning
-                foreach (ScannerBase scanner in EnabledScanners)
+                foreach (var scanner in EnabledScanners)
                 {
                     InvokeCurrentSection(scanner.ScannerName);
 
@@ -182,7 +182,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             finally
             {
                 // Compute time between start and end of scan
-                TimeSpan ts = DateTime.Now.Subtract(_dateTimeStart);
+                var ts = DateTime.Now.Subtract(_dateTimeStart);
 
                 // Report to Little Software Stats
                 Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int)ts.TotalSeconds, true);
@@ -277,7 +277,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ProgressBar.Maximum != 0)
+            if (Math.Abs(ProgressBar.Maximum) > 0)
                 Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
         }
        

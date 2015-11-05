@@ -107,7 +107,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             Running = true;
         }
 
-        private async static void CheckForUpdate()
+        private static async void CheckForUpdate()
         {
             var mainAssembly = Assembly.GetEntryAssembly();
             var companyAttribute = (AssemblyCompanyAttribute)GetAttribute(mainAssembly, typeof(AssemblyCompanyAttribute));
@@ -145,9 +145,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             if (ForceCheck == false && remindLaterTime != null)
             {
-                DateTime remindLater = Convert.ToDateTime(remindLaterTime.ToString(), CultureInfo.CreateSpecificCulture("en-US"));
+                var remindLater = Convert.ToDateTime(remindLaterTime.ToString(), CultureInfo.CreateSpecificCulture("en-US"));
 
-                int compareResult = DateTime.Compare(DateTime.Now, remindLater);
+                var compareResult = DateTime.Compare(DateTime.Now, remindLater);
 
                 if (compareResult < 0)
                 {
@@ -160,7 +160,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             var fileVersionAttribute = (AssemblyFileVersionAttribute)GetAttribute(mainAssembly, typeof(AssemblyFileVersionAttribute));
             InstalledVersion = new Version(fileVersionAttribute.Version);
 
-            WebRequest webRequest = WebRequest.Create(AppCastUrl);
+            var webRequest = WebRequest.Create(AppCastUrl);
             webRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
             webRequest.Proxy = Utils.GetProxySettings();
 
@@ -172,19 +172,19 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             catch (Exception ex)
             {
-                if (MainDispatcher != null) // Make sure MainDispatcher is set
-                {
-                    if (ForceCheck)
-                    {
-                        // Only display errors if user requested update check
+                if (MainDispatcher == null)
+                    return;
 
-                        if (ex is WebException)
-                            Utils.MessageBoxThreadSafe("An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        else
-                            Utils.MessageBoxThreadSafe("The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                
+                if (!ForceCheck)
+                    return;
+
+                // Only display errors if user requested update check
+
+                if (ex is WebException)
+                    Utils.MessageBoxThreadSafe("An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                    Utils.MessageBoxThreadSafe("The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+
                 return;
             }
 
@@ -200,7 +200,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 if (appCastStream == null)
                     throw new Exception("Response stream from update server was null.");
 
-                XmlSerializer serializer = new XmlSerializer(typeof(UpdateXml));
+                var serializer = new XmlSerializer(typeof(UpdateXml));
 
                 reader = new XmlTextReader(appCastStream);
                 
@@ -227,7 +227,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 webResponse.Close();
             }
 
-            foreach (UpdateXml.Item item in updateXml.Items)
+            foreach (var item in updateXml.Items)
             {
                 if (item.Version != null)
                 {
@@ -249,7 +249,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 if (skip != null && applicationVersion != null)
                 {
-                    string skipValue = skip.ToString();
+                    var skipValue = skip.ToString();
                     var skipVersion = new Version(applicationVersion.ToString());
 
                     if (skipValue.Equals("1") && CurrentVersion <= skipVersion)
@@ -271,7 +271,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         }
                         catch (Exception ex)
                         {
-                            string message = "The following error occurred trying to save update update settings: " + ex.Message;
+                            var message = "The following error occurred trying to save update update settings: " + ex.Message;
 
                             Debug.WriteLine(message);
                             Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);

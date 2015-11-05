@@ -75,17 +75,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
             Name = reader.GetAttribute("Name");
 
-            string strType = reader.GetAttribute("Type");
-            Type = (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), strType);
+            var strType = reader.GetAttribute("Type");
+            if (strType != null)
+                Type = (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), strType);
 
-            byte[] valByte = new byte[1];
-            byte[] buffer = new byte[50];
+            var valByte = new byte[1];
+            var buffer = new byte[50];
 
             if (Type != RegistryValueKind.MultiString)
             {
-                using (MemoryStream ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
-                    using (BinaryWriter bw = new BinaryWriter(ms))
+                    using (var bw = new BinaryWriter(ms))
                     {
                         int readBytes;
                         while ((readBytes = reader.ReadElementContentAsBase64(buffer, 0, 50)) > 0)
@@ -108,9 +109,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                 case RegistryValueKind.DWord:
                     {
-                        string strValue = Encoding.UTF8.GetString(valByte);
+                        var strValue = Encoding.UTF8.GetString(valByte);
 
-                        uint val = Convert.ToUInt32(strValue);
+                        var val = Convert.ToUInt32(strValue);
 
                         Value = val;
 
@@ -118,9 +119,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                 case RegistryValueKind.QWord:
                     {
-                        string strValue = Encoding.UTF8.GetString(valByte);
+                        var strValue = Encoding.UTF8.GetString(valByte);
 
-                        ulong val = Convert.ToUInt64(strValue);
+                        var val = Convert.ToUInt64(strValue);
 
                         Value = val;
 
@@ -128,7 +129,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                 case RegistryValueKind.MultiString:
                     {
-                        List<string> strings = new List<string>();
+                        var strings = new List<string>();
 
                         if (reader.IsEmptyElement)
                         {
@@ -136,14 +137,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                             break;
                         }
 
-                        XmlReader children = reader.ReadSubtree();
+                        var children = reader.ReadSubtree();
 
                         while (children.Read())
                         {
                             if (children.Name != "string" || children.IsEmptyElement)
                                 continue;
 
-                            string s = children.ReadString();
+                            var s = children.ReadString();
 
                             if (string.IsNullOrWhiteSpace(s))
                             {
@@ -151,8 +152,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                             }
                             else
                             {
-                                byte[] base64Bytes = Convert.FromBase64String(s.Trim());
-                                string base64Str = Encoding.UTF8.GetString(base64Bytes);
+                                var base64Bytes = Convert.FromBase64String(s.Trim());
+                                var base64Str = Encoding.UTF8.GetString(base64Bytes);
 
                                 strings.Add(base64Str);
                             }
@@ -193,8 +194,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             {
                 case RegistryValueKind.Binary:
                     {
-                        byte[] bRawBuffer = (byte[])Value;
-                        int bufLen = bRawBuffer.Length;
+                        var bRawBuffer = (byte[])Value;
+                        var bufLen = bRawBuffer.Length;
 
                         writer.WriteBase64(bRawBuffer, 0, bufLen);
 
@@ -202,7 +203,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                 case RegistryValueKind.DWord: // == REG_DWORD_LITTLE_ENDIAN
                     {
-                        uint val = Convert.ToUInt32(Value);
+                        var val = Convert.ToUInt32(Value);
 
                         strValue = Convert.ToString(val);
 
@@ -212,7 +213,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                 case RegistryValueKind.QWord: // QWORD, QWORD_LITTLE_ENDIAN (64-bit integer)
                     {
-                        ulong val = Convert.ToUInt64(Value);
+                        var val = Convert.ToUInt64(Value);
 
                         strValue = Convert.ToString(val);
 
@@ -222,9 +223,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                 case RegistryValueKind.MultiString:
                     {
-                        string[] val = (string[])Value;
+                        var val = (string[])Value;
 
-                        foreach (string s in val)
+                        foreach (var s in val)
                         {
                             writer.WriteStartElement("string");
 
@@ -250,8 +251,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                         byte[] bRawBuffer;
                         int nLen;
 
-                        BinaryFormatter bf = new BinaryFormatter();
-                        using (MemoryStream ms = new MemoryStream())
+                        var bf = new BinaryFormatter();
+                        using (var ms = new MemoryStream())
                         {
                             bf.Serialize(ms, Value);
                             nLen = (int)ms.Length;
@@ -259,7 +260,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                         }
 
                         // Convert the new byte[] into a char[] and then into a string.
-                        char[] asciiChars = new char[Encoding.ASCII.GetCharCount(bRawBuffer, 0, nLen)];
+                        var asciiChars = new char[Encoding.ASCII.GetCharCount(bRawBuffer, 0, nLen)];
                         Encoding.ASCII.GetChars(bRawBuffer, 0, nLen, asciiChars, 0);
 
                         strValue = new string(asciiChars);
@@ -273,8 +274,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
         private void WriteBase64(XmlWriter writer, string val)
         {
-            int byteLen = Encoding.UTF8.GetByteCount(val);
-            byte[] bytes = Encoding.UTF8.GetBytes(val);
+            var byteLen = Encoding.UTF8.GetByteCount(val);
+            var bytes = Encoding.UTF8.GetBytes(val);
             writer.WriteBase64(bytes, 0, byteLen);
         }
 
@@ -287,18 +288,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         #region IEquatable Members
         public bool Equals(RegistryValue regValue)
         {
-            if (Name == regValue.Name)
-                return true;
-            return false;
+            return Name == regValue.Name;
         }
 
         public override bool Equals(object obj)
         {
             var a = obj as RegistryValue;
-            if (a != null)
-                return Equals(a);
-
-            return false;
+            return a != null && Equals(a);
         }
 
         public override int GetHashCode()

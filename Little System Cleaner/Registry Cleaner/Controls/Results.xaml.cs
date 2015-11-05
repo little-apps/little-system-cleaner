@@ -66,11 +66,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     return;
                 }
 
-                int val = value;
+                var val = value;
 
                 _progressBarValue = val;
 
-                if (ProgressBar.Maximum != 0)
+                if (Math.Abs(ProgressBar.Maximum) > 0)
                     Main.TaskbarProgressValue = (val / ProgressBar.Maximum);
 
                 OnPropertyChanged("ProgressBarValue");
@@ -113,8 +113,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             Tree.Model = ResultModel.CreateResultModel();
             Tree.ExpandAll();
-            
-            if ((Tree.Model as ResultModel).Root.Children.Count == 0)
+
+            var resultModel = Tree.Model as ResultModel;
+            if (resultModel != null && resultModel.Root.Children.Count == 0)
             {
                 MessageBox.Show(Application.Current.MainWindow, "There were no errors found!", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -123,10 +124,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 Wizard.Report.DisplayLogFile((Settings.Default.registryCleanerOptionsShowLog && !Settings.Default.registryCleanerOptionsAutoRepair));
 
                 // Set last scan errors found
-                Settings.Default.lastScanErrors =
-                    (Tree.Model as ResultModel).Root.Children
-                    .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
-                    .Count();
+                var model = Tree.Model as ResultModel;
+                if (model != null)
+                    Settings.Default.lastScanErrors =
+                        model.Root.Children
+                            .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
+                            .Count();
 
                 // Set total errors found
                 Settings.Default.totalErrorsFound += Settings.Default.lastScanErrors;
@@ -138,7 +141,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private List<BadRegistryKey> GetSelectedRegKeys()
         {
-            return (Tree.Model as ResultModel).Root.Children
+            return (Tree.Model as ResultModel)?.Root.Children
                 .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
                 .Where(child => (child.IsChecked.HasValue) && child.IsChecked.Value)
                 .ToList();
@@ -146,7 +149,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void SetCheckedItems(bool? isChecked)
         {
-            foreach (BadRegistryKey child in (Tree.Model as ResultModel).Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children))
+            var badRegistryKeys = (Tree.Model as ResultModel)?.Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children);
+
+            if (badRegistryKeys == null)
+                return;
+
+            foreach (var child in badRegistryKeys)
             {
                 if (!isChecked.HasValue)
                     child.IsChecked = !child.IsChecked;
@@ -162,7 +170,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private async void buttonFix_Click(object sender, RoutedEventArgs e)
         {
-            int selectedCount = GetSelectedRegKeys().Count;
+            var selectedCount = GetSelectedRegKeys().Count;
 
             if (selectedCount == 0)
             {
@@ -241,7 +249,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             try
             {
-                List<BadRegistryKey> badRegKeys = GetSelectedRegKeys();
+                var badRegKeys = GetSelectedRegKeys();
 
                 long lSeqNum = 0;
                 BackupRegistry backupReg;
@@ -266,7 +274,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 // Generate filename to backup registry
                 ProgressBarText = "Creating backup file";
-                string strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx",
+                var strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx",
                     Settings.Default.OptionsBackupDir, DateTime.Now);
 
                 try
@@ -285,7 +293,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 foreach (BadRegistryKey brk in badRegKeys)
                 {
-                    bool skip = false;
+                    var skip = false;
 
                     if (_cancellationTokenSource.IsCancellationRequested)
                         break;
@@ -394,7 +402,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             // If no errors found -> Go to first control
-            if ((Tree.Model as ResultModel).Root.Children.Count == 0)
+            var resultModel = Tree.Model as ResultModel;
+            if (resultModel != null && resultModel.Root.Children.Count == 0)
                 _scanWiz.MoveFirst();
 
             Tree.AutoResizeColumns();
@@ -402,7 +411,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void contextMenuResults_Clicked(object sender, RoutedEventArgs e)
         {
-            switch ((string)(sender as MenuItem).Header)
+            switch ((string)(sender as MenuItem)?.Header)
             {
                 case "Select All":
                     {
@@ -427,9 +436,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                             return;
                         }
 
-                        string regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
+                        var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
 
-                        ExcludeItem excludeItem = new ExcludeItem { RegistryPath = regKeyPath };
+                        var excludeItem = new ExcludeItem { RegistryPath = regKeyPath };
                         if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
                         {
                             Settings.Default.ArrayExcludeList.Add(excludeItem);
@@ -450,8 +459,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                         try
                         {
-                            string regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey).RegKeyPath;
-                            string regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey).ValueName;
+                            var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
+                            var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
 
                             RegEditGo.GoTo(regKeyPath, regKeyValueName);
                         }

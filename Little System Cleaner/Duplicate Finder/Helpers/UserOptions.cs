@@ -151,15 +151,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 _skipTempFiles = value;
 
-                string[] excFolders = {
-                        Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine),
-                        Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User)
-                    };
+                string[] excFolders =
+                {
+                    Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine),
+                    Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User)
+                };
 
                 foreach (string excFolderPath in excFolders)
                 {
-                    ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = ExcludeFolders.IndexOf(excFolder);
+                    var excFolder = new ExcludeFolder(excFolderPath, true);
+                    var index = ExcludeFolders.IndexOf(excFolder);
 
                     if (value.GetValueOrDefault())
                     {
@@ -189,20 +190,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 _skipSysAppDirs = value;
 
-                string[] excFolders = {
-                        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), // Program files directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), 
-                        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), // Program files (x86) directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86),
-                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), // Programdata directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), // AppData directory
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-                    };
+                string[] excFolders =
+                {
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), // Program files directory
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles),
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                    // Program files (x86) directory
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86),
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), // Programdata directory
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), // AppData directory
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
+                };
 
                 foreach (string excFolderPath in excFolders)
                 {
-                    ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = ExcludeFolders.IndexOf(excFolder);
+                    var excFolder = new ExcludeFolder(excFolderPath, true);
+                    var index = ExcludeFolders.IndexOf(excFolder);
 
                     if (value.GetValueOrDefault())
                     {
@@ -235,14 +238,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 _skipWindowsDir = value;
 
-                string[] excFolders = {
-                        Environment.GetFolderPath(Environment.SpecialFolder.Windows)
-                    };
-
-                foreach (string excFolderPath in excFolders)
+                string[] excFolders =
                 {
-                    ExcludeFolder excFolder = new ExcludeFolder(excFolderPath, true);
-                    int index = ExcludeFolders.IndexOf(excFolder);
+                    Environment.GetFolderPath(Environment.SpecialFolder.Windows)
+                };
+
+                foreach (var excFolderPath in excFolders)
+                {
+                    var excFolder = new ExcludeFolder(excFolderPath, true);
+                    var index = ExcludeFolders.IndexOf(excFolder);
 
                     if (value.GetValueOrDefault())
                     {
@@ -358,9 +362,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public static void StoreUserOptions(UserOptions userOptions)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(UserOptions));
+                var serializer = new XmlSerializer(typeof(UserOptions));
                 serializer.Serialize(ms, userOptions);
 
                 var xml = Convert.ToBase64String(ms.ToArray());
@@ -376,9 +380,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             try
             {
-                using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(Properties.Settings.Default.duplicateFinderOptions)))
+                using (var ms = new MemoryStream(Convert.FromBase64String(Properties.Settings.Default.duplicateFinderOptions)))
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(UserOptions));
+                    var serializer = new XmlSerializer(typeof(UserOptions));
                     userOptions = (UserOptions)serializer.Deserialize(ms);
                 }
             }

@@ -25,7 +25,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
         private bool? _bIsChecked = true;
 
         #region IsChecked Methods
-        void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
+
+        private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
             if (value == _bIsChecked)
                 return;
@@ -41,7 +42,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
             OnPropertyChanged("IsChecked");
         }
 
-        void VerifyCheckState()
+        private void VerifyCheckState()
         {
             bool? state = null;
             for (int i = 0; i < Children.Count; ++i)
@@ -78,7 +79,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
         {
             set
             {
-                using (MemoryStream ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
                     value.Save(ms);
 

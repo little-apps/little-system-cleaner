@@ -8,8 +8,6 @@ namespace Little_System_Cleaner.Misc
 {
     public abstract class WizardBase : UserControl
     {
-        private int _currentControlIndex;
-
         public List<Type> Controls { get; } = new List<Type>();
 
         public UserControl CurrentControl => (UserControl)Content;
@@ -17,7 +15,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// This value is readonly and can only be manipulated with SetCurrentControl()
         /// </summary>
-        public int CurrentControlIndex => _currentControlIndex;
+        public int CurrentControlIndex { get; private set; }
 
         /// <summary>
         /// This function is called when the wizard is loaded
@@ -48,7 +46,7 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MovePrev(bool autoMove = true)
         {
-            int prevControl = CurrentControlIndex - 1;
+            var prevControl = CurrentControlIndex - 1;
 
             SetCurrentControl(prevControl, autoMove);
         }
@@ -60,7 +58,7 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MoveNext(bool autoMove = true)
         {
-            int nextControl = CurrentControlIndex + 1;
+            var nextControl = CurrentControlIndex + 1;
 
             SetCurrentControl(nextControl, autoMove);
         }
@@ -72,7 +70,7 @@ namespace Little_System_Cleaner.Misc
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
         public virtual void MoveLast(bool autoMove = true)
         {
-            int lastControl = Controls.Count;
+            var lastControl = Controls.Count;
 
             SetCurrentControl(lastControl, autoMove);
         }
@@ -92,7 +90,7 @@ namespace Little_System_Cleaner.Misc
             if (index < 0 || index > Controls.Count)
                 throw new IndexOutOfRangeException($"There is no control with #{index}");
 
-            _currentControlIndex = index;
+            CurrentControlIndex = index;
 
             if (autoMove)
                 ChangeCurrentControl();

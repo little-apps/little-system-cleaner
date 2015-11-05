@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    Debug.WriteLine("Unable to get filename from {0}", new object[] { _downloadUrl });
+                    Debug.WriteLine($"Unable to get filename from {_downloadUrl}");
 
                     Close();
                     return;
@@ -141,12 +141,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 }
             }
 
-            if (string.IsNullOrEmpty(fileName))
-            {
-                var uri = new Uri(url);
+            if (!string.IsNullOrEmpty(fileName))
+                return fileName;
 
-                fileName = Path.GetFileName(uri.LocalPath);
-            }
+            var uri = new Uri(url);
+
+            fileName = Path.GetFileName(uri.LocalPath);
 
             return fileName;
         }

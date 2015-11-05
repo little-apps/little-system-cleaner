@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Scanning " + baseRegKey.Name + " for empty registry keys");
 
-            foreach (string strSubKey in baseRegKey.GetSubKeyNames()
+            foreach (var strSubKey in baseRegKey.GetSubKeyNames()
                 .Where(strSubKey => IsEmptyRegistryKey(baseRegKey.OpenSubKey(strSubKey, true)))
                 .TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
@@ -74,8 +74,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return false;
 
-            int nValueCount = regKey.ValueCount;
-            int nSubKeyCount = regKey.SubKeyCount;
+            var nValueCount = regKey.ValueCount;
+            var nSubKeyCount = regKey.SubKeyCount;
 
             if (regKey.ValueCount != 0)
                 return (nValueCount == 0 && nSubKeyCount == 0);

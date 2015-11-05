@@ -128,10 +128,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
             }
             
-            foreach (FileInfo fi in di.GetFiles().Where(fi => fi.Extension.CompareTo(".bakx") == 0))
+            foreach (var fi in di.GetFiles().Where(fi => string.Compare(fi.Extension, ".bakx", StringComparison.Ordinal) == 0))
             {
                 // Deserialize to creation date
-                using (BackupRegistry backupReg = new BackupRegistry(fi.FullName))
+                using (var backupReg = new BackupRegistry(fi.FullName))
                 {
                     if (!backupReg.Open(true))
                         continue;
@@ -154,17 +154,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public void UpdateSettings()
         {
-            Settings.Default.registryCleanerOptionsLog = CheckBoxLog.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsAutoRescan = CheckBoxAutoRescan.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsDelBackup = CheckBoxDelBackup.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsRemMedia = CheckBoxIgnoreRemMedia.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsShowErrors = CheckBoxShowErrors.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsDeleteOnBackupError = CheckBoxDeleteOnBackupError.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsAutoRepair = CheckBoxAutoRepair.IsChecked.Value;
-            Settings.Default.registryCleanerOptionsAutoExit = CheckBoxAutoExit.IsChecked.Value;
+            Settings.Default.registryCleanerOptionsLog = CheckBoxLog.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsAutoRescan = CheckBoxAutoRescan.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsDelBackup = CheckBoxDelBackup.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsRemMedia = CheckBoxIgnoreRemMedia.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsShowErrors = CheckBoxShowErrors.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsDeleteOnBackupError = CheckBoxDeleteOnBackupError.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsAutoRepair = CheckBoxAutoRepair.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsAutoExit = CheckBoxAutoExit.IsChecked.GetValueOrDefault();
 
-            if (CheckBoxDeleteOnBackupError.IsEnabled != (!CheckBoxShowErrors.IsChecked.Value))
-                CheckBoxDeleteOnBackupError.IsEnabled = (!CheckBoxShowErrors.IsChecked.Value);
+            if (CheckBoxDeleteOnBackupError.IsEnabled != !CheckBoxShowErrors.IsChecked.GetValueOrDefault())
+                CheckBoxDeleteOnBackupError.IsEnabled = !CheckBoxShowErrors.IsChecked.GetValueOrDefault();
 
             if (TextBoxBackups.Text != Settings.Default.OptionsBackupDir)
                 Settings.Default.OptionsBackupDir = TextBoxBackups.Text;
@@ -178,7 +178,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             try
             {
-                Process proc = new Process
+                var proc = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -229,9 +229,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            string filePath = (ListViewFiles.SelectedItem as RestoreFile).FileInfo.FullName;
+            var filePath = (ListViewFiles.SelectedItem as RestoreFile)?.FileInfo.FullName;
 
-            using (BackupRegistry backupReg = new BackupRegistry(filePath))
+            using (var backupReg = new BackupRegistry(filePath))
             {
                 string message;
                 if (!backupReg.Open(true))
@@ -269,7 +269,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     if (Settings.Default.registryCleanerOptionsDelBackup)
                     {
                         // Delete file
-                        (ListViewFiles.SelectedItem as RestoreFile).FileInfo.Delete();
+                        (ListViewFiles.SelectedItem as RestoreFile)?.FileInfo.Delete();
 
                         // Remove from listview and refresh
                         RestoreFiles.Remove(ListViewFiles.SelectedItem as RestoreFile);
@@ -281,17 +281,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     MessageBox.Show(Application.Current.MainWindow, "Error restoring the registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                if (lSeqNum != 0)
+                if (lSeqNum == 0)
+                    return;
+                
+                try
                 {
-                    try
-                    {
-                        SysRestore.EndRestore(lSeqNum);
-                    }
-                    catch (Win32Exception ex)
-                    {
-                        message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    SysRestore.EndRestore(lSeqNum);
+                }
+                catch (Win32Exception ex)
+                {
+                    message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -303,7 +303,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonBrowseBackupDir_Click(object sender, RoutedEventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog())
+            using (var folderBrowserDlg = new FolderBrowserDialog())
             {
                 folderBrowserDlg.Description = "Select the folder where the backup files will be placed";
                 folderBrowserDlg.SelectedPath = TextBoxBackups.Text;
@@ -319,33 +319,33 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void menuItemAddFile_Click(object sender, RoutedEventArgs e)
         {
-            AddEditExcludeItem addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.File);
-
-            if (addExcludeItem.ShowDialog().GetValueOrDefault())
-            {
-                ExcludeItem excludeItem = addExcludeItem.ExcludeItem;
-                if (!ExcludeArray.Contains(excludeItem))
-                {
-                    ExcludeArray.Add(excludeItem);
-
-                    MessageBox.Show(Application.Current.MainWindow, "Successfully added file to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    UpdateSettings();
-                    Utils.AutoResizeColumns(ListViewExcludes);
-                }
-                else
-                    MessageBox.Show(Application.Current.MainWindow, $"File ({addExcludeItem.FilePath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void menuItemAddFolder_Click(object sender, RoutedEventArgs e)
-        {
-            AddEditExcludeItem addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.Folder);
+            var addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.File);
 
             if (!addExcludeItem.ShowDialog().GetValueOrDefault())
                 return;
 
-            ExcludeItem excludeItem = addExcludeItem.ExcludeItem;
+            var excludeItem = addExcludeItem.ExcludeItem;
+            if (!ExcludeArray.Contains(excludeItem))
+            {
+                ExcludeArray.Add(excludeItem);
+
+                MessageBox.Show(Application.Current.MainWindow, "Successfully added file to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+                UpdateSettings();
+                Utils.AutoResizeColumns(ListViewExcludes);
+            }
+            else
+                MessageBox.Show(Application.Current.MainWindow, $"File ({addExcludeItem.FilePath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void menuItemAddFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.Folder);
+
+            if (!addExcludeItem.ShowDialog().GetValueOrDefault())
+                return;
+
+            var excludeItem = addExcludeItem.ExcludeItem;
             if (!ExcludeArray.Contains(excludeItem)) {
                 ExcludeArray.Add(excludeItem);
 
@@ -360,11 +360,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void menuItemAddRegKey_Click(object sender, RoutedEventArgs e)
         {
-            AddEditExcludeItem addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.Registry);
+            var addExcludeItem = new AddEditExcludeItem(AddEditExcludeItem.ExcludeTypes.Registry);
             if (!addExcludeItem.ShowDialog().GetValueOrDefault())
                 return;
 
-            ExcludeItem excludeItem = addExcludeItem.ExcludeItem;
+            var excludeItem = addExcludeItem.ExcludeItem;
             if (!ExcludeArray.Contains(excludeItem)) 
             {
                 ExcludeArray.Add(excludeItem);
@@ -383,8 +383,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (ListViewExcludes.SelectedItems.Count == 0)
                 return;
 
-            ExcludeItem excItem = ListViewExcludes.SelectedItem as ExcludeItem;
-            int pos = ExcludeArray.IndexOf(excItem);
+            var excItem = ListViewExcludes.SelectedItem as ExcludeItem;
+            var pos = ExcludeArray.IndexOf(excItem);
 
             if (pos == -1)
             {
@@ -392,7 +392,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
             }
 
-            AddEditExcludeItem editExcludeItem = new AddEditExcludeItem(excItem);
+            var editExcludeItem = new AddEditExcludeItem(excItem);
             if (!editExcludeItem.ShowDialog().GetValueOrDefault())
                 return;
 

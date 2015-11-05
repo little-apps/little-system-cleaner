@@ -95,11 +95,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             if (Stream.Position > 0)
                 Stream.Position = 0;
 
-            XmlSerializer serializer = new XmlSerializer(RegistryEntries.GetType());
+            var serializer = new XmlSerializer(RegistryEntries.GetType());
 
             try
             {
-                using (XmlTextReader reader = new XmlTextReader(Stream))
+                using (var reader = new XmlTextReader(Stream))
                 {
                     if (serializer.CanDeserialize(reader))
                     {
@@ -129,9 +129,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             if (RegistryEntries.Count == 0)
                 return false;
 
-            foreach (RegistryEntry regEntry in RegistryEntries.RegEntries)
+            foreach (var regEntry in RegistryEntries.RegEntries)
             {
-                RegistryKey regKey = regEntry.CreateSubKey();
+                var regKey = regEntry.CreateSubKey();
 
                 if (regKey == null)
                 {
@@ -146,11 +146,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 if (regEntry.Values.Count <= 0)
                     continue;
 
-                foreach (RegistryValue regValue in regEntry.Values)
+                foreach (var regValue in regEntry.Values)
                 {
-                    string valueName = regValue.Name;
-                    object value = regValue.Value;
-                    RegistryValueKind type = regValue.Type;
+                    var valueName = regValue.Name;
+                    var value = regValue.Value;
+                    var type = regValue.Type;
 
                     try
                     {
@@ -171,7 +171,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
         public bool Store(BadRegistryKey brk)
         {
-            RegistryEntry regEntry = new RegistryEntry(brk.RegKeyPath);
+            var regEntry = new RegistryEntry(brk.RegKeyPath);
 
             if (!string.IsNullOrEmpty(brk.ValueName))
             {
@@ -181,7 +181,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
                     return regEntry.AddValue(brk.ValueName);
                 }
-                bool ret = regEntry.AddValue(brk.ValueName);
+                var ret = regEntry.AddValue(brk.ValueName);
 
                 RegistryEntries.Add(regEntry);
                 return ret;
@@ -194,12 +194,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
         private void RecurseSubKeys(string regPath)
         {
-            RegistryEntry regEntry = new RegistryEntry(regPath);
+            var regEntry = new RegistryEntry(regPath);
 
             if (regEntry.RegistryKey == null)
                 return;
 
-            bool alreadyAdded = RegistryEntries.Contains(regEntry);
+            var alreadyAdded = RegistryEntries.Contains(regEntry);
 
             if (alreadyAdded)
                 regEntry = RegistryEntries[RegistryEntries.IndexOf(regEntry)];
@@ -210,7 +210,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             if (!alreadyAdded)
                 RegistryEntries.Add(regEntry);
 
-            foreach (string subKeyPath in regEntry.RegistryKey.GetSubKeyNames().Select(subKey => regPath + "\\" + subKey))
+            foreach (var subKeyPath in regEntry.RegistryKey.GetSubKeyNames().Select(subKey => regPath + "\\" + subKey))
             {
                 RecurseSubKeys(subKeyPath);
             }
@@ -219,23 +219,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         #region IDisposable Members
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    // Dispose managed resources.
-                    if (Stream != Stream.Null)
-                    {
-                        Stream.Close();
-                        _stream = Stream.Null;
-                    }
+            if (_disposed)
+                return;
 
-                    if (RegistryEntries.Count > 0)
-                        RegistryEntries.Clear();
+            if (disposing)
+            {
+                // Dispose managed resources.
+                if (Stream != Stream.Null)
+                {
+                    Stream.Close();
+                    _stream = Stream.Null;
                 }
 
-                _disposed = true;
+                if (RegistryEntries.Count > 0)
+                    RegistryEntries.Clear();
             }
+
+            _disposed = true;
         }
 
         public void Dispose()

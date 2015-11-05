@@ -35,7 +35,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Drivers32"))
+                using (var regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Drivers32"))
                 {
                     if (regKey == null)
                         return;

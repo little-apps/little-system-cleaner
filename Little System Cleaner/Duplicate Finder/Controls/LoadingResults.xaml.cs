@@ -16,9 +16,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private readonly BackgroundWorker _backgroundWorker = new BackgroundWorker();
         private readonly Wizard _scanBase;
         private readonly TreeList _tree;
-        private ResultModel _resultModel;
 
-        public ResultModel Model => _resultModel;
+        public ResultModel Model { get; private set; }
 
         public LoadingResults(Wizard scanBase, TreeList treeListView)
         {
@@ -40,7 +39,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             _backgroundWorker.RunWorkerAsync(_scanBase);
         }
 
-        void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
@@ -54,11 +53,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Close();
         }
 
-        void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            _resultModel = ResultModel.CreateResultModel((Wizard)e.Argument);
+            Model = ResultModel.CreateResultModel((Wizard)e.Argument);
 
-            Dispatcher.Invoke(new Action(() => _tree.Model = _resultModel));
+            Dispatcher.Invoke(new Action(() => _tree.Model = Model));
 
             _tree.ExpandAll();
 
@@ -67,12 +66,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void LoadingResults_Closing(object sender, CancelEventArgs e)
         {
-            if (_backgroundWorker.IsBusy && !_backgroundWorker.CancellationPending)
-            {
-                _backgroundWorker.CancelAsync();
+            if (!_backgroundWorker.IsBusy || _backgroundWorker.CancellationPending)
+                return;
 
-                DialogResult = false;
-            }
+            _backgroundWorker.CancelAsync();
+
+            DialogResult = false;
         }
 
         

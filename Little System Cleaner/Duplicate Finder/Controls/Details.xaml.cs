@@ -28,7 +28,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && !string.IsNullOrEmpty(_fileEntry.Artist))
+                if (_fileEntry.HasAudioTags && !string.IsNullOrEmpty(_fileEntry.Artist))
                     return _fileEntry.Artist;
                 return "N/A";
             }
@@ -37,7 +37,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && !string.IsNullOrEmpty(_fileEntry.Title))
+                if (_fileEntry.HasAudioTags && !string.IsNullOrEmpty(_fileEntry.Title))
                     return _fileEntry.Title;
                 return "N/A";
             }
@@ -55,7 +55,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && !string.IsNullOrEmpty(_fileEntry.Genre))
+                if (_fileEntry.HasAudioTags && !string.IsNullOrEmpty(_fileEntry.Genre))
                     return _fileEntry.Genre;
                 return "N/A";
             }
@@ -64,7 +64,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && !string.IsNullOrEmpty(_fileEntry.Album))
+                if (_fileEntry.HasAudioTags && !string.IsNullOrEmpty(_fileEntry.Album))
                     return _fileEntry.Album;
                 return "N/A";
             }
@@ -73,7 +73,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && _fileEntry.Duration.TotalSeconds > 0)
+                if (_fileEntry.HasAudioTags && _fileEntry.Duration.TotalSeconds > 0)
                     return _fileEntry.Duration.ToString();
                 return "N/A";
             }
@@ -82,7 +82,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && _fileEntry.TrackNo > 0)
+                if (_fileEntry.HasAudioTags && _fileEntry.TrackNo > 0)
                     return Convert.ToString(_fileEntry.TrackNo);
                 return "N/A";
             }
@@ -91,7 +91,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             get
             {
-                if ((_fileEntry.HasAudioTags) && _fileEntry.Bitrate > 0)
+                if (_fileEntry.HasAudioTags && _fileEntry.Bitrate > 0)
                     return $"{_fileEntry.Bitrate} kbps";
                 return "N/A";
             }

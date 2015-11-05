@@ -71,7 +71,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         internal static ObservableCollection<HashAlgorithm> CreateList()
         {
-            ObservableCollection<HashAlgorithm> algorithms = new ObservableCollection<HashAlgorithm>
+            var algorithms = new ObservableCollection<HashAlgorithm>
             {
                 new HashAlgorithm(Algorithms.CRC32),
                 new HashAlgorithm(Algorithms.MD5),

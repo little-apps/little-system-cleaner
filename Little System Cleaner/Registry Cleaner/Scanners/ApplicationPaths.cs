@@ -51,12 +51,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
         private static void ScanInstallFolders()
         {
-            RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\Folders");
+            var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\Folders");
 
             if (regKey == null)
                 return;
 
-            foreach (string strFolder in regKey.GetValueNames()
+            foreach (var strFolder in regKey.GetValueNames()
                 .Where(strFolder => !string.IsNullOrWhiteSpace(strFolder))
                 .Where(strFolder => !ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder))
                 .TakeWhile(strFolder => !CancellationToken.IsCancellationRequested))
@@ -67,14 +67,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
         private static void ScanAppPaths()
         {
-            RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths");
+            var regKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths");
 
             if (regKey == null)
                 return;
 
-            foreach (string strSubKey in regKey.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+            foreach (var strSubKey in regKey.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
-                RegistryKey regKey2 = regKey.OpenSubKey(strSubKey);
+                var regKey2 = regKey.OpenSubKey(strSubKey);
 
                 if (regKey2 == null)
                     continue;
@@ -82,8 +82,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 if (Convert.ToInt32(regKey2.GetValue("BlockOnTSNonInstallMode")) == 1)
                     continue;
 
-                string strAppPath = regKey2.GetValue("") as string;
-                string strAppDir = regKey2.GetValue("Path") as string;
+                var strAppPath = regKey2.GetValue("") as string;
+                var strAppDir = regKey2.GetValue("Path") as string;
 
                 if (string.IsNullOrEmpty(strAppPath))
                 {

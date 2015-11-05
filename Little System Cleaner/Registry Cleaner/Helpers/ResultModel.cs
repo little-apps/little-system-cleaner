@@ -1,4 +1,5 @@
-﻿using CommonTools.TreeListView.Tree;
+﻿using System.Linq;
+using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
@@ -10,16 +11,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
         internal static ResultModel CreateResultModel()
         {
-            ResultModel model = new ResultModel();
+            var model = new ResultModel();
 
             foreach (var scanner in Scan.EnabledScanners)
             {
-                BadRegistryKey rootBadRegKey = new BadRegistryKey(scanner.bMapImg, scanner.ScannerName);
+                var rootBadRegKey = new BadRegistryKey(scanner.bMapImg, scanner.ScannerName);
 
-                foreach (BadRegistryKey childBadRegKey in Wizard.badRegKeyArray)
+                foreach (
+                    var childBadRegKey in
+                        Wizard.badRegKeyArray.Cast<BadRegistryKey>()
+                            .Where(childBadRegKey => scanner.ScannerName == childBadRegKey.SectionName))
                 {
-                    if (scanner.ScannerName == childBadRegKey.SectionName)
-                        rootBadRegKey.Children.Add(childBadRegKey);
+                    rootBadRegKey.Children.Add(childBadRegKey);
                 }
 
                 rootBadRegKey.Init();
@@ -41,12 +44,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             if (parent == null)
                 parent = Root;
 
-            return (parent as BadRegistryKey).Children;
+            return (parent as BadRegistryKey)?.Children;
         }
 
         public bool HasChildren(object parent)
         {
-            return (parent as BadRegistryKey).Children.Count > 0;
+            var badRegistryKey = parent as BadRegistryKey;
+            return badRegistryKey != null && badRegistryKey.Children.Count > 0;
         }
     }
 }

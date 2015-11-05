@@ -55,10 +55,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (DiskDrives == null || IncludeFolders == null)
                     return false;
 
-                if (DiskDrives.Count == 0 || IncludeFolders.Count == 0)
-                    return false;
-
-                return true;
+                return DiskDrives.Count != 0 && IncludeFolders.Count != 0;
             }
         }
 
@@ -84,7 +81,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (analyze != null)
             {
-                exit = (forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                 if (!exit)
                     return false;
@@ -97,7 +94,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             if (!(CurrentControl is Results))
                 return true;
 
-            exit = (forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+            exit = forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
             if (!exit)
                 return false;

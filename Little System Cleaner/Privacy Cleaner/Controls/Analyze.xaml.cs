@@ -54,7 +54,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             get
             {
-                string currentSection = (CurrentListViewItem.Parent != null ? CurrentListViewItem.Parent.Section : CurrentListViewItem.Section);
+                var currentSection = CurrentListViewItem.Parent != null
+                    ? CurrentListViewItem.Parent.Section
+                    : CurrentListViewItem.Section;
 
                 return Wizard.ResultArray.Where(n => currentSection == n.Section).Select(n => n.Children.Count).FirstOrDefault();
             }
@@ -97,7 +99,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void SetProgressBar()
         {
-            int max = SectionsCollection.Where(n => n.IsChecked.GetValueOrDefault()).SelectMany(n => n.Children).Count(child => child.IsChecked.GetValueOrDefault());
+            var max =
+                SectionsCollection.Where(n => n.IsChecked.GetValueOrDefault())
+                    .SelectMany(n => n.Children)
+                    .Count(child => child.IsChecked.GetValueOrDefault());
 
             // Set task bar progress bar
             Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
@@ -111,20 +116,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private void StartScanning()
         {
-            int currentParent = -1;
+            var currentParent = -1;
 
-            DateTime dtStart = DateTime.Now;
+            var dtStart = DateTime.Now;
 
             try
             {
                 // Begin critical region
                 Thread.BeginCriticalRegion();
 
-                foreach (ScannerBase n in SectionsCollection)
+                foreach (
+                    var n in
+                        SectionsCollection.TakeWhile(
+                            n => _cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested))
                 {
-                    if (_cancellationTokenSource.IsCancellationRequested)
-                        break;
-
                     currentParent++;
                     _currentListViewIndex = -1;
 
@@ -135,7 +140,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
                     if (n.Children.Count > 0) // Should always have children, but just in case
                     {
-                        foreach (ScannerBase child in n.Children)
+                        foreach (var child in n.Children)
                         {
                             if (_cancellationTokenSource.IsCancellationRequested)
                                 break;
@@ -166,11 +171,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     }
 
                     // Update info before going to next section (or exiting) 
-                    Dispatcher.Invoke(new Action(() => {
+                    Dispatcher.Invoke(() =>
+                    {
                         n.Errors = $"{CurrentSectionProblems} Errors";
                         n.Status = "Finished";
                         n.UnloadGif();
-                    }));
+                    });
                 }
             }
             finally
@@ -226,7 +232,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 if (parent.Skipped)
                     return;
 
-                bool? ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
+                var ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
 
                 if (ret.GetValueOrDefault() == false)
                 {
@@ -248,7 +254,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             ScannerBase.CancellationToken = new CancellationTokenSource();
 
-            Task scanTask = new Task(() => parent.Scan(child), ScannerBase.CancellationToken.Token);
+            var scanTask = new Task(() => parent.Scan(child), ScannerBase.CancellationToken.Token);
             scanTask.RunSynchronously();
 
             ScannerBase.CancellationToken.Dispose();
@@ -262,7 +268,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 if (parent.Skipped)
                     return;
 
-                bool? ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
+                var ret = RunningMsg.DisplayRunningMsg(parent.Name, parent.ProcessName);
 
                 if (ret.GetValueOrDefault() == false)
                 {
@@ -284,14 +290,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             ScannerBase.CancellationToken = new CancellationTokenSource();
 
-            Task scanTask = new Task(parent.Scan, _cancellationTokenSource.Token);
+            var scanTask = new Task(parent.Scan, _cancellationTokenSource.Token);
             scanTask.RunSynchronously();
 
             ScannerBase.CancellationToken.Dispose();
             ScannerBase.CancellationToken = null;
         }
 
-        void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        private void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (Dispatcher.Thread != Thread.CurrentThread)
             {
@@ -300,11 +306,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
 
 
-            if (_currentListViewIndex != -1)
-            {
-                CurrentListViewItem.Errors = $"{CurrentSectionProblems} Errors";
-                ListView.Items.Refresh();
-            }
+            if (_currentListViewIndex == -1)
+                return;
+
+            CurrentListViewItem.Errors = $"{CurrentSectionProblems} Errors";
+            ListView.Items.Refresh();
         }
 
         public void AbortScanThread()
@@ -315,21 +321,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private async void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                AbortScanThread();
+            if (
+                MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
 
-                await _scanTask;
+            AbortScanThread();
 
-                _scanBase.MoveFirst();
-            }
+            await _scanTask;
+
+            _scanBase.MoveFirst();
         }
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ProgressBar.Maximum != 0)
+            if (Math.Abs(ProgressBar.Maximum) > 0)
             {
-                Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
+                Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
             }
         }
     }

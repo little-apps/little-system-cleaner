@@ -57,9 +57,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             _scanBase = sb;
 
-            LoadingResults loadingResults = new LoadingResults(_scanBase, Tree);
+            var loadingResults = new LoadingResults(_scanBase, Tree);
 
-            bool? windowResult = loadingResults.ShowDialog();
+            var windowResult = loadingResults.ShowDialog();
 
             if (windowResult.GetValueOrDefault(false))
             {
@@ -86,7 +86,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (resultModel == null)
                 return;
 
-            List<FileEntry> files = resultModel.Root.Children.Where(resParent => resParent.Children.Count > 0)
+            var files = resultModel.Root.Children.Where(resParent => resParent.Children.Count > 0)
                 .SelectMany(resParent => resParent.Children)
                 .Where(resChild => resChild.IsChecked.GetValueOrDefault())
                 .Select(resChild => resChild.FileEntry)
@@ -125,10 +125,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             _scanBase.MoveFirst();
         }
 
-        private void FixDuplicates(List<FileEntry> files)
+        private void FixDuplicates(IEnumerable<FileEntry> files)
         {
             long seqNum = 0;
-            bool sysRestoreAvailable = SysRestore.SysRestoreAvailable();
+            var sysRestoreAvailable = SysRestore.SysRestoreAvailable();
 
             if (sysRestoreAvailable)
             {
@@ -146,11 +146,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Dispatcher.Invoke(() => ProgressBar.Value++);
             }
 
-            foreach (FileEntry fileEntry in files)
+            foreach (var fileEntry in files)
             {
-                string filePath = fileEntry.FilePath;
+                var filePath = fileEntry.FilePath;
 
-                double percent = Dispatcher.Invoke(() => (ProgressBar.Value/ProgressBar.Maximum)*100);
+                var percent = Dispatcher.Invoke(() => ProgressBar.Value/ProgressBar.Maximum*100);
                 ProgressBarText = Dispatcher.Invoke(() => $"{ProgressBar.Value}/{ProgressBar.Maximum} ({percent:0.##}%)");
 
                 try
@@ -169,24 +169,24 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
-            if (sysRestoreAvailable)
+            if (!sysRestoreAvailable)
+                return;
+
+            ProgressBarText = "Finalizing system restore point";
+
+            if (seqNum != 0)
             {
-                ProgressBarText = "Finalizing system restore point";
-
-                if (seqNum != 0)
+                try
                 {
-                    try
-                    {
-                        SysRestore.EndRestore(seqNum);
-                    }
-                    catch (Win32Exception ex)
-                    {
-                        Utils.MessageBoxThreadSafe(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    SysRestore.EndRestore(seqNum);
                 }
-
-                Dispatcher.Invoke(() => ProgressBar.Value++);
+                catch (Win32Exception ex)
+                {
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
+
+            Dispatcher.Invoke(() => ProgressBar.Value++);
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
@@ -214,7 +214,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (Tree.SelectedNode == null)
                 return;
 
-            Result resultNode = Tree.SelectedNode.Tag as Result;
+            var resultNode = Tree.SelectedNode.Tag as Result;
 
             if (resultNode != null && (resultNode.Children.Count > 0 || resultNode.FileEntry == null))
                 return;
@@ -251,7 +251,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (resultModel == null)
                 return;
 
-            foreach (Result child in resultModel.Root.Children.SelectMany(root => root.Children))
+            foreach (var child in resultModel.Root.Children.SelectMany(root => root.Children))
             {
                 if (!isChecked.HasValue)
                     child.IsChecked = !child.IsChecked;
@@ -264,7 +264,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ProgressBar.Maximum != 0)
+            if (Math.Abs(ProgressBar.Maximum) > 0)
             {
                 Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
             }

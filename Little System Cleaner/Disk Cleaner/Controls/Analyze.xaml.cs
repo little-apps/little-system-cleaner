@@ -29,7 +29,6 @@ using System.Windows.Shell;
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
-using ThreadState = System.Threading.ThreadState;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
@@ -85,7 +84,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             _taskMain.Start();
         }
 
-        void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        private void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (Dispatcher.Thread != Thread.CurrentThread)
             {
@@ -99,29 +98,29 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void AnalyzeDisk()
         {
-            bool completedSuccessfully = false;
+            var completedSuccessfully = false;
 
             try
             {
                 // Show taskbar progress bar
-                Dispatcher.BeginInvoke(new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+                Dispatcher.BeginInvoke(
+                    new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
 
-                foreach (DriveInfo driveInfo in ScanBase.SelectedDrives)
+                foreach (var driveInfo in ScanBase.SelectedDrives)
                 {
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                     ScanFiles(driveInfo.RootDirectory);
                 }
 
-                Main.Watcher.EventPeriod("Disk Cleaner", "Analyze", (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
+                Main.Watcher.EventPeriod("Disk Cleaner", "Analyze",
+                    (int) DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
-                if (Wizard.FileList.Count > 0) {
+                if (Wizard.FileList.Count > 0)
                     completedSuccessfully = true;
-                }
                 else
-                {
-                    Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                    Utils.MessageBoxThreadSafe("No problem files were detected", Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Information);
             }
             catch (OperationCanceledException)
             {
@@ -167,7 +166,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             try
             {
-                foreach (FileInfo fileInfo in parentInfo.GetFiles().TakeWhile(fileInfo => !_cancellationTokenSource.IsCancellationRequested))
+                foreach (var fileInfo in parentInfo.GetFiles().TakeWhile(fileInfo => !_cancellationTokenSource.IsCancellationRequested))
                 {
                     try
                     {
@@ -228,15 +227,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
 
             try {
-                foreach (DirectoryInfo childInfo in parentInfo.GetDirectories().TakeWhile(childInfo => !_cancellationTokenSource.IsCancellationRequested))
+                foreach (
+                    var childInfo in
+                        parentInfo.GetDirectories()
+                            .TakeWhile(childInfo => !_cancellationTokenSource.IsCancellationRequested))
                 {
                     try
                     {
-                        string dirPath = childInfo.FullName;
+                        var dirPath = childInfo.FullName;
 
                         if (FolderIsIncluded(dirPath) && !FolderIsExcluded(dirPath))
                         {
-                            foreach (FileInfo fileInfo in childInfo.GetFiles())
+                            foreach (var fileInfo in childInfo.GetFiles())
                             {
                                 Wizard.FileList.Add(new ProblemFile(fileInfo));
                             }
@@ -263,7 +265,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             try
             {
-                long fileSize = fileInfo.Length / 1024;
+                var fileSize = fileInfo.Length / 1024;
 
                 if (Settings.Default.diskCleanerCheckFileSizeLeast > 0)
                     if (fileSize <= Settings.Default.diskCleanerCheckFileSizeLeast)
@@ -286,10 +288,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// </summary>
         /// <param name="fileInfo">File information</param>
         /// <returns>True if file is in date/time range</returns>
-        private static bool FileCheckDate(FileInfo fileInfo)
+        private static bool FileCheckDate(FileSystemInfo fileInfo)
         {
-            DateTime dateTimeFile = DateTime.MinValue;
-            bool bRet = false;
+            var dateTimeFile = DateTime.MinValue;
+            var bRet = false;
 
             try
             {
@@ -346,16 +348,16 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return false;
             }
 
-            if ((!Settings.Default.diskCleanerSearchHidden) && ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
+            if (!Settings.Default.diskCleanerSearchHidden && ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
                 return false;
 
-            if ((!Settings.Default.diskCleanerSearchArchives) && ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
+            if (!Settings.Default.diskCleanerSearchArchives && ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
                 return false;
 
-            if ((!Settings.Default.diskCleanerSearchReadOnly) && ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
+            if (!Settings.Default.diskCleanerSearchReadOnly && ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
                 return false;
 
-            if ((!Settings.Default.diskCleanerSearchSystem) && ((fileAttribs & FileAttributes.System) == FileAttributes.System))
+            if (!Settings.Default.diskCleanerSearchSystem && ((fileAttribs & FileAttributes.System) == FileAttributes.System))
                 return false;
 
             return true;
@@ -370,7 +372,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         private static bool IsFileLocked(FileInfo fileInfo)
         {
             Stream stream = null;
-            bool ret = false;
+            var ret = false;
 
             try {
                 stream = fileInfo.Open(FileMode.Open);
@@ -395,21 +397,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             var includeDirsList = Settings.Default.diskCleanerIncludedFolders.Cast<string>();
 
-            return (includeDirsList.Any(includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0));
+            return includeDirsList.Any(includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0);
         }
 
         private static bool FolderIsExcluded(string dirPath)
         {
             var excludeDirsList = Settings.Default.diskCleanerExcludedDirs.Cast<string>();
 
-            return (excludeDirsList.Any(excludeDir => Utils.CompareWildcard(dirPath, excludeDir)));
+            return excludeDirsList.Any(excludeDir => Utils.CompareWildcard(dirPath, excludeDir));
         }
 
         private static bool FileTypeIsExcluded(string fileName)
         {
             var excludeFileTypesList = Settings.Default.diskCleanerExcludedFileTypes.Cast<string>();
 
-            return (excludeFileTypesList.Any(excludeFileType => Utils.CompareWildcard(fileName, excludeFileType)));
+            return excludeFileTypesList.Any(excludeFileType => Utils.CompareWildcard(fileName, excludeFileType));
         }
 
         /// <summary>
@@ -427,7 +429,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             if (masks == "*")
                 return true;
 
-            var masksListTrimmed = masks.Split(';').Select(s => s.Trim()).Where(maskTrimmed => !string.IsNullOrEmpty(maskTrimmed));
+            var masksListTrimmed =
+                masks.Split(';').Select(s => s.Trim()).Where(maskTrimmed => !string.IsNullOrEmpty(maskTrimmed));
 
             return masksListTrimmed.Any(maskTrimmed => Utils.CompareWildcard(wildString, maskTrimmed, ignoreCase));
         }

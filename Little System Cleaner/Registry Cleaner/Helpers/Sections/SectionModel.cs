@@ -27,8 +27,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 
         internal static SectionModel CreateSectionModel()
         {
-            Section myComp = new Section() { Icon = Properties.Resources.mycomputer, SectionName = "My Computer" };
-            SectionModel model = new SectionModel();
+            var myComp = new Section() { Icon = Properties.Resources.mycomputer, SectionName = "My Computer" };
+            var model = new SectionModel();
 
             myComp.Children.Add(new Section() { Icon = Properties.Resources.activexcom, SectionName = Strings.ActivexComObjects, Description = "Locations to ActiveX and COM objects that no longer exist", Parent = myComp });
             myComp.Children.Add(new Section() { Icon = Properties.Resources.appinfo, SectionName = Strings.ApplicationInfo, Description = "Currently installed applications", Parent = myComp });
@@ -56,12 +56,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
         {
             if (parent == null)
                 parent = Root;
-            return (parent as Section).Children;
+            return (parent as Section)?.Children;
         }
 
         public bool HasChildren(object parent)
         {
-            return (parent as Section).Children.Count > 0;
+            var section = parent as Section;
+            return section != null && section.Children.Count > 0;
         }
     }
 }

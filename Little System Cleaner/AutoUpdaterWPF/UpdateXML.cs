@@ -47,8 +47,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
         }
 
-        private List<Item> _items = new List<Item>();
-
         [XmlElement("item")]
         public List<Item> Items
         {

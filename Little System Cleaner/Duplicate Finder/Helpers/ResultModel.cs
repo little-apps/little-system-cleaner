@@ -10,15 +10,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         internal static ResultModel CreateResultModel(Wizard scanBase)
         {
-            ResultModel model = new ResultModel();
+            var model = new ResultModel();
 
             if (scanBase.FilesGroupedByFilename.Count > 0)
             {
-                foreach (KeyValuePair<string, List<FileEntry>> kvp in scanBase.FilesGroupedByFilename)
+                foreach (var kvp in scanBase.FilesGroupedByFilename)
                 {
-                    Result res = new Result();
+                    var res = new Result();
 
-                    foreach (FileEntry fileEntry in kvp.Value)
+                    foreach (var fileEntry in kvp.Value)
                     {
                         res.Children.Add(new Result(fileEntry, res));
                     }
@@ -27,19 +27,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 }
             }
 
-            if (scanBase.FilesGroupedByHash.Count > 0)
+            if (scanBase.FilesGroupedByHash.Count <= 0)
+                return model;
+
+            foreach (var kvp in scanBase.FilesGroupedByHash)
             {
-                foreach (KeyValuePair<string, List<FileEntry>> kvp in scanBase.FilesGroupedByHash)
+                var res = new Result();
+
+                foreach (var fileEntry in kvp.Value)
                 {
-                    Result res = new Result();
-
-                    foreach (FileEntry fileEntry in kvp.Value)
-                    {
-                        res.Children.Add(new Result(fileEntry, res));
-                    }
-
-                    model.Root.Children.Add(res);
+                    res.Children.Add(new Result(fileEntry, res));
                 }
+
+                model.Root.Children.Add(res);
             }
 
             //model.Root.Children.Add(root);

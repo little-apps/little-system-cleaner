@@ -17,23 +17,23 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
         public Update(bool remindLater = false)
         {
-            if (!remindLater)
+            if (remindLater)
+                return;
+
+            try
             {
-                try
-                {
-                    InitializeComponent();
-                }
-                catch (Exception e)
-                {
-                    Debug.Write(e);
-                }
-                
-                Text = AutoUpdater.DialogTitle;
-                TextBlockUpdate.Text = string.Format(TextBlockUpdate.Text, AutoUpdater.AppTitle);
-                TextBlockDescription.Text =
-                    string.Format(TextBlockDescription.Text,
-                        AutoUpdater.AppTitle, AutoUpdater.CurrentVersion, AutoUpdater.InstalledVersion);
+                InitializeComponent();
             }
+            catch (Exception e)
+            {
+                Debug.Write(e);
+            }
+                
+            Text = AutoUpdater.DialogTitle;
+            TextBlockUpdate.Text = string.Format(TextBlockUpdate.Text, AutoUpdater.AppTitle);
+            TextBlockDescription.Text =
+                string.Format(TextBlockDescription.Text,
+                    AutoUpdater.AppTitle, AutoUpdater.CurrentVersion, AutoUpdater.InstalledVersion);
         }
 
         public string Text
@@ -96,74 +96,73 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
                 var dialogResult = remindLaterForm.ShowDialog();
 
-                if (dialogResult == true)
+                switch (dialogResult)
                 {
-                    AutoUpdater.RemindLaterTimeSpan = remindLaterForm.RemindLaterFormat;
-                    AutoUpdater.RemindLaterAt = remindLaterForm.RemindLaterAt;
-                }
-                else if (dialogResult == false)
-                {
-                    var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
+                    case true:
+                        AutoUpdater.RemindLaterTimeSpan = remindLaterForm.RemindLaterFormat;
+                        AutoUpdater.RemindLaterAt = remindLaterForm.RemindLaterAt;
+                        break;
+                    case false:
+                        var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
 
-                    try
-                    {
-                        downloadDialog.ShowDialog();
-                    }
-                    catch (TargetInvocationException)
-                    {
+                        try
+                        {
+                            downloadDialog.ShowDialog();
+                        }
+                        catch (TargetInvocationException)
+                        {
+                            return;
+                        }
                         return;
-                    }
-                    return;
-                }
-                else
-                {
-                    DialogResult = null;
-                    return;
+                    default:
+                        DialogResult = null;
+                        return;
                 }
             }
 
-            RegistryKey updateKey = Registry.CurrentUser.CreateSubKey(AutoUpdater.RegistryLocation);
-            if (updateKey != null)
+            var updateKey = Registry.CurrentUser.CreateSubKey(AutoUpdater.RegistryLocation);
+            if (updateKey == null)
+                return;
+
+            updateKey.SetValue("version", AutoUpdater.CurrentVersion);
+            updateKey.SetValue("skip", 0);
+
+            var remindLaterDateTime = DateTime.Now;
+            switch (AutoUpdater.RemindLaterTimeSpan)
             {
-                updateKey.SetValue("version", AutoUpdater.CurrentVersion);
-                updateKey.SetValue("skip", 0);
-                DateTime remindLaterDateTime = DateTime.Now;
-                switch (AutoUpdater.RemindLaterTimeSpan)
-                {
-                    case RemindLaterFormat.Days:
-                        remindLaterDateTime = DateTime.Now + TimeSpan.FromDays(AutoUpdater.RemindLaterAt);
-                        break;
-                    case RemindLaterFormat.Hours:
-                        remindLaterDateTime = DateTime.Now + TimeSpan.FromHours(AutoUpdater.RemindLaterAt);
-                        break;
-                    case RemindLaterFormat.Minutes:
-                        remindLaterDateTime = DateTime.Now + TimeSpan.FromMinutes(AutoUpdater.RemindLaterAt);
-                        break;
-
-                }
-                updateKey.SetValue("remindlater", remindLaterDateTime.ToString(CultureInfo.CreateSpecificCulture("en-US")));
-                SetTimer(remindLaterDateTime);
-                updateKey.Close();
+                case RemindLaterFormat.Days:
+                    remindLaterDateTime = DateTime.Now + TimeSpan.FromDays(AutoUpdater.RemindLaterAt);
+                    break;
+                case RemindLaterFormat.Hours:
+                    remindLaterDateTime = DateTime.Now + TimeSpan.FromHours(AutoUpdater.RemindLaterAt);
+                    break;
+                case RemindLaterFormat.Minutes:
+                    remindLaterDateTime = DateTime.Now + TimeSpan.FromMinutes(AutoUpdater.RemindLaterAt);
+                    break;
             }
+            updateKey.SetValue("remindlater", remindLaterDateTime.ToString(CultureInfo.CreateSpecificCulture("en-US")));
+            SetTimer(remindLaterDateTime);
+            updateKey.Close();
         }
 
         private void buttonSkip_Click(object sender, RoutedEventArgs e)
         {
-            RegistryKey updateKey = Registry.CurrentUser.CreateSubKey(AutoUpdater.RegistryLocation);
-            if (updateKey != null)
-            {
-                updateKey.SetValue("version", AutoUpdater.CurrentVersion.ToString());
-                updateKey.SetValue("skip", 1);
-                updateKey.Close();
-            }
+            var updateKey = Registry.CurrentUser.CreateSubKey(AutoUpdater.RegistryLocation);
+
+            if (updateKey == null)
+                return;
+
+            updateKey.SetValue("version", AutoUpdater.CurrentVersion.ToString());
+            updateKey.SetValue("skip", 1);
+            updateKey.Close();
         }
 
         public void SetTimer(DateTime remindLater)
         {
-            TimeSpan timeSpan = remindLater - DateTime.Now;
+            var timeSpan = remindLater - DateTime.Now;
             _timer = new Timer
             {
-                Interval = (int)timeSpan.TotalMilliseconds
+                Interval = (int) timeSpan.TotalMilliseconds
             };
             _timer.Elapsed += TimerElapsed;
             _timer.Start();

@@ -44,12 +44,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\ShellNoRoam\MUICache"))
+                using (var regKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\ShellNoRoam\MUICache"))
                 {
                     if (regKey == null)
                         return;
 
-                    foreach (string valueName in regKey.GetValueNames()
+                    foreach (var valueName in regKey.GetValueNames()
                         .Where(valueName => !string.IsNullOrWhiteSpace(valueName))
                         .Where(valueName => !valueName.StartsWith("@") && valueName != "LangID")
                         .Where(valueName => !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName))
@@ -72,7 +72,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs"))
+                using (var regKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs"))
                 {
                     if (regKey == null)
                         return;
@@ -81,7 +81,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     EnumMruList(regKey);
 
-                    foreach (RegistryKey subKey in regKey.GetSubKeyNames()
+                    foreach (var subKey in regKey.GetSubKeyNames()
                         .Select(strSubKey => regKey.OpenSubKey(strSubKey))
                         .Where(subKey => subKey != null)
                         .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
@@ -98,7 +98,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
         private static void EnumMruList(RegistryKey regKey)
         {
-            foreach (string strValueName in regKey.GetValueNames())
+            foreach (var strValueName in regKey.GetValueNames())
             {
                 string filePath = "", fileArgs;
 
@@ -112,7 +112,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 var value = regKey.GetValue(strValueName);
 
-                string fileName = ExtractUnicodeStringFromBinary(value);
+                var fileName = ExtractUnicodeStringFromBinary(value);
                 string shortcutPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Recent)}\\{fileName}.lnk";
 
                 // See if file exists in Recent Docs folder
@@ -138,19 +138,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <param name="keyObj">Value from registry key</param>
         private static string ExtractUnicodeStringFromBinary(object keyObj)
         {
-            string value = keyObj.ToString();    //get object value 
-            string type = keyObj.GetType().Name;  //get object type
+            var value = keyObj.ToString();    //get object value 
+            var type = keyObj.GetType().Name;  //get object type
 
             if (type == "Byte[]")
             {
                 value = "";
-                byte[] bytes = (byte[])keyObj;
+                var bytes = (byte[])keyObj;
                 //this seems crude but cannot find a way to 'cast' a Unicode string to byte[]
                 //even in case where we know the beginning format is Unicode
                 //so do it the hard way
 
-                char[] chars = Encoding.Unicode.GetChars(bytes);
-                foreach (char bt in chars)
+                var chars = Encoding.Unicode.GetChars(bytes);
+                foreach (var bt in chars)
                 {
                     if (bt != 0)
                     {

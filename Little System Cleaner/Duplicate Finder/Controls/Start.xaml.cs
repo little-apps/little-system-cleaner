@@ -34,7 +34,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             try {
                 // Iterate through drives and check drive if checked in previous list
-                foreach (IncludeDrive includeDriveToAdd in DriveInfo.GetDrives().Select(di => new IncludeDrive(di)))
+                foreach (var includeDriveToAdd in DriveInfo.GetDrives().Select(di => new IncludeDrive(di)))
                 {
                     var isChecked = drivesChecked.Contains(includeDriveToAdd);
                     includeDriveToAdd.IsChecked = isChecked;
@@ -71,20 +71,20 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 folderBrowser.Description = "Select a folder to exclude from check for duplicate files";
 
-                if (folderBrowser.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) == DialogResult.OK)
+                if (folderBrowser.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) != DialogResult.OK)
+                    return;
+
+                var excFolder = new ExcludeFolder(folderBrowser.SelectedPath);
+
+                if (_scanBase.Options.ExcludeFolders.Contains(excFolder))
+                    MessageBox.Show(Application.Current.MainWindow, "The selected folder is already excluded", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                else if (_scanBase.Options.OnlySelectedFolders.GetValueOrDefault() && _scanBase.Options.IncFolders.Contains(new IncludeFolder(folderBrowser.SelectedPath)))
+                    MessageBox.Show(Application.Current.MainWindow, "The selected folder cannot be in both the included and excluded folders", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                else
                 {
-                    ExcludeFolder excFolder = new ExcludeFolder(folderBrowser.SelectedPath);
+                    _scanBase.Options.ExcludeFolders.Add(excFolder);
 
-                    if (_scanBase.Options.ExcludeFolders.Contains(excFolder))
-                        MessageBox.Show(Application.Current.MainWindow, "The selected folder is already excluded", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    else if (_scanBase.Options.OnlySelectedFolders.GetValueOrDefault() && _scanBase.Options.IncFolders.Contains(new IncludeFolder(folderBrowser.SelectedPath)))
-                        MessageBox.Show(Application.Current.MainWindow, "The selected folder cannot be in both the included and excluded folders", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    else
-                    {
-                        _scanBase.Options.ExcludeFolders.Add(excFolder);
-
-                        MessageBox.Show(Application.Current.MainWindow, "The selected folder has been excluded from the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                    MessageBox.Show(Application.Current.MainWindow, "The selected folder has been excluded from the search", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
@@ -104,13 +104,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             else
             {
-                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this directory from the excluded folders?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    string message = $"The folder ({_scanBase.Options.ExcludeFolderSelected.FolderPath}) has been removed from the excluded folders.";
-                    _scanBase.Options.ExcludeFolders.Remove(_scanBase.Options.ExcludeFolderSelected);
+                if (
+                    MessageBox.Show(Application.Current.MainWindow,
+                        "Are you sure you want to remove this directory from the excluded folders?", Utils.ProductName,
+                        MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    return;
 
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                string message = $"The folder ({_scanBase.Options.ExcludeFolderSelected.FolderPath}) has been removed from the excluded folders.";
+                _scanBase.Options.ExcludeFolders.Remove(_scanBase.Options.ExcludeFolderSelected);
+
+                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
             
@@ -118,13 +121,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void addFolder_Click(object sender, RoutedEventArgs e)
         {
-            using (FolderBrowserDialog folderBrowser = new FolderBrowserDialog())
+            using (var folderBrowser = new FolderBrowserDialog())
             {
                 folderBrowser.Description = "Select a folder to check for duplicate files";
 
                 if (folderBrowser.ShowDialog(WindowWrapper.GetCurrentWindowHandle()) == DialogResult.OK)
                 {
-                    IncludeFolder incFolder = new IncludeFolder(folderBrowser.SelectedPath);
+                    var incFolder = new IncludeFolder(folderBrowser.SelectedPath);
 
                     if (_scanBase.Options.IncFolders.Contains(incFolder))
                         MessageBox.Show(Application.Current.MainWindow, "The selected folder is already included", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -148,13 +151,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this directory from the included folders?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                string message = $"The folder ({_scanBase.Options.IncludeFolderSelected.Name}) has been removed from the included folders.";
-                _scanBase.Options.IncFolders.Remove(_scanBase.Options.IncludeFolderSelected);
+            if (
+                MessageBox.Show(Application.Current.MainWindow,
+                    "Are you sure you want to remove this directory from the included folders?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
 
-                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            string message = $"The folder ({_scanBase.Options.IncludeFolderSelected.Name}) has been removed from the included folders.";
+            _scanBase.Options.IncFolders.Remove(_scanBase.Options.IncludeFolderSelected);
+
+            MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)

@@ -53,7 +53,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             ScanBase = sb;
 
             // Update last scan stats
-            long elapsedTime = DateTime.Now.Subtract(Wizard.ScanStartTime).Ticks;
+            var elapsedTime = DateTime.Now.Subtract(Wizard.ScanStartTime).Ticks;
 
             Settings.Default.lastScanElapsed = elapsedTime;
 
@@ -71,7 +71,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (problemFile == null)
                     return;
 
-                FileInfo fileInfo = problemFile.FileInfo;
+                var fileInfo = problemFile.FileInfo;
 
                 // Get icon
                 var fileIcon = System.Drawing.Icon.ExtractAssociatedIcon(fileInfo.FullName) ?? SystemIcons.Application;
@@ -122,7 +122,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private async void buttonFix_Click(object sender, RoutedEventArgs e)
         {
-            int uncheckedFiles = ProblemsCollection.Count(lvi => !lvi.Checked.GetValueOrDefault());
+            var uncheckedFiles = ProblemsCollection.Count(lvi => !lvi.Checked.GetValueOrDefault());
 
             if (uncheckedFiles == ProblemsCollection.Count)
             {
@@ -158,11 +158,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            foreach (ProblemFile lvi in ProblemsCollection.Where(lvi => lvi.Checked.GetValueOrDefault()))
+            foreach (var lvi in ProblemsCollection.Where(lvi => lvi.Checked.GetValueOrDefault()))
             {
                 try
                 {
-                    FileInfo fileInfo = lvi.FileInfo;
+                    var fileInfo = lvi.FileInfo;
 
                     // Set last scan erors fixed
                     Settings.Default.lastScanErrorsFixed++;
@@ -231,7 +231,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private static void SendFileToRecycleBin(string filePath)
         {
-            PInvoke.SHFILEOPSTRUCT shf = new PInvoke.SHFILEOPSTRUCT { wFunc = PInvoke.FO_DELETE, fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION, pFrom = filePath };
+            var shf = new PInvoke.SHFILEOPSTRUCT
+            {
+                wFunc = PInvoke.FO_DELETE,
+                fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION,
+                pFrom = filePath
+            };
             PInvoke.SHFileOperation(ref shf);
         }
     }

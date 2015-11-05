@@ -99,10 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             {
                 if (!string.IsNullOrEmpty(BaseRegKey) && !string.IsNullOrEmpty(SubRegKey))
                     return $"{BaseRegKey}\\{SubRegKey}";
-                if (!string.IsNullOrEmpty(BaseRegKey))
-                    return BaseRegKey;
-
-                return "";
+                return !string.IsNullOrEmpty(BaseRegKey) ? BaseRegKey : "";
             }
         }
 
@@ -113,35 +110,31 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         {
             get
             {
-                Image img = new Image();
+                var img = new Image();
                 Bitmap bmp;
-                if (_nSeverity == 1)
+
+                switch (_nSeverity)
                 {
-                    bmp = Resources._1;
-                }
-                else if (_nSeverity == 2)
-                {
-                    bmp = Resources._2;
-                }
-                else if (_nSeverity == 3)
-                {
-                    bmp = Resources._3;
-                }
-                else if (_nSeverity == 4)
-                {
-                    bmp = Resources._4;
-                }
-                else if (_nSeverity == 5)
-                {
-                    bmp = Resources._5;
-                }
-                else
-                {
-                    // Return blank image (problem root key)
-                    return img;
+                    case 1:
+                        bmp = Resources._1;
+                        break;
+                    case 2:
+                        bmp = Resources._2;
+                        break;
+                    case 3:
+                        bmp = Resources._3;
+                        break;
+                    case 4:
+                        bmp = Resources._4;
+                        break;
+                    case 5:
+                        bmp = Resources._5;
+                        break;
+                    default:
+                        return img;
                 }
 
-                IntPtr hBitmap = bmp.GetHbitmap();
+                var hBitmap = bmp.GetHbitmap();
 
                 img.Source = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
@@ -156,7 +149,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         }
 
         #region IsChecked Methods
-        void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
+
+        private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
             if (value == _bIsChecked)
                 return;
@@ -172,12 +166,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             OnPropertyChanged("IsChecked");
         }
 
-        void VerifyCheckState()
+        private void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < Children.Count; ++i)
+            for (var i = 0; i < Children.Count; ++i)
             {
-                bool? current = Children[i].IsChecked;
+                var current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -210,17 +204,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             SubRegKey = subKey;
             _nSeverity = severity;
 
-            if (!string.IsNullOrEmpty(valueName))
-            {
-                ValueName = valueName;
+            if (string.IsNullOrEmpty(valueName))
+                return;
 
-                // Open registry key
-                RegistryKey regKey = Utils.RegOpenKey(baseKey, subKey);
+            ValueName = valueName;
 
-                // Convert value to string
-                if (regKey != null)
-                    Data = ScanFunctions.RegConvertXValueToString(regKey, valueName);
-            }
+            // Open registry key
+            var regKey = Utils.RegOpenKey(baseKey, subKey);
+
+            // Convert value to string
+            if (regKey != null)
+                Data = ScanFunctions.RegConvertXValueToString(regKey, valueName);
         }
 
         /// <summary>
@@ -241,7 +235,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         public void Init()
         {
-            foreach (BadRegistryKey childBadRegKey in Children)
+            foreach (var childBadRegKey in Children)
             {
                 childBadRegKey._parent = this;
                 childBadRegKey.Init();
@@ -250,7 +244,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         public bool Delete()
         {
-            bool ret = false;
+            var ret = false;
             RegistryKey regKey = null;
 
             try

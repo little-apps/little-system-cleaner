@@ -35,7 +35,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             try
             {
-                RegistryKey regKey = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\SharedDLLs");
+                var regKey = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\SharedDLLs");
 
                 if (regKey == null)
                     return;
@@ -43,7 +43,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 Wizard.Report.WriteLine("Scanning for missing shared DLLs");
 
                 // Validate Each DLL from the value names
-                foreach (string strFilePath in regKey.GetValueNames()
+                foreach (var strFilePath in regKey.GetValueNames()
                     .Where(strFilePath => !string.IsNullOrWhiteSpace(strFilePath))
                     .Where(strFilePath => !Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
                     .TakeWhile(strFilePath => !CancellationToken.IsCancellationRequested))
