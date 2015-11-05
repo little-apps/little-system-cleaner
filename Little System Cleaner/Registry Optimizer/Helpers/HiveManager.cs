@@ -35,8 +35,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         {
             try
             {
-                string tempPath = Path.GetTempPath();
-                string randFilename = Path.GetRandomFileName();
+                var tempPath = Path.GetTempPath();
+                var randFilename = Path.GetRandomFileName();
 
                 if (tempPath[0] != drive)
                 {
@@ -64,15 +64,15 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <returns>Drive path</returns>
         internal static string ConvertDeviceToMsdosName(string devicePath)
         {
-            string retVal = "";
+            var retVal = "";
 
             devicePath = string.Copy(devicePath.ToLower());
 
             // Convert \Device\HarddiskVolumeX\... to X:\...
-            foreach (KeyValuePair<string, string> kvp in QueryDosDevice())
+            foreach (var kvp in QueryDosDevice())
             {
-                string driveLetter = kvp.Key.ToLower();
-                string deviceName = kvp.Value.ToLower();
+                var driveLetter = kvp.Key.ToLower();
+                var deviceName = kvp.Value.ToLower();
 
                 if (!devicePath.StartsWith(deviceName))
                     continue;
@@ -86,19 +86,16 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
         private static Dictionary<string, string> QueryDosDevice()
         {
-            Dictionary<string, string> ret = new Dictionary<string, string>();
+            var ret = new Dictionary<string, string>();
 
-            foreach (DriveInfo di in DriveInfo.GetDrives())
+            foreach (var di in DriveInfo.GetDrives().Where(di => di.IsReady))
             {
-                if (di.IsReady)
-                {
-                    string driveLetter = di.Name.Substring(0, 2);
-                    StringBuilder deviceName = new StringBuilder(260);
+                var driveLetter = di.Name.Substring(0, 2);
+                var deviceName = new StringBuilder(260);
 
-                    // Convert C: to \Device\HarddiskVolume1
-                    if (PInvoke.QueryDosDevice(driveLetter, deviceName, 260) > 0)
-                        ret.Add(driveLetter, deviceName.ToString());
-                }
+                // Convert C: to \Device\HarddiskVolume1
+                if (PInvoke.QueryDosDevice(driveLetter, deviceName, 260) > 0)
+                    ret.Add(driveLetter, deviceName.ToString());
             }
 
             return ret;
@@ -113,10 +110,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             if (Wizard.RegistryHives == null)
                 return 0;
 
-            if (Wizard.RegistryHives.Count == 0)
-                return 0;
-
-            return Wizard.RegistryHives.Sum(h => h.OldHiveSize);
+            return Wizard.RegistryHives.Count == 0 ? 0 : Wizard.RegistryHives.Sum(h => h.OldHiveSize);
         }
 
         /// <summary>
@@ -128,10 +122,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             if (Wizard.RegistryHives == null)
                 return 0;
 
-            if (Wizard.RegistryHives.Count == 0)
-                return 0;
-
-            return Wizard.RegistryHives.Sum(h => h.NewHiveSize);
+            return Wizard.RegistryHives.Count == 0 ? 0 : Wizard.RegistryHives.Sum(h => h.NewHiveSize);
         }
     }
 

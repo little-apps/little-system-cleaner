@@ -20,7 +20,6 @@ using System.Linq;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -83,7 +82,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey.GetValue("") != null)
                 nValueCount = 1;
 
-            return (nValueCount == 0 && nSubKeyCount == 0);
+            return nValueCount == 0 && nSubKeyCount == 0;
         }
     }
 }

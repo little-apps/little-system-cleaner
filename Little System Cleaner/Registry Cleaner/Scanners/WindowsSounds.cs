@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Linq;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
@@ -53,11 +54,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <param name="rk">Registry subkey</param>
         private static void ParseSoundKeys(RegistryKey rk)
         {
-            foreach (var strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+            foreach (
+                var strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
 
                 // Ignores ".Default" Subkey
-                if ((strSubKey.CompareTo(".Current") == 0) || (strSubKey.CompareTo(".Modified") == 0))
+                if ((string.Compare(strSubKey, ".Current", StringComparison.Ordinal) == 0) || (string.Compare(strSubKey, ".Modified", StringComparison.Ordinal) == 0))
                 {
                     // Gets the (default) key and sees if the file exists
                     var rk2 = rk.OpenSubKey(strSubKey);

@@ -55,23 +55,27 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             if (IsBusy)
             {
-                MessageBox.Show(Application.Current.MainWindow, "The Windows Registry is currently being analyzed/compacted. The operation cannot be completed at the moment.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "The Windows Registry is currently being analyzed/compacted. The operation cannot be completed at the moment.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
             if (CurrentControl is AnalyzeResults)
             {
-                var exit = (forceExit || MessageBox.Show(Application.Current.MainWindow, "Analyze results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                var exit = forceExit ||
+                           MessageBox.Show(Application.Current.MainWindow,
+                               "Analyze results will be reset. Would you like to continue?", Utils.ProductName,
+                               MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
-                if (exit)
-                {
-                    foreach (Hive h in RegistryHives) {
-                        h.Reset();
-                    }
+                if (!exit)
+                    return false;
 
-                    return true;
+                foreach (var h in RegistryHives) {
+                    h.Reset();
                 }
-                return false;
+
+                return true;
             }
 
             return true;

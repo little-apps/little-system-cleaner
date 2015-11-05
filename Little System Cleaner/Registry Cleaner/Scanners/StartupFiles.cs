@@ -52,28 +52,28 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunEx"));
                 CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"));
 
-                if (Utils.Is64BitOs)
-                {
-                    // all user keys
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnceEx"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunEx"));
-                    CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
+                if (!Utils.Is64BitOs)
+                    return;
 
-                    // current user keys
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnceEx"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunEx"));
-                    CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
-                }
+                // all user keys
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnceEx"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunEx"));
+                CheckAutoRun(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
+
+                // current user keys
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnceEx"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunEx"));
+                CheckAutoRun(Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
             }
             catch (System.Security.SecurityException ex)
             {
@@ -92,33 +92,36 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Checking for invalid files in " + regKey.Name);
 
-            foreach (var progName in regKey.GetValueNames().TakeWhile(progName => !CancellationToken.IsCancellationRequested))
+            foreach (
+                var progName in regKey.GetValueNames().TakeWhile(progName => !CancellationToken.IsCancellationRequested)
+                )
             {
                 var runPath = regKey.GetValue(progName) as string;
 
-                if (!string.IsNullOrEmpty(runPath))
-                {
-                    // Check run path by itself
-                    if (Utils.FileExists(runPath) || Wizard.IsOnIgnoreList(runPath))
-                        continue;
+                if (string.IsNullOrEmpty(runPath))
+                    continue;
 
-                    // See if file exists (also checks if string is null)
-                    string filePath, args;
+                // Check run path by itself
+                if (Utils.FileExists(runPath) || Wizard.IsOnIgnoreList(runPath))
+                    continue;
 
-                    if (Utils.ExtractArguments(runPath, out filePath, out args))
-                        continue;
+                // See if file exists (also checks if string is null)
+                string filePath, args;
 
-                    if (Wizard.IsOnIgnoreList(filePath))
-                        continue;
+                if (Utils.ExtractArguments(runPath, out filePath, out args))
+                    continue;
 
-                    if (Utils.ExtractArguments2(runPath, out filePath, out args))
-                        continue;
+                if (Wizard.IsOnIgnoreList(filePath))
+                    continue;
 
-                    if (Wizard.IsOnIgnoreList(filePath))
-                        continue;
+                if (Utils.ExtractArguments2(runPath, out filePath, out args))
+                    continue;
 
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(progName) ? "(default)" : progName));
-                }
+                if (Wizard.IsOnIgnoreList(filePath))
+                    continue;
+
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name,
+                    string.IsNullOrWhiteSpace(progName) ? "(default)" : progName);
             }
 
             regKey.Close();

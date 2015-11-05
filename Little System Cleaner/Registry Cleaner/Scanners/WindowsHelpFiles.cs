@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 )
             {
                 // (Won't include default value name as strHelpFile must not be null/empty)
-                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(helpFile) ? "(default)" : helpFile));
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), string.IsNullOrWhiteSpace(helpFile) ? "(default)" : helpFile);
             }
         }
 
@@ -84,10 +84,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             var combinedPath = Path.Combine(helpPath, helpFile);
 
-            if (Utils.FileExists(combinedPath) || Wizard.IsOnIgnoreList(combinedPath))
-                return true;
-
-            return false;
+            return Utils.FileExists(combinedPath) || Wizard.IsOnIgnoreList(combinedPath);
         }
     }
 }

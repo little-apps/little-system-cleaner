@@ -26,7 +26,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void InitHives()
         {
             RegistryKey rkHives;
-            int i = 0;
+            var i = 0;
             Wizard.RegistryHives = new ObservableCollection<Hive>();
 
             using (rkHives = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\hivelist"))
@@ -34,7 +34,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 if (rkHives == null)
                     throw new ApplicationException("Unable to open hive list... this can be a problem!");
 
-                foreach (string strValueName in rkHives.GetValueNames())
+                foreach (var strValueName in rkHives.GetValueNames())
                 {
                     Dispatcher.Invoke(new Action(() => Message.Text = $"Loading {++i}/{rkHives.ValueCount} Hives"));
 
@@ -42,7 +42,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     if (strValueName.Contains("BCD") || strValueName.Contains("HARDWARE"))
                         continue;
 
-                    string strHivePath = rkHives.GetValue(strValueName) as string;
+                    var strHivePath = rkHives.GetValue(strValueName) as string;
 
                     if (string.IsNullOrEmpty(strHivePath))
                         continue;
@@ -53,7 +53,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     if (string.IsNullOrEmpty(strValueName) || string.IsNullOrEmpty(strHivePath))
                         continue;
 
-                    Hive h = new Hive(strValueName, strHivePath);
+                    var h = new Hive(strValueName, strHivePath);
 
                     if (h.IsValid)
                         Wizard.RegistryHives.Add(h);

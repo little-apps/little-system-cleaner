@@ -39,12 +39,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 Wizard.Report.WriteLine("Verifying programs in Add/Remove list");
 
-                using (var regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
+                using (
+                    var regKey =
+                        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"))
                 {
                     if (regKey == null)
                         return;
 
-                    foreach (var strProgName in regKey.GetSubKeyNames().TakeWhile(strProgName => !CancellationToken.IsCancellationRequested))
+                    foreach (
+                        var strProgName in
+                            regKey.GetSubKeyNames().TakeWhile(strProgName => !CancellationToken.IsCancellationRequested)
+                        )
                     {
                         using (var regKey2 = regKey.OpenSubKey(strProgName))
                         {
@@ -62,7 +67,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             if (progInfo.WindowsInstaller)
                                 continue;
 
-                            if (string.IsNullOrEmpty(progInfo.DisplayName) && (!progInfo.Uninstallable))
+                            if (string.IsNullOrEmpty(progInfo.DisplayName) && !progInfo.Uninstallable)
                             {
                                 Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
                                 continue;
@@ -75,25 +80,25 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                             // Check install location 
                             if (!string.IsNullOrEmpty(progInfo.InstallLocation))
-                                if ((!ScanFunctions.DirExists(progInfo.InstallLocation)) && (!Utils.FileExists(progInfo.InstallLocation)))
+                                if (!ScanFunctions.DirExists(progInfo.InstallLocation) && !Utils.FileExists(progInfo.InstallLocation))
                                     if (!Wizard.IsOnIgnoreList(progInfo.InstallLocation))
                                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
 
                             // Check install source 
                             if (!string.IsNullOrEmpty(progInfo.InstallSource))
-                                if ((!ScanFunctions.DirExists(progInfo.InstallSource)) && (!Utils.FileExists(progInfo.InstallSource)))
+                                if (!ScanFunctions.DirExists(progInfo.InstallSource) && !Utils.FileExists(progInfo.InstallSource))
                                     if (!Wizard.IsOnIgnoreList(progInfo.InstallSource))
                                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
                             // Check ARP Cache
-                            if (progInfo.SlowCache)
-                            {
-                                if (string.IsNullOrEmpty(progInfo.FileName))
-                                    continue;
+                            if (!progInfo.SlowCache)
+                                continue;
 
-                                if (!Utils.FileExists(progInfo.FileName) && !Wizard.IsOnIgnoreList(progInfo.FileName))
-                                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, progInfo.SlowInfoCacheRegKey);
-                            }
+                            if (string.IsNullOrEmpty(progInfo.FileName))
+                                continue;
+
+                            if (!Utils.FileExists(progInfo.FileName) && !Wizard.IsOnIgnoreList(progInfo.FileName))
+                                Wizard.StoreInvalidKey(Strings.InvalidRegKey, progInfo.SlowInfoCacheRegKey);
                         }
                     }
                 }
@@ -119,7 +124,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
 
             foreach (var subKey in regKey.GetSubKeyNames()
-                .Where(subKey => Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + subKey) == null)
+                .Where(
+                    subKey =>
+                        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" +
+                                                         subKey) == null)
                 .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
                 Wizard.StoreInvalidKey(Strings.ObsoleteRegKey, $"{regKey.Name}/{subKey}");

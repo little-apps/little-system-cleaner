@@ -46,7 +46,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             SetComboBox(sectionName);
 
-            TextBoxName.Text = entryName.EndsWith(".lnk") ? entryName.Remove(entryName.IndexOf(".lnk")) : entryName;
+            TextBoxName.Text = entryName.EndsWith(".lnk")
+                ? entryName.Remove(entryName.IndexOf(".lnk", StringComparison.Ordinal))
+                : entryName;
             TextBoxPath.Text = filePath;
             TextBoxArgs.Text = fileArgs;
 
@@ -217,18 +219,18 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private ComboBoxItem CreateComboBoxItem(Bitmap bitMap, string startupPath) 
         {
-            ComboBoxItem comboItem = new ComboBoxItem();
+            var comboItem = new ComboBoxItem();
 
-            StackPanel stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
-            Image bMapImg = Utils.CreateBitmapSourceFromBitmap(bitMap);
+            var bMapImg = Utils.CreateBitmapSourceFromBitmap(bitMap);
 
             // Resize image to 16x16
             bMapImg.Width = bMapImg.Height = 16;
             
             stackPanel.Children.Add(bMapImg);
 
-            TextBlock textBlock = new TextBlock { Text = startupPath };
+            var textBlock = new TextBlock { Text = startupPath };
 
             stackPanel.Children.Add(textBlock);
 
@@ -241,7 +243,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             if (string.IsNullOrWhiteSpace(TextBoxName.Text) || string.IsNullOrWhiteSpace(TextBoxPath.Text))
             {
-                MessageBox.Show(this, "You must enter a name and a path", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, "You must enter a name and a path", Utils.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
 
@@ -266,27 +269,34 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             // Store changed entry
             RegistryKey regKey = null;
-            bool created = false;
+            var created = false;
 
             if (Sections.SelectedIndex <= 1)
             {
                 try
                 {
-                    var filePath = Path.Combine(Sections.SelectedIndex == 0 ? Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP) : Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), TextBoxName.Text + ".lnk");
+                    var filePath =
+                        Path.Combine(
+                            Sections.SelectedIndex == 0
+                                ? Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP)
+                                : Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), TextBoxName.Text + ".lnk");
 
-                    string fileDir = Path.GetDirectoryName(filePath);
-                    if (!Directory.Exists(fileDir))
+                    var fileDir = Path.GetDirectoryName(filePath);
+                    if (!string.IsNullOrEmpty(fileDir) && !Directory.Exists(fileDir))
                         Directory.CreateDirectory(fileDir);
 
                     // Make sure file doesn't already exist
                     if (File.Exists(filePath))
                     {
-                        MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(this,
+                            "A startup entry already exists with that specified name. Please change it before continuing.",
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
                     if (!(created = CreateShortcut(filePath, TextBoxPath.Text, TextBoxArgs.Text)))
-                        MessageBox.Show(this, "There was an error creating the shortcut for the startup entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(this, "There was an error creating the shortcut for the startup entry.",
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
@@ -297,7 +307,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
             else
             {
-                string strPath = (!string.IsNullOrEmpty(TextBoxPath.Text) && !string.IsNullOrEmpty(TextBoxArgs.Text) ? $"\"{TextBoxPath.Text}\" {TextBoxArgs.Text}" : $"\"{TextBoxPath.Text}\"");
+                var strPath = !string.IsNullOrEmpty(TextBoxPath.Text) && !string.IsNullOrEmpty(TextBoxArgs.Text)
+                    ? $"\"{TextBoxPath.Text}\" {TextBoxArgs.Text}"
+                    : $"\"{TextBoxPath.Text}\"";
 
                 try
                 {
@@ -306,7 +318,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     // Make sure registry value name doesn't already exist
                     if (regKey.GetValue(TextBoxName.Text) != null)
                     {
-                        MessageBox.Show(this, "A startup entry already exists with that specified name. Please change it before continuing.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(this,
+                            "A startup entry already exists with that specified name. Please change it before continuing.",
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
@@ -326,14 +340,14 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
             }
 
-            if (created)
-            {
-                MessageBox.Show(this, "Successfully created startup entry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            if (!created)
+                return;
 
-                DialogResult = true;
-                Close();
-            }
-            
+            MessageBox.Show(this, "Successfully created startup entry", Utils.ProductName, MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            DialogResult = true;
+            Close();
         }
 
         private RegistryKey GetSelectedRegKey()
@@ -487,7 +501,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void BrowseFile()
         {
-            OpenFileDialog openFileDlg = new OpenFileDialog { Multiselect = false };
+            var openFileDlg = new OpenFileDialog { Multiselect = false };
             
             if (!string.IsNullOrEmpty(TextBoxPath.Text))
             {
@@ -508,7 +522,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         /// <param name="path">path for filename</param>
         /// <param name="arguments">arguments for shortcut (can be null)</param>
         /// <returns>True if shortcut was created</returns>
-        private bool CreateShortcut(string filename, string path, string arguments)
+        private static bool CreateShortcut(string filename, string path, string arguments)
         {
             PInvoke.ShellLink link = new PInvoke.ShellLink();
             ((PInvoke.IShellLinkW)link).SetPath(path);
@@ -516,7 +530,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 ((PInvoke.IShellLinkW)link).SetArguments(arguments);
             ((PInvoke.IPersistFile)link).Save(filename, false);
 
-            return (File.Exists(filename));
+            return File.Exists(filename);
         }
     }
 }

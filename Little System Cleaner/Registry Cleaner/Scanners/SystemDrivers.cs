@@ -20,7 +20,6 @@ using System.Linq;
 using Microsoft.Win32;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -45,13 +44,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     foreach (
                         var driverName in
                             regKey.GetValueNames()
-                                .Select(driverName => new { Name = driverName, Value = regKey.GetValue(driverName) as string })
+                                .Select(
+                                    driverName => new {Name = driverName, Value = regKey.GetValue(driverName) as string})
                                 .Where(o => !string.IsNullOrEmpty(o.Value))
                                 .Where(o => !Utils.FileExists(o.Value) && !Wizard.IsOnIgnoreList(o.Value))
                                 .Select(o => o.Name)
                                 .TakeWhile(driverName => !CancellationToken.IsCancellationRequested))
                     {
-                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, (string.IsNullOrWhiteSpace(driverName) ? "(default)" : driverName));
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, string.IsNullOrWhiteSpace(driverName) ? "(default)" : driverName);
                     }
                 }
             }

@@ -81,7 +81,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 return;
 
             string[] strValueNames;
-            StartupEntry nodeRoot = new StartupEntry
+            var nodeRoot = new StartupEntry
             {
                 SectionName = regKey.Name,
                 bMapImg =
@@ -101,11 +101,11 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 return;
             }
 
-            foreach (string strItem in strValueNames)
+            foreach (var strItem in strValueNames)
             {
                 try
                 {
-                    string strFilePath = regKey.GetValue(strItem) as string;
+                    var strFilePath = regKey.GetValue(strItem) as string;
 
                     if (string.IsNullOrEmpty(strFilePath))
                         continue;
@@ -123,9 +123,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                                 strFile = strFilePath;
                     }
 
-                    StartupEntry node = new StartupEntry { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
+                    var node = new StartupEntry { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
 
-                    Icon ico = Utils.ExtractIcon(strFile);
+                    var ico = Utils.ExtractIcon(strFile);
                     node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Resources.appinfo.ToBitmap());
 
                     nodeRoot.Children.Add(node);
@@ -149,7 +149,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 return;
 
             string[] shortcutList;
-            StartupEntry nodeRoot = new StartupEntry
+            var nodeRoot = new StartupEntry
             {
                 SectionName = folder,
                 bMapImg =
@@ -169,11 +169,11 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 return;
             }
 
-            foreach (string shortcut in shortcutList)
+            foreach (var shortcut in shortcutList)
             {
                 try
                 {
-                    string shortcutName = Path.GetFileName(shortcut);
+                    var shortcutName = Path.GetFileName(shortcut);
 
                     if (Path.GetExtension(shortcut) != ".lnk")
                         continue;
@@ -183,10 +183,12 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     if (!Utils.ResolveShortcut(shortcut, out filePath, out fileArgs))
                         continue;
 
-                    StartupEntry node = new StartupEntry { Parent = nodeRoot, SectionName = shortcutName, Path = filePath, Args = fileArgs };
+                    var node = new StartupEntry { Parent = nodeRoot, SectionName = shortcutName, Path = filePath, Args = fileArgs };
 
-                    Icon ico = Utils.ExtractIcon(filePath);
-                    node.bMapImg = ico != null ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap) : Utils.CreateBitmapSourceFromBitmap(Resources.appinfo.ToBitmap());
+                    var ico = Utils.ExtractIcon(filePath);
+                    node.bMapImg = ico != null
+                        ? Utils.CreateBitmapSourceFromBitmap(ico.ToBitmap().Clone() as Bitmap)
+                        : Utils.CreateBitmapSourceFromBitmap(Resources.appinfo.ToBitmap());
 
                     nodeRoot.Children.Add(node);
                 }
@@ -206,14 +208,13 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             if (parent == null)
                 parent = Root;
-            return (parent as StartupEntry).Children;
+            return (parent as StartupEntry)?.Children;
         }
 
         public bool HasChildren(object parent)
         {
-            return (parent as StartupEntry).Children.Count > 0;
+            var startupEntry = parent as StartupEntry;
+            return startupEntry != null && startupEntry.Children.Count > 0;
         }
-
-        
     }
 }

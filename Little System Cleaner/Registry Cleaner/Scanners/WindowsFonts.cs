@@ -23,7 +23,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using System.Threading;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Microsoft.Win32;
@@ -73,7 +72,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 .TakeWhile(fontName => !CancellationToken.IsCancellationRequested)
                         )
                     {
-                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), (string.IsNullOrWhiteSpace(fontName) ? "(default)" : fontName));
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), string.IsNullOrWhiteSpace(fontName) ? "(default)" : fontName);
                     }
 
                 }

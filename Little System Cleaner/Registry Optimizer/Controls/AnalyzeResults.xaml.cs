@@ -32,7 +32,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// </summary>
     public partial class AnalyzeResults
     {
-        readonly Wizard _scanBase;
+        private readonly Wizard _scanBase;
 
         public AnalyzeResults(Wizard sb)
         {
@@ -42,17 +42,18 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             double oldRegistrySize = HiveManager.GetOldRegistrySize(), newRegistrySize = HiveManager.GetNewRegistrySize();
 
-            decimal oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
-            decimal diffRegistrySizeMb = decimal.Round((Convert.ToDecimal(oldRegistrySize - newRegistrySize)) / 1024 / 1024, 2);
+            var oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
+            var diffRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize - newRegistrySize) / 1024 / 1024, 2);
 
-            ((PieSeries)McChart.Series[0]).ItemsSource = 
-                new[] 
-                { 
-                    new KeyValuePair<string, decimal>($"Registry Size ({oldRegistrySizeMb}MB)", oldRegistrySizeMb - diffRegistrySizeMb),
+            ((PieSeries) McChart.Series[0]).ItemsSource =
+                new[]
+                {
+                    new KeyValuePair<string, decimal>($"Registry Size ({oldRegistrySizeMb}MB)",
+                        oldRegistrySizeMb - diffRegistrySizeMb),
                     new KeyValuePair<string, decimal>($"Saving ({diffRegistrySizeMb}MB)", diffRegistrySizeMb)
                 };
 
-            if ((100 - ((newRegistrySize / oldRegistrySize) * 100)) >= 5) {
+            if (100 - ((newRegistrySize / oldRegistrySize) * 100) >= 5) {
                 // Set errors to number of registry hives
                 Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;
 
@@ -67,15 +68,17 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void buttonCompact_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to compact your registry?",
+                    Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
             Wizard.IsBusy = true;
 
-            SecureDesktop secureDesktop = new SecureDesktop();
+            var secureDesktop = new SecureDesktop();
             secureDesktop.Show();
 
-            Compact compactWnd = new Compact();
+            var compactWnd = new Compact();
             compactWnd.ShowDialog();
 
             secureDesktop.Close();
@@ -86,7 +89,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Wizard.IsBusy = false;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow,
+                    "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?",
+                    Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 // Restart computer
                 PInvoke.ExitWindowsEx(0x02, PInvoke.MajorOperatingSystem | PInvoke.MinorReconfig | PInvoke.FlagPlanned);
 
@@ -97,7 +103,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         {
             if (Wizard.IsBusy)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(Application.Current.MainWindow, "Cannot cancel while the registry is being compacted",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 

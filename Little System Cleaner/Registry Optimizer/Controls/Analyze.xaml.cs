@@ -65,11 +65,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private async void AnalyzeHives()
         {
-            DateTime dtStart = DateTime.Now;
+            var dtStart = DateTime.Now;
             
             Thread.BeginCriticalRegion();
 
-            foreach (Hive h in Wizard.RegistryHives)
+            foreach (var h in Wizard.RegistryHives)
             {
                 IncrementProgressBar(h.RegistryHive);
 
@@ -79,7 +79,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Thread.EndCriticalRegion();
 
-            TimeSpan timeSpan = DateTime.Now.Subtract(dtStart);
+            var timeSpan = DateTime.Now.Subtract(dtStart);
 
             Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds, true);
 
@@ -97,7 +97,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ProgressBar.Maximum != 0)
+            if (Math.Abs(ProgressBar.Maximum) > 0)
                 Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
         }
     }

@@ -40,8 +40,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     return _cmd;
                 }
 
-                string cmd = Path.Trim();
-                string args = Args.Trim();
+                var cmd = Path.Trim();
+                var args = Args.Trim();
 
                 if (!string.IsNullOrEmpty(args))
                     cmd = cmd + " " + args;

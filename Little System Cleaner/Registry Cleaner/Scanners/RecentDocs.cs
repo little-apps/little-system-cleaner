@@ -23,7 +23,6 @@ using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
-using System.Threading;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -100,7 +99,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         {
             foreach (var strValueName in regKey.GetValueNames())
             {
-                string filePath = "", fileArgs;
+                var filePath = "";
+                string fileArgs;
 
                 // Skip if value name is null/empty
                 if (string.IsNullOrWhiteSpace(strValueName))
@@ -122,12 +122,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     continue;
                 }
 
-                if (!Utils.FileExists(shortcutPath) || !Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs))
+                if (Utils.FileExists(shortcutPath) && Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs))
+                    continue;
+
+                if (!Wizard.IsOnIgnoreList(shortcutPath) && !Wizard.IsOnIgnoreList(filePath))
                 {
-                    if (!Wizard.IsOnIgnoreList(shortcutPath) && !Wizard.IsOnIgnoreList(filePath))
-                    {
-                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
-                    }
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
                 }
             }
         }
@@ -141,28 +141,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             var value = keyObj.ToString();    //get object value 
             var type = keyObj.GetType().Name;  //get object type
 
-            if (type == "Byte[]")
-            {
-                value = "";
-                var bytes = (byte[])keyObj;
-                //this seems crude but cannot find a way to 'cast' a Unicode string to byte[]
-                //even in case where we know the beginning format is Unicode
-                //so do it the hard way
+            if (type != "Byte[]")
+                return value;
 
-                var chars = Encoding.Unicode.GetChars(bytes);
-                foreach (var bt in chars)
-                {
-                    if (bt != 0)
-                    {
-                        value = value + bt; //construct string one at a time
-                    }
-                    else
-                    {
-                        break;  //apparently found 0,0 (end of string)
-                    }
-                }
-            }
-            return value;
+            value = "";
+            var bytes = (byte[])keyObj;
+            //this seems crude but cannot find a way to 'cast' a Unicode string to byte[]
+            //even in case where we know the beginning format is Unicode
+            //so do it the hard way
+            
+            return Encoding.Unicode.GetChars(bytes).TakeWhile(bt => bt != 0).Aggregate(value, (s, c) => s + c); ;
         }
     }
 }
