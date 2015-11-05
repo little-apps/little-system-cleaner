@@ -205,11 +205,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     if ((regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\" + regKeyName)) == null)
                         return;
 
-                byte[] b = (byte[])regKey.GetValue("SlowInfoCache");
+                var b = (byte[])regKey.GetValue("SlowInfoCache");
 
-                GCHandle gcHandle = GCHandle.Alloc(b, GCHandleType.Pinned);
-                IntPtr ptr = gcHandle.AddrOfPinnedObject();
-                SlowInfoCache slowInfoCache = (SlowInfoCache)Marshal.PtrToStructure(ptr, typeof(SlowInfoCache));
+                var gcHandle = GCHandle.Alloc(b, GCHandleType.Pinned);
+                var ptr = gcHandle.AddrOfPinnedObject();
+                var slowInfoCache = (SlowInfoCache)Marshal.PtrToStructure(ptr, typeof(SlowInfoCache));
 
                 SlowCache = true;
                 SlowInfoCacheRegKey = regKey.ToString();
@@ -242,12 +242,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         /// <returns>True if the ARP cache registry key was removed, otherwise, false</returns>
         private bool RemoveArpCache()
         {
-            bool ret = false;
+            var ret = false;
             string baseKey, subKey;
 
             Utils.ParseRegKeyPath(SlowInfoCacheRegKey, out baseKey, out subKey);
 
-            RegistryKey regKey = Utils.RegOpenKey(baseKey, false);
+            var regKey = Utils.RegOpenKey(baseKey, false);
 
             if (regKey != null)
             {
@@ -264,7 +264,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public bool Uninstall()
         {
-            string cmdLine = "";
+            var cmdLine = "";
 
             if (!string.IsNullOrEmpty(UninstallString))
                 cmdLine = UninstallString;
@@ -282,11 +282,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             if (WindowsInstaller)
             {
                 // Remove 'msiexec' from uninstall string
-                string cmdArgs = cmdLine.Substring(cmdLine.IndexOf(' ') + 1);
+                var cmdArgs = cmdLine.Substring(cmdLine.IndexOf(' ') + 1);
 
                 try
                 {
-                    Process proc = Process.Start("msiexec.exe", cmdArgs);
+                    var proc = Process.Start("msiexec.exe", cmdArgs);
                     proc.WaitForExit();
 
                     if (proc.ExitCode != 0)
@@ -299,12 +299,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 {
                     if (ex is FileNotFoundException)
                     {
-                        string message = $"The Windows Installer tool (msiexec.exe) could not be found. Please ensure that it's located in either {Environment.GetFolderPath(Environment.SpecialFolder.Windows)} or {Environment.SystemDirectory} and also ensure that the PATH variable is properly set to include these directories.";
+                        var message = $"The Windows Installer tool (msiexec.exe) could not be found. Please ensure that it's located in either {Environment.GetFolderPath(Environment.SpecialFolder.Windows)} or {Environment.SystemDirectory} and also ensure that the PATH variable is properly set to include these directories.";
                         MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else if (ex is Win32Exception)
                     {
-                        int hr = Marshal.GetHRForException(ex);
+                        var hr = Marshal.GetHRForException(ex);
                         if (hr == unchecked((int)0x80004002))
                         {
                             MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -327,7 +327,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 // Execute uninstall string
                 try
                 {
-                    Process proc = Process.Start(cmdLine);
+                    var proc = Process.Start(cmdLine);
                     if (proc != null)
                     {
                         proc.WaitForExit();
@@ -354,7 +354,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     }
                     else if (ex is Win32Exception)
                     {
-                        int hr = Marshal.GetHRForException(ex);
+                        var hr = Marshal.GetHRForException(ex);
                         if (hr == unchecked((int)0x80004002))
                         {
                             MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -388,7 +388,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public bool RemoveFromRegistry()
         {
-            string strKeyName = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + Key;
+            var strKeyName = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + Key;
 
             try
             {
@@ -421,7 +421,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         private DateTime FileTime2DateTime(FILETIME ft)
         {
             DateTime dt;
-            long hFT2 = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
+            var hFT2 = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
 
             try
             {
@@ -437,7 +437,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         private static object TryGetValue(RegistryKey regKey, string valueName, object defaultValue = null)
         {
-            object value = defaultValue;
+            var value = defaultValue;
 
             try
             {

@@ -219,7 +219,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
         {
             get
             {
-                using (SecureString secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword))
+                using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword))
                 {
                     return Utils.ToInsecureString(secureStr);
                 }
@@ -227,7 +227,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
             set
             {
-                string encryptedPassword = Utils.EncryptString(proxyPassword.SecurePassword);
+                var encryptedPassword = Utils.EncryptString(proxyPassword.SecurePassword);
                 if (Settings.Default.optionsProxyPassword != encryptedPassword)
                     Settings.Default.optionsProxyPassword = encryptedPassword;
             }
@@ -238,7 +238,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 		{
             InitializeComponent();
 
-            using (SecureString secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword)) {
+            using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword)) {
                 proxyPassword.Password = Utils.ToInsecureString(secureStr);
             }
 		}
@@ -268,7 +268,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog())
+            using (var folderBrowserDlg = new FolderBrowserDialog())
             {
                 folderBrowserDlg.Description = "Select the folder where the log files will be placed";
                 folderBrowserDlg.SelectedPath = TextBoxLog.Text;
@@ -281,7 +281,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
         private void proxyPassword_LostFocus(object sender, RoutedEventArgs e)
         {
-            string encryptedPassword = Utils.EncryptString(proxyPassword.SecurePassword);
+            var encryptedPassword = Utils.EncryptString(proxyPassword.SecurePassword);
             if (Settings.Default.optionsProxyPassword != encryptedPassword)
                 Settings.Default.optionsProxyPassword = encryptedPassword;
         }

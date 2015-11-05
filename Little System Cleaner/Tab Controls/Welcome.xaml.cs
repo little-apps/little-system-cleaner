@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Tab_Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+            var memStatus = new MEMORYSTATUSEX();
             RegistryKey regKey = null;
 
             LastDateTime.Text = Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Settings.Default.lastScanDate).ToString() : "Unknown";
@@ -69,7 +69,7 @@ namespace Little_System_Cleaner.Tab_Controls
             ErrorsRepaired.Text = $"{Settings.Default.lastScanErrorsFixed} errors fixed";
             if (Settings.Default.lastScanElapsed != 0)
             {
-                TimeSpan ts = TimeSpan.FromTicks(Settings.Default.lastScanElapsed);
+                var ts = TimeSpan.FromTicks(Settings.Default.lastScanElapsed);
                 ElapsedTime.Text = $"{Convert.ToInt32(ts.TotalSeconds)} seconds";
             }
             else 
@@ -85,7 +85,7 @@ namespace Little_System_Cleaner.Tab_Controls
             {
                 regKey = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
 
-                string procName = regKey?.GetValue("ProcessorNameString") as string;
+                var procName = regKey?.GetValue("ProcessorNameString") as string;
 
                 if (!string.IsNullOrEmpty(procName))
                     CpuType.Text = procName;

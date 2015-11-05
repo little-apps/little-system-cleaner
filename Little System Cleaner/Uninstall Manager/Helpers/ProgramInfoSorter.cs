@@ -20,7 +20,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         {
             try
             {
-                int priority = 0;
+                var priority = 0;
 
                 switch ((string)_column.Header)
                 {
@@ -34,8 +34,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                         priority = x.SizeBytes.CompareTo(y.SizeBytes);
                         break;
                 }
-                
-                return (_direction.Equals(ListSortDirection.Ascending) ? priority : -priority);
+
+                return _direction.Equals(ListSortDirection.Ascending) ? priority : -priority;
             }
             catch
             {

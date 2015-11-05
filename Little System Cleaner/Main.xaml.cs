@@ -39,9 +39,9 @@ namespace Little_System_Cleaner
             {
                 if (Application.Current != null)
                 {
-                    Main currentWindow = Application.Current.MainWindow as Main;
+                    var currentWindow = Application.Current.MainWindow as Main;
 
-                    TaskbarItemInfo taskBarItemInfo = currentWindow?.TaskBarItemInfo;
+                    var taskBarItemInfo = currentWindow?.TaskBarItemInfo;
 
                     if (taskBarItemInfo != null)
                         taskBarItemInfo.ProgressState = value;
@@ -63,7 +63,7 @@ namespace Little_System_Cleaner
             set
             {
                 var main = Application.Current.MainWindow as Main;
-                TaskbarItemInfo taskBarItemInfo = main?.TaskBarItemInfo;
+                var taskBarItemInfo = main?.TaskBarItemInfo;
 
                 if (taskBarItemInfo != null)
                     taskBarItemInfo.ProgressValue = value;
@@ -107,7 +107,7 @@ namespace Little_System_Cleaner
             _watcher = new LittleSoftwareStats.Watcher();
             LittleSoftwareStats.Config.Enabled = Properties.Settings.Default.optionsUsageStats;
 
-            string appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             Watcher.Start("922492147b2e47744961de5b9a5d0886", appVer);
 
@@ -153,7 +153,7 @@ namespace Little_System_Cleaner
 
         private void imageHelp_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ContextMenu contextMenu = new ContextMenu();
+            var contextMenu = new ContextMenu();
 
             contextMenu.Items.Add(CreateMenuItem(Properties.Resources.Help, "Help"));
             contextMenu.Items.Add(new Separator());
@@ -173,10 +173,10 @@ namespace Little_System_Cleaner
         /// <returns>MenuItem</returns>
         private MenuItem CreateMenuItem(System.Drawing.Bitmap bMapImg, string header)
         {
-            MenuItem menuItem = new MenuItem();
+            var menuItem = new MenuItem();
 
             // Create icon
-            Image imgCtrl = new Image();
+            var imgCtrl = new Image();
             if (bMapImg != null)
             {
                 imgCtrl.Height = imgCtrl.Width = 16;
@@ -278,7 +278,7 @@ namespace Little_System_Cleaner
                     ? (selectedContent as DynamicUserControl).InitUserControl()
                     : TabControl.SelectedContent as UserControl;
                 
-                MethodBase methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
+                var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
                 methodLoad?.Invoke(nextCtrl, new object[] { });
             }
             else
@@ -291,7 +291,7 @@ namespace Little_System_Cleaner
 
         private UserControl GetLastControl()
         {
-            UserControl lastCtrl = (TabControl.SelectedContent as UserControl);
+            var lastCtrl = (TabControl.SelectedContent as UserControl);
 
             if (lastCtrl is DynamicUserControl)
                 lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
@@ -303,7 +303,7 @@ namespace Little_System_Cleaner
         {
             bool? canExit = null;
 
-            MethodBase methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
+            var methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
                 canExit = (bool?)methodUnload.Invoke(lastCtrl, new object[] { forceExit });
 

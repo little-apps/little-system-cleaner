@@ -37,9 +37,9 @@ namespace Little_System_Cleaner
         {
             bool bMutexCreated;
 
-            bool bWaitToExit = Environment.GetCommandLineArgs().Any(arg => arg == "/restart" || arg == "--restart");
+            var bWaitToExit = Environment.GetCommandLineArgs().Any(arg => arg == "/restart" || arg == "--restart");
 
-            using (Mutex mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated))
+            using (var mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated))
             {
                 if (!bMutexCreated)
                 {
@@ -113,7 +113,7 @@ namespace Little_System_Cleaner
             base.OnStartup(e);
         }
 
-        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             CrashReporter.ShowCrashReport(e.ExceptionObject as Exception);
         }

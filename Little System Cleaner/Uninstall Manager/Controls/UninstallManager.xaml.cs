@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void PopulateListView()
         {
-            List<ProgramInfo> listProgInfo = new List<ProgramInfo>();
+            var listProgInfo = new List<ProgramInfo>();
             RegistryKey regKey = null;
 
             // Clear listview
@@ -75,7 +75,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             if (TextBoxSearch.HasText)
             {
                 StringBuilder result = new StringBuilder();
-                foreach (string str in TextBoxSearch.Text.Split(' '))
+                foreach (var str in TextBoxSearch.Text.Split(' '))
                 {
                     result.Append(Regex.Escape(str));
                     result.Append(".*");
@@ -91,7 +91,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
                 if (regKey != null)
                 {
-                    foreach (string strSubKeyName in regKey.GetSubKeyNames())
+                    foreach (var strSubKeyName in regKey.GetSubKeyNames())
                     {
                         RegistryKey subKey = null;
 
@@ -131,7 +131,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
                     if (regKey != null)
                     {
-                        foreach (string strSubKeyName in regKey.GetSubKeyNames())
+                        foreach (var strSubKeyName in regKey.GetSubKeyNames())
                         {
                             RegistryKey subKey = null;
 
@@ -165,7 +165,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
 
             // Populate list view
-            foreach (ProgramInfo progInfo in listProgInfo.Where(progInfo => (!string.IsNullOrEmpty(progInfo.DisplayName))
+            foreach (var progInfo in listProgInfo.Where(progInfo => (!string.IsNullOrEmpty(progInfo.DisplayName))
                                                                             && (string.IsNullOrEmpty(progInfo.ParentKeyName))
                                                                             && (!progInfo.SystemComponent)).Where(progInfo => regex.IsMatch(progInfo.Program)))
             {
@@ -184,7 +184,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
         {
-            GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+            var headerClicked = e.OriginalSource as GridViewColumnHeader;
 
             if (headerClicked != null)
             {
@@ -236,7 +236,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 return;
             }
 
-            ProgramInfo progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
+            var progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -258,7 +258,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 return;
             }
 
-            ProgramInfo progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
+            var progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
 
             if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
