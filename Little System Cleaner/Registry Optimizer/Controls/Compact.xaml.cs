@@ -138,8 +138,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ProgressBar.Maximum != 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
+            if (Math.Abs(ProgressBar.Maximum) > 0)
+                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
         }
     }
 }

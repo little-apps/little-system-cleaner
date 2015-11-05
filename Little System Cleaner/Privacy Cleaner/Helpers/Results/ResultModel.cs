@@ -29,12 +29,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             if (parent == null)
                 parent = Root;
 
-            return (parent as ResultNode).Children;
+            return (parent as ResultNode)?.Children;
         }
 
         public bool HasChildren(object parent)
         {
-            return (parent as ResultNode).Children.Count > 0;
+            var resultNode = parent as ResultNode;
+            return resultNode != null && resultNode.Children.Count > 0;
         }
     }
 }

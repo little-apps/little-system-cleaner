@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic;s
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {

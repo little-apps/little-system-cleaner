@@ -191,7 +191,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
                 {
                     ListSortDirection direction;
-                    if (headerClicked.Column != _lastColumnClicked)
+                    if (!Equals(headerClicked.Column, _lastColumnClicked))
                         direction = ListSortDirection.Ascending;
                     else
                         direction = _lastDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
@@ -221,7 +221,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 column.HeaderTemplate = Resources["HeaderTemplateArrowDown"] as DataTemplate;
 
             // Remove arrow from previously sorted header
-            if (_lastColumnClicked != null && _lastColumnClicked != column)
+            if (_lastColumnClicked != null && !Equals(_lastColumnClicked, column))
                 _lastColumnClicked.HeaderTemplate = null;
 
             _lastColumnClicked = column;

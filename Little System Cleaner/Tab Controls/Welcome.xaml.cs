@@ -17,6 +17,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows;
 using Little_System_Cleaner.Misc;
@@ -52,8 +53,7 @@ namespace Little_System_Cleaner.Tab_Controls
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
-
-
+        
         public Welcome()
         {
             InitializeComponent();
@@ -64,7 +64,9 @@ namespace Little_System_Cleaner.Tab_Controls
             var memStatus = new MEMORYSTATUSEX();
             RegistryKey regKey = null;
 
-            LastDateTime.Text = Settings.Default.lastScanDate != 0 ? DateTime.FromBinary(Settings.Default.lastScanDate).ToString() : "Unknown";
+            LastDateTime.Text = Settings.Default.lastScanDate != 0
+                ? DateTime.FromBinary(Settings.Default.lastScanDate).ToString(CultureInfo.InvariantCulture)
+                : "Unknown";
             ErrorsFound.Text = $"{Settings.Default.lastScanErrors} errors found";
             ErrorsRepaired.Text = $"{Settings.Default.lastScanErrorsFixed} errors fixed";
             if (Settings.Default.lastScanElapsed != 0)

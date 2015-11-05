@@ -37,16 +37,14 @@ namespace Little_System_Cleaner
             get { return (Application.Current.MainWindow as Main).TaskBarItemInfo.ProgressState; }
             set 
             {
-                if (Application.Current != null)
-                {
-                    var currentWindow = Application.Current.MainWindow as Main;
+                if (Application.Current == null)
+                    return;
+                var currentWindow = Application.Current.MainWindow as Main;
 
-                    var taskBarItemInfo = currentWindow?.TaskBarItemInfo;
+                var taskBarItemInfo = currentWindow?.TaskBarItemInfo;
 
-                    if (taskBarItemInfo != null)
-                        taskBarItemInfo.ProgressState = value;
-                }
-                
+                if (taskBarItemInfo != null)
+                    taskBarItemInfo.ProgressState = value;
             }
         }
 
@@ -190,9 +188,9 @@ namespace Little_System_Cleaner
             return menuItem;
         }
 
-        void menuItem_Click(object sender, RoutedEventArgs e)
+        private void menuItem_Click(object sender, RoutedEventArgs e)
         {
-            switch ((string)(sender as MenuItem).Header)
+            switch ((string)(sender as MenuItem)?.Header)
             {
                 case "Help":
                     {
@@ -275,7 +273,7 @@ namespace Little_System_Cleaner
                 var selectedContent = TabControl.SelectedContent;
 
                 var nextCtrl = selectedContent is DynamicUserControl
-                    ? (selectedContent as DynamicUserControl).InitUserControl()
+                    ? ((DynamicUserControl) selectedContent).InitUserControl()
                     : TabControl.SelectedContent as UserControl;
                 
                 var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
@@ -299,7 +297,7 @@ namespace Little_System_Cleaner
             return lastCtrl;
         }
 
-        private bool? CallOnUnloaded(UserControl lastCtrl, bool forceExit)
+        private static bool? CallOnUnloaded(UserControl lastCtrl, bool forceExit)
         {
             bool? canExit = null;
 

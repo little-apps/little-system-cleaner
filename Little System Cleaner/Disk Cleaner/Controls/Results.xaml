@@ -92,6 +92,6 @@
         </Grid>
 
         <Button Name="ButtonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="3" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" Grid.Column="1" />
-        <Button Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="3" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
+        <Button Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
     </Grid>
 </UserControl>

@@ -70,14 +70,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         public IEnumerable GetChildren(object parent)
         {
-            if (parent == null)
-                return RootChildren;
-            return (parent as ScannerBase).Children;
+            return parent == null ? RootChildren : (parent as ScannerBase)?.Children;
         }
 
         public bool HasChildren(object parent)
         {
-            return (parent as ScannerBase).Children.Count > 0;
+            var scannerBase = parent as ScannerBase;
+            return scannerBase != null && scannerBase.Children.Count > 0;
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             }
             set
             {
-                int index = value;
+                var index = value;
 
                 switch (index)
                 {
@@ -238,7 +238,8 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 		{
             InitializeComponent();
 
-            using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword)) {
+		    using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword))
+		    {
                 proxyPassword.Password = Utils.ToInsecureString(secureStr);
             }
 		}
@@ -251,19 +252,22 @@ namespace Little_System_Cleaner.Tab_Controls.Options
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             if (!Utils.LaunchUri(e.Uri.ToString()))
-                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonSupportThisProject_Click(object sender, RoutedEventArgs e)
         {
             if (!Utils.LaunchUri(@"http://www.little-apps.com/?donate"))
-                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonWebsite_Click(object sender, RoutedEventArgs e)
         {
             if (!Utils.LaunchUri(@"http://www.little-apps.com/"))
-                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Unable to detect web browser to open link",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)

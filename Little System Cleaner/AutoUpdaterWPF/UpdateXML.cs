@@ -16,7 +16,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 set;
             }
 
-            public Version Version => (!string.IsNullOrEmpty(VersionString) ? new Version(VersionString) : null);
+            public Version Version => !string.IsNullOrEmpty(VersionString) ? new Version(VersionString) : null;
 
             [XmlElement("title")]
             public string Title

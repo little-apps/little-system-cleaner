@@ -101,21 +101,22 @@ namespace CommonTools
             _searchEventDelayTimer.Tick += OnSeachEventDelayTimerTick;
         }
 
-        void OnSeachEventDelayTimerTick(object o, EventArgs e)
+        private void OnSeachEventDelayTimerTick(object o, EventArgs e)
         {
             _searchEventDelayTimer.Stop();
             RaiseSearchEvent();
         }
 
-        static void OnSearchEventTimeDelayChanged(
+        private static void OnSearchEventTimeDelayChanged(
             DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            SearchTextBox stb = o as SearchTextBox;
-            if (stb != null)
-            {
-                stb._searchEventDelayTimer.Interval = ((Duration)e.NewValue).TimeSpan;
-                stb._searchEventDelayTimer.Stop();
-            }
+            var stb = o as SearchTextBox;
+
+            if (stb == null)
+                return;
+
+            stb._searchEventDelayTimer.Interval = ((Duration)e.NewValue).TimeSpan;
+            stb._searchEventDelayTimer.Stop();
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
@@ -135,7 +136,7 @@ namespace CommonTools
         {
             base.OnApplyTemplate();
             
-            Border iconBorder = GetTemplateChild("PART_SearchIconBorder") as Border;
+            var iconBorder = GetTemplateChild("PART_SearchIconBorder") as Border;
 
             if (iconBorder == null)
                 return;
@@ -191,7 +192,7 @@ namespace CommonTools
 
         private void RaiseSearchEvent()
         {
-            RoutedEventArgs args = new RoutedEventArgs(SearchEvent);
+            var args = new RoutedEventArgs(SearchEvent);
             RaiseEvent(args);
         }
 

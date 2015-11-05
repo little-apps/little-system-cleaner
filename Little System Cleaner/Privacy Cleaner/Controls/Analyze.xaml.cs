@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,10 +42,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private readonly Task _scanTask;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-
-        int _currentListViewParentIndex = -1;
-        int _currentListViewIndex = -1;
+        
+        private int _currentListViewParentIndex = -1;
+        private int _currentListViewIndex = -1;
 
         public ScannerBase CurrentListViewItem => SectionsCollection[_currentListViewParentIndex].Children[_currentListViewIndex];
 
@@ -140,11 +138,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
                     if (n.Children.Count > 0) // Should always have children, but just in case
                     {
-                        foreach (var child in n.Children)
+                        foreach (
+                            var child in
+                                n.Children.TakeWhile(child => !_cancellationTokenSource.IsCancellationRequested))
                         {
-                            if (_cancellationTokenSource.IsCancellationRequested)
-                                break;
-
                             InvokeCurrentSection(child.Section, currentParent);
 
                             StartScanner(n, child);
@@ -167,7 +164,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                             Wizard.ResultArray.Add(n.Results);
                             Settings.Default.lastScanErrors += n.Results.Children.Count;
                         }
-                            
                     }
 
                     // Update info before going to next section (or exiting) 

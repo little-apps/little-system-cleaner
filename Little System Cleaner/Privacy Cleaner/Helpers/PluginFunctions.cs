@@ -254,17 +254,21 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (dirList == null)
                 return;
 
-            foreach (string folderPath in dirList)
+            foreach (var folderPath in dirList)
             {
                 string[] fileList = null;
 
                 Wizard.CurrentFile = folderPath;
-                string folderName = folderPath.Substring(Path.GetDirectoryName(folderPath).Length + 1);
-
-                // Iterate through the files and folders in the current folder
-                foreach (KeyValuePair<string, bool> kvp in regexFolders.Where(kvp => Regex.IsMatch(folderName, kvp.Key)))
+                var directoryName = Path.GetDirectoryName(folderPath);
+                if (directoryName != null)
                 {
-                    AddToFolders(folderPath, kvp.Value);
+                    var folderName = folderPath.Substring(directoryName.Length + 1);
+
+                    // Iterate through the files and folders in the current folder
+                    foreach (var kvp in regexFolders.Where(kvp => Regex.IsMatch(folderName, kvp.Key)))
+                    {
+                        AddToFolders(folderPath, kvp.Value);
+                    }
                 }
 
                 try
@@ -283,13 +287,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 if (fileList == null)
                     continue;
 
-                foreach (string filePath in fileList)
+                foreach (var filePath in fileList)
                 {
                     if (string.IsNullOrEmpty(filePath))
                         continue;
 
                     // Get filename from file path
-                    string fileName = Path.GetFileName(filePath);
+                    var fileName = Path.GetFileName(filePath);
 
                     if (regexFiles.Where(regex => !string.IsNullOrEmpty(regex)).Any(regex => Regex.IsMatch(fileName, regex)))
                         AddToFiles(filePath);
@@ -302,7 +306,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!File.Exists(filePath))
                 return;
 
-            foreach (string sectionName in MiscFunctions.GetSections(filePath))
+            foreach (var sectionName in MiscFunctions.GetSections(filePath))
             {
                 if (string.IsNullOrEmpty(sectionName))
                     continue;
@@ -310,10 +314,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 if (!Regex.IsMatch(sectionName, searchSectionText))
                     continue;
 
-                foreach (KeyValuePair<string, string> kvp in MiscFunctions.GetValues(filePath, sectionName).Cast<KeyValuePair<string, string>>().Where(kvp => Regex.IsMatch(kvp.Key, searchValueNameText)))
-                {
-                    IniList.Add(new IniInfo { FilePath = filePath, SectionName = sectionName, ValueName = kvp.Key });
-                }
+                IniList.AddRange(MiscFunctions.GetValues(filePath, sectionName)
+                    .Cast<KeyValuePair<string, string>>()
+                    .Where(kvp => Regex.IsMatch(kvp.Key, searchValueNameText))
+                    .Select(kvp => new IniInfo {FilePath = filePath, SectionName = sectionName, ValueName = kvp.Key}));
             }
         }
 
@@ -322,10 +326,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!File.Exists(filePath))
                 return;
 
-            foreach (string sectionName in MiscFunctions.GetSections(filePath).Where(sectionName => !string.IsNullOrEmpty(sectionName)).Where(sectionName => Regex.IsMatch(sectionName, searchSectionText)))
-            {
-                IniList.Add(new IniInfo { FilePath = filePath, SectionName = sectionName });
-            }
+            IniList.AddRange(
+                MiscFunctions.GetSections(filePath)
+                    .Where(sectionName => !string.IsNullOrEmpty(sectionName))
+                    .Where(sectionName => Regex.IsMatch(sectionName, searchSectionText))
+                    .Select(sectionName => new IniInfo {FilePath = filePath, SectionName = sectionName}));
         }
 
         public void DeleteXml(string filePath, string xPath)
@@ -338,8 +343,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         Dictionary<RegistryKey, string[]> RecurseRegKeyValueNames(RegistryKey regKey, List<string> regexValueNames, bool recurse)
         {
-            Dictionary<RegistryKey, string[]> ret = new Dictionary<RegistryKey, string[]>();
-            List<string> valueNames = new List<string>();
+            var ret = new Dictionary<RegistryKey, string[]>();
+            var valueNames = new List<string>();
 
             if (regKey == null || regexValueNames.Count == 0)
                 return ret;
@@ -364,11 +369,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return ret;
             }
 
-            foreach (string valueName in regValueNames)
-            {
-                if (regexValueNames.Any(regex => Regex.IsMatch(valueName, regex) && (!valueNames.Contains(valueName))))
-                    valueNames.Add(valueName);
-            }
+            valueNames.AddRange(
+                regValueNames.Where(
+                    valueName =>
+                        regexValueNames.Any(
+                            regex => Regex.IsMatch(valueName, regex) && (!valueNames.Contains(valueName)))));
 
             if (recurse)
             {
@@ -392,7 +397,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     return ret;
                 }
 
-                foreach (string subKey in subKeys)
+                foreach (var subKey in subKeys)
                 {
                     RegistryKey subRegKey = null;
 
@@ -405,11 +410,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
                     }
 
-                    if (subRegKey != null)
-                    {
-                        foreach (KeyValuePair<RegistryKey, string[]> kvp in RecurseRegKeyValueNames(subRegKey, regexValueNames, recurse))
-                            ret.Add(kvp.Key, kvp.Value);
-                    }
+                    if (subRegKey == null)
+                        continue;
+                    
+                    foreach (var kvp in RecurseRegKeyValueNames(subRegKey, regexValueNames, true))
+                        ret.Add(kvp.Key, kvp.Value);
                 }
             }
 
@@ -419,9 +424,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             return ret;
         }
 
-        Dictionary<RegistryKey, bool> RecurseRegKeySubKeys(RegistryKey regKey, Dictionary<string, bool> regexSubKeys, bool recurse)
+        private static Dictionary<RegistryKey, bool> RecurseRegKeySubKeys(RegistryKey regKey, Dictionary<string, bool> regexSubKeys, bool recurse)
         {
-            Dictionary<RegistryKey, bool> ret = new Dictionary<RegistryKey, bool>();
+            var ret = new Dictionary<RegistryKey, bool>();
 
             if (regKey == null || regexSubKeys.Count == 0)
                 return ret;
@@ -444,9 +449,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (subKeys == null)
                 return ret;
 
-            foreach (string subKeyName in subKeys)
+            foreach (var subKeyName in subKeys)
             {
-                foreach (KeyValuePair<string, bool> kvp in regexSubKeys.Where(kvp => Regex.IsMatch(subKeyName, kvp.Key)))
+                foreach (var kvp in regexSubKeys.Where(kvp => Regex.IsMatch(subKeyName, kvp.Key)))
                 {
                     RegistryKey subKey = null;
 
@@ -467,45 +472,45 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 }
             }
 
-            if (recurse)
+            if (!recurse)
+                return ret;
+
+            string[] recurseSubKeys = null;
+
+            try
             {
-                string[] recurseSubKeys = null;
+                recurseSubKeys = regKey.GetSubKeyNames();
+            }
+            catch (SecurityException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+            }
+
+            if (recurseSubKeys == null)
+                return ret;
+
+            foreach (var subKey in recurseSubKeys)
+            {
+                RegistryKey subRegKey = null;
 
                 try
                 {
-                    recurseSubKeys = regKey.GetSubKeyNames();
+                    subRegKey = regKey.OpenSubKey(subKey, true);
                 }
                 catch (SecurityException ex)
                 {
-                    Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    Debug.WriteLine("The following error occurred: {0}\nUnable to get sub keys.", ex.Message);
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
                 }
 
-                if (recurseSubKeys == null)
-                    return ret;
+                if (subRegKey == null)
+                    continue;
 
-                foreach (string subKey in recurseSubKeys)
-                {
-                    RegistryKey subRegKey = null;
-
-                    try
-                    {
-                        subRegKey = regKey.OpenSubKey(subKey, true);
-                    }
-                    catch (SecurityException ex)
-                    {
-                        Debug.WriteLine("The following error occurred: {0}\nUnable to open sub key.", ex.Message);
-                    }
-
-                    if (subRegKey == null)
-                        continue;
-
-                    foreach (KeyValuePair<RegistryKey, bool> kvp in RecurseRegKeySubKeys(subRegKey, regexSubKeys, recurse))
-                        ret.Add(kvp.Key, kvp.Value);
-                }
+                foreach (var kvp in RecurseRegKeySubKeys(subRegKey, regexSubKeys, true))
+                    ret.Add(kvp.Key, kvp.Value);
             }
 
             return ret;
@@ -541,18 +546,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             // Check if folder is root directory (THIS IS DANGEROUS)
             try
             {
-                string rootDir = Directory.GetDirectoryRoot(cleanFolderPath);
+                if (cleanFolderPath != null)
+                {
+                    var rootDir = Directory.GetDirectoryRoot(cleanFolderPath);
 
-                if (rootDir == cleanFolderPath)
-                    return;
+                    if (rootDir == cleanFolderPath)
+                        return;
+                }
             }
             catch (Exception ex)
             {
                 Debug.Write("The following error occurred: {0}\nUnable to determine root folder.", ex.Message);
                 return;
-            } 
+            }
 
-            if (!FolderAlreadyAdded(cleanFolderPath))
+            if (FolderAlreadyAdded(cleanFolderPath))
+                return;
+
+            if (cleanFolderPath != null)
                 Folders.Add(cleanFolderPath, recurse);
         }
 
@@ -586,7 +597,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
             else
             {
-                List<string> xPaths = XmlPaths[filePath];
+                var xPaths = XmlPaths[filePath];
 
                 if (xPaths.Contains(xPath))
                     // Already added

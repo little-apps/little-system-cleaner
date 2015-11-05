@@ -1,14 +1,12 @@
 ﻿using Little_System_Cleaner.Misc;
 using Microsoft.Win32;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -304,7 +302,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             updateForm.Focus();
         }
 
-        private static Attribute GetAttribute(Assembly assembly, Type attributeType)
+        private static Attribute GetAttribute(ICustomAttributeProvider assembly, Type attributeType)
         {
             var attributes = assembly.GetCustomAttributes(attributeType, false);
             if (attributes.Length == 0)

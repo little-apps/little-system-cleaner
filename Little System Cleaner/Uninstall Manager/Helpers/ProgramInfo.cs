@@ -287,11 +287,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 try
                 {
                     var proc = Process.Start("msiexec.exe", cmdArgs);
-                    proc.WaitForExit();
+                    proc?.WaitForExit();
 
-                    if (proc.ExitCode != 0)
+                    if (proc != null && proc.ExitCode != 0)
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "It appears the program couldn't be uninstalled or the uninstall was aborted by the user.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow,
+                            "It appears the program couldn't be uninstalled or the uninstall was aborted by the user.",
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         return false;
                     }
                 }
@@ -300,23 +302,30 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     if (ex is FileNotFoundException)
                     {
                         var message = $"The Windows Installer tool (msiexec.exe) could not be found. Please ensure that it's located in either {Environment.GetFolderPath(Environment.SpecialFolder.Windows)} or {Environment.SystemDirectory} and also ensure that the PATH variable is properly set to include these directories.";
-                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                     }
                     else if (ex is Win32Exception)
                     {
                         var hr = Marshal.GetHRForException(ex);
                         if (hr == unchecked((int)0x80004002))
                         {
-                            MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(Application.Current.MainWindow,
+                                "The following error occurred: " + ex.Message +
+                                "\nThis can be caused by problems with permissions and the Windows Registry.",
+                                Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                         else
                         {
-                            MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(Application.Current.MainWindow,
+                                "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                         }
                     }
                     else
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message,
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
                     return false;
@@ -350,23 +359,30 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     if (ex is FileNotFoundException)
                     {
                         string message = $"The file could not be found from the command: {cmdLine}";
-                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                     }
                     else if (ex is Win32Exception)
                     {
                         var hr = Marshal.GetHRForException(ex);
                         if (hr == unchecked((int)0x80004002))
                         {
-                            MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(Application.Current.MainWindow,
+                                "The following error occurred: " + ex.Message +
+                                "\nThis can be caused by problems with permissions and the Windows Registry.",
+                                Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                         else
                         {
-                            MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(Application.Current.MainWindow,
+                                "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                         }
                     }
                     else
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message,
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
                     return false;
@@ -377,11 +393,14 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             if (SlowCache)
             {
                 if (!RemoveArpCache())
-                    MessageBox.Show(Application.Current.MainWindow, "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow,
+                        "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
 
-            MessageBox.Show("Successfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+
+            MessageBox.Show("Successfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK,
+                MessageBoxImage.Information);
 
             return true;
         }
@@ -397,7 +416,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error removing registry key: {ex.Message}", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error removing registry key: {ex.Message}", Utils.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 
                 return false;
             }
@@ -405,10 +425,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             if (SlowCache)
             {
                 if (!RemoveArpCache())
-                    MessageBox.Show(Application.Current.MainWindow, "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow,
+                        "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            MessageBox.Show("Successfully removed registry key", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Successfully removed registry key", Utils.ProductName, MessageBoxButton.OK,
+                MessageBoxImage.Information);
 
             return true;
         }
@@ -418,7 +441,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         /// </summary>
         /// <param name="ft">FILETIME structure</param>
         /// <returns>DateTime structure</returns>
-        private DateTime FileTime2DateTime(FILETIME ft)
+        private static DateTime FileTime2DateTime(FILETIME ft)
         {
             DateTime dt;
             var hFT2 = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
@@ -448,7 +471,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get registry value for " + valueName + " in " + regKey);
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get registry value for " +
+                                valueName + " in " + regKey);
             }
 
             return value;
@@ -467,7 +491,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public bool Equals(ProgramInfo other)
         {
-            return (other.Key == Key);
+            return other.Key == Key;
         }
         #endregion
     }

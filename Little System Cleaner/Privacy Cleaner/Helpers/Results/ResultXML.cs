@@ -63,18 +63,21 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         continue;
                     }
 
-                    foreach (XmlNode xmlNode in xmlNodes)
+                    if (xmlNodes != null)
                     {
-                        XmlNode parentNode = xmlNode.ParentNode;
+                        foreach (XmlNode xmlNode in xmlNodes)
+                        {
+                            var parentNode = xmlNode.ParentNode;
 
-                        if (parentNode != null)
-                            parentNode.RemoveChild(xmlNode);
-                        else
-                            xmlDoc.RemoveChild(xmlNode);
+                            if (parentNode != null)
+                                parentNode.RemoveChild(xmlNode);
+                            else
+                                xmlDoc.RemoveChild(xmlNode);
 
-                        Settings.Default.lastScanErrorsFixed++;
+                            Settings.Default.lastScanErrorsFixed++;
+                        }
                     }
-                    
+
                     report.WriteLine("Removed XML File: {0} Matching XPath: {1}", filePath, xPath);
                 }
 

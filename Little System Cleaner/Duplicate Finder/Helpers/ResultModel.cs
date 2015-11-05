@@ -1,6 +1,5 @@
 ﻿using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Duplicate_Finder.Controls;
-using System.Collections.Generic;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {

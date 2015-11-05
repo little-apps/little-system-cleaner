@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
@@ -24,7 +22,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public override bool Equals(object obj)
         {
-            return (obj is IncludeDrive ? Equals(obj as IncludeDrive) : base.Equals(obj));
+            return obj is IncludeDrive ? Equals((IncludeDrive) obj) : base.Equals(obj);
         }
 
         public bool Equals(IncludeDrive other)

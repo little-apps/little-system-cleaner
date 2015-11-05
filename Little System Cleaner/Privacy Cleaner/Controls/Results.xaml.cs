@@ -108,13 +108,17 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            foreach (var parent in (Tree.Model as ResultModel).Root.Children)
+            var observationModel = (Tree.Model as ResultModel)?.Root.Children;
+            if (observationModel != null)
             {
-                foreach (var n in parent.Children.Where(n => n.IsChecked.GetValueOrDefault()))
+                foreach (var parent in observationModel)
                 {
-                    report.WriteLine("Section: {0}", parent.Section);
+                    foreach (var n in parent.Children.Where(n => n.IsChecked.GetValueOrDefault()))
+                    {
+                        report.WriteLine("Section: {0}", parent.Section);
 
-                    n.Clean(report);
+                        n.Clean(report);
+                    }
                 }
             }
 

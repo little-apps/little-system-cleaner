@@ -294,8 +294,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             try
             {
-                UrlHistoryClass url = new UrlHistoryClass();
-                IUrlHistoryStg2 obj = (IUrlHistoryStg2)url;
+                var url = new UrlHistoryClass();
+                var obj = (IUrlHistoryStg2)url;
 
                 obj.ClearHistory();
             }
@@ -308,56 +308,51 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanCookies()
         {
-            long folderSize = 0;
+            var folderSize = MiscFunctions.FindUrlCacheEntries("cookie:").Aggregate(0L, (i, info) => i + info.dwSizeHigh);
 
-            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries("cookie:"))
-            {
-                cacheEntriesCookies.Add(cacheEntry);
+            cacheEntriesCookies.AddRange(MiscFunctions.FindUrlCacheEntries("cookie:"));
 
-                folderSize += cacheEntry.dwSizeHigh;
-            }
-            
             if (folderSize > 0)
                 Wizard.StoreCleanDelegate(ClearIeCookies, "Clear Cookies", folderSize);
         }
 
         private void ClearIeCookies()
         {
-            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCookies.Where(cacheEntry => !DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName)).Where(cacheEntry => Marshal.GetLastWin32Error() == 5).Where(cacheEntry => UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0)))
+            foreach (
+                var cacheEntry in
+                    cacheEntriesCookies.Where(cacheEntry => !DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                        .Where(cacheEntry => Marshal.GetLastWin32Error() == 5)
+                        .Where(cacheEntry => UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0)))
             {
                 DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
             }
         }
 
-        private void ScanAutoComplete()
+        private static void ScanAutoComplete()
         {
             Wizard.StoreCleanDelegate(ClearFormData, "Clear Form Data & Passwords", 0);
         }
 
-        private void ClearFormData()
+        private static void ClearFormData()
         {
             if (Utils.MessageBoxThreadSafe("This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
                 return;
 
             // Clear Form Data
             var proc = Process.Start("rundll32.exe", "InetCpl.cpl,ClearMyTracksByProcess 16");
-            proc.WaitForExit();
+            proc?.WaitForExit();
 
             // Clear Saved Passwords
             proc = Process.Start("rundll32.exe", "InetCpl.cpl,ClearMyTracksByProcess 32");
-            proc.WaitForExit();
+            proc?.WaitForExit();
         }
 
         private void ScanTemporaryFiles()
         {
-            long folderSize = 0;
+            var cacheEntries = MiscFunctions.FindUrlCacheEntries(null);
+            var folderSize = cacheEntries.Aggregate(0L, (i, info) => i + info.dwSizeHigh);
 
-            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in MiscFunctions.FindUrlCacheEntries(null))
-            {
-                cacheEntriesCache.Add(cacheEntry);
-
-                folderSize += cacheEntry.dwSizeHigh;
-            }
+            cacheEntriesCache.AddRange(cacheEntries);
 
             if (folderSize > 0)
                 Wizard.StoreCleanDelegate(ClearIeCache, "Clear Cache Files", folderSize);
@@ -367,21 +362,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             const uint COOKIE_CACHE_ENTRY = 0x00100000;
 
-            foreach (INTERNET_CACHE_ENTRY_INFO cacheEntry in cacheEntriesCache)
+            foreach (
+                var sourceUrlName in
+                    cacheEntriesCache.Where(cacheEntry => (cacheEntry.CacheEntryType & COOKIE_CACHE_ENTRY) == 0)
+                        .Where(cacheEntry => !DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
+                        .Where(cacheEntry => Marshal.GetLastWin32Error() == 5)
+                        .Where(cacheEntry => UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
+                        .Select(cacheEntry => cacheEntry.lpszSourceUrlName))
             {
-                // Delete entry if its not a cookie
-                if ((cacheEntry.CacheEntryType & COOKIE_CACHE_ENTRY) != 0)
-                    continue;
-
-                if (DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName))
-                    continue;
-
-                // ERROR_ACCESS_DENIED
-                if (Marshal.GetLastWin32Error() != 5)
-                    continue;
-                // Unlock file and try again
-                if (UnlockUrlCacheEntryFile(cacheEntry.lpszSourceUrlName, 0))
-                    DeleteUrlCacheEntry(cacheEntry.lpszSourceUrlName);
+                DeleteUrlCacheEntry(sourceUrlName);
             }
         }
 

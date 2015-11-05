@@ -32,7 +32,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -79,12 +78,9 @@ namespace Little_System_Cleaner.Misc
         {
             get
             {
-                if (System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread)
-                {
-                    return (Window)System.Windows.Application.Current.Dispatcher.Invoke(new Func<Window>(() => MainWindowThreadSafe));
-                }
-
-                return System.Windows.Application.Current.MainWindow;
+                return System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread
+                    ? System.Windows.Application.Current.Dispatcher.Invoke(() => MainWindowThreadSafe)
+                    : System.Windows.Application.Current.MainWindow;
             }
         }
 
@@ -99,21 +95,21 @@ namespace Little_System_Cleaner.Misc
                 case 1:
                     return WebRequest.DefaultWebProxy;
                 default:
-                    if (!string.IsNullOrEmpty(Settings.Default.optionsProxyHost) && (Settings.Default.optionsProxyPort > 0 && Settings.Default.optionsProxyPort < 65535))
-                    {
-                        webProxy.Address = new Uri("http://" + Settings.Default.optionsProxyHost + ":" + Settings.Default.optionsProxyPort);
-                        webProxy.BypassProxyOnLocal = false;
-
-                        if (!Settings.Default.optionsProxyAuthenticate)
-                            return webProxy;
-
-                        using (SecureString strPass = DecryptString(Settings.Default.optionsProxyPassword))
-                        {
-                            webProxy.Credentials = new NetworkCredential(Settings.Default.optionsProxyUser, strPass);
-                        }
-
+                    if (string.IsNullOrEmpty(Settings.Default.optionsProxyHost) ||
+                        Settings.Default.optionsProxyPort <= 0 || Settings.Default.optionsProxyPort >= 65535)
                         return webProxy;
+
+                    webProxy.Address = new Uri("http://" + Settings.Default.optionsProxyHost + ":" + Settings.Default.optionsProxyPort);
+                    webProxy.BypassProxyOnLocal = false;
+
+                    if (!Settings.Default.optionsProxyAuthenticate)
+                        return webProxy;
+
+                    using (var strPass = DecryptString(Settings.Default.optionsProxyPassword))
+                    {
+                        webProxy.Credentials = new NetworkCredential(Settings.Default.optionsProxyUser, strPass);
                     }
+
                     return webProxy;
             }
         }
@@ -128,17 +124,15 @@ namespace Little_System_Cleaner.Misc
                 string macId = "NOTFOUND";
                 try
                 {
-                    NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+                    var nics = NetworkInterface.GetAllNetworkInterfaces();
 
                     if (nics.Length > 0)
                     {
-                        foreach (NetworkInterface nic in nics)
+                        foreach (var nic in nics.Where(nic => nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                            )
                         {
-                            if (nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-                            {
-                                macId = nic.GetPhysicalAddress().ToString();
-                                break;
-                            }
+                            macId = nic.GetPhysicalAddress().ToString();
+                            break;
                         }
                     }
 
@@ -148,19 +142,20 @@ namespace Little_System_Cleaner.Misc
                     // ignored
                 }
 
-                string hardDriveSerialNo = "";
-                ManagementClass mc = new ManagementClass("Win32_DiskDrive");
-                foreach (var o in mc.GetInstances())
+                string[] hardDriveSerialNo = {""};
+                var mc = new ManagementClass("Win32_DiskDrive");
+                foreach (
+                    var o in
+                        mc.GetInstances()
+                            .Cast<ManagementBaseObject>()
+                            .TakeWhile(o => string.IsNullOrEmpty(hardDriveSerialNo[0])))
                 {
-                    if (!string.IsNullOrEmpty(hardDriveSerialNo))
-                        break;
-
                     // Only get the first one
                     try
                     {
                         var mo = (ManagementObject)o;
 
-                        hardDriveSerialNo = mo["SerialNumber"].ToString();
+                        hardDriveSerialNo[0] = mo["SerialNumber"].ToString();
                     }
                     catch
                     {
@@ -169,7 +164,7 @@ namespace Little_System_Cleaner.Misc
                 }
 
                 MD5 md5 = new MD5CryptoServiceProvider();
-                return md5.ComputeHash(Encoding.ASCII.GetBytes(machineName + macId + hardDriveSerialNo));
+                return md5.ComputeHash(Encoding.ASCII.GetBytes(machineName + macId + hardDriveSerialNo[0]));
             }
         }
 
@@ -178,7 +173,7 @@ namespace Little_System_Cleaner.Misc
             if (input.Length == 0)
                 return string.Empty;
 
-            byte[] encryptedData = ProtectedData.Protect(
+            var encryptedData = ProtectedData.Protect(
                 Encoding.Unicode.GetBytes(ToInsecureString(input)),
                 GetMachineHash,
                 DataProtectionScope.CurrentUser);
@@ -192,7 +187,7 @@ namespace Little_System_Cleaner.Misc
 
             try
             {
-                byte[] decryptedData = ProtectedData.Unprotect(
+                var decryptedData = ProtectedData.Unprotect(
                     Convert.FromBase64String(encryptedData),
                     GetMachineHash,
                     DataProtectionScope.CurrentUser);
@@ -206,8 +201,8 @@ namespace Little_System_Cleaner.Misc
 
         internal static SecureString ToSecureString(string input)
         {
-            SecureString secure = new SecureString();
-            foreach (char c in input)
+            var secure = new SecureString();
+            foreach (var c in input)
             {
                 secure.AppendChar(c);
             }
@@ -219,7 +214,7 @@ namespace Little_System_Cleaner.Misc
         {
             string returnValue;
 
-            IntPtr ptr = Marshal.SecureStringToBSTR(input);
+            var ptr = Marshal.SecureStringToBSTR(input);
 
             try
             {
@@ -244,24 +239,19 @@ namespace Little_System_Cleaner.Misc
         {
             string strBaseKey, strSubKey;
 
-            if (!ParseRegKeyPath(inPath, out strBaseKey, out strSubKey))
-                return false;
-
-            return RegKeyExists(strBaseKey, strSubKey);
+            return ParseRegKeyPath(inPath, out strBaseKey, out strSubKey) && RegKeyExists(strBaseKey, strSubKey);
         }
 
         internal static bool RegKeyExists(string mainKey, string subKey)
         {
-            bool bKeyExists = false;
-            RegistryKey reg = RegOpenKey(mainKey, subKey);
+            var reg = RegOpenKey(mainKey, subKey);
 
-            if (reg != null)
-            {
-                bKeyExists = true;
-                reg.Close();
-            }
+            if (reg == null)
+                return false;
 
-            return bKeyExists;
+            reg.Close();
+
+            return true;
         }
 
         /// <summary>
@@ -458,24 +448,21 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns false if the filepath doesnt exist</returns>
         internal static bool ResolveShortcut(string shortcut, out string filepath, out string arguments)
         {
-            PInvoke.ShellLink link = new PInvoke.ShellLink();
+            var link = new PInvoke.ShellLink();
             ((PInvoke.IPersistFile)link).Load(shortcut, PInvoke.STGM_READ);
             // TODO: if I can get hold of the hwnd call resolve first. This handles moved and renamed files.  
             // ((IShellLinkW)link).Resolve(hwnd, 0) 
-            StringBuilder path = new StringBuilder(PInvoke.MAX_PATH);
-            PInvoke.WIN32_FIND_DATAW data = new PInvoke.WIN32_FIND_DATAW();
+            var path = new StringBuilder(PInvoke.MAX_PATH);
+            PInvoke.WIN32_FIND_DATAW data;
             ((PInvoke.IShellLinkW)link).GetPath(path, path.Capacity, out data, 0);
 
-            StringBuilder args = new StringBuilder(PInvoke.MAX_PATH);
+            var args = new StringBuilder(PInvoke.MAX_PATH);
             ((PInvoke.IShellLinkW)link).GetArguments(args, args.Capacity);
 
             filepath = path.ToString();
             arguments = args.ToString();
 
-            if (!FileExists(filepath))
-                return false;
-
-            return true;
+            return FileExists(filepath);
         }
 
         /// <summary>
@@ -491,7 +478,7 @@ namespace Little_System_Cleaner.Misc
             if (string.IsNullOrEmpty(filePath))
                 return false;
 
-            string strFileName = string.Copy(filePath.Trim().ToLower());
+            var strFileName = string.Copy(filePath.Trim().ToLower());
 
             // Remove quotes
             strFileName = UnqouteSpaces(strFileName);
@@ -504,23 +491,24 @@ namespace Little_System_Cleaner.Misc
                 return false;
 
             // Check Drive Type
-            VDTReturn ret = ValidDriveType(strFileName);
-            if (ret == VDTReturn.InvalidDrive)
-                return false;
-            if (ret == VDTReturn.SkipCheck)
-                return true;
+            var ret = ValidDriveType(strFileName);
+            switch (ret)
+            {
+                case VDTReturn.InvalidDrive:
+                    return false;
+                case VDTReturn.SkipCheck:
+                    return true;
+                case VDTReturn.ValidDrive:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             // Now see if file exists
             if (File.Exists(strFileName))
                 return true;
 
-            if (PInvoke.PathFileExists(strFileName))
-                return true;
-
-            if (SearchPath(strFileName))
-                return true;
-
-            return false;
+            return PInvoke.PathFileExists(strFileName) || SearchPath(strFileName);
         }
 
         /// <summary>
@@ -533,7 +521,7 @@ namespace Little_System_Cleaner.Misc
         /// <returns>False if the path doesnt exist</returns>
         internal static bool ExtractArguments(string cmdLine, out string filePath, out string fileArgs)
         {
-            StringBuilder strCmdLine = new StringBuilder(cmdLine.ToLower().Trim());
+            var strCmdLine = new StringBuilder(cmdLine.ToLower().Trim());
 
             filePath = fileArgs = "";
 
@@ -546,11 +534,7 @@ namespace Little_System_Cleaner.Misc
 
             filePath = string.Copy(strCmdLine.ToString());
 
-            if (!string.IsNullOrEmpty(filePath))
-                if (FileExists(filePath))
-                    return true;
-
-            return false;
+            return !string.IsNullOrEmpty(filePath) && FileExists(filePath);
         }
 
         /// <summary>
@@ -563,8 +547,8 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns true if file was located</returns>
         internal static bool ExtractArguments2(string cmdLine, out string filePath, out string fileArgs)
         {
-            string strCmdLine = string.Copy(cmdLine.ToLower().Trim());
-            bool bRet = false;
+            var strCmdLine = string.Copy(cmdLine.ToLower().Trim());
+            var bRet = false;
 
             filePath = fileArgs = "";
 
@@ -578,9 +562,9 @@ namespace Little_System_Cleaner.Misc
             strCmdLine = Environment.ExpandEnvironmentVariables(strCmdLine);
 
             // Try to see file exists by combining parts
-            StringBuilder strFileFullPath = new StringBuilder(260);
-            int nPos = 0;
-            foreach (char ch in strCmdLine)
+            var strFileFullPath = new StringBuilder(260);
+            var nPos = 0;
+            foreach (var ch in strCmdLine)
             {
                 strFileFullPath = strFileFullPath.Append(ch);
                 nPos++;
@@ -589,12 +573,12 @@ namespace Little_System_Cleaner.Misc
                     break;
 
                 // See if part exists
-                if (File.Exists(strFileFullPath.ToString()))
-                {
-                    filePath = string.Copy(strFileFullPath.ToString());
-                    bRet = true;
-                    break;
-                }
+                if (!File.Exists(strFileFullPath.ToString()))
+                    continue;
+
+                filePath = string.Copy(strFileFullPath.ToString());
+                bRet = true;
+                break;
             }
 
             if (bRet && nPos > 0)
@@ -633,28 +617,28 @@ namespace Little_System_Cleaner.Misc
             float nSize;
             string strSizeFmt, strUnit;
 
-            if (length < 1000)             // 1KB
+            if (length < 1000) // 1KB
             {
                 nSize = length;
                 strUnit = (shortFormat ? " B" : " Bytes");
             }
-            else if (length < 1000000)     // 1MB
+            else if (length < 1000000) // 1MB
             {
-                nSize = length / (float)0x400;
+                nSize = length/(float) 0x400;
                 strUnit = (shortFormat ? " KB" : " Kilobytes");
             }
-            else if (length < 1000000000)   // 1GB
+            else if (length < 1000000000) // 1GB
             {
-                nSize = length / (float)0x100000;
+                nSize = length/(float) 0x100000;
                 strUnit = (shortFormat ? " MB" : " Megabytes");
             }
             else
             {
-                nSize = length / (float)0x40000000;
+                nSize = length/(float) 0x40000000;
                 strUnit = (shortFormat ? " GB" : " Gigabytes");
             }
 
-            if ((nSize - nSize) == 0.00F)
+            if (nSize - nSize == 0.00F)
                 strSizeFmt = nSize.ToString("0");
             else if (nSize < 10)
                 strSizeFmt = nSize.ToString("0.00");
@@ -762,7 +746,7 @@ namespace Little_System_Cleaner.Misc
             return string.Copy(sb.ToString());
         }
 
-        
+
         /// <summary>
         /// Parses the path and checks for any illegal characters
         /// </summary>
@@ -895,7 +879,6 @@ namespace Little_System_Cleaner.Misc
 
                     return true;
                 }
-
             }
             catch
             {
@@ -1007,19 +990,23 @@ namespace Little_System_Cleaner.Misc
             if (number <= 0)
                 return number.ToString();
 
-            int n = number % 100;
+            int n = number%100;
 
             // Skip the switch for as many numbers as possible.
             if (n > 3 && n < 21)
                 return n + "th";
 
             // Determine the suffix for numbers ending in 1, 2 or 3, otherwise add a 'th'
-            switch (n % 10)
+            switch (n%10)
             {
-                case 1: return n + "st";
-                case 2: return n + "nd";
-                case 3: return n + "rd";
-                default: return n + "th";
+                case 1:
+                    return n + "st";
+                case 2:
+                    return n + "nd";
+                case 3:
+                    return n + "rd";
+                default:
+                    return n + "th";
             }
         }
 
@@ -1039,12 +1026,7 @@ namespace Little_System_Cleaner.Misc
             {
                 Image bMapImg = new Image
                 {
-                    Source = Imaging.CreateBitmapSourceFromHBitmap(
-                                hBitmap,
-                                IntPtr.Zero,
-                                Int32Rect.Empty,
-                                BitmapSizeOptions.FromEmptyOptions()
-                            )
+                    Source = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions())
                 };
 
                 return bMapImg;
@@ -1086,7 +1068,7 @@ namespace Little_System_Cleaner.Misc
 
             string regExPattern = "^" + Regex.Escape(mask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
             Regex regEx = new Regex(regExPattern, (ignoreCase ? RegexOptions.Singleline | RegexOptions.IgnoreCase : RegexOptions.Singleline));
-            
+
             return regEx.IsMatch(wildString);
         }
 
@@ -1099,7 +1081,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="publicKeyToken">What the public key token of the assembly should be. Set to null for any public key token (default is null). This needs to be 8 bytes.</param>
         /// <returns>True if the assembly is loaded</returns>
         /// <remarks>Please note that if versionCanBeGreater is set to true and publicKeyToken is not null, this function can return false even though the the version of the assembly is greater. This is due to the fact that the public key token is derived from the certificate used to sign the file and this certificate can change over time.</remarks>
-        internal static bool IsAssemblyLoaded(string assembly, Version ver = null, bool versionCanBeGreater = false, byte[] publicKeyToken = null) 
+        internal static bool IsAssemblyLoaded(string assembly, Version ver = null, bool versionCanBeGreater = false, byte[] publicKeyToken = null)
         {
             if (string.IsNullOrWhiteSpace(assembly))
                 throw new ArgumentNullException(nameof(assembly), "The assembly name cannot be null or empty");
@@ -1124,7 +1106,7 @@ namespace Little_System_Cleaner.Misc
 
                         if (!versionCanBeGreater && n > 0)
                             // version cannot be greater
-                            continue; 
+                            continue;
                     }
 
                     byte[] asmPublicKeyToken = asmLoaded.GetPublicKeyToken();
@@ -1164,9 +1146,7 @@ namespace Little_System_Cleaner.Misc
         {
             Func<MessageBoxResult> showMsgBox = () => MessageBox.Show(owner, messageBoxText, caption, button, icon);
 
-            if (System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread)
-                return (MessageBoxResult)System.Windows.Application.Current.Dispatcher.Invoke(showMsgBox);
-            return showMsgBox();
+            return System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread ? System.Windows.Application.Current.Dispatcher.Invoke(showMsgBox) : showMsgBox();
         }
 
         /// <summary>
@@ -1211,10 +1191,7 @@ namespace Little_System_Cleaner.Misc
             if (addClosingHook)
             {
                 // Cancel Closing event (if it occurs)
-                window.Closing += delegate (object sender, CancelEventArgs args)
-                {
-                    args.Cancel = true;
-                };
+                window.Closing += delegate(object sender, CancelEventArgs args) { args.Cancel = true; };
             }
         }
 
@@ -1228,7 +1205,7 @@ namespace Little_System_Cleaner.Misc
         {
             if (window.IsInitialized)
             {
-                window.Icon = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[] { 0, 0, 0, 0 }, 4);
+                window.Icon = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[] {0, 0, 0, 0}, 4);
             }
             else
             {
