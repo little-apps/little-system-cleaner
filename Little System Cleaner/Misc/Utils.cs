@@ -346,7 +346,7 @@ namespace Little_System_Cleaner.Misc
             if (length < 0)
                 return "";
 
-            float nSize;
+            decimal nSize;
             string strSizeFmt, strUnit;
 
             if (length < 1000) // 1KB
@@ -356,21 +356,21 @@ namespace Little_System_Cleaner.Misc
             }
             else if (length < 1000000) // 1MB
             {
-                nSize = length/(float) 0x400;
+                nSize = length/(decimal) 0x400;
                 strUnit = shortFormat ? " KB" : " Kilobytes";
             }
             else if (length < 1000000000) // 1GB
             {
-                nSize = length/(float) 0x100000;
+                nSize = length/(decimal) 0x100000;
                 strUnit = shortFormat ? " MB" : " Megabytes";
             }
             else
             {
-                nSize = length/(float) 0x40000000;
+                nSize = length/(decimal) 0x40000000;
                 strUnit = shortFormat ? " GB" : " Gigabytes";
             }
 
-            if (nSize - nSize == 0.00F)
+            if (decimal.Subtract(nSize, nSize) == decimal.Zero)
                 strSizeFmt = nSize.ToString("0");
             else if (nSize < 10)
                 strSizeFmt = nSize.ToString("0.00");
