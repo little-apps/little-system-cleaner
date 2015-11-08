@@ -83,20 +83,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             }
         }
 
-        public bool Uninstallable => ((!string.IsNullOrEmpty(UninstallString)) || (!string.IsNullOrEmpty(QuietUninstallString)));
+        public bool Uninstallable => !string.IsNullOrEmpty(UninstallString) || !string.IsNullOrEmpty(QuietUninstallString);
 
         #endregion
 
         #region ListView Properties
-        public Image bMapImg
-        {
-            get
-            {
-                if (Uninstallable)
-                    return Utils.CreateBitmapSourceFromBitmap(Resources.uninstall);
-                return Utils.CreateBitmapSourceFromBitmap(Resources.cancel);
-            }
-        }
+        public Image bMapImg => Uninstallable ? Resources.uninstall.CreateBitmapSourceFromBitmap() : Resources.cancel.CreateBitmapSourceFromBitmap();
 
         public string Program
         {

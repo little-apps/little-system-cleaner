@@ -87,7 +87,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 }
             }
 
-            Utils.AutoResizeColumns(ListView);
+            ListView.AutoResizeColumns();
         }
 
         private void ButtonGoBack_Click(object sender, RoutedEventArgs e)

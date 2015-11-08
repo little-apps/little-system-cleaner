@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (windowResult.GetValueOrDefault(false))
             {
-                Utils.AutoResizeColumns(Tree);
+                Tree.AutoResizeColumns();
             }
             else
             {

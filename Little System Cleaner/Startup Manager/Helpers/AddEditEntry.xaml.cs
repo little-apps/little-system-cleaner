@@ -223,7 +223,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
-            var bMapImg = Utils.CreateBitmapSourceFromBitmap(bitMap);
+            var bMapImg = bitMap.CreateBitmapSourceFromBitmap();
 
             // Resize image to 16x16
             bMapImg.Width = bMapImg.Height = 16;

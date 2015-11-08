@@ -149,7 +149,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             // Auto resize columns
             if (ListViewFiles.Items.Count > 0)
-                Utils.AutoResizeColumns(ListViewFiles);
+                ListViewFiles.AutoResizeColumns();
         }
 
         public void UpdateSettings()
@@ -332,7 +332,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 MessageBox.Show(Application.Current.MainWindow, "Successfully added file to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
-                Utils.AutoResizeColumns(ListViewExcludes);
+                ListViewExcludes.AutoResizeColumns();
             }
             else
                 MessageBox.Show(Application.Current.MainWindow, $"File ({addExcludeItem.FilePath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -352,7 +352,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 MessageBox.Show(Application.Current.MainWindow, "Successfully added folder to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
-                Utils.AutoResizeColumns(ListViewExcludes);
+                ListViewExcludes.AutoResizeColumns();
             }
             else
                 MessageBox.Show(Application.Current.MainWindow, $"Folder ({addExcludeItem.FolderPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -372,7 +372,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 MessageBox.Show(Application.Current.MainWindow, "Successfully added registry key to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
-                Utils.AutoResizeColumns(ListViewExcludes);
+                ListViewExcludes.AutoResizeColumns();
             }
             else
                 MessageBox.Show(Application.Current.MainWindow, $"Registry key ({addExcludeItem.RegistryPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -401,7 +401,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             MessageBox.Show(Application.Current.MainWindow, "Successfully updated exclude entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
             UpdateSettings();
-            Utils.AutoResizeColumns(ListViewExcludes);
+            ListViewExcludes.AutoResizeColumns();
         }
 
         private void menuItemRemove_Click(object sender, RoutedEventArgs e)
@@ -415,7 +415,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             ExcludeArray.Remove(ListViewExcludes.SelectedItem as ExcludeItem);
 
             UpdateSettings();
-            Utils.AutoResizeColumns(ListViewExcludes);
+            ListViewExcludes.AutoResizeColumns();
         }
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)

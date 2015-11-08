@@ -216,7 +216,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             CurrentListViewItem.Status = "Scanning " + sectionName;
             CurrentListViewItem.LoadGif();
 
-            Utils.AutoResizeColumns(ListView);
+            ListView.AutoResizeColumns();
 
             ListView.Items.Refresh();
         }

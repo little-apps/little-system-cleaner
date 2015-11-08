@@ -165,15 +165,16 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
 
             // Populate list view
-            foreach (var progInfo in listProgInfo.Where(progInfo => (!string.IsNullOrEmpty(progInfo.DisplayName))
-                                                                            && (string.IsNullOrEmpty(progInfo.ParentKeyName))
-                                                                            && (!progInfo.SystemComponent)).Where(progInfo => regex.IsMatch(progInfo.Program)))
+            foreach (var progInfo in listProgInfo.Where(progInfo => !string.IsNullOrEmpty(progInfo.DisplayName)
+                                                                    && string.IsNullOrEmpty(progInfo.ParentKeyName)
+                                                                    && !progInfo.SystemComponent)
+                .Where(progInfo => regex.IsMatch(progInfo.Program)))
             {
                 ProgramInfos.Add(progInfo);
             }
 
             // Resize columns
-            Utils.AutoResizeColumns(ListViewProgs);
+            ListViewProgs.AutoResizeColumns();
         }
 
         private void SearchTextBox_Search(object sender, RoutedEventArgs e)

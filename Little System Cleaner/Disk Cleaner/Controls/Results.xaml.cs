@@ -59,7 +59,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             ResetInfo();
 
-            Utils.AutoResizeColumns(ListViewFiles);
+            ListViewFiles.AutoResizeColumns();
         }
 
         private void listViewFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
