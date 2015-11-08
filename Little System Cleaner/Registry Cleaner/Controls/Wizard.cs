@@ -65,7 +65,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         internal static string CurrentScannerName { get; set; }
 
-        internal static BadRegKeyArray badRegKeyArray { get; } = new BadRegKeyArray();
+        internal static BadRegKeyArray BadRegKeyArray { get; } = new BadRegKeyArray();
 
         public List<ScannerBase> Scanners { get; } = new List<ScannerBase>();
 
@@ -100,7 +100,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     return false;
 
                 scan.AbortScanThread();
-                badRegKeyArray.Clear();
+                BadRegKeyArray.Clear();
                 Scan.EnabledScanners.Clear();
 
                 return true;
@@ -123,7 +123,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             // Forced to exit -> abort fix task
             ((Results) CurrentControl).CancelFixIfRunning();
 
-            badRegKeyArray.Clear();
+            BadRegKeyArray.Clear();
             Scan.EnabledScanners.Clear();
 
             return true;
@@ -131,7 +131,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         public override void MoveFirst(bool autoMove = true)
         {
-            badRegKeyArray.Clear();
+            BadRegKeyArray.Clear();
             Scan.EnabledScanners.Clear();
 
             base.MoveFirst(autoMove);
@@ -142,7 +142,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// </summary>
         public void Rescan()
         {
-            badRegKeyArray.Clear();
+            BadRegKeyArray.Clear();
 
             SetCurrentControl(1);
         }
@@ -198,7 +198,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return false;
 
             // Make sure registry key isnt already in array
-            if (badRegKeyArray.Contains(regPath, valueName))
+            if (BadRegKeyArray.Contains(regPath, valueName))
                 return false;
 
             // Make sure registry key exists
@@ -280,7 +280,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 severity = 1;
             }
 
-            badRegKeyArray.Add(new BadRegistryKey(CurrentScannerName, problem, baseKey, subKey, valueName, severity));
+            BadRegKeyArray.Add(new BadRegistryKey(CurrentScannerName, problem, baseKey, subKey, valueName, severity));
 
             Report.WriteLine(!string.IsNullOrEmpty(valueName)
                 ? $"Bad Registry Value Found! Problem: \"{problem}\" Path: \"{regPath}\" Value Name: \"{valueName}\""
