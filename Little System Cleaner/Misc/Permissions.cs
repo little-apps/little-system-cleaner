@@ -33,27 +33,26 @@ namespace Little_System_Cleaner.Misc
             get
             {
                 //bool value to hold our return value
-                bool isAdmin;
+                var isAdmin = false;
                 try
                 {
                     //get the currently logged in user
                     var user = WindowsIdentity.GetCurrent();
-                    var principal = new WindowsPrincipal(user);
-                    isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+                    if (user != null)
+                    {
+                        var principal = new WindowsPrincipal(user);
+                        isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+                    }
                 }
-                catch (UnauthorizedAccessException)
+                catch (UnauthorizedAccessException ex)
                 {
-                    isAdmin = false;
-#if (DEBUG)
-                    throw;
-#endif
+                    Debug.WriteLine(
+                        $"An UnauthorizedAccessException was thrown trying to determine if user is admin ({ex.Message})");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    isAdmin = false;
-#if (DEBUG)
-                    throw;
-#endif
+                    Debug.WriteLine(
+                        $"An unknown error occurred trying to determine if user is admin ({ex.Message})");
                 }
                 return isAdmin;
             }
