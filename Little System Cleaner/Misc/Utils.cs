@@ -117,24 +117,24 @@ namespace Little_System_Cleaner.Misc
         internal static VDTReturn ValidDriveType(string path)
         {
             var sb = new StringBuilder(path);
-            if (PInvoke.PathStripToRoot(sb))
+            if (!PInvoke.PathStripToRoot(sb))
+                return VDTReturn.ValidDrive;
+
+            var dt = PInvoke.GetDriveType(sb.ToString());
+
+            if (Settings.Default.registryCleanerOptionsRemMedia)
             {
-                var dt = PInvoke.GetDriveType(sb.ToString());
-
-                if (Settings.Default.registryCleanerOptionsRemMedia)
-                {
-                    // Just return true if its on a removable media
-                    if (dt == DriveType.Removable ||
-                        dt == DriveType.Network ||
-                        dt == DriveType.CDRom)
-                        return VDTReturn.SkipCheck;
-                }
-
-                // Return false for unkown and no root dir
-                if (dt == DriveType.NoRootDirectory ||
-                    dt == DriveType.Unknown)
-                    return VDTReturn.InvalidDrive;
+                // Just return true if its on a removable media
+                if (dt == DriveType.Removable ||
+                    dt == DriveType.Network ||
+                    dt == DriveType.CDRom)
+                    return VDTReturn.SkipCheck;
             }
+
+            // Return false for unkown and no root dir
+            if (dt == DriveType.NoRootDirectory ||
+                dt == DriveType.Unknown)
+                return VDTReturn.InvalidDrive;
 
             return VDTReturn.ValidDrive;
         }
