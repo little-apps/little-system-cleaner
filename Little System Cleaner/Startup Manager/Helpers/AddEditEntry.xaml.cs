@@ -142,9 +142,9 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void SetComboBox(string sectionName)
         {
-            if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP))
+            if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CsidlCommonStartup))
                 Sections.SelectedIndex = 0;
-            else if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP))
+            else if (sectionName == Utils.GetSpecialFolderPath(PInvoke.CsidlStartup))
                 Sections.SelectedIndex = 1;
 
             if (Utils.Is64BitOs)
@@ -323,8 +323,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     var filePath =
                         Path.Combine(
                             Sections.SelectedIndex == 0
-                                ? Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP)
-                                : Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP), TextBoxName.Text + ".lnk");
+                                ? Utils.GetSpecialFolderPath(PInvoke.CsidlCommonStartup)
+                                : Utils.GetSpecialFolderPath(PInvoke.CsidlStartup), TextBoxName.Text + ".lnk");
 
                     var fileDir = Path.GetDirectoryName(filePath);
                     if (!string.IsNullOrEmpty(fileDir) && !Directory.Exists(fileDir))

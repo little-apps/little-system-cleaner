@@ -178,14 +178,14 @@ namespace Little_System_Cleaner.Misc
         internal static bool ResolveShortcut(string shortcut, out string filepath, out string arguments)
         {
             var link = new PInvoke.ShellLink();
-            ((PInvoke.IPersistFile) link).Load(shortcut, PInvoke.STGM_READ);
+            ((PInvoke.IPersistFile) link).Load(shortcut, PInvoke.StgmRead);
             // TODO: if I can get hold of the hwnd call resolve first. This handles moved and renamed files.  
             // ((IShellLinkW)link).Resolve(hwnd, 0) 
-            var path = new StringBuilder(PInvoke.MAX_PATH);
-            PInvoke.WIN32_FIND_DATAW data;
+            var path = new StringBuilder(PInvoke.MaxPath);
+            PInvoke.Win32FindDataWide data;
             ((PInvoke.IShellLinkW) link).GetPath(path, path.Capacity, out data, 0);
 
-            var args = new StringBuilder(PInvoke.MAX_PATH);
+            var args = new StringBuilder(PInvoke.MaxPath);
             ((PInvoke.IShellLinkW) link).GetArguments(args, args.Capacity);
 
             filepath = path.ToString();

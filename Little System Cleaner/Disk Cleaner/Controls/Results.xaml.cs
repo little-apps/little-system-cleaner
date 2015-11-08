@@ -243,10 +243,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private static void SendFileToRecycleBin(string filePath)
         {
-            var shf = new PInvoke.SHFILEOPSTRUCT
+            var shf = new PInvoke.ShFileOpStruct
             {
-                wFunc = PInvoke.FO_DELETE,
-                fFlags = PInvoke.FOF_ALLOWUNDO | PInvoke.FOF_NOCONFIRMATION,
+                wFunc = PInvoke.FoDelete,
+                fFlags = PInvoke.FofAllowundo | PInvoke.FofNoconfirmation,
                 pFrom = filePath
             };
             PInvoke.SHFileOperation(ref shf);

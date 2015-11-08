@@ -169,8 +169,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
 
             // Adds startup folders
-            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP));
-            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(PInvoke.CSIDL_COMMON_STARTUP));
+            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(PInvoke.CsidlStartup));
+            AddStartupFolder(treeModel, Utils.GetSpecialFolderPath(PInvoke.CsidlCommonStartup));
 
             return treeModel;
         }
@@ -267,7 +267,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 return;
 
             string[] shortcutList;
-            var bitmap = Utils.GetSpecialFolderPath(PInvoke.CSIDL_STARTUP) == folder
+            var bitmap = Utils.GetSpecialFolderPath(PInvoke.CsidlStartup) == folder
                 ? Resources.current_user
                 : Resources.all_users;
             var nodeRoot = new StartupEntry

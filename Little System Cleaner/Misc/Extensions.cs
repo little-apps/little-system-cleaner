@@ -27,8 +27,8 @@ namespace Little_System_Cleaner.Misc
         internal static void HideCloseButton(this Window window, bool addClosingHook = false)
         {
             var hwnd = new WindowInteropHelper(window).Handle;
-            PInvoke.SetWindowLong(hwnd, PInvoke.GWL_STYLE,
-                PInvoke.GetWindowLong(hwnd, PInvoke.GWL_STYLE) & ~PInvoke.WS_SYSMENU);
+            PInvoke.SetWindowLong(hwnd, PInvoke.GwlStyle,
+                PInvoke.GetWindowLong(hwnd, PInvoke.GwlStyle) & ~PInvoke.WsSysmenu);
 
             if (addClosingHook)
             {
@@ -58,12 +58,12 @@ namespace Little_System_Cleaner.Misc
                     var hwnd = new WindowInteropHelper(window).Handle;
 
                     // Change the extended window style to not show a window icon
-                    var extendedStyle = PInvoke.GetWindowLong(hwnd, PInvoke.GWL_EXSTYLE);
-                    PInvoke.SetWindowLong(hwnd, PInvoke.GWL_EXSTYLE, extendedStyle | PInvoke.WS_EX_DLGMODALFRAME);
+                    var extendedStyle = PInvoke.GetWindowLong(hwnd, PInvoke.GwlExstyle);
+                    PInvoke.SetWindowLong(hwnd, PInvoke.GwlExstyle, extendedStyle | PInvoke.WsExDlgmodalframe);
 
                     // Update the window's non-client area to reflect the changes
                     PInvoke.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0,
-                        PInvoke.SWP_NOMOVE | PInvoke.SWP_NOSIZE | PInvoke.SWP_NOZORDER | PInvoke.SWP_FRAMECHANGED);
+                        PInvoke.SwpNomove | PInvoke.SwpNosize | PInvoke.SwpNozorder | PInvoke.SwpFramechanged);
                 };
             }
         }

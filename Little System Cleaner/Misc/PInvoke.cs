@@ -11,7 +11,7 @@ namespace Little_System_Cleaner.Misc
 
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AdjustTokenPrivileges(IntPtr TokenHandle,
+        internal static extern bool AdjustTokenPrivileges(IntPtr tokenHandle,
             [MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges,
             ref TokPriv1Luid newState,
             uint zero,
@@ -46,7 +46,7 @@ namespace Little_System_Cleaner.Misc
             ref IntPtr phiconSmall, int nIcons);
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        internal static extern int SHFileOperation(ref SHFILEOPSTRUCT FileOp);
+        internal static extern int SHFileOperation(ref ShFileOpStruct fileOp);
 
         [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern IntPtr PathGetArgs(string path);
@@ -101,7 +101,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal struct WIN32_FIND_DATAW
+        public struct Win32FindDataWide
         {
             public uint dwFileAttributes;
             public long ftCreationTime;
@@ -116,7 +116,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 1)]
-        internal struct SHFILEOPSTRUCT
+        public struct ShFileOpStruct
         {
             public IntPtr hwnd;
             [MarshalAs(UnmanagedType.U4)] public int wFunc;
@@ -133,26 +133,26 @@ namespace Little_System_Cleaner.Misc
         #region Enumerations
 
         [Flags]
-        internal enum SLGP_FLAGS
+        internal enum SlGpFlags
         {
             /// <summary>Retrieves the standard short (8.3 format) file name</summary>
-            SLGP_SHORTPATH = 0x1,
+            SlGpShortpath = 0x1,
 
             /// <summary>Retrieves the Universal Naming Convention (UNC) path name of the file</summary>
-            SLGP_UNCPRIORITY = 0x2,
+            SlGpUncpriority = 0x2,
 
             /// <summary>
             ///     Retrieves the raw path name. A raw path is something that might not exist and may include environment
             ///     variables that need to be expanded
             /// </summary>
-            SLGP_RAWPATH = 0x4
+            SlGpRawpath = 0x4
         }
 
         [Flags]
-        internal enum SLR_FLAGS
+        internal enum SlrFlags
         {
             /// <summary>
-            ///     Do not display a dialog box if the link cannot be resolved. When SLR_NO_UI is set,
+            ///     Do not display a dialog box if the link cannot be resolved. When SlrNoUi is set,
             ///     the high-order word of fFlags can be set to a time-out value that specifies the
             ///     maximum amount of time to be spent resolving the link. The function returns if the
             ///     link cannot be resolved within the time-out duration. If the high-order word is set
@@ -160,37 +160,37 @@ namespace Little_System_Cleaner.Misc
             ///     (3 seconds). To specify a value, set the high word of fFlags to the desired time-out
             ///     duration, in milliseconds.
             /// </summary>
-            SLR_NO_UI = 0x1,
+            SlrNoUi = 0x1,
 
             /// <summary>Obsolete and no longer used</summary>
-            SLR_ANY_MATCH = 0x2,
+            SlrAnyMatch = 0x2,
 
             /// <summary>
             ///     If the link object has changed, update its path and list of identifiers.
-            ///     If SLR_UPDATE is set, you do not need to call IPersistFile::IsDirty to determine
+            ///     If SlrUpdate is set, you do not need to call IPersistFile::IsDirty to determine
             ///     whether or not the link object has changed.
             /// </summary>
-            SLR_UPDATE = 0x4,
+            SlrUpdate = 0x4,
 
             /// <summary>Do not update the link information</summary>
-            SLR_NOUPDATE = 0x8,
+            SlrNoupdate = 0x8,
 
             /// <summary>Do not execute the search heuristics</summary>
-            SLR_NOSEARCH = 0x10,
+            SlrNosearch = 0x10,
 
             /// <summary>Do not use distributed link tracking</summary>
-            SLR_NOTRACK = 0x20,
+            SlrNotrack = 0x20,
 
             /// <summary>
             ///     Disable distributed link tracking. By default, distributed link tracking tracks
             ///     removable media across multiple devices based on the volume name. It also uses the
             ///     Universal Naming Convention (UNC) path to track remote file systems whose drive letter
-            ///     has changed. Setting SLR_NOLINKINFO disables both types of tracking.
+            ///     has changed. Setting SlrNolinkinfo disables both types of tracking.
             /// </summary>
-            SLR_NOLINKINFO = 0x40,
+            SlrNolinkinfo = 0x40,
 
             /// <summary>Call the Microsoft Windows Installer</summary>
-            SLR_INVOKE_MSI = 0x80
+            SlrInvokeMsi = 0x80
         }
 
         #endregion
@@ -198,36 +198,36 @@ namespace Little_System_Cleaner.Misc
         #region Definitions
 
         // AdjustTokenPrivileges
-        internal const int SE_PRIVILEGE_ENABLED = 0x00000002;
-        internal const int SE_PRIVILEGE_REMOVED = 0x00000004;
-        internal const int TOKEN_QUERY = 0x00000008;
-        internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
+        internal const int SePrivilegeEnabled = 0x00000002;
+        internal const int SePrivilegeRemoved = 0x00000004;
+        internal const int TokenQuery = 0x00000008;
+        internal const int TokenAdjustPrivileges = 0x00000020;
 
         // SHGetSpecialFolderPath
-        internal const int CSIDL_STARTUP = 0x0007; // All Users\Startup
-        internal const int CSIDL_COMMON_STARTUP = 0x0018; // Common Users\Startup
-        internal const int CSIDL_PROGRAMS = 0x0002; // All Users\Start Menu\Programs
-        internal const int CSIDL_COMMON_PROGRAMS = 0x0017; // Start Menu\Programs
+        internal const int CsidlStartup = 0x0007; // All Users\Startup
+        internal const int CsidlCommonStartup = 0x0018; // Common Users\Startup
+        internal const int CsidlPrograms = 0x0002; // All Users\Start Menu\Programs
+        internal const int CsidlCommonPrograms = 0x0017; // Start Menu\Programs
 
-        internal const int MAX_PATH = 260;
-        internal const uint STGM_READ = 0;
+        internal const int MaxPath = 260;
+        internal const uint StgmRead = 0;
 
         // SHFileOperation
-        internal const int FO_DELETE = 3;
-        internal const int FOF_ALLOWUNDO = 0x40;
-        internal const int FOF_NOCONFIRMATION = 0x10;
+        internal const int FoDelete = 3;
+        internal const int FofAllowundo = 0x40;
+        internal const int FofNoconfirmation = 0x10;
 
         // GetWindowLong + SetWindowLong
-        internal const int GWL_STYLE = -16;
-        internal const int WS_SYSMENU = 0x80000;
-        internal const int GWL_EXSTYLE = -20;
-        internal const int WS_EX_DLGMODALFRAME = 0x0001;
+        internal const int GwlStyle = -16;
+        internal const int WsSysmenu = 0x80000;
+        internal const int GwlExstyle = -20;
+        internal const int WsExDlgmodalframe = 0x0001;
 
         // SetWindowPos
-        internal const int SWP_NOSIZE = 0x0001;
-        internal const int SWP_NOMOVE = 0x0002;
-        internal const int SWP_NOZORDER = 0x0004;
-        internal const int SWP_FRAMECHANGED = 0x0020;
+        internal const int SwpNosize = 0x0001;
+        internal const int SwpNomove = 0x0002;
+        internal const int SwpNozorder = 0x0004;
+        internal const int SwpFramechanged = 0x0020;
 
         #endregion
 
@@ -239,7 +239,7 @@ namespace Little_System_Cleaner.Misc
         {
             /// <summary>Retrieves the path and file name of a Shell link object</summary>
             void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMaxPath,
-                out WIN32_FIND_DATAW pfd, SLGP_FLAGS fFlags);
+                out Win32FindDataWide pfd, SlGpFlags fFlags);
 
             /// <summary>Retrieves the list of item identifiers for a Shell link object</summary>
             void GetIDList(out IntPtr ppidl);
@@ -288,7 +288,7 @@ namespace Little_System_Cleaner.Misc
             void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string pszPathRel, int dwReserved);
 
             /// <summary>Attempts to find the target of a Shell link, even if it has been moved or renamed</summary>
-            void Resolve(IntPtr hwnd, SLR_FLAGS fFlags);
+            void Resolve(IntPtr hwnd, SlrFlags fFlags);
 
             /// <summary>Sets the path and file name of a Shell link object</summary>
             void SetPath([MarshalAs(UnmanagedType.LPWStr)] string pszFile);
@@ -298,14 +298,14 @@ namespace Little_System_Cleaner.Misc
         public interface IPersist
         {
             [PreserveSig]
-            void GetClassID(out Guid pClassID);
+            void GetClassID(out Guid pClassId);
         }
 
 
         [ComImport, Guid("0000010b-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IPersistFile : IPersist
         {
-            new void GetClassID(out Guid pClassID);
+            new void GetClassID(out Guid pClassId);
 
             [PreserveSig]
             int IsDirty();

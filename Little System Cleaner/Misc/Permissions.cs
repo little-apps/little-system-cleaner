@@ -73,14 +73,14 @@ namespace Little_System_Cleaner.Misc
                 var hproc = Process.GetCurrentProcess().Handle;
                 var htok = IntPtr.Zero;
 
-                if (!PInvoke.OpenProcessToken(hproc, PInvoke.TOKEN_ADJUST_PRIVILEGES | PInvoke.TOKEN_QUERY, ref htok))
+                if (!PInvoke.OpenProcessToken(hproc, PInvoke.TokenAdjustPrivileges | PInvoke.TokenQuery, ref htok))
                     return false;
 
                 var tp = new PInvoke.TokPriv1Luid
                 {
                     Count = 1,
                     Luid = 0,
-                    Attr = enabled ? PInvoke.SE_PRIVILEGE_ENABLED : PInvoke.SE_PRIVILEGE_REMOVED
+                    Attr = enabled ? PInvoke.SePrivilegeEnabled : PInvoke.SePrivilegeRemoved
                 };
 
                 if (!PInvoke.LookupPrivilegeValue(null, privilege, ref tp.Luid))
