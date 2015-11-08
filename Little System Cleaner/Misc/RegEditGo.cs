@@ -76,7 +76,7 @@ namespace Little_System_Cleaner.Misc
 
 
             // allocate buffer in local process
-            _lpLocalBuffer = Marshal.AllocHGlobal(dwBufferSize);
+            _lpLocalBuffer = Marshal.AllocHGlobal(BufferSize);
             if (_lpLocalBuffer == IntPtr.Zero)
                 ShowErrorMessage(new SystemException("Failed to allocate memory in local process"));
 
@@ -85,7 +85,7 @@ namespace Little_System_Cleaner.Misc
                 ShowErrorMessage(new ApplicationException("Failed to access process"));
 
             // Allocate a buffer in the remote process
-            _lpRemoteBuffer = Interop.VirtualAllocEx(_hProcess, IntPtr.Zero, dwBufferSize, Interop.MEM_COMMIT,
+            _lpRemoteBuffer = Interop.VirtualAllocEx(_hProcess, IntPtr.Zero, BufferSize, Interop.MEM_COMMIT,
                 Interop.PAGE_READWRITE);
             if (_lpRemoteBuffer == IntPtr.Zero)
                 ShowErrorMessage(new SystemException("Failed to allocate memory in remote process"));
@@ -196,7 +196,7 @@ namespace Little_System_Cleaner.Misc
             var item = 0;
             for (;;)
             {
-                var itemText = GetLVItemText(item);
+                var itemText = GetLvItemText(item);
                 if (itemText == null)
                 {
                     return;
@@ -239,7 +239,7 @@ namespace Little_System_Cleaner.Misc
                 Interop.CloseHandle(_hProcess);
         }
 
-        private const int dwBufferSize = 1024;
+        public static int BufferSize { get; } = 1024;
 
         private readonly IntPtr _wndApp;
         private readonly IntPtr _wndTreeView;
@@ -293,7 +293,7 @@ namespace Little_System_Cleaner.Misc
             Interop.SendMessage(wndTreeView, Interop.TVM_GETITEMW, IntPtr.Zero, _lpRemoteBuffer);
 
             // copy tvItem back into local buffer (copy whole buffer because we don't yet know how big the string is)
-            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, dwBufferSize, IntPtr.Zero);
+            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, BufferSize, IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
@@ -348,7 +348,7 @@ namespace Little_System_Cleaner.Misc
                 ShowErrorMessage(new SystemException("LVM_GETITEM Failed "));
         }
 
-        private string GetLVItemText(int item)
+        private string GetLvItemText(int item)
         {
             const int LVM_GETITEM = 0x1005;
             const int LVIF_TEXT = 0x0001;
@@ -376,7 +376,7 @@ namespace Little_System_Cleaner.Misc
                 return null;
 
             // copy lvItem back into local buffer (copy whole buffer because we don't yet know how big the string is)
-            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, dwBufferSize, IntPtr.Zero);
+            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, BufferSize, IntPtr.Zero);
             if (!bSuccess)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
@@ -384,7 +384,7 @@ namespace Little_System_Cleaner.Misc
             return Marshal.PtrToStringAnsi((IntPtr) nLocalBufferPtr);
         }
 
-        private void CheckAccess()
+        private static void CheckAccess()
         {
             using (
                 var regKey =
@@ -407,7 +407,7 @@ namespace Little_System_Cleaner.Misc
             }
         }
 
-        private void ShowErrorMessage(Exception ex)
+        private static void ShowErrorMessage(Exception ex)
         {
 #if (DEBUG)
             throw ex;
