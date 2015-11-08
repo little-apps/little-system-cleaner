@@ -20,7 +20,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
     public class ResultXml : ResultNode
     {
         /// <summary>
-        /// Constructor for XML file
+        ///     Constructor for XML file
         /// </summary>
         /// <param name="desc">Description</param>
         /// <param name="xmlPaths">XML Paths</param>
@@ -32,12 +32,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
         public override void Clean(Report report)
         {
-            foreach (KeyValuePair<string, List<string>> kvp in XmlPaths)
+            foreach (var kvp in XmlPaths)
             {
-                string filePath = kvp.Key;
-                List<string> xPaths = kvp.Value;
+                var filePath = kvp.Key;
+                var xPaths = kvp.Value;
 
-                XmlDocument xmlDoc = new XmlDocument();
+                var xmlDoc = new XmlDocument();
 
                 try
                 {
@@ -45,11 +45,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occurred: {0}\nUnable to load XML file ({1})", ex.Message, filePath);
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to load XML file ({1})", ex.Message,
+                        filePath);
                     continue;
                 }
 
-                foreach (string xPath in xPaths)
+                foreach (var xPath in xPaths)
                 {
                     XmlNodeList xmlNodes;
 
@@ -59,7 +60,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     }
                     catch (XPathException ex)
                     {
-                        Debug.WriteLine("The following error occurred: {0}\nUnable to find XPath ({1}) in XML file ({2})", ex.Message, xPath, filePath);
+                        Debug.WriteLine(
+                            "The following error occurred: {0}\nUnable to find XPath ({1}) in XML file ({2})",
+                            ex.Message, xPath, filePath);
                         continue;
                     }
 
@@ -82,7 +85,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 }
 
                 xmlDoc.Save(filePath);
-
             }
         }
     }

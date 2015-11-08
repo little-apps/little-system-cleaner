@@ -20,7 +20,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Applications : ScannerBase
     {
-        public Applications() 
+        public Applications()
         {
             Name = "Applications";
 

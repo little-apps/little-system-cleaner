@@ -2,10 +2,6 @@
 {
     public class LviFile
     {
-        public string File
-        {
-            get;
-            set;
-        }
+        public string File { get; set; }
     }
 }

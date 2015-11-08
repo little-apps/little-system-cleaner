@@ -17,11 +17,12 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
+using System.Security;
 using Little_System_Cleaner.Misc;
-using System.Threading;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -42,14 +43,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     ParseSoundKeys(regKey);
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
         /// <summary>
-        /// Goes deep into sub keys to see if files exist
+        ///     Goes deep into sub keys to see if files exist
         /// </summary>
         /// <param name="rk">Registry subkey</param>
         private static void ParseSoundKeys(RegistryKey rk)
@@ -57,9 +58,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             foreach (
                 var strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
-
                 // Ignores ".Default" Subkey
-                if ((string.Compare(strSubKey, ".Current", StringComparison.Ordinal) == 0) || (string.Compare(strSubKey, ".Modified", StringComparison.Ordinal) == 0))
+                if ((string.Compare(strSubKey, ".Current", StringComparison.Ordinal) == 0) ||
+                    (string.Compare(strSubKey, ".Modified", StringComparison.Ordinal) == 0))
                 {
                     // Gets the (default) key and sees if the file exists
                     var rk2 = rk.OpenSubKey(strSubKey);
@@ -80,7 +81,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         ParseSoundKeys(rk2);
                     }
                 }
-
             }
         }
     }

@@ -34,21 +34,14 @@ using Timer = System.Timers.Timer;
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Analyze.xaml
+    ///     Interaction logic for Analyze.xaml
     /// </summary>
     public partial class Analyze
     {
-        internal Timer TimerUpdate = new Timer(100);
-        public Wizard ScanBase;
-
         private readonly Task _taskMain;
         private CancellationTokenSource _cancellationTokenSource;
-
-        internal static string CurrentFile
-        {
-            get;
-            set;
-        }
+        public Wizard ScanBase;
+        internal Timer TimerUpdate = new Timer(100);
 
         public Analyze(Wizard sb)
         {
@@ -83,6 +76,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             _taskMain = new Task(AnalyzeDisk, _cancellationTokenSource.Token);
             _taskMain.Start();
         }
+
+        internal static string CurrentFile { get; set; }
 
         private void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -148,7 +143,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }));
 
             CurrentFile = "";
-            
+
 
             if (success)
             {
@@ -159,14 +154,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 CurrentFile = "Click \"Cancel\" to go back to the previous screen.";
             }
-
         }
 
         private void ScanFiles(DirectoryInfo parentInfo)
         {
             try
             {
-                foreach (var fileInfo in parentInfo.GetFiles().TakeWhile(fileInfo => !_cancellationTokenSource.IsCancellationRequested))
+                foreach (
+                    var fileInfo in
+                        parentInfo.GetFiles().TakeWhile(fileInfo => !_cancellationTokenSource.IsCancellationRequested))
                 {
                     try
                     {
@@ -218,7 +214,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     {
                         Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping check of file...");
                     }
-                    
                 }
             }
             catch (Exception ex)
@@ -226,7 +221,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to scan files.");
             }
 
-            try {
+            try
+            {
                 foreach (
                     var childInfo in
                         parentInfo.GetDirectories()
@@ -251,7 +247,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping check of directory...");
+                        Debug.WriteLine("The following error occurred: " + ex.Message +
+                                        "\nSkipping check of directory...");
                     }
                 }
             }
@@ -265,7 +262,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             try
             {
-                var fileSize = fileInfo.Length / 1024;
+                var fileSize = fileInfo.Length/1024;
 
                 if (Settings.Default.diskCleanerCheckFileSizeLeast > 0)
                     if (fileSize <= Settings.Default.diskCleanerCheckFileSizeLeast)
@@ -279,12 +276,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check file size.");
             }
-            
+
             return true;
         }
 
         /// <summary>
-        /// Checks if file is in specified date/time range
+        ///     Checks if file is in specified date/time range
         /// </summary>
         /// <param name="fileInfo">File information</param>
         /// <returns>True if file is in date/time range</returns>
@@ -330,7 +327,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         }
 
         /// <summary>
-        /// Checks file attributes to match what user specified to search for
+        ///     Checks file attributes to match what user specified to search for
         /// </summary>
         /// <param name="fileInfo">File Information</param>
         /// <returns>True if file matches attributes</returns>
@@ -348,16 +345,20 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 return false;
             }
 
-            if (!Settings.Default.diskCleanerSearchHidden && ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
+            if (!Settings.Default.diskCleanerSearchHidden &&
+                ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden))
                 return false;
 
-            if (!Settings.Default.diskCleanerSearchArchives && ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
+            if (!Settings.Default.diskCleanerSearchArchives &&
+                ((fileAttribs & FileAttributes.Archive) == FileAttributes.Archive))
                 return false;
 
-            if (!Settings.Default.diskCleanerSearchReadOnly && ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
+            if (!Settings.Default.diskCleanerSearchReadOnly &&
+                ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
                 return false;
 
-            if (!Settings.Default.diskCleanerSearchSystem && ((fileAttribs & FileAttributes.System) == FileAttributes.System))
+            if (!Settings.Default.diskCleanerSearchSystem &&
+                ((fileAttribs & FileAttributes.System) == FileAttributes.System))
                 return false;
 
             return true;
@@ -365,7 +366,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
 
         /// <summary>
-        /// Checks if file is in use
+        ///     Checks if file is in use
         /// </summary>
         /// <param name="fileInfo">FileInfo class</param>
         /// <returns>True if file is in use</returns>
@@ -374,7 +375,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             Stream stream = null;
             var ret = false;
 
-            try {
+            try
+            {
                 stream = fileInfo.Open(FileMode.Open);
 
                 if (!stream.CanWrite)
@@ -397,7 +399,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             var includeDirsList = Settings.Default.diskCleanerIncludedFolders.Cast<string>();
 
-            return includeDirsList.Any(includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0);
+            return
+                includeDirsList.Any(
+                    includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0);
         }
 
         private static bool FolderIsExcluded(string dirPath)
@@ -415,7 +419,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         }
 
         /// <summary>
-        /// Compare multiple wildcards to string
+        ///     Compare multiple wildcards to string
         /// </summary>
         /// <param name="wildString">String to compare</param>
         /// <param name="masks">Wildcard masks seperated by a semicolon (;)</param>
@@ -436,7 +440,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         }
 
         /// <summary>
-        /// Cancels timer and thread
+        ///     Cancels timer and thread
         /// </summary>
         public void CancelAnalyze()
         {
@@ -449,10 +453,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (!_taskMain.IsCompleted)
             {
-                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (
+                    MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?",
+                        Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
             }
-            
+
             CancelAnalyze();
 
             await _taskMain;

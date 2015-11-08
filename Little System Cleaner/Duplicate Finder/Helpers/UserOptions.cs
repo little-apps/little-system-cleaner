@@ -3,13 +3,68 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
+using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     [XmlRoot("Options")]
     public class UserOptions : INotifyPropertyChanged
     {
+        private bool? _allExceptDrives = true;
+        private ExcludeFolder _excFolderSelected;
+
+        private HashAlgorithm _hashAlgorithm;
+
+        private ObservableCollection<HashAlgorithm> _hashAlgorithms;
+
+        private IncludeFolder _incFolderSelected;
+        private bool? _onlySelectedDrives = false;
+        private bool? _onlySelectedFolders = false;
+
+        private int _scanMethod;
+        private int _skipFilesGreaterSize = 512;
+        private bool? _skipFilesGreaterThan = true;
+        private string _skipFilesGreaterUnit = "MB";
+        private bool? _skipSysAppDirs = false;
+
+        private bool? _skipTempFiles = false;
+        private bool? _skipWindowsDir = false;
+
+        public static void StoreUserOptions(UserOptions userOptions)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var serializer = new XmlSerializer(typeof (UserOptions));
+                serializer.Serialize(ms, userOptions);
+
+                var xml = Convert.ToBase64String(ms.ToArray());
+                Settings.Default.duplicateFinderOptions = xml;
+                Settings.Default.Save();
+            }
+        }
+
+        public static UserOptions GetUserOptions()
+        {
+            UserOptions userOptions;
+
+            try
+            {
+                using (var ms = new MemoryStream(Convert.FromBase64String(Settings.Default.duplicateFinderOptions)))
+                {
+                    var serializer = new XmlSerializer(typeof (UserOptions));
+                    userOptions = (UserOptions) serializer.Deserialize(ms);
+                }
+            }
+            catch
+            {
+                userOptions = new UserOptions();
+            }
+
+            return userOptions;
+        }
+
         #region INotifyPropertyChanged Members
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string prop)
@@ -19,27 +74,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         #endregion
 
-        private ObservableCollection<HashAlgorithm> _hashAlgorithms;
-
-        private IncludeFolder _incFolderSelected;
-        private ExcludeFolder _excFolderSelected;
-
-        private bool? _allExceptDrives = true;
-        private bool? _onlySelectedDrives = false;
-        private bool? _onlySelectedFolders = false;
-
-        private int _scanMethod;
-
-        private bool? _skipTempFiles = false;
-        private bool? _skipSysAppDirs = false;
-        private bool? _skipWindowsDir = false;
-        private bool? _skipFilesGreaterThan = true;
-        private int _skipFilesGreaterSize = 512;
-        private string _skipFilesGreaterUnit = "MB";
-
-        private HashAlgorithm _hashAlgorithm;
-
         #region Drives/Folders Properties
+
         public ObservableCollection<IncludeDrive> Drives { get; } = new ObservableCollection<IncludeDrive>();
 
         public ObservableCollection<IncludeFolder> IncFolders { get; set; } = new ObservableCollection<IncludeFolder>();
@@ -81,6 +117,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 OnPropertyChanged("SelectedDrivesEnabled");
             }
         }
+
         public bool? OnlySelectedFolders
         {
             get { return _onlySelectedFolders; }
@@ -91,18 +128,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        public bool AllExceptEnabled => (AllExceptDrives.GetValueOrDefault());
+        public bool AllExceptEnabled => AllExceptDrives.GetValueOrDefault();
 
-        public bool SelectedDrivesEnabled => (OnlySelectedDrives.GetValueOrDefault());
+        public bool SelectedDrivesEnabled => OnlySelectedDrives.GetValueOrDefault();
 
-        public bool SelectedFoldersEnabled => (OnlySelectedFolders.GetValueOrDefault());
+        public bool SelectedFoldersEnabled => OnlySelectedFolders.GetValueOrDefault();
 
         #endregion
 
         #region Files Properties
+
         public bool? CompareChecksumFilename
         {
-            get { return (_scanMethod == 0); }
+            get { return _scanMethod == 0; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -112,7 +150,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? CompareChecksum
         {
-            get { return (_scanMethod == 1); }
+            get { return _scanMethod == 1; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -122,7 +160,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? CompareFilename
         {
-            get { return (_scanMethod == 2); }
+            get { return _scanMethod == 2; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -132,7 +170,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? CompareMusicTags
         {
-            get { return (_scanMethod == 3); }
+            get { return _scanMethod == 3; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -155,7 +193,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.User)
                 };
 
-                foreach (string excFolderPath in excFolders)
+                foreach (var excFolderPath in excFolders)
                 {
                     var excFolder = new ExcludeFolder(excFolderPath, true);
                     var index = ExcludeFolders.IndexOf(excFolder);
@@ -200,7 +238,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
                 };
 
-                foreach (string excFolderPath in excFolders)
+                foreach (var excFolderPath in excFolders)
                 {
                     var excFolder = new ExcludeFolder(excFolderPath, true);
                     var index = ExcludeFolders.IndexOf(excFolder);
@@ -223,6 +261,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 OnPropertyChanged("ExcludeFolders");
             }
         }
+
         public bool? SkipZeroByteFiles { get; set; } = true;
 
         public bool? IncHiddenFiles { get; set; } = false;
@@ -286,7 +325,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        public string[] SkipFilesGreaterUnits => new[] { "B", "KB", "MB", "GB" };
+        public string[] SkipFilesGreaterUnits => new[] {"B", "KB", "MB", "GB"};
 
         public string SkipFilesGreaterUnit
         {
@@ -298,7 +337,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        public bool SkipFilesGreaterEnabled => (SkipFilesGreaterThan.GetValueOrDefault());
+        public bool SkipFilesGreaterEnabled => SkipFilesGreaterThan.GetValueOrDefault();
 
         [XmlIgnore]
         public HashAlgorithm HashAlgorithm
@@ -321,10 +360,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 OnPropertyChanged("HashAlgorithms");
             }
         }
+
         #endregion
 
         #region Music Tags Properties
-        public bool MusicTagsEnabled => (CompareMusicTags.GetValueOrDefault());
+
+        public bool MusicTagsEnabled => CompareMusicTags.GetValueOrDefault();
 
         public bool? MusicTagTitle { get; set; } = true;
 
@@ -345,6 +386,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         #endregion
 
         #region Exclude Folders Properties
+
         public ObservableCollection<ExcludeFolder> ExcludeFolders { get; } = new ObservableCollection<ExcludeFolder>();
 
         public ExcludeFolder ExcludeFolderSelected
@@ -356,40 +398,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 OnPropertyChanged("ExcludeFolderSelected");
             }
         }
+
         #endregion
-
-        public static void StoreUserOptions(UserOptions userOptions)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var serializer = new XmlSerializer(typeof(UserOptions));
-                serializer.Serialize(ms, userOptions);
-
-                var xml = Convert.ToBase64String(ms.ToArray());
-                Properties.Settings.Default.duplicateFinderOptions = xml;
-                Properties.Settings.Default.Save();
-            }
-                
-        }
-
-        public static UserOptions GetUserOptions()
-        {
-            UserOptions userOptions;
-
-            try
-            {
-                using (var ms = new MemoryStream(Convert.FromBase64String(Properties.Settings.Default.duplicateFinderOptions)))
-                {
-                    var serializer = new XmlSerializer(typeof(UserOptions));
-                    userOptions = (UserOptions)serializer.Deserialize(ms);
-                }
-            }
-            catch
-            {
-                userOptions = new UserOptions();
-            }
-            
-            return userOptions;
-        }
     }
 }

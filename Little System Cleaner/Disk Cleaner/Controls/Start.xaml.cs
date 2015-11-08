@@ -34,22 +34,18 @@ using MessageBox = System.Windows.MessageBox;
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Start.xaml
+    ///     Interaction logic for Start.xaml
     /// </summary>
     public partial class Start : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
         public Wizard ScanBase;
+
+        public Start(Wizard sb)
+        {
+            InitializeComponent();
+
+            ScanBase = sb;
+        }
 
         public ObservableCollection<LviDrive> DrivesCollection => Wizard.DiskDrives;
 
@@ -61,7 +57,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? JunkFilesDelete
         {
-            get { return (Settings.Default.diskCleanerRemoveMode == 0); }
+            get { return Settings.Default.diskCleanerRemoveMode == 0; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -75,7 +71,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? JunkFilesRecycle
         {
-            get { return (Settings.Default.diskCleanerRemoveMode == 1); }
+            get { return Settings.Default.diskCleanerRemoveMode == 1; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -89,7 +85,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? JunkFilesMove
         {
-            get { return (Settings.Default.diskCleanerRemoveMode == 2); }
+            get { return Settings.Default.diskCleanerRemoveMode == 2; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -144,7 +140,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? SearchFilterSafe
         {
-            get { return (Settings.Default.diskCleanerFilterMode == 0); }
+            get { return Settings.Default.diskCleanerFilterMode == 0; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -160,7 +156,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? SearchFilterMedium
         {
-            get { return (Settings.Default.diskCleanerFilterMode == 1); }
+            get { return Settings.Default.diskCleanerFilterMode == 1; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -176,7 +172,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? SearchFilterAggressive
         {
-            get { return (Settings.Default.diskCleanerFilterMode == 2); }
+            get { return Settings.Default.diskCleanerFilterMode == 2; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -248,7 +244,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? FindFilesCreated
         {
-            get { return (Settings.Default.diskCleanerFindFilesMode == 0); }
+            get { return Settings.Default.diskCleanerFindFilesMode == 0; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -262,7 +258,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? FindFilesModified
         {
-            get { return (Settings.Default.diskCleanerFindFilesMode == 1); }
+            get { return Settings.Default.diskCleanerFindFilesMode == 1; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -276,7 +272,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         public bool? FindFilesAccessed
         {
-            get { return (Settings.Default.diskCleanerFindFilesMode == 2); }
+            get { return Settings.Default.diskCleanerFindFilesMode == 2; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -365,13 +361,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-        public Start(Wizard sb)
-        {
-            InitializeComponent();
-
-            ScanBase = sb;
-        }
-
         private void buttonScan_Click(object sender, RoutedEventArgs e)
         {
             UpdateOptions();
@@ -385,13 +374,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (ScanBase.SelectedDrives.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No drives selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No drives selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(SearchFilter))
             {
-                MessageBox.Show(Application.Current.MainWindow, "At least one search filter must be specified", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "At least one search filter must be specified",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -437,7 +428,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             // Excluded Files
             ExcFilesCollection.AddRange(
                 Settings.Default.diskCleanerExcludedFileTypes.Cast<string>()
-                    .Select(excludeFile => new LviFile { File = excludeFile }));
+                    .Select(excludeFile => new LviFile {File = excludeFile}));
             //this.listViewFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Included Folders
@@ -484,7 +475,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             addExcFolder.ShowDialog();
         }
 
-        void addFolder_AddExcludeFolder(object sender, AddExcludeFolderEventArgs e)
+        private void addFolder_AddExcludeFolder(object sender, AddExcludeFolderEventArgs e)
         {
             ExcFoldersCollection.Add(new LviFolder {Folder = e.FolderPath});
         }
@@ -505,12 +496,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (ListViewFiles.SelectedItems.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No file was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No file was selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 ExcFilesCollection.Remove(ListViewFiles.SelectedItems[0] as LviFile);
             }
@@ -520,12 +514,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (ListViewExcludeFolders.SelectedItems.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No folder was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No folder was selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 ExcFoldersCollection.Remove(ListViewExcludeFolders.SelectedItems[0] as LviFolder);
             }
@@ -535,12 +532,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (ListViewIncFolders.SelectedItems.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No folder was selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No folder was selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 IncFoldersCollection.Remove(ListViewIncFolders.SelectedItems[0] as LviFolder);
             }
@@ -556,7 +556,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps",
                 "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous"
             };
-            string[] filters = { };
+            string[] filters = {};
 
             if (SearchFilterSafe.GetValueOrDefault())
                 filters = new[] {"*.tmp", "*.temp", "*.gid", "*.chk", "*.~*"};
@@ -599,8 +599,20 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 MoveFolder = folderBrowserDlg.SelectedPath;
 
-                MessageBox.Show(Application.Current.MainWindow, "Folder to move junk files to has been updated", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "Folder to move junk files to has been updated",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
     }
 }

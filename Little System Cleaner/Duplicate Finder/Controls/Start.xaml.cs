@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ using MessageBox = System.Windows.MessageBox;
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     /// <summary>
-    /// Interaction logic for Start.xaml
+    ///     Interaction logic for Start.xaml
     /// </summary>
     public partial class Start
     {
@@ -31,11 +32,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 _scanBase.Options.Drives.Where(includeDrive => includeDrive.IsChecked.GetValueOrDefault()).ToList();
 
             // Clear drives
-            _scanBase.Options.Drives.Clear();  
+            _scanBase.Options.Drives.Clear();
 
             try
             {
-
                 _scanBase.Options.Drives.AddRange(DriveInfo.GetDrives()
                     .Select(di => new IncludeDrive(di))
                     // Iterate through drives and check drive if checked in previous list
@@ -51,7 +51,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             if (_scanBase.Options.IncFolders.Count > 0)
             {
                 _scanBase.Options.IncFolders =
-                    new System.Collections.ObjectModel.ObservableCollection<IncludeFolder>(
+                    new ObservableCollection<IncludeFolder>(
                         _scanBase.Options.IncFolders.Where(includeFolder => Directory.Exists(includeFolder.Name)));
             }
 
@@ -128,8 +128,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
-
-            
         }
 
         private void addFolder_Click(object sender, RoutedEventArgs e)
@@ -244,7 +242,5 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             _scanBase.MoveNext();
         }
-
-        
     }
 }

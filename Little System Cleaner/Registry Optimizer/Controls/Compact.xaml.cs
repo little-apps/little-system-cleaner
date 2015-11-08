@@ -20,21 +20,21 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
-using System.Threading.Tasks;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
-    /// Interaction logic for Compact.xaml
+    ///     Interaction logic for Compact.xaml
     /// </summary>
     public partial class Compact
     {
-        Thread _threadScan, _threadCurrent;
+        private Thread _threadScan;
+        private Thread _threadCurrent;
 
         public Compact()
         {
@@ -72,10 +72,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             catch (Win32Exception ex)
             {
                 string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
-            
-            foreach (Hive h in Wizard.RegistryHives)
+
+            foreach (var h in Wizard.RegistryHives)
             {
                 if (h.SkipCompact)
                 {
@@ -99,13 +100,15 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    string message =
+                        $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
 
             SetShutdownBlockReason(false);
-            
+
             Thread.EndCriticalRegion();
 
             // Set IsCompacted
@@ -118,7 +121,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         }
 
         /// <summary>
-        /// Enables/Disables the shutdown block reason
+        ///     Enables/Disables the shutdown block reason
         /// </summary>
         /// <param name="enable">True to enable the shutdown block reason</param>
         private bool SetShutdownBlockReason(bool enable)
@@ -126,12 +129,14 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             // The shutdown block will only succeed if it is called from the main thread
             if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                return (bool)Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
+                return (bool) Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
             }
 
-            IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
+            var hWnd = Process.GetCurrentProcess().MainWindowHandle;
 
-            var ret = enable ? PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted") : PInvoke.ShutdownBlockReasonDestroy(hWnd);
+            var ret = enable
+                ? PInvoke.ShutdownBlockReasonCreate(hWnd, "The Windows Registry Is Being Compacted")
+                : PInvoke.ShutdownBlockReasonDestroy(hWnd);
 
             return ret;
         }
@@ -139,7 +144,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
+                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
         }
     }
 }

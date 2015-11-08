@@ -1,11 +1,14 @@
 ﻿<Window x:Class="Little_System_Cleaner.Startup_Manager.Helpers.AddEditEntry"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Add/Edit Startup Entry" ShowInTaskbar="False" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="208" Width="390" ResizeMode="NoResize" Topmost="True">
+        Title="Add/Edit Startup Entry" ShowInTaskbar="False" mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="208" Width="390"
+        ResizeMode="NoResize" Topmost="True">
     <StackPanel>
-        <StackPanel Orientation="Horizontal"  Margin="3,3,3,0">
+        <StackPanel Orientation="Horizontal" Margin="3,3,3,0">
             <Label Content="Section:" Height="23" VerticalAlignment="Center" />
-            <ComboBox x:Name="Sections"  Height="23" VerticalAlignment="Center" Width="304" />
+            <ComboBox x:Name="Sections" Height="23" VerticalAlignment="Center" Width="304" />
         </StackPanel>
         <GroupBox Header="Name &amp; Path" Margin="3,3,3,0">
             <StackPanel>
@@ -13,14 +16,16 @@
                     <Label Content="Name:" Width="70" />
                     <TextBox Height="22" Name="TextBoxName" Width="296" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal"  Margin="0,3,0,0" >
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
                     <Label Content="Path:" Width="70" />
-                    <TextBox Height="23" Name="TextBoxPath" Width="273" IsReadOnly="True" MouseDoubleClick="textBoxPath_MouseDoubleClick" />
+                    <TextBox Height="23" Name="TextBoxPath" Width="273" IsReadOnly="True"
+                             MouseDoubleClick="textBoxPath_MouseDoubleClick" />
                     <Button Height="23" Name="ButtonBrowse" Click="buttonBrowse_Click">
-                        <Image Source="/Little_System_Cleaner;component/Resources/startup manager/addeditentry/search.png" />
+                        <Image
+                            Source="/Little_System_Cleaner;component/Resources/startup manager/addeditentry/search.png" />
                     </Button>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
                     <Label Content="Arguments:" Width="70" />
                     <TextBox Height="23" Name="TextBoxArgs" Width="296" />
                 </StackPanel>

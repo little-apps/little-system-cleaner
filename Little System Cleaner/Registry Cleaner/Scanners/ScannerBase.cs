@@ -24,45 +24,41 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public abstract class ScannerBase
     {
-        /// <summary>
-        /// Returns the scanner name
-        /// </summary>
-        abstract public string ScannerName
-        {
-            get;
-        }
+        public static CancellationTokenSource CancellationToken;
 
         /// <summary>
-        /// Gets/Sets the icon for the section
-        /// </summary>
-        public BitmapImage bMapImg { get; set; } 
-
-        /// <summary>
-        /// Gets/Sets if the scanner is enabled
-        /// </summary>
-        public bool IsEnabled { get; set; }
-
-        /// <summary>
-        /// The root node (used for scan dialog)
+        ///     The root node (used for scan dialog)
         /// </summary>
         public BadRegistryKey RootNode = new BadRegistryKey(null, "");
 
         /// <summary>
-        /// Returns the scanner name
+        ///     Returns the scanner name
+        /// </summary>
+        public abstract string ScannerName { get; }
+
+        /// <summary>
+        ///     Gets/Sets the icon for the section
+        /// </summary>
+        public BitmapImage bMapImg { get; set; }
+
+        /// <summary>
+        ///     Gets/Sets if the scanner is enabled
+        /// </summary>
+        public bool IsEnabled { get; set; }
+
+        /// <summary>
+        ///     Returns the scanner name
         /// </summary>
         public override string ToString()
         {
-            return (string)ScannerName.Clone();
+            return (string) ScannerName.Clone();
         }
 
-        public static CancellationTokenSource CancellationToken;
-
         public abstract void Scan();
+        //}
+        //    return;
+        //{
 
         //public virtual void Scan()
-        //{
-        //    return;
-        //}
-
     }
 }

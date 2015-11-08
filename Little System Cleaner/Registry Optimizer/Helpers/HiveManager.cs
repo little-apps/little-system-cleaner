@@ -16,18 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Registry_Optimizer.Controls;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Little_System_Cleaner.Registry_Optimizer.Controls;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
-    internal static class HiveManager 
+    internal static class HiveManager
     {
         /// <summary>
-        /// Gets a temporary path for a registry hive
+        ///     Gets a temporary path for a registry hive
         /// </summary>
         /// <remarks>The temporary hive path MUST be on the same drive as the hive or RegReplaceKey() will return error code 17</remarks>
         /// <returns>Temporary hive path</returns>
@@ -58,7 +58,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         }
 
         /// <summary>
-        /// Converts \\Device\\HarddiskVolumeX\... to X:\...
+        ///     Converts \\Device\\HarddiskVolumeX\... to X:\...
         /// </summary>
         /// <param name="devicePath">Device name with path</param>
         /// <returns>Drive path</returns>
@@ -102,7 +102,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         }
 
         /// <summary>
-        /// Gets the old size of the registry hives
+        ///     Gets the old size of the registry hives
         /// </summary>
         /// <returns>Registry size (in bytes)</returns>
         internal static long GetOldRegistrySize()
@@ -114,7 +114,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         }
 
         /// <summary>
-        /// Gets the new size of the registry hives
+        ///     Gets the new size of the registry hives
         /// </summary>
         /// <returns>Registry size (in bytes)</returns>
         internal static long GetNewRegistrySize()
@@ -125,6 +125,4 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             return Wizard.RegistryHives.Count == 0 ? 0 : Wizard.RegistryHives.Sum(h => h.NewHiveSize);
         }
     }
-
-    
 }

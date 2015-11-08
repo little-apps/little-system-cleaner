@@ -29,33 +29,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class Misc : ScannerBase
     {
-        #region Constants
-        // No dialog box confirming the deletion of the objects will be displayed.
-        internal const int SHERB_NOCONFIRMATION = 0x00000001;
-        // No dialog box indicating the progress will be displayed.
-        internal const int SHERB_NOPROGRESSUI = 0x00000002;
-        // No sound will be played when the operation is complete.
-        internal const int SHERB_NOSOUND = 0x00000004;
-        #endregion
-
-        #region Structures
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct SHQUERYRBINFO
-        {
-            public int cbSize;
-            public long i64Size;
-            public long i64NumItems;
-        }
-        #endregion
-
-        #region Functions
-        [DllImport("shell32.dll", SetLastError = true)]
-        internal static extern int SHQueryRecycleBin(string pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
-        [DllImport("shell32.dll", SetLastError = true)]
-        internal static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
-        #endregion
-
-        public Misc() 
+        public Misc()
         {
             Name = "Miscellaneous";
 
@@ -79,7 +53,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             switch (child.Name)
             {
-
                 case "Recycle Bin":
                     ScanRecycleBin();
                     break;
@@ -92,7 +65,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanRecycleBin()
         {
-            SHQUERYRBINFO sqrbi = new SHQUERYRBINFO { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
+            var sqrbi = new SHQUERYRBINFO {cbSize = Marshal.SizeOf(typeof (SHQUERYRBINFO))};
             SHQueryRecycleBin(string.Empty, ref sqrbi);
             if (sqrbi.i64NumItems > 0)
                 Wizard.StoreCleanDelegate(CleanRecycleBin, "Empty Recycle Bin", sqrbi.i64Size);
@@ -111,10 +84,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanDesktopShortcuts()
         {
-            string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            string desktopDir2 = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var desktopDir2 = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-            List<string> fileList = new List<string>(ParseDirectoryShortcuts(desktopDir));
+            var fileList = new List<string>(ParseDirectoryShortcuts(desktopDir));
 
             // If two paths are different, then check 2nd directory
             if (desktopDir != desktopDir2)
@@ -125,23 +98,27 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanStartMenuShortcuts()
         {
-            string startMenuDir = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
+            var startMenuDir = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
 
-            List<string> fileList = new List<string>(ParseDirectoryShortcuts(startMenuDir));
+            var fileList = new List<string>(ParseDirectoryShortcuts(startMenuDir));
 
             Wizard.StoreBadFileList("Invalid Start Menu Shortcuts", fileList.ToArray());
         }
 
         private List<string> ParseDirectoryShortcuts(string path)
         {
-            List<string> fileList = new List<string>();
+            var fileList = new List<string>();
 
-            foreach (string dirPath in Directory.GetDirectories(path).TakeWhile(dirPath => !CancellationToken.IsCancellationRequested))
+            foreach (
+                var dirPath in
+                    Directory.GetDirectories(path).TakeWhile(dirPath => !CancellationToken.IsCancellationRequested))
             {
                 fileList.AddRange(ParseDirectoryShortcuts(dirPath).ToArray());
             }
 
-            foreach (string shortcutPath in Directory.GetFiles(path).TakeWhile(shortcutPath => !CancellationToken.IsCancellationRequested))
+            foreach (
+                var shortcutPath in
+                    Directory.GetFiles(path).TakeWhile(shortcutPath => !CancellationToken.IsCancellationRequested))
             {
                 Wizard.CurrentFile = shortcutPath;
 
@@ -165,5 +142,38 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             return fileList;
         }
+
+        #region Structures
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct SHQUERYRBINFO
+        {
+            public int cbSize;
+            public long i64Size;
+            public long i64NumItems;
+        }
+
+        #endregion
+
+        #region Constants
+
+        // No dialog box confirming the deletion of the objects will be displayed.
+        internal const int SHERB_NOCONFIRMATION = 0x00000001;
+        // No dialog box indicating the progress will be displayed.
+        internal const int SHERB_NOPROGRESSUI = 0x00000002;
+        // No sound will be played when the operation is complete.
+        internal const int SHERB_NOSOUND = 0x00000004;
+
+        #endregion
+
+        #region Functions
+
+        [DllImport("shell32.dll", SetLastError = true)]
+        internal static extern int SHQueryRecycleBin(string pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
+
+        [DllImport("shell32.dll", SetLastError = true)]
+        internal static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
+
+        #endregion
     }
 }

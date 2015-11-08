@@ -6,28 +6,33 @@ using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
+
     #region INI Info Struct
+
     public struct IniInfo
     {
         /// <summary>
-        /// Path of the INI File
+        ///     Path of the INI File
         /// </summary>
         public string FilePath;
+
         /// <summary>
-        /// Section Name
+        ///     Section Name
         /// </summary>
         public string SectionName;
+
         /// <summary>
-        /// Value Name (optional)
+        ///     Value Name (optional)
         /// </summary>
         public string ValueName;
     }
+
     #endregion
 
     public class ResultIni : ResultNode
     {
         /// <summary>
-        /// Constructor for bad INI file
+        ///     Constructor for bad INI file
         /// </summary>
         /// <param name="desc">Description</param>
         /// <param name="iniInfo">INI Info Array</param>
@@ -39,11 +44,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
         public override void Clean(Report report)
         {
-            foreach (IniInfo iniInfo in IniInfoList)
+            foreach (var iniInfo in IniInfoList)
             {
-                string filePath = iniInfo.FilePath;
-                string section = iniInfo.SectionName;
-                string valueName = iniInfo.ValueName;
+                var filePath = iniInfo.FilePath;
+                var section = iniInfo.SectionName;
+                var valueName = iniInfo.ValueName;
 
                 // Delete section if value name is empty
                 if (string.IsNullOrEmpty(valueName))
@@ -52,8 +57,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         report.WriteLine($"Erased INI File: {filePath} Section: {section}");
                     else
                     {
-                        Win32Exception ex = new Win32Exception(Marshal.GetLastWin32Error());
-                        string message = $"Unable to erase INI File: {filePath} Section: {section}\nValue: {valueName}\nError: {ex.Message}";
+                        var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                        string message =
+                            $"Unable to erase INI File: {filePath} Section: {section}\nValue: {valueName}\nError: {ex.Message}";
 
                         Debug.WriteLine(message);
                     }
@@ -64,8 +70,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         report.WriteLine($"Erased INI File: {filePath} Section: {section} Value Name: {valueName}");
                     else
                     {
-                        Win32Exception ex = new Win32Exception(Marshal.GetLastWin32Error());
-                        string message = $"Unable to erase INI File: {filePath} Section: {section} Value Name: {valueName}\nError: {ex.Message}";
+                        var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                        string message =
+                            $"Unable to erase INI File: {filePath} Section: {section} Value Name: {valueName}\nError: {ex.Message}";
 
                         Debug.WriteLine(message);
                     }

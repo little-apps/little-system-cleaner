@@ -18,16 +18,15 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
 using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
-using System.Threading.Tasks;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
-    /// Interaction logic for Analyze.xaml
+    ///     Interaction logic for Analyze.xaml
     /// </summary>
     public partial class Analyze
     {
@@ -66,7 +65,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private async void AnalyzeHives()
         {
             var dtStart = DateTime.Now;
-            
+
             Thread.BeginCriticalRegion();
 
             foreach (var h in Wizard.RegistryHives)
@@ -81,7 +80,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             var timeSpan = DateTime.Now.Subtract(dtStart);
 
-            Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds, true);
+            Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int) timeSpan.TotalSeconds,
+                true);
 
             Settings.Default.lastScanElapsed = timeSpan.Ticks;
 
@@ -98,7 +98,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
+                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
         }
     }
 }

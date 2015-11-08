@@ -29,11 +29,11 @@ using Little_System_Cleaner.Properties;
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Analyze.xaml
+    ///     Interaction logic for Analyze.xaml
     /// </summary>
     public partial class Results
     {
-        readonly Wizard _scanBase;
+        private readonly Wizard _scanBase;
 
         private Task _cleanTask;
 
@@ -67,7 +67,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (Tree.SelectedNode == null)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Nothing is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Application.Current.MainWindow, "Nothing is selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
@@ -77,7 +78,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         private async void buttonClean_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
             Main.Watcher.Event("Privacy Cleaner", "Clean Files");
@@ -87,7 +90,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             await _cleanTask;
 
             MessageBox.Show(Application.Current.MainWindow, "Successfully Cleaned Disk", Utils.ProductName,
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBoxButton.OK, MessageBoxImage.Information);
 
             _scanBase.MoveFirst();
         }
@@ -105,7 +108,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             catch (Win32Exception ex)
             {
                 string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             var observationModel = (Tree.Model as ResultModel)?.Root.Children;
@@ -137,7 +141,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             catch (Win32Exception ex)
             {
                 string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -150,7 +155,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 _scanBase.MoveFirst();
             }

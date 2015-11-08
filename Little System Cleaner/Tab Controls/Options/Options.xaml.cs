@@ -17,7 +17,6 @@
 */
 
 using System.ComponentModel;
-using System.Security;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
@@ -30,15 +29,15 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 {
     public partial class Options : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string propertyName)
+        public Options()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            InitializeComponent();
 
-        #endregion
+            using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword))
+            {
+                proxyPassword.Password = Utils.ToInsecureString(secureStr);
+            }
+        }
 
         public int SelectedUpdateDelay
         {
@@ -126,7 +125,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
         public bool? NoProxy
         {
-            get { return (Settings.Default.optionsUseProxy == 0); }
+            get { return Settings.Default.optionsUseProxy == 0; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -141,7 +140,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
         public bool? IeProxy
         {
-            get { return (Settings.Default.optionsUseProxy == 1); }
+            get { return Settings.Default.optionsUseProxy == 1; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -156,7 +155,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 
         public bool? Proxy
         {
-            get { return (Settings.Default.optionsUseProxy == 2); }
+            get { return Settings.Default.optionsUseProxy == 2; }
             set
             {
                 if (value.GetValueOrDefault())
@@ -233,17 +232,6 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             }
         }
 
-
-		public Options()
-		{
-            InitializeComponent();
-
-		    using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword))
-		    {
-                proxyPassword.Password = Utils.ToInsecureString(secureStr);
-            }
-		}
-
         public void ShowAboutTab()
         {
             TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemAbout);
@@ -289,5 +277,16 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             if (Settings.Default.optionsProxyPassword != encryptedPassword)
                 Settings.Default.optionsProxyPassword = encryptedPassword;
         }
-	}
+
+        #region INotifyPropertyChanged implementation
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+    }
 }

@@ -28,7 +28,7 @@ using Timer = System.Timers.Timer;
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
     /// <summary>
-    /// Interaction logic for RunningMsg.xaml
+    ///     Interaction logic for RunningMsg.xaml
     /// </summary>
     public partial class RunningMsg
     {
@@ -59,7 +59,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
             {
-                return (bool?)Application.Current.Dispatcher.Invoke(new Func<string, string, bool?>(DisplayRunningMsg), scannerName, procName);
+                return
+                    (bool?)
+                        Application.Current.Dispatcher.Invoke(new Func<string, string, bool?>(DisplayRunningMsg),
+                            scannerName, procName);
             }
 
             if (!MiscFunctions.IsProcessRunning(procName))
@@ -67,11 +70,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (Settings.Default.privacyCleanerAutoSkipScanner)
             {
-                MessageBox.Show(Application.Current.MainWindow, $"Automatically skipping the scanning for {scannerName}...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow,
+                    $"Automatically skipping the scanning for {scannerName}...", Utils.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 return false;
             }
 
-            RunningMsg dlgResult = new RunningMsg(scannerName, procName);
+            var dlgResult = new RunningMsg(scannerName, procName);
             return dlgResult.ShowDialog();
         }
 
@@ -85,7 +90,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             // Update list box
             ListBox.Items.Clear();
-            foreach (Process p in Process.GetProcessesByName(_procName))
+            foreach (var p in Process.GetProcessesByName(_procName))
             {
                 if (!string.IsNullOrEmpty(p.MainWindowTitle))
                     ListBox.Items.Add(p.MainWindowTitle);
@@ -103,7 +108,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             if (DialogResult.GetValueOrDefault() == false)
             {
-                MessageBox.Show(this, $"Skipping the scanning for {_scannerName}...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(this, $"Skipping the scanning for {_scannerName}...", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

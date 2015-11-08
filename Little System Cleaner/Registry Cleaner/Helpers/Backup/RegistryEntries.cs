@@ -6,25 +6,18 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 {
     public class RegistryEntries
     {
-        private DateTime _dateTimeCreated = DateTime.Now;
-        private List<RegistryEntry> _regEntries = new List<RegistryEntry>();
-
-        public int Count => _regEntries.Count;
+        public int Count => RegEntries.Count;
 
         [XmlAttribute("Created")]
         public long Created
         {
-            get { return _dateTimeCreated.ToBinary(); }
-            set { _dateTimeCreated = DateTime.FromBinary(value); }
+            get { return CreatedDateTime.ToBinary(); }
+            set { CreatedDateTime = DateTime.FromBinary(value); }
         }
 
         [XmlArray("RegistryEntries")]
         [XmlArrayItem("RegistryEntry")]
-        public List<RegistryEntry> RegEntries
-        {
-            get { return _regEntries; }
-            set { _regEntries = value; }
-        }
+        public List<RegistryEntry> RegEntries { get; set; } = new List<RegistryEntry>();
 
         public RegistryEntry this[int i]
         {
@@ -34,14 +27,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 // the corresponding element from the internal array. 
                 return RegEntries[i];
             }
-            set
-            {
-                RegEntries[i] = value;
-            }
+            set { RegEntries[i] = value; }
         }
 
 
-        public DateTime CreatedDateTime => _dateTimeCreated;
+        public DateTime CreatedDateTime { get; private set; } = DateTime.Now;
 
         public void Clear()
         {

@@ -12,53 +12,160 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
     public class StartupMgrModel : ITreeModel
     {
-        public StartupEntry Root { get; }
-
         public StartupMgrModel()
         {
             Root = new StartupEntry();
         }
 
+        public StartupEntry Root { get; }
+
+        public IEnumerable GetChildren(object parent)
+        {
+            if (parent == null)
+                parent = Root;
+            return (parent as StartupEntry)?.Children;
+        }
+
+        public bool HasChildren(object parent)
+        {
+            var startupEntry = parent as StartupEntry;
+            return startupEntry != null && startupEntry.Children.Count > 0;
+        }
+
         internal static StartupMgrModel CreateStarupMgrModel()
         {
-            StartupMgrModel treeModel = new StartupMgrModel();
+            var treeModel = new StartupMgrModel();
 
             // Adds registry keys to model
 
             // all user keys
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.LocalMachine.OpenSubKey(
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.LocalMachine.OpenSubKey(
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices",
+                            true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.LocalMachine.OpenSubKey(
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
 
             if (Utils.Is64BitOs)
             {
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run",
+                                true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
             }
 
             // current user keys
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
-            Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.CurrentUser.OpenSubKey(
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.CurrentUser.OpenSubKey(
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices",
+                            true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup",
+                            true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
+            Utils.SafeOpenRegistryKey(
+                () =>
+                    LoadRegistryAutoRun(treeModel,
+                        Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
 
             if (Utils.Is64BitOs)
             {
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
-                Utils.SafeOpenRegistryKey(() => LoadRegistryAutoRun(treeModel, Registry.CurrentUser.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run",
+                                true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true)));
+                Utils.SafeOpenRegistryKey(
+                    () =>
+                        LoadRegistryAutoRun(treeModel,
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true)));
             }
 
             // Adds startup folders
@@ -69,7 +176,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         }
 
         /// <summary>
-        /// Loads registry sub key into tree view
+        ///     Loads registry sub key into tree view
         /// </summary>
         /// <remarks>Do NOT close the registry key after use!</remarks>
         private static void LoadRegistryAutoRun(StartupMgrModel treeModel, RegistryKey regKey)
@@ -90,14 +197,15 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 SectionName = regKey.Name,
                 bMapImg = bitmap.CreateBitmapSourceFromBitmap()
             };
-            
+
             try
             {
                 strValueNames = regKey.GetValueNames();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey);
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " +
+                                regKey);
                 return;
             }
 
@@ -123,7 +231,14 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                                 strFile = strFilePath;
                     }
 
-                    var node = new StartupEntry { Parent = nodeRoot, SectionName = strItem, Path = strFile, Args = strArgs, RegKey = regKey };
+                    var node = new StartupEntry
+                    {
+                        Parent = nodeRoot,
+                        SectionName = strItem,
+                        Path = strFile,
+                        Args = strArgs,
+                        RegKey = regKey
+                    };
 
                     var ico = Utils.ExtractIcon(strFile);
                     node.bMapImg = ico != null
@@ -134,7 +249,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping trying to get value for " + strItem + " in " + regKey + "...");
+                    Debug.WriteLine("The following error occurred: " + ex.Message +
+                                    "\nSkipping trying to get value for " + strItem + " in " + regKey + "...");
                 }
             }
 
@@ -143,7 +259,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         }
 
         /// <summary>
-        /// Loads startup folder into tree view
+        ///     Loads startup folder into tree view
         /// </summary>
         private static void AddStartupFolder(StartupMgrModel treeModel, string folder)
         {
@@ -185,7 +301,13 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     if (!Utils.ResolveShortcut(shortcut, out filePath, out fileArgs))
                         continue;
 
-                    var node = new StartupEntry { Parent = nodeRoot, SectionName = shortcutName, Path = filePath, Args = fileArgs };
+                    var node = new StartupEntry
+                    {
+                        Parent = nodeRoot,
+                        SectionName = shortcutName,
+                        Path = filePath,
+                        Args = fileArgs
+                    };
 
                     var ico = Utils.ExtractIcon(filePath);
                     node.bMapImg = ico != null
@@ -196,27 +318,13 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping trying to resolve shortcut for " + shortcut);
+                    Debug.WriteLine("The following error occurred: " + ex.Message +
+                                    "\nSkipping trying to resolve shortcut for " + shortcut);
                 }
-                    
             }
 
             if (nodeRoot.Children.Count > 0)
                 treeModel.Root.Children.Add(nodeRoot);
-
-        }
-
-        public IEnumerable GetChildren(object parent)
-        {
-            if (parent == null)
-                parent = Root;
-            return (parent as StartupEntry)?.Children;
-        }
-
-        public bool HasChildren(object parent)
-        {
-            var startupEntry = parent as StartupEntry;
-            return startupEntry != null && startupEntry.Children.Count > 0;
         }
     }
 }

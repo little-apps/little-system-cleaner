@@ -18,21 +18,16 @@
 
 using System;
 using System.Windows;
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Optimizer.Helpers;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
-    /// Interaction logic for Main.xaml
+    ///     Interaction logic for Main.xaml
     /// </summary>
     public partial class Main
-    {       
-        /// <summary>
-        /// True if the registry has been compacted and is waiting for a reboot
-        /// </summary>
-        internal static bool IsCompacted { get; set; }
-
+    {
         private readonly Wizard _scanBase;
 
         public Main(Wizard sb)
@@ -41,6 +36,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             _scanBase = sb;
         }
+
+        /// <summary>
+        ///     True if the registry has been compacted and is waiting for a reboot
+        /// </summary>
+        internal static bool IsCompacted { get; set; }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -77,12 +77,13 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             // Check registry size before continuing
             if (HiveManager.GetNewRegistrySize() <= 0 || IsCompacted)
             {
-                MessageBox.Show(Application.Current.MainWindow, "It appears that the registry has already been compacted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "It appears that the registry has already been compacted.", Utils.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
 
             _scanBase.MoveNext();
         }
-
     }
 }

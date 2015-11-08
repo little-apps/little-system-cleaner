@@ -16,43 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections;
 using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
     public class SectionModel : ITreeModel
     {
-        public Section Root { get; }
-
-        internal static SectionModel CreateSectionModel()
-        {
-            var myComp = new Section() { Icon = Properties.Resources.mycomputer, SectionName = "My Computer" };
-            var model = new SectionModel();
-
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.activexcom, SectionName = Strings.ActivexComObjects, Description = "Locations to ActiveX and COM objects that no longer exist", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.appinfo, SectionName = Strings.ApplicationInfo, Description = "Currently installed applications", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.programlocations, SectionName = Strings.ApplicationPaths, Description = "Removes invalid application paths", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.softwaresettings, SectionName = Strings.ApplicationSettings, Description = "Scans for software registry keys with no data", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.startup, SectionName = Strings.StartupFiles, Description = "Programs that run when windows starts up", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.drivers, SectionName = Strings.SystemDrivers, Description = "Finds invalid references to drivers", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.shareddlls, SectionName = Strings.SharedDLLs, Description = "Scans for invalid DLL references", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.helpfiles, SectionName = Strings.WindowsHelpFiles, Description = "Scans for help files that no longer exist", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.soundevents, SectionName = Strings.WindowsSounds, Description = "Scans for missing windows sounds", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.historylist, SectionName = Strings.RecentDocs, Description = "Scans for missing recent documents links", Parent = myComp });
-            myComp.Children.Add(new Section() { Icon = Properties.Resources.fonts, SectionName = Strings.WindowsFonts, Description = "Finds invalid font references", Parent = myComp });
-
-            model.Root.Children.Add(myComp);
-
-            return model;
-        }
-
         public SectionModel()
         {
             Root = new Section();
         }
 
-        public System.Collections.IEnumerable GetChildren(object parent)
+        public Section Root { get; }
+
+        public IEnumerable GetChildren(object parent)
         {
             if (parent == null)
                 parent = Root;
@@ -63,6 +43,94 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
         {
             var section = parent as Section;
             return section != null && section.Children.Count > 0;
+        }
+
+        internal static SectionModel CreateSectionModel()
+        {
+            var myComp = new Section {Icon = Resources.mycomputer, SectionName = "My Computer"};
+            var model = new SectionModel();
+
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.activexcom,
+                SectionName = Strings.ActivexComObjects,
+                Description = "Locations to ActiveX and COM objects that no longer exist",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.appinfo,
+                SectionName = Strings.ApplicationInfo,
+                Description = "Currently installed applications",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.programlocations,
+                SectionName = Strings.ApplicationPaths,
+                Description = "Removes invalid application paths",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.softwaresettings,
+                SectionName = Strings.ApplicationSettings,
+                Description = "Scans for software registry keys with no data",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.startup,
+                SectionName = Strings.StartupFiles,
+                Description = "Programs that run when windows starts up",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.drivers,
+                SectionName = Strings.SystemDrivers,
+                Description = "Finds invalid references to drivers",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.shareddlls,
+                SectionName = Strings.SharedDLLs,
+                Description = "Scans for invalid DLL references",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.helpfiles,
+                SectionName = Strings.WindowsHelpFiles,
+                Description = "Scans for help files that no longer exist",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.soundevents,
+                SectionName = Strings.WindowsSounds,
+                Description = "Scans for missing windows sounds",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.historylist,
+                SectionName = Strings.RecentDocs,
+                Description = "Scans for missing recent documents links",
+                Parent = myComp
+            });
+            myComp.Children.Add(new Section
+            {
+                Icon = Resources.fonts,
+                SectionName = Strings.WindowsFonts,
+                Description = "Finds invalid font references",
+                Parent = myComp
+            });
+
+            model.Root.Children.Add(myComp);
+
+            return model;
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿<UserControl
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ct="clr-namespace:CommonTools;assembly=CommonTools"
     xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
     mc:Ignorable="d"
-	x:Class="Little_System_Cleaner.Registry_Cleaner.Controls.Scan"
-	x:Name="UserControl"
+    x:Class="Little_System_Cleaner.Registry_Cleaner.Controls.Scan"
+    x:Name="UserControl"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
-	MinWidth="579" MinHeight="384"
-    >
+    MinWidth="579" MinHeight="384">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -25,44 +24,51 @@
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0"/>
-                    <GradientStop Color="Gray" Offset="1"/>
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="Gray" Offset="1" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Registry Cleaner" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Content="Registry Cleaner" Margin="8,0" Foreground="White" Height="28"
+                       HorizontalAlignment="Left" />
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 2 of 3</Label>
             </Grid>
         </Border>
-        <ProgressBar VerticalAlignment="Top" Height="24" x:Name="ProgressBar" Grid.Row="2" ValueChanged="progressBar_ValueChanged" />
-        <Button x:Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0" HorizontalAlignment="Left">
+        <ProgressBar VerticalAlignment="Top" Height="24" x:Name="ProgressBar" Grid.Row="2"
+                     ValueChanged="progressBar_ValueChanged" />
+        <Button x:Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="4" Margin="0,5,0,5" Padding="8,0,8,0"
+                HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" />
+                <Image Margin="0,0,5,0" Width="16" Height="16" VerticalAlignment="Center"
+                       Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" />
                 <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
             </StackPanel>
         </Button>
-        <Label Content="Section: " x:Name="CurrentSection" VerticalAlignment="Top" Grid.Row="2" Height="24" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="0"  />
+        <Label Content="Section: " x:Name="CurrentSection" VerticalAlignment="Top" Grid.Row="2" Height="24"
+               HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="0" />
 
-        <ListView ItemsSource="{Binding SectionsCollection}" Name="ListView" IsSynchronizedWithCurrentItem="True" Grid.Row="3" DataContext="{Binding}">
+        <ListView ItemsSource="{Binding SectionsCollection}" Name="ListView" IsSynchronizedWithCurrentItem="True"
+                  Grid.Row="3" DataContext="{Binding}">
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn Header="Section" x:Name="Section">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding Image}" gif:AnimationBehavior.SourceUri="{Binding Path=AnimatedImage}" />
-                                    <TextBlock Text="{Binding Path=Section}"></TextBlock>
+                                    <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding Image}"
+                                           gif:AnimationBehavior.SourceUri="{Binding Path=AnimatedImage}" />
+                                    <TextBlock Text="{Binding Path=Section}" />
                                 </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="177"/>
-                    <GridViewColumn Header="Errors" DisplayMemberBinding="{Binding Errors}" Width="177"/>
-        		</GridView>
-        	</ListView.View>
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="177" />
+                    <GridViewColumn Header="Errors" DisplayMemberBinding="{Binding Errors}" Width="177" />
+                </GridView>
+            </ListView.View>
         </ListView>
-        
+
         <TextBlock Grid.Column="1" Grid.Row="1" Margin="60,6,32,0" HorizontalAlignment="Center">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
-        
+
     </Grid>
 </UserControl>

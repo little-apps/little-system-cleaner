@@ -36,24 +36,41 @@ using MessageBox = System.Windows.MessageBox;
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Sections.xaml
+    ///     Interaction logic for Sections.xaml
     /// </summary>
     public partial class Start : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
+        private ObservableCollection<ExcludeItem> _excludeArray;
+        private ObservableCollection<RestoreFile> _restoreFiles;
 
         public Wizard ScanBase;
-        private ObservableCollection<RestoreFile> _restoreFiles;
-        private ObservableCollection<ExcludeItem> _excludeArray;
+
+        public Start(Wizard sb)
+        {
+            InitializeComponent();
+
+            Tree.Model = SectionModel.CreateSectionModel();
+
+            ScanBase = sb;
+
+            TextBoxBackups.Text = Settings.Default.OptionsBackupDir;
+
+            CheckBoxLog.IsChecked = Settings.Default.registryCleanerOptionsLog;
+            CheckBoxShowLog.IsChecked = Settings.Default.registryCleanerOptionsShowLog;
+            CheckBoxAutoRescan.IsChecked = Settings.Default.registryCleanerOptionsAutoRescan;
+            CheckBoxDelBackup.IsChecked = Settings.Default.registryCleanerOptionsDelBackup;
+            CheckBoxIgnoreRemMedia.IsChecked = Settings.Default.registryCleanerOptionsRemMedia;
+            CheckBoxShowErrors.IsChecked = Settings.Default.registryCleanerOptionsShowErrors;
+            CheckBoxDeleteOnBackupError.IsEnabled = !CheckBoxShowErrors.IsChecked.Value;
+            CheckBoxDeleteOnBackupError.IsChecked = Settings.Default.registryCleanerOptionsDeleteOnBackupError;
+            CheckBoxAutoRepair.IsChecked = Settings.Default.registryCleanerOptionsAutoRepair;
+            CheckBoxAutoExit.IsChecked = Settings.Default.registryCleanerOptionsAutoExit;
+
+            ExcludeArray = Settings.Default.ArrayExcludeList;
+            RestoreFiles = new ObservableCollection<RestoreFile>();
+
+            PopulateListView();
+        }
 
         public ObservableCollection<ExcludeItem> ExcludeArray
         {
@@ -77,33 +94,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        public Start(Wizard sb)
-        {
-            InitializeComponent();
-
-            Tree.Model = SectionModel.CreateSectionModel();
-
-            ScanBase = sb;
-
-            TextBoxBackups.Text = Settings.Default.OptionsBackupDir;
-
-            CheckBoxLog.IsChecked = Settings.Default.registryCleanerOptionsLog;
-            CheckBoxShowLog.IsChecked = Settings.Default.registryCleanerOptionsShowLog;
-            CheckBoxAutoRescan.IsChecked = Settings.Default.registryCleanerOptionsAutoRescan;
-            CheckBoxDelBackup.IsChecked = Settings.Default.registryCleanerOptionsDelBackup;
-            CheckBoxIgnoreRemMedia.IsChecked = Settings.Default.registryCleanerOptionsRemMedia;
-            CheckBoxShowErrors.IsChecked = Settings.Default.registryCleanerOptionsShowErrors;
-            CheckBoxDeleteOnBackupError.IsEnabled = (!CheckBoxShowErrors.IsChecked.Value);
-            CheckBoxDeleteOnBackupError.IsChecked = Settings.Default.registryCleanerOptionsDeleteOnBackupError;
-            CheckBoxAutoRepair.IsChecked = Settings.Default.registryCleanerOptionsAutoRepair;
-            CheckBoxAutoExit.IsChecked = Settings.Default.registryCleanerOptionsAutoExit;
-
-            ExcludeArray = Settings.Default.ArrayExcludeList;
-            RestoreFiles = new ObservableCollection<RestoreFile>();
-
-            PopulateListView();
-        }
-
         private void PopulateListView()
         {
             DirectoryInfo di;
@@ -122,13 +112,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
             catch (Exception ex)
             {
-                string message = $"Unable to get files from backup directory.\nThe following error occurred: {ex.Message}";
-                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                string message =
+                    $"Unable to get files from backup directory.\nThe following error occurred: {ex.Message}";
+                MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 
                 return;
             }
-            
-            foreach (var fi in di.GetFiles().Where(fi => string.Compare(fi.Extension, ".bakx", StringComparison.Ordinal) == 0))
+
+            foreach (
+                var fi in
+                    di.GetFiles().Where(fi => string.Compare(fi.Extension, ".bakx", StringComparison.Ordinal) == 0))
             {
                 // Deserialize to creation date
                 using (var backupReg = new BackupRegistry(fi.FullName))
@@ -159,7 +153,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             Settings.Default.registryCleanerOptionsDelBackup = CheckBoxDelBackup.IsChecked.GetValueOrDefault();
             Settings.Default.registryCleanerOptionsRemMedia = CheckBoxIgnoreRemMedia.IsChecked.GetValueOrDefault();
             Settings.Default.registryCleanerOptionsShowErrors = CheckBoxShowErrors.IsChecked.GetValueOrDefault();
-            Settings.Default.registryCleanerOptionsDeleteOnBackupError = CheckBoxDeleteOnBackupError.IsChecked.GetValueOrDefault();
+            Settings.Default.registryCleanerOptionsDeleteOnBackupError =
+                CheckBoxDeleteOnBackupError.IsChecked.GetValueOrDefault();
             Settings.Default.registryCleanerOptionsAutoRepair = CheckBoxAutoRepair.IsChecked.GetValueOrDefault();
             Settings.Default.registryCleanerOptionsAutoExit = CheckBoxAutoExit.IsChecked.GetValueOrDefault();
 
@@ -174,7 +169,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            string windir = Environment.GetEnvironmentVariable("WINDIR");
+            var windir = Environment.GetEnvironmentVariable("WINDIR");
 
             try
             {
@@ -191,29 +186,34 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
             catch (Exception ex)
             {
-                if (ex is FileNotFoundException) 
+                if (ex is FileNotFoundException)
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "Could not find Windows Explorer to browse to a folder (" + Settings.Default.OptionsBackupDir + ")", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow,
+                        "Could not find Windows Explorer to browse to a folder (" + Settings.Default.OptionsBackupDir +
+                        ")", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else if (ex is Win32Exception)
                 {
-                    int hr = Marshal.GetHRForException(ex);
-                    if (hr == unchecked((int)0x80004002))
+                    var hr = Marshal.GetHRForException(ex);
+                    if (hr == unchecked((int) 0x80004002))
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message + "\nThis can be caused by problems with permissions and the Windows Registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow,
+                            "The following error occurred: " + ex.Message +
+                            "\nThis can be caused by problems with permissions and the Windows Registry.",
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message,
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 else
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, "The following error occurred: " + ex.Message,
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                
             }
-            
         }
 
         private void buttonRestore_Click(object sender, RoutedEventArgs e)
@@ -222,11 +222,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (ListViewFiles.SelectedItem == null)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No restore file selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No restore file selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
             var filePath = (ListViewFiles.SelectedItem as RestoreFile)?.FileInfo.FullName;
@@ -237,7 +240,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (!backupReg.Open(true))
                 {
                     message = $"Failed to open backup file ({filePath}).\nUnable to restore registry.";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                     return;
                 }
 
@@ -248,24 +252,29 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 catch (Win32Exception ex)
                 {
                     message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
 
                 if (!backupReg.Deserialize(out message))
                 {
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                     return;
                 }
 
                 if (backupReg.RegistryEntries.Count == 0)
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "No registry entries found in backup file.\nUnable to restore registry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow,
+                        "No registry entries found in backup file.\nUnable to restore registry.", Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (backupReg.Restore())
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "Successfully restored registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(Application.Current.MainWindow, "Successfully restored registry", Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                     if (Settings.Default.registryCleanerOptionsDelBackup)
                     {
                         // Delete file
@@ -278,12 +287,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 }
                 else
                 {
-                    MessageBox.Show(Application.Current.MainWindow, "Error restoring the registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, "Error restoring the registry", Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
                 if (lSeqNum == 0)
                     return;
-                
+
                 try
                 {
                     SysRestore.EndRestore(lSeqNum);
@@ -291,7 +301,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 catch (Win32Exception ex)
                 {
                     message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }
@@ -329,13 +340,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             {
                 ExcludeArray.Add(excludeItem);
 
-                MessageBox.Show(Application.Current.MainWindow, "Successfully added file to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "Successfully added file to exclude list.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
                 ListViewExcludes.AutoResizeColumns();
             }
             else
-                MessageBox.Show(Application.Current.MainWindow, $"File ({addExcludeItem.FilePath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, $"File ({addExcludeItem.FilePath}) already exists",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void menuItemAddFolder_Click(object sender, RoutedEventArgs e)
@@ -346,16 +359,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
 
             var excludeItem = addExcludeItem.ExcludeItem;
-            if (!ExcludeArray.Contains(excludeItem)) {
+            if (!ExcludeArray.Contains(excludeItem))
+            {
                 ExcludeArray.Add(excludeItem);
 
-                MessageBox.Show(Application.Current.MainWindow, "Successfully added folder to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "Successfully added folder to exclude list.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
                 ListViewExcludes.AutoResizeColumns();
             }
             else
-                MessageBox.Show(Application.Current.MainWindow, $"Folder ({addExcludeItem.FolderPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, $"Folder ({addExcludeItem.FolderPath}) already exists",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void menuItemAddRegKey_Click(object sender, RoutedEventArgs e)
@@ -365,17 +381,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
 
             var excludeItem = addExcludeItem.ExcludeItem;
-            if (!ExcludeArray.Contains(excludeItem)) 
+            if (!ExcludeArray.Contains(excludeItem))
             {
                 ExcludeArray.Add(excludeItem);
 
-                MessageBox.Show(Application.Current.MainWindow, "Successfully added registry key to exclude list.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "Successfully added registry key to exclude list.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateSettings();
                 ListViewExcludes.AutoResizeColumns();
             }
             else
-                MessageBox.Show(Application.Current.MainWindow, $"Registry key ({addExcludeItem.RegistryPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    $"Registry key ({addExcludeItem.RegistryPath}) already exists", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void menuItemEdit_Click(object sender, RoutedEventArgs e)
@@ -388,7 +407,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (pos == -1)
             {
-                MessageBox.Show(Application.Current.MainWindow, "The selected entry could not be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "The selected entry could not be found.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -398,7 +418,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             ExcludeArray[pos] = editExcludeItem.ExcludeItem;
 
-            MessageBox.Show(Application.Current.MainWindow, "Successfully updated exclude entry.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Application.Current.MainWindow, "Successfully updated exclude entry.", Utils.ProductName,
+                MessageBoxButton.OK, MessageBoxImage.Information);
 
             UpdateSettings();
             ListViewExcludes.AutoResizeColumns();
@@ -409,7 +430,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (ListViewExcludes.SelectedItems.Count == 0)
                 return;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
             ExcludeArray.Remove(ListViewExcludes.SelectedItem as ExcludeItem);
@@ -424,7 +447,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (Scan.EnabledScanners.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "At least one section must be selected in order for the Windows Registry to be scanned.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "At least one section must be selected in order for the Windows Registry to be scanned.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -449,7 +474,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             UpdateSettings();
         }
 
-        
+        #region INotifyPropertyChanged Members
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
     }
 }

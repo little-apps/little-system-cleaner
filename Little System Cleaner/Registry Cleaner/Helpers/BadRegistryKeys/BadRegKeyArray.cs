@@ -28,7 +28,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         public BadRegistryKey this[int index]
         {
-            get { return (BadRegistryKey)InnerList[index]; }
+            get { return (BadRegistryKey) InnerList[index]; }
             set { InnerList[index] = value; }
         }
 
@@ -37,7 +37,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             if (badRegKey == null)
                 throw new ArgumentNullException(nameof(badRegKey));
 
-            int index; 
+            int index;
 
             lock (_lockObj)
             {
@@ -82,7 +82,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         }
 
         /// <summary>
-        /// Checks if an entry already exists with the same registry key
+        ///     Checks if an entry already exists with the same registry key
         /// </summary>
         /// <param name="regPath">Registry key</param>
         /// <param name="valueName">Value Name</param>
@@ -111,11 +111,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         public int Problems(string sectionName)
         {
-            int count = 0;
+            var count = 0;
 
             lock (_lockObj)
             {
-                count += ((ArrayList) InnerList.Clone()).Cast<BadRegistryKey>().Count(badRegKey => badRegKey.SectionName == sectionName);
+                count +=
+                    ((ArrayList) InnerList.Clone()).Cast<BadRegistryKey>()
+                        .Count(badRegKey => badRegKey.SectionName == sectionName);
             }
 
             return count;

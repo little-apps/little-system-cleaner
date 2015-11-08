@@ -16,10 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
+using System.Security;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -40,9 +42,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     ScanRegistryKey(Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Wow6432Node"));
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -64,7 +66,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         }
 
         /// <summary>
-        /// Recursively goes through the registry keys and finds how many values there are
+        ///     Recursively goes through the registry keys and finds how many values there are
         /// </summary>
         /// <param name="regKey">The base registry key</param>
         /// <returns>True if the registry key is empty</returns>
@@ -77,7 +79,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             var nSubKeyCount = regKey.SubKeyCount;
 
             if (regKey.ValueCount != 0)
-                return (nValueCount == 0 && nSubKeyCount == 0);
+                return nValueCount == 0 && nSubKeyCount == 0;
 
             if (regKey.GetValue("") != null)
                 nValueCount = 1;

@@ -7,24 +7,12 @@ using System.Xml;
 using System.Xml.Serialization;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 {
     public class BackupRegistry : IDisposable
     {
-        private RegistryEntries _registryEntries;
-        private Stream _stream = Stream.Null;
-
         private bool _disposed;
-
-        public string FilePath { get; }
-
-        public Stream Stream => _stream;
-
-        public RegistryEntries RegistryEntries => _registryEntries;
-
-        public DateTime Created => RegistryEntries?.CreatedDateTime ?? DateTime.MinValue;
 
         public BackupRegistry(string file)
         {
@@ -32,20 +20,29 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 throw new ArgumentNullException(nameof(file));
 
             FilePath = file;
-            _registryEntries = new RegistryEntries();
+            RegistryEntries = new RegistryEntries();
         }
+
+        public string FilePath { get; }
+
+        public Stream Stream { get; private set; } = Stream.Null;
+
+        public RegistryEntries RegistryEntries { get; private set; }
+
+        public DateTime Created => RegistryEntries?.CreatedDateTime ?? DateTime.MinValue;
 
         public bool Open(bool openExisting)
         {
             try
             {
-                if (openExisting) {
+                if (openExisting)
+                {
                     // Open for reading
-                    _stream = File.OpenRead(FilePath);
+                    Stream = File.OpenRead(FilePath);
                 }
                 else
                 {
-                    _stream = File.OpenWrite(FilePath);
+                    Stream = File.OpenWrite(FilePath);
 
                     if (Stream.Length > 0)
                     {
@@ -53,13 +50,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                         fileStream?.SetLength(0);
                     }
                 }
-                    
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Unable to open file ({0}).\nError: {1}", FilePath, ex.Message);
 
-                _stream = Stream.Null;
+                Stream = Stream.Null;
                 return false;
             }
 
@@ -103,7 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 {
                     if (serializer.CanDeserialize(reader))
                     {
-                        _registryEntries = (RegistryEntries)serializer.Deserialize(reader);
+                        RegistryEntries = (RegistryEntries) serializer.Deserialize(reader);
                     }
                     else
                     {
@@ -137,7 +133,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 {
                     string message = $"Unable to create registry sub key ({regEntry.RegistryKeyPath})";
 
-                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                     Debug.WriteLine(message);
 
                     continue;
@@ -158,9 +155,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                     catch (Exception ex)
                     {
-                        string message = $"Unable to restore value name ({valueName}) for registry key ({regKey}).\nError: {ex.Message}";
+                        string message =
+                            $"Unable to restore value name ({valueName}) for registry key ({regKey}).\nError: {ex.Message}";
 
-                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                         Debug.WriteLine(message);
                     }
                 }
@@ -217,6 +216,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         }
 
         #region IDisposable Members
+
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)
@@ -228,7 +228,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 if (Stream != Stream.Null)
                 {
                     Stream.Close();
-                    _stream = Stream.Null;
+                    Stream = Stream.Null;
                 }
 
                 if (RegistryEntries.Count > 0)
@@ -243,6 +243,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         #endregion
     }
 }

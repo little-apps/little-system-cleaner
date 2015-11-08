@@ -5,8 +5,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -19,10 +17,13 @@ namespace Little_System_Cleaner.Misc
     internal static class Extensions
     {
         /// <summary>
-        /// Hides close (X) button in top right window
+        ///     Hides close (X) button in top right window
         /// </summary>
         /// <param name="window"></param>
-        /// <param name="addClosingHook">If true, adds delegate to Closing event which sets Cancel to true causing Window to note close. Please note, calling Close() method will not close the window either.</param>
+        /// <param name="addClosingHook">
+        ///     If true, adds delegate to Closing event which sets Cancel to true causing Window to note
+        ///     close. Please note, calling Close() method will not close the window either.
+        /// </param>
         internal static void HideCloseButton(this Window window, bool addClosingHook = false)
         {
             var hwnd = new WindowInteropHelper(window).Handle;
@@ -32,14 +33,15 @@ namespace Little_System_Cleaner.Misc
             if (addClosingHook)
             {
                 // Cancel Closing event (if it occurs)
-                window.Closing += delegate (object sender, CancelEventArgs args) { args.Cancel = true; };
+                window.Closing += delegate(object sender, CancelEventArgs args) { args.Cancel = true; };
             }
         }
 
         /// <summary>
-        /// Hides icon for window.
-        /// If this is called before InitializeComponent() then the icon will be completely removed from the title bar
-        /// If this is called after InitializeComponent() then an empty image is used but there will be empty space between window border and title
+        ///     Hides icon for window.
+        ///     If this is called before InitializeComponent() then the icon will be completely removed from the title bar
+        ///     If this is called after InitializeComponent() then an empty image is used but there will be empty space between
+        ///     window border and title
         /// </summary>
         /// <param name="window">Window class</param>
         internal static void HideIcon(this Window window)
@@ -67,7 +69,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Converts a System.Drawing.Bitmap to a System.Controls.Image
+        ///     Converts a System.Drawing.Bitmap to a System.Controls.Image
         /// </summary>
         /// <param name="bitmap">Source</param>
         /// <returns>Image</returns>
@@ -96,7 +98,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Adds a suffix to a given number (1st, 2nd, 3rd, ...)
+        ///     Adds a suffix to a given number (1st, 2nd, 3rd, ...)
         /// </summary>
         /// <param name="number">Number to add suffix to</param>
         /// <returns>Number with suffix</returns>
@@ -105,14 +107,14 @@ namespace Little_System_Cleaner.Misc
             if (number <= 0)
                 return number.ToString();
 
-            var n = number % 100;
+            var n = number%100;
 
             // Skip the switch for as many numbers as possible.
             if (n > 3 && n < 21)
                 return n + "th";
 
             // Determine the suffix for numbers ending in 1, 2 or 3, otherwise add a 'th'
-            switch (n % 10)
+            switch (n%10)
             {
                 case 1:
                     return n + "st";
@@ -126,7 +128,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Auto resize columns
+        ///     Auto resize columns
         /// </summary>
         internal static void AutoResizeColumns(this ListView listView)
         {
@@ -148,7 +150,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Calculates size of directory
+        ///     Calculates size of directory
         /// </summary>
         /// <param name="directory">DirectoryInfo class</param>
         /// <param name="includeSubdirectories">Includes sub directories if true</param>

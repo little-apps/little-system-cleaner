@@ -16,13 +16,18 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             _direction = direction;
         }
 
+        public int Compare(object x, object y)
+        {
+            return Compare(x as ProgramInfo, y as ProgramInfo);
+        }
+
         public int Compare(ProgramInfo x, ProgramInfo y)
         {
             try
             {
                 var priority = 0;
 
-                switch ((string)_column.Header)
+                switch ((string) _column.Header)
                 {
                     case "Program":
                         priority = string.Compare(x.Program, y.Program);
@@ -41,11 +46,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             {
                 return 0;
             }
-        }
-
-        public int Compare(object x, object y)
-        {
-            return Compare(x as ProgramInfo, y as ProgramInfo);
         }
     }
 }

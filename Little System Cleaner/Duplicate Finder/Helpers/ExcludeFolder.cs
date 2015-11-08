@@ -8,17 +8,17 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     public class ExcludeFolder : INotifyPropertyChanged, IEquatable<ExcludeFolder>
     {
-        #region INotifyPropertyChanged Members
-        public event PropertyChangedEventHandler PropertyChanged;
+        private string _folderPath;
 
-        private void OnPropertyChanged(string prop)
+        public ExcludeFolder()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
-
-        private string _folderPath;
+        public ExcludeFolder(string folderPath, bool readOnly = false)
+        {
+            FolderPath = folderPath;
+            ReadOnly = readOnly;
+        }
 
         public string FolderPath
         {
@@ -31,17 +31,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         public bool ReadOnly { get; set; }
-
-        public ExcludeFolder()
-        {
-
-        }
-
-        public ExcludeFolder(string folderPath, bool readOnly = false) 
-        {
-            FolderPath = folderPath;
-            ReadOnly = readOnly;
-        }
 
         public bool Equals(ExcludeFolder other)
         {
@@ -90,5 +79,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             return excFolders;
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
     }
 }

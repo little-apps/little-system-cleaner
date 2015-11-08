@@ -10,6 +10,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
     public abstract class ResultNode : INotifyPropertyChanged, ICloneable
     {
+        public abstract void Clean(Report report);
+
+        public override string ToString()
+        {
+            if (Parent != null)
+                return string.Copy(Description);
+
+            return !string.IsNullOrEmpty(Section) ? string.Copy(Section) : string.Empty;
+        }
+
         #region INotifyPropertyChanged & ICloneable Members
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -23,6 +33,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         {
             return MemberwiseClone();
         }
+
         #endregion
 
         #region Properties
@@ -32,6 +43,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         private bool? _bIsChecked = true;
 
         #region IsChecked Methods
+
         public void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
             if (value == _bIsChecked)
@@ -48,12 +60,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             OnPropertyChanged("IsChecked");
         }
 
-        void VerifyCheckState()
+        private void VerifyCheckState()
         {
             bool? state = null;
-            for (int i = 0; i < Children.Count; ++i)
+            for (var i = 0; i < Children.Count; ++i)
             {
-                bool? current = Children[i].IsChecked;
+                var current = Children[i].IsChecked;
                 if (i == 0)
                 {
                     state = current;
@@ -66,6 +78,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             }
             SetIsChecked(state, false, true);
         }
+
         #endregion
 
         public bool? IsChecked
@@ -77,102 +90,59 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         public ResultNode Parent { get; set; }
 
         /// <summary>
-        /// Gets/Sets the section name
+        ///     Gets/Sets the section name
         /// </summary>
-        public string Section
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// Gets/Sets a list of procs to check before cleaning
-        /// </summary>
-        public string[] ProcNames
-        {
-            get;
-            set;
-        }
+        public string Section { get; set; }
 
         /// <summary>
-        /// Gets/Sets the file path string array
+        ///     Gets/Sets a list of procs to check before cleaning
         /// </summary>
-        public string[] FilePaths
-        {
-            get;
-            set;
-        }
+        public string[] ProcNames { get; set; }
 
         /// <summary>
-        /// Gets/Sets information for INI
+        ///     Gets/Sets the file path string array
         /// </summary>
-        public IniInfo[] IniInfoList
-        {
-            get;
-            set;
-        }
+        public string[] FilePaths { get; set; }
 
         /// <summary>
-        /// Gets/Sets information for XML
+        ///     Gets/Sets information for INI
         /// </summary>
-        public Dictionary<string, List<string>> XmlPaths
-        {
-            get;
-            set;
-        }
+        public IniInfo[] IniInfoList { get; set; }
 
         /// <summary>
-        /// Gets/Sets the folder path string array
+        ///     Gets/Sets information for XML
         /// </summary>
-        public Dictionary<string, bool> FolderPaths
-        {
-            get;
-            set;
-        }
+        public Dictionary<string, List<string>> XmlPaths { get; set; }
 
         /// <summary>
-        /// Gets/Sets the file size as a string (ex: 10 MB)
+        ///     Gets/Sets the folder path string array
         /// </summary>
-        public string Size
-        {
-            get;
-            set;
-        }
+        public Dictionary<string, bool> FolderPaths { get; set; }
 
         /// <summary>
-        /// Gets/Sets the delegate
+        ///     Gets/Sets the file size as a string (ex: 10 MB)
         /// </summary>
-        public CleanDelegate CleanDelegate
-        {
-            get;
-            set;
-        }
+        public string Size { get; set; }
 
         /// <summary>
-        /// Gets/Sets the description of the delegate
+        ///     Gets/Sets the delegate
         /// </summary>
-        public string Description
-        {
-            get;
-            set;
-        }
+        public CleanDelegate CleanDelegate { get; set; }
 
         /// <summary>
-        /// Gets/Sets the registry key and value names
+        ///     Gets/Sets the description of the delegate
         /// </summary>
-        public Dictionary<RegistryKey, string[]> RegKeyValueNames
-        {
-            get;
-            set;
-        }
+        public string Description { get; set; }
 
         /// <summary>
-        /// Gets/Sets the registry key and whether to recurse through them
+        ///     Gets/Sets the registry key and value names
         /// </summary>
-        public Dictionary<RegistryKey, bool> RegKeySubKeys
-        {
-            get;
-            set;
-        }
+        public Dictionary<RegistryKey, string[]> RegKeyValueNames { get; set; }
+
+        /// <summary>
+        ///     Gets/Sets the registry key and whether to recurse through them
+        /// </summary>
+        public Dictionary<RegistryKey, bool> RegKeySubKeys { get; set; }
 
         public string Header
         {
@@ -185,16 +155,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                 return string.Empty;
             }
         }
+
         #endregion
-
-        public abstract void Clean(Report report);
-
-        public override string ToString()
-        {
-            if (Parent != null)
-                return string.Copy(Description);
-
-            return !string.IsNullOrEmpty(Section) ? string.Copy(Section) : string.Empty;
-        }
     }
 }

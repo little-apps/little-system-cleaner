@@ -1,6 +1,4 @@
-﻿using Little_System_Cleaner.Misc;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -12,6 +10,9 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
@@ -23,7 +24,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     }
 
     /// <summary>
-    /// Main class that lets you auto update applications by setting some static fields and executing its Start method.
+    ///     Main class that lets you auto update applications by setting some static fields and executing its Start method.
     /// </summary>
     internal static class AutoUpdater
     {
@@ -50,33 +51,33 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         internal static bool Running;
 
         /// <summary>
-        /// URL of the xml file that contains information about latest version of the application.
+        ///     URL of the xml file that contains information about latest version of the application.
         /// </summary>
-        /// 
         internal static string AppCastUrl;
 
         /// <summary>
-        /// Opens the download url in default browser if true. Very usefull if you have portable application.
+        ///     Opens the download url in default browser if true. Very usefull if you have portable application.
         /// </summary>
         internal static bool OpenDownloadPage = false;
 
         /// <summary>
-        /// If this is true users see dialog where they can set remind later interval otherwise it will take the interval from RemindLaterAt and RemindLaterTimeSpan fields.
+        ///     If this is true users see dialog where they can set remind later interval otherwise it will take the interval from
+        ///     RemindLaterAt and RemindLaterTimeSpan fields.
         /// </summary>
         internal static bool LetUserSelectRemindLater = true;
 
         /// <summary>
-        /// Remind Later interval after user should be reminded of update.
+        ///     Remind Later interval after user should be reminded of update.
         /// </summary>
         internal static int RemindLaterAt = 2;
 
         /// <summary>
-        /// Set if RemindLaterAt interval should be in Minutes, Hours or Days.
+        ///     Set if RemindLaterAt interval should be in Minutes, Hours or Days.
         /// </summary>
         internal static RemindLaterFormat RemindLaterTimeSpan = RemindLaterFormat.Days;
 
         /// <summary>
-        /// Start checking for new version of application and display dialog to the user if update is available.
+        ///     Start checking for new version of application and display dialog to the user if update is available.
         /// </summary>
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
         internal static void Start(bool forceUpdate = false)
@@ -85,7 +86,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         }
 
         /// <summary>
-        /// Start checking for new version of application and display dialog to the user if update is available.
+        ///     Start checking for new version of application and display dialog to the user if update is available.
         /// </summary>
         /// <param name="appCast">URL of the xml file that contains information about latest version of the application.</param>
         /// <param name="forceUpdate">If true, ignores remind later and checks for update right away</param>
@@ -93,7 +94,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (Running)
             {
-                MessageBox.Show(Application.Current.MainWindow, "An update check is already in progress.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "An update check is already in progress.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -108,12 +110,15 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         private static async void CheckForUpdate()
         {
             var mainAssembly = Assembly.GetEntryAssembly();
-            var companyAttribute = (AssemblyCompanyAttribute)GetAttribute(mainAssembly, typeof(AssemblyCompanyAttribute));
-            var titleAttribute = (AssemblyTitleAttribute)GetAttribute(mainAssembly, typeof(AssemblyTitleAttribute));
+            var companyAttribute =
+                (AssemblyCompanyAttribute) GetAttribute(mainAssembly, typeof (AssemblyCompanyAttribute));
+            var titleAttribute = (AssemblyTitleAttribute) GetAttribute(mainAssembly, typeof (AssemblyTitleAttribute));
             AppTitle = titleAttribute != null ? titleAttribute.Title : mainAssembly.GetName().Name;
             var appCompany = companyAttribute != null ? companyAttribute.Company : "";
 
-            RegistryLocation = !string.IsNullOrEmpty(appCompany) ? $@"Software\{appCompany}\{AppTitle}\AutoUpdater" : $@"Software\{AppTitle}\AutoUpdater";
+            RegistryLocation = !string.IsNullOrEmpty(appCompany)
+                ? $@"Software\{appCompany}\{AppTitle}\AutoUpdater"
+                : $@"Software\{AppTitle}\AutoUpdater";
 
             RegistryKey updateKey = null;
             object skip = null;
@@ -122,7 +127,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-               updateKey = Registry.CurrentUser.OpenSubKey(RegistryLocation);
+                updateKey = Registry.CurrentUser.OpenSubKey(RegistryLocation);
 
                 if (updateKey != null)
                 {
@@ -143,7 +148,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             if (ForceCheck == false && remindLaterTime != null)
             {
-                var remindLater = Convert.ToDateTime(remindLaterTime.ToString(), CultureInfo.CreateSpecificCulture("en-US"));
+                var remindLater = Convert.ToDateTime(remindLaterTime.ToString(),
+                    CultureInfo.CreateSpecificCulture("en-US"));
 
                 var compareResult = DateTime.Compare(DateTime.Now, remindLater);
 
@@ -155,7 +161,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 }
             }
 
-            var fileVersionAttribute = (AssemblyFileVersionAttribute)GetAttribute(mainAssembly, typeof(AssemblyFileVersionAttribute));
+            var fileVersionAttribute =
+                (AssemblyFileVersionAttribute) GetAttribute(mainAssembly, typeof (AssemblyFileVersionAttribute));
             InstalledVersion = new Version(fileVersionAttribute.Version);
 
             var webRequest = WebRequest.Create(AppCastUrl);
@@ -179,9 +186,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 // Only display errors if user requested update check
 
                 if (ex is WebException)
-                    Utils.MessageBoxThreadSafe("An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(
+                        "An error occurred connecting to the update server. Please check that you're connected to the internet and (if applicable) your proxy settings are correct.",
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 else
-                    Utils.MessageBoxThreadSafe("The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe("The following error occurred: " + ex.Message, Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -198,12 +208,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 if (appCastStream == null)
                     throw new Exception("Response stream from update server was null.");
 
-                var serializer = new XmlSerializer(typeof(UpdateXml));
+                var serializer = new XmlSerializer(typeof (UpdateXml));
 
                 reader = new XmlTextReader(appCastStream);
-                
+
                 if (serializer.CanDeserialize(reader))
-                    updateXml = (UpdateXml)serializer.Deserialize(reader);
+                    updateXml = (UpdateXml) serializer.Deserialize(reader);
                 else
                     throw new Exception("Update file is in the wrong format.");
             }
@@ -269,10 +279,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         }
                         catch (Exception ex)
                         {
-                            var message = "The following error occurred trying to save update update settings: " + ex.Message;
+                            var message = "The following error occurred trying to save update update settings: " +
+                                          ex.Message;
 
                             Debug.WriteLine(message);
-                            Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                         }
                         finally
                         {
@@ -285,8 +297,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             else if (ForceCheck)
             {
-                Utils.MessageBoxThreadSafe(Properties.Resources.updateLatest, Properties.Resources.updateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
-
+                Utils.MessageBoxThreadSafe(Resources.updateLatest, Resources.updateTitle, MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
         }
 
@@ -309,7 +321,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 return null;
             }
-            return (Attribute)attributes[0];
+            return (Attribute) attributes[0];
         }
     }
 }

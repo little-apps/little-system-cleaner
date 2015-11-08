@@ -8,15 +8,13 @@ using Little_System_Cleaner.Misc;
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     /// <summary>
-    /// Interaction logic for LoadingResults.xaml
+    ///     Interaction logic for LoadingResults.xaml
     /// </summary>
     public partial class LoadingResults
     {
         private readonly BackgroundWorker _backgroundWorker = new BackgroundWorker();
         private readonly Wizard _scanBase;
         private readonly TreeList _tree;
-
-        public ResultModel Model { get; private set; }
 
         public LoadingResults(Wizard scanBase, TreeList treeListView)
         {
@@ -27,6 +25,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             _scanBase = scanBase;
             _tree = treeListView;
         }
+
+        public ResultModel Model { get; private set; }
 
         private void LoadingResults_Loaded(object sender, RoutedEventArgs e)
         {
@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (!e.Cancelled && e.Error == null && (bool)e.Result)
+            if (!e.Cancelled && e.Error == null && (bool) e.Result)
             {
                 DialogResult = true;
             }
@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            Model = ResultModel.CreateResultModel((Wizard)e.Argument);
+            Model = ResultModel.CreateResultModel((Wizard) e.Argument);
 
             Dispatcher.Invoke(new Action(() => _tree.Model = Model));
 
@@ -72,7 +72,5 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             DialogResult = false;
         }
-
-        
     }
 }

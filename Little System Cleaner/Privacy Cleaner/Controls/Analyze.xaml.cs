@@ -33,34 +33,18 @@ using Timer = System.Timers.Timer;
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Analyze.xaml
+    ///     Interaction logic for Analyze.xaml
     /// </summary>
     public partial class Analyze
     {
-        readonly Wizard _scanBase;
-        readonly Timer _timerUpdate = new Timer(200);
+        private readonly Wizard _scanBase;
 
         private readonly Task _scanTask;
+        private readonly Timer _timerUpdate = new Timer(200);
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        
-        private int _currentListViewParentIndex = -1;
         private int _currentListViewIndex = -1;
 
-        public ScannerBase CurrentListViewItem => SectionsCollection[_currentListViewParentIndex].Children[_currentListViewIndex];
-
-        private int CurrentSectionProblems
-        {
-            get
-            {
-                var currentSection = CurrentListViewItem.Parent != null
-                    ? CurrentListViewItem.Parent.Section
-                    : CurrentListViewItem.Section;
-
-                return Wizard.ResultArray.Where(n => currentSection == n.Section).Select(n => n.Children.Count).FirstOrDefault();
-            }
-        }
-
-        public ObservableCollection<ScannerBase> SectionsCollection => _scanBase.Model.RootChildren;
+        private int _currentListViewParentIndex = -1;
 
         public Analyze(Wizard sb)
         {
@@ -94,6 +78,26 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             //Wizard.ScanThread = new Thread(StartScanning);
             //Wizard.ScanThread.Start();
         }
+
+        public ScannerBase CurrentListViewItem
+            => SectionsCollection[_currentListViewParentIndex].Children[_currentListViewIndex];
+
+        private int CurrentSectionProblems
+        {
+            get
+            {
+                var currentSection = CurrentListViewItem.Parent != null
+                    ? CurrentListViewItem.Parent.Section
+                    : CurrentListViewItem.Section;
+
+                return
+                    Wizard.ResultArray.Where(n => currentSection == n.Section)
+                        .Select(n => n.Children.Count)
+                        .FirstOrDefault();
+            }
+        }
+
+        public ObservableCollection<ScannerBase> SectionsCollection => _scanBase.Model.RootChildren;
 
         private void SetProgressBar()
         {
@@ -180,7 +184,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 // End critical region
                 Thread.EndCriticalRegion();
 
-                Main.Watcher.EventPeriod("Privacy Cleaner", "Analyze", (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+                Main.Watcher.EventPeriod("Privacy Cleaner", "Analyze", (int) DateTime.Now.Subtract(dtStart).TotalSeconds,
+                    true);
 
                 Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
 
@@ -195,7 +200,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Sets the current section and increments the progress bar
+        ///     Sets the current section and increments the progress bar
         /// </summary>
         private void InvokeCurrentSection(string sectionName, int parentSection)
         {
@@ -243,7 +248,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                     }
 
                     parent.Skipped = true;
-                    
+
                     return;
                 }
             }
@@ -333,7 +338,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
             {
-                Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
+                Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
             }
         }
     }

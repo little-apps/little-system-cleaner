@@ -26,12 +26,10 @@ using Application = System.Windows.Forms.Application;
 namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 {
     /// <summary>
-    /// Interaction logic for AddExcludeFileType.xaml
+    ///     Interaction logic for AddExcludeFileType.xaml
     /// </summary>
     public partial class AddExcludeFileType
     {
-        public event AddFileTypeEventHandler AddFileType;
-
         public AddExcludeFileType()
         {
             this.HideIcon();
@@ -39,16 +37,19 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
             InitializeComponent();
         }
 
+        public event AddFileTypeEventHandler AddFileType;
+
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(TextBox.Text.Trim()))
             {
-                MessageBox.Show(this, "Please enter a file type", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, "Please enter a file type", Application.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
             if (AddFileType != null)
             {
-                var eventArgs = new AddFileTypeEventArgs { FileType =  TextBox.Text.Trim() };
+                var eventArgs = new AddFileTypeEventArgs {FileType = TextBox.Text.Trim()};
                 AddFileType(this, eventArgs);
             }
 
@@ -57,20 +58,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            const string message = "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
-                                   "Example: *.old matches files that end with .old";
+            const string message =
+                "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
+                "Example: *.old matches files that end with .old";
 
-            MessageBox.Show(this, message, "Add Exclude File Type Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, message, "Add Exclude File Type Information", MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 
     public class AddFileTypeEventArgs : EventArgs
     {
-        public string FileType
-        {
-            get;
-            set;
-        }
+        public string FileType { get; set; }
     }
 
     public delegate void AddFileTypeEventHandler(object sender, AddFileTypeEventArgs e);

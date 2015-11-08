@@ -19,13 +19,14 @@
 using System;
 using System.Windows;
 using System.Windows.Interop;
+using IWin32Window = System.Windows.Forms.IWin32Window;
 
 namespace Little_System_Cleaner.Misc
 {
     /// <summary>
-    /// Used to get IWin32Window from WPF Window
+    ///     Used to get IWin32Window from WPF Window
     /// </summary>
-    public class WindowWrapper : System.Windows.Forms.IWin32Window
+    public class WindowWrapper : IWin32Window
     {
         public WindowWrapper(IntPtr handle)
         {
@@ -34,7 +35,7 @@ namespace Little_System_Cleaner.Misc
 
         public WindowWrapper(Window window)
         {
-            WindowInteropHelper wih = new WindowInteropHelper(window);
+            var wih = new WindowInteropHelper(window);
             Handle = wih.Handle;
         }
 
@@ -42,7 +43,7 @@ namespace Little_System_Cleaner.Misc
 
         internal static WindowWrapper GetCurrentWindowHandle()
         {
-            WindowWrapper winWrapper = new WindowWrapper(Application.Current.MainWindow);
+            var winWrapper = new WindowWrapper(Application.Current.MainWindow);
 
             return winWrapper;
         }

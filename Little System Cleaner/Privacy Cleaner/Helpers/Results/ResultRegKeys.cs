@@ -10,7 +10,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
     public class ResultRegKeys : ResultNode
     {
         /// <summary>
-        /// Constructor for registry key node
+        ///     Constructor for registry key node
         /// </summary>
         /// <param name="desc">Description of node</param>
         /// <param name="regKeys">Registry key with a list of value names</param>
@@ -21,7 +21,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         }
 
         /// <summary>
-        /// Constructor for registry key node
+        ///     Constructor for registry key node
         /// </summary>
         /// <param name="desc">Description of node</param>
         /// <param name="regKeys">Registry sub keys with a bool to specify if the tree should be removed</param>
@@ -35,10 +35,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         {
             if (RegKeySubKeys != null)
             {
-                foreach (KeyValuePair<RegistryKey, bool> kvp in RegKeySubKeys)
+                foreach (var kvp in RegKeySubKeys)
                 {
-                    RegistryKey regKey = kvp.Key;
-                    bool recurse = kvp.Value;
+                    var regKey = kvp.Key;
+                    var recurse = kvp.Value;
 
                     RegistryKey reg;
                     string rootKey, subkey;
@@ -99,10 +99,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         }
                         catch (Exception ex)
                         {
-                            string message = $"The following registry key could not be removed: {rootKey + "\\" + subkey}\nError: {ex.Message}";
+                            string message =
+                                $"The following registry key could not be removed: {rootKey + "\\" + subkey}\nError: {ex.Message}";
                             Debug.WriteLine(message);
-                        } 
-                        finally 
+                        }
+                        finally
                         {
                             reg.Flush();
                             reg.Close();
@@ -114,10 +115,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
             if (RegKeyValueNames != null)
             {
-                foreach (KeyValuePair<RegistryKey, string[]> kvp in RegKeyValueNames)
+                foreach (var kvp in RegKeyValueNames)
                 {
-                    RegistryKey regKey = kvp.Key;
-                    string[] valueNames = kvp.Value;
+                    var regKey = kvp.Key;
+                    var valueNames = kvp.Value;
 
                     if (regKey == null)
                     {
@@ -131,7 +132,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                     if ((valueNames == null) || valueNames.Length == 0)
                         continue;
 
-                    foreach (string valueName in valueNames)
+                    foreach (var valueName in valueNames)
                     {
                         try
                         {
@@ -145,7 +146,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine("The following exception occurred: {0}\nUnable to remove value name ({1}) from registry key ({2})", ex.Message, regKey.Name, valueName);
+                            Debug.WriteLine(
+                                "The following exception occurred: {0}\nUnable to remove value name ({1}) from registry key ({2})",
+                                ex.Message, regKey.Name, valueName);
                         }
                     }
 

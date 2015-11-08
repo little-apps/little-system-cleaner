@@ -4,12 +4,15 @@
         Title="Exclude File Type" Height="89" Width="300" ResizeMode="NoResize" ShowInTaskbar="False">
     <StackPanel Margin="5,5">
         <StackPanel Orientation="Horizontal" Height="25" Width="290">
-            <Label Content="File Type:" Margin="0,0,5,0" VerticalAlignment="Center" Width="60" VerticalContentAlignment="Center" />
+            <Label Content="File Type:" Margin="0,0,5,0" VerticalAlignment="Center" Width="60"
+                   VerticalContentAlignment="Center" />
             <TextBox x:Name="TextBox" Margin="0,0,5,0" Width="189" />
-            <Button x:Name="HelpButton" Width="25" Height="25" ToolTip="Click to view information on what can be entered into text box." Click="HelpButton_Click">
-                <Image x:Name="HelpIcon" Source="/Little_System_Cleaner;component/Resources/Help.png" Width="20" Height="20"  />
+            <Button x:Name="HelpButton" Width="25" Height="25"
+                    ToolTip="Click to view information on what can be entered into text box." Click="HelpButton_Click">
+                <Image x:Name="HelpIcon" Source="/Little_System_Cleaner;component/Resources/Help.png" Width="20"
+                       Height="20" />
             </Button>
-            
+
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
             <Button x:Name="ButtonOk" Content="OK" Margin="0,0,5,0" Width="27" Click="buttonOk_Click" IsDefault="True" />

@@ -1,11 +1,11 @@
 ﻿<UserControl x:Class="Little_System_Cleaner.Registry_Optimizer.Controls.AnalyzeResults"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dv="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
              xmlns:dvc="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              MinHeight="384" MinWidth="579">
     <UserControl.Resources>
         <dv:ResourceDictionaryCollection x:Key="MyPalette">
@@ -33,8 +33,8 @@
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0"/>
-                    <GradientStop Color="Gray" Offset="1"/>
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="Gray" Offset="1" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
@@ -42,22 +42,28 @@
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 4</Label>
             </Grid>
         </Border>
-        <dvc:Chart Name="McChart" Foreground="DarkBlue" Title="Analyze Results" LegendTitle="Registry Size" Grid.Row="1" Palette="{StaticResource MyPalette}" Margin="0,6,0,0" BorderBrush="White">
+        <dvc:Chart Name="McChart" Foreground="DarkBlue" Title="Analyze Results" LegendTitle="Registry Size"
+                   Grid.Row="1" Palette="{StaticResource MyPalette}" Margin="0,6,0,0" BorderBrush="White">
             <dvc:Chart.Series>
-                <dvc:PieSeries Title="Registry Size" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}">
-                </dvc:PieSeries>
+                <dvc:PieSeries Title="Registry Size" IndependentValueBinding="{Binding Path=Key}"
+                               DependentValueBinding="{Binding Path=Value}" />
             </dvc:Chart.Series>
         </dvc:Chart>
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
-            <Button x:Name="ButtonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0" IsDefault="True" FontSize="15">
+            <Button x:Name="ButtonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0"
+                    IsDefault="True" FontSize="15">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry optimizer/compact-registry.png" Width="24" Height="24" />
+                    <Image Margin="0,0,5,0"
+                           Source="/Little_System_Cleaner;component/Resources/registry optimizer/compact-registry.png"
+                           Width="24" Height="24" />
                     <TextBlock VerticalAlignment="Center">Compact</TextBlock>
                 </StackPanel>
             </Button>
             <Button x:Name="ButtonCancel" Click="buttonCancel_Click" Margin="0,0,0,0" Padding="8,0,8,0" FontSize="15">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry optimizer/cancel.png" Width="24" Height="24" />
+                    <Image Margin="0,0,5,0"
+                           Source="/Little_System_Cleaner;component/Resources/registry optimizer/cancel.png" Width="24"
+                           Height="24" />
                     <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
                 </StackPanel>
             </Button>

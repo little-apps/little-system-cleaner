@@ -8,15 +8,33 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 {
     public class RegistryEntry : IEquatable<RegistryEntry>
     {
+        [NonSerialized] private RegistryKey _regKey;
+
         private string _rootKey;
-        private string _subKey;
 
+        public RegistryEntry()
+        {
+        }
 
-        [NonSerialized]
-        private RegistryKey _regKey;
+        public RegistryEntry(string regPath)
+        {
+            Values = new List<RegistryValue>();
+
+            var slashIndex = regPath.IndexOf('\\');
+
+            if (slashIndex >= 0)
+            {
+                _rootKey = regPath.Substring(0, regPath.IndexOf('\\'));
+                SubKey = regPath.Substring(regPath.IndexOf('\\') + 1).Trim().Trim('\\');
+            }
+            else
+            {
+                _rootKey = regPath;
+            }
+        }
 
         /// <summary>
-        /// Gets the root key (HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER, etc)
+        ///     Gets the root key (HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER, etc)
         /// </summary>
         [XmlAttribute("RootKey")]
         public string RootKey
@@ -26,38 +44,34 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         }
 
         /// <summary>
-        /// Gets the subkey
+        ///     Gets the subkey
         /// </summary>
         /// <remarks>This can be null/empty if no subkey exists</remarks>
         [XmlAttribute("SubKey")]
-        public string SubKey
-        {
-            get { return _subKey; }
-            set { _subKey = value; }
-        }
+        public string SubKey { get; set; }
 
         /// <summary>
-        /// Gets a list contains values of subkey
+        ///     Gets a list contains values of subkey
         /// </summary>
         [XmlArray("Values"), XmlArrayItem("Value")]
         public List<RegistryValue> Values { get; set; }
 
         /// <summary>
-        /// Gets the path for the registry key
+        ///     Gets the path for the registry key
         /// </summary>
         [XmlIgnore]
         public string RegistryKeyPath
         {
             get
             {
-                if (string.IsNullOrEmpty(_subKey))
+                if (string.IsNullOrEmpty(SubKey))
                     return RootKey;
                 return RootKey + "\\" + SubKey;
             }
         }
 
         /// <summary>
-        /// Gets RegistryKey for registry key path
+        ///     Gets RegistryKey for registry key path
         /// </summary>
         /// <remarks>This will ONLY open a registry key. To create it, use CreateSubKey()</remarks>
         [XmlIgnore]
@@ -88,46 +102,24 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("Unable to open registry key using registry path ({0}).\nError: {1}", RegistryKeyPath, ex.Message);
+                        Debug.WriteLine("Unable to open registry key using registry path ({0}).\nError: {1}",
+                            RegistryKeyPath, ex.Message);
                         _regKey = null;
                     }
-                    
                 }
 
                 return _regKey;
             }
         }
 
-        public RegistryEntry()
-        {
-
-        }
-
-        public RegistryEntry(string regPath)
-        {
-            Values = new List<RegistryValue>();
-
-            var slashIndex = regPath.IndexOf('\\');
-
-            if (slashIndex >= 0)
-            {
-                _rootKey = regPath.Substring(0, regPath.IndexOf('\\'));
-                _subKey = regPath.Substring(regPath.IndexOf('\\') + 1).Trim().Trim('\\');
-            }
-            else
-            {
-                _rootKey = regPath;
-            }
-        }
-
         /// <summary>
-        /// Adds subkey to registry key
+        ///     Adds subkey to registry key
         /// </summary>
         /// <returns>Registry key, or null if unable to be created</returns>
         public RegistryKey CreateSubKey()
         {
             RegistryKey regKey = null;
-            
+
             if (string.Compare(RootKey, "HKEY_CLASSES_ROOT", StringComparison.Ordinal) == 0)
                 regKey = Registry.ClassesRoot;
             else if (string.Compare(RootKey, "HKEY_CURRENT_USER", StringComparison.Ordinal) == 0)
@@ -152,10 +144,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("Unable to create sub key ({0}) for registry path ({1}).\nError: {2}", subKey, RegistryKeyPath, ex.Message);
+                        Debug.WriteLine("Unable to create sub key ({0}) for registry path ({1}).\nError: {2}", subKey,
+                            RegistryKeyPath, ex.Message);
                         regKey = null;
                     }
-                    
+
                     if (regKey == null)
                         break;
                 }
@@ -168,7 +161,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Unable to create sub key ({0}) for registry path ({1}).\nError: {2}", SubKey, RegistryKeyPath, ex.Message);
+                    Debug.WriteLine("Unable to create sub key ({0}) for registry path ({1}).\nError: {2}", SubKey,
+                        RegistryKeyPath, ex.Message);
                     regKey = null;
                 }
             }
@@ -177,7 +171,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         }
 
         /// <summary>
-        /// Gets all values from registry key
+        ///     Gets all values from registry key
         /// </summary>
         /// <returns>True if values added</returns>
         public bool AddValues()
@@ -200,7 +194,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to get value names from registry key ({0}).\nError: {1}", RegistryKeyPath, ex.Message);
+                Debug.WriteLine("Failed to get value names from registry key ({0}).\nError: {1}", RegistryKeyPath,
+                    ex.Message);
                 return false;
             }
 
@@ -214,7 +209,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         }
 
         /// <summary>
-        /// Adds value from registry key
+        ///     Adds value from registry key
         /// </summary>
         /// <param name="valueName">Value name</param>
         /// <returns>True if value added</returns>
@@ -239,7 +234,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to get value ({0} from registry key ({1}).\nError: {2}", valueName, RegistryKeyPath, ex.Message);
+                Debug.WriteLine("Failed to get value ({0} from registry key ({1}).\nError: {2}", valueName,
+                    RegistryKeyPath, ex.Message);
                 return false;
             }
 
@@ -252,6 +248,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         }
 
         #region IEquatable Methods
+
         public bool Equals(RegistryEntry regEntry)
         {
             return regEntry.RegistryKeyPath == RegistryKeyPath;
@@ -270,7 +267,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
         public static bool operator ==(RegistryEntry regEntry1, RegistryEntry regEntry2)
         {
-            if ((object)regEntry1 == null || ((object)regEntry2) == null)
+            if ((object) regEntry1 == null || (object) regEntry2 == null)
                 return Equals(regEntry1, regEntry2);
 
             return regEntry1.Equals(regEntry2);
@@ -283,6 +280,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
             return !regEntry1.Equals(regEntry2);
         }
+
         #endregion
     }
 }

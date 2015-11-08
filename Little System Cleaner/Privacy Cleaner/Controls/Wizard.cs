@@ -20,8 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
@@ -37,23 +35,22 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         internal static ScannerBase CurrentScanner;
         internal static bool SqLiteLoaded = true;
 
-        /// <summary>
-        /// Gets/Sets the current file or registry key being scanned
-        /// <remarks>Please set this with every scan function</remarks>
-        /// </summary>
-        internal static string CurrentFile
-        {
-            get;
-            set;
-        }
-
-        internal static string CurrentSectionName
-        {
-            get;
-            set;
-        }
-
         private static readonly ObservableCollection<ResultNode> _resultArray = new ObservableCollection<ResultNode>();
+
+        public Wizard()
+        {
+            Controls.Add(typeof (Start));
+            Controls.Add(typeof (Analyze));
+            Controls.Add(typeof (Results));
+        }
+
+        /// <summary>
+        ///     Gets/Sets the current file or registry key being scanned
+        ///     <remarks>Please set this with every scan function</remarks>
+        /// </summary>
+        internal static string CurrentFile { get; set; }
+
+        internal static string CurrentSectionName { get; set; }
 
         internal static ObservableCollection<ResultNode> ResultArray
         {
@@ -66,20 +63,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             }
         }
 
-        public SectionModel Model
-        {
-            get;
-            set;
-        }
+        public SectionModel Model { get; set; }
 
         private Results StoredResults { get; set; }
-
-        public Wizard()
-        {
-            Controls.Add(typeof(Start));
-            Controls.Add(typeof(Analyze));
-            Controls.Add(typeof(Results));
-        }
 
         public override void OnLoaded()
         {
@@ -93,7 +79,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             var analyze = CurrentControl as Analyze;
             if (analyze != null)
             {
-                exit = (forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+                exit = forceExit ||
+                       MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName,
+                           MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                 if (exit)
                 {
@@ -108,7 +96,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (!(CurrentControl is Results))
                 return true;
 
-            exit = (forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+            exit = forceExit ||
+                   MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo,
+                       MessageBoxImage.Question) == MessageBoxResult.Yes;
 
             if (!exit)
                 return false;
@@ -123,7 +113,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             // Store current control
             StoredResults = CurrentControl as Results;
 
-            Details ctrlDetails = new Details(this, resultNode);
+            var ctrlDetails = new Details(this, resultNode);
             Content = ctrlDetails;
         }
 
@@ -131,7 +121,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (StoredResults == null)
             {
-                MessageBox.Show(Application.Current.MainWindow, "An error occurred going back to the results. The scan process will need to be restarted.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "An error occurred going back to the results. The scan process will need to be restarted.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 MoveFirst();
 
                 return;
@@ -141,7 +133,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Moves to the first control
+        ///     Moves to the first control
         /// </summary>
         public override void MoveFirst(bool autoMove = true)
         {
@@ -152,7 +144,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Adds a clean delegate to the result array
+        ///     Adds a clean delegate to the result array
         /// </summary>
         /// <param name="cleanDelegate">Delegate</param>
         /// <param name="desc">Description</param>
@@ -168,7 +160,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Gets the size of the files and stores the files in the result array
+        ///     Gets the size of the files and stores the files in the result array
         /// </summary>
         /// <param name="desc">Description of bad files</param>
         /// <param name="filePaths">File Paths</param>
@@ -179,7 +171,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 return false;
 
             // Calculate total file size
-            long fileSize = filePaths.Sum(filePath => MiscFunctions.GetFileSize(filePath));
+            var fileSize = filePaths.Sum(filePath => MiscFunctions.GetFileSize(filePath));
 
             CurrentScanner.Results.Children.Add(new ResultFiles(desc, filePaths, fileSize));
 
@@ -187,7 +179,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Stores the folder paths in the result array
+        ///     Stores the folder paths in the result array
         /// </summary>
         /// <param name="desc">Description of bad files</param>
         /// <param name="folderPaths">Folder Paths</param>
@@ -203,7 +195,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Stores a bad file path in the result array
+        ///     Stores a bad file path in the result array
         /// </summary>
         /// <param name="desc">Description of bad files</param>
         /// <param name="filePaths">File Paths</param>
@@ -226,7 +218,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Stores a registry key in the result array
+        ///     Stores a registry key in the result array
         /// </summary>
         /// <param name="desc">Description</param>
         /// <param name="regKeys">Dictionary containing a registry key (must be writeable) and a list of value names</param>
@@ -236,7 +228,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             if (string.IsNullOrEmpty(desc) || regKeys == null || regKeys.Count == 0)
                 return false;
 
-            if (regKeys.Any(kvp => kvp.Key == null || (kvp.Value == null || kvp.Value.Length <= 0)))
+            if (regKeys.Any(kvp => kvp.Key == null || kvp.Value == null || kvp.Value.Length <= 0))
                 return false;
 
             CurrentScanner.Results.Children.Add(new ResultRegKeys(desc, regKeys));
@@ -245,10 +237,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         }
 
         /// <summary>
-        /// Stores a registry key in the result array
+        ///     Stores a registry key in the result array
         /// </summary>
         /// <param name="desc">Description</param>
-        /// <param name="regKeys">Dictionary containing a registry subkey (must be writeable) and a whether to remove to the whole subkey</param>
+        /// <param name="regKeys">
+        ///     Dictionary containing a registry subkey (must be writeable) and a whether to remove to the whole
+        ///     subkey
+        /// </param>
         /// <returns>True or false if the description and/or dictionary is empty</returns>
         internal static bool StoreBadRegKeySubKeys(string desc, Dictionary<RegistryKey, bool> regKeys)
         {

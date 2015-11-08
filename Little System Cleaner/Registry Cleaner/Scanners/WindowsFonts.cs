@@ -31,15 +31,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class WindowsFonts : ScannerBase
     {
+        private const int CSIDL_FONTS = 0x0014; // windows\fonts 
         public override string ScannerName => Strings.WindowsFonts;
 
         [DllImport("shell32.dll")]
-        internal static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder strPath, int nFolder, bool fCreate);
-
-        const int CSIDL_FONTS = 0x0014;    // windows\fonts 
+        internal static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder strPath, int nFolder,
+            bool fCreate);
 
         /// <summary>
-        /// Finds invalid font references
+        ///     Finds invalid font references
         /// </summary>
         public override void Scan()
         {
@@ -47,7 +47,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             try
             {
-                using (var regKey = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"))
+                using (
+                    var regKey =
+                        Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts"))
                 {
                     if (regKey == null)
                         return;
@@ -58,23 +60,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         return;
 
                     foreach (var fontName in 
-                            regKey.GetValueNames()
-                                .Select(valueName => new { Name = valueName, Value = regKey.GetValue(valueName) as string })
-                                // Skip if value is empty
-                                .Where(o => !string.IsNullOrEmpty(o.Value))
-                                // Check value by itself
-                                .Where(o => !Utils.FileExists(o.Value))
-                                .Where(o => !Wizard.IsOnIgnoreList(o.Value))
-                                .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}" })
-                                // Check for font in fonts folder
-                                .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
-                                .Select(o => o.Name)
-                                .TakeWhile(fontName => !CancellationToken.IsCancellationRequested)
+                        regKey.GetValueNames()
+                            .Select(valueName => new {Name = valueName, Value = regKey.GetValue(valueName) as string})
+                            // Skip if value is empty
+                            .Where(o => !string.IsNullOrEmpty(o.Value))
+                            // Check value by itself
+                            .Where(o => !Utils.FileExists(o.Value))
+                            .Where(o => !Wizard.IsOnIgnoreList(o.Value))
+                            .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}"})
+                            // Check for font in fonts folder
+                            .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
+                            .Select(o => o.Name)
+                            .TakeWhile(fontName => !CancellationToken.IsCancellationRequested)
                         )
                     {
-                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), string.IsNullOrWhiteSpace(fontName) ? "(default)" : fontName);
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(),
+                            string.IsNullOrWhiteSpace(fontName) ? "(default)" : fontName);
                     }
-
                 }
             }
             catch (SecurityException ex)

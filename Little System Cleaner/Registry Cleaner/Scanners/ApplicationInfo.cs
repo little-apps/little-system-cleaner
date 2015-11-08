@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using System.Security;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using System.Threading;
+using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -31,7 +32,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         public override string ScannerName => Strings.ApplicationInfo;
 
         /// <summary>
-        /// Verifies installed programs in add/remove list
+        ///     Verifies installed programs in add/remove list
         /// </summary>
         public override void Scan()
         {
@@ -80,13 +81,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                             // Check install location 
                             if (!string.IsNullOrEmpty(progInfo.InstallLocation))
-                                if (!ScanFunctions.DirExists(progInfo.InstallLocation) && !Utils.FileExists(progInfo.InstallLocation))
+                                if (!ScanFunctions.DirExists(progInfo.InstallLocation) &&
+                                    !Utils.FileExists(progInfo.InstallLocation))
                                     if (!Wizard.IsOnIgnoreList(progInfo.InstallLocation))
-                                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallLocation");
+                                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(),
+                                            "InstallLocation");
 
                             // Check install source 
                             if (!string.IsNullOrEmpty(progInfo.InstallSource))
-                                if (!ScanFunctions.DirExists(progInfo.InstallSource) && !Utils.FileExists(progInfo.InstallSource))
+                                if (!ScanFunctions.DirExists(progInfo.InstallSource) &&
+                                    !Utils.FileExists(progInfo.InstallSource))
                                     if (!Wizard.IsOnIgnoreList(progInfo.InstallSource))
                                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
@@ -105,17 +109,21 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 Wizard.Report.WriteLine("Verifying registry entries in Add/Remove Cache");
 
-                CheckArpCache(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\"));
-                CheckArpCache(Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\"));
+                CheckArpCache(
+                    Registry.LocalMachine.OpenSubKey(
+                        @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\"));
+                CheckArpCache(
+                    Registry.CurrentUser.OpenSubKey(
+                        @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache\"));
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
         /// <summary>
-        /// Do a cross-reference check on ARP Cache keys
+        ///     Do a cross-reference check on ARP Cache keys
         /// </summary>
         /// <param name="regKey"></param>
         private static void CheckArpCache(RegistryKey regKey)

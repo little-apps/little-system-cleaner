@@ -30,10 +30,30 @@ namespace Little_System_Cleaner
     public class App : Application
     {
         /// <summary>
-        /// 
+        /// </summary>
+        public App()
+        {
+            StartupUri = new Uri("Main.xaml", UriKind.Relative);
+
+            // Add resources
+            Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("TreeStyles.xaml", UriKind.Relative)
+            });
+            Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("Themes/Generic.xaml", UriKind.Relative)
+            });
+
+            Permissions.SetPrivileges(true);
+            Run();
+            Permissions.SetPrivileges(false);
+        }
+
+        /// <summary>
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             bool bMutexCreated;
 
@@ -63,22 +83,26 @@ namespace Little_System_Cleaner
                         // If mutex isnt available, show message and exit...
                         if (!bMutexCreated)
                         {
-                            MessageBox.Show("Another program seems to be already running...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show("Another program seems to be already running...", Utils.ProductName,
+                                MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
                     }
-                    
                 }
 
                 if (!Utils.IsAssemblyLoaded("CommonTools", Utils.ProductVersion))
                 {
-                    MessageBox.Show("It appears that CommonTools.dll is not loaded, because of this, Little System Cleaner cannot be loaded.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        "It appears that CommonTools.dll is not loaded, because of this, Little System Cleaner cannot be loaded.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.",
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (!Utils.IsAssemblyLoaded("Xceed.Wpf.Toolkit", new Version(2, 0, 0, 0), true))
                 {
-                    MessageBox.Show("It appears that Xceed.Wpf.Toolkit.dll is not loaded, because of this, Little System Cleaner cannot be loaded.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 2.0.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        "It appears that Xceed.Wpf.Toolkit.dll is not loaded, because of this, Little System Cleaner cannot be loaded.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 2.0.",
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -86,22 +110,6 @@ namespace Little_System_Cleaner
 
                 mutexMain.ReleaseMutex();
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public App()
-        {
-            StartupUri = new Uri("Main.xaml", UriKind.Relative);
-
-            // Add resources
-            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("TreeStyles.xaml", UriKind.Relative) });
-            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("Themes/Generic.xaml", UriKind.Relative) });
-            
-            Permissions.SetPrivileges(true);
-            Run();
-            Permissions.SetPrivileges(false);
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -128,7 +136,7 @@ namespace Little_System_Cleaner
             e.Handled = true;
         }
 
-        void App_Exit(object sender, ExitEventArgs e)
+        private void App_Exit(object sender, ExitEventArgs e)
         {
             Settings.Default.Save();
         }

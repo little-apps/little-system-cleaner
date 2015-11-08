@@ -1,22 +1,22 @@
 ﻿<UserControl x:Class="Little_System_Cleaner.Duplicate_Finder.Controls.Details"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              d:DesignHeight="384" d:DesignWidth="579"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="188*"/>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="188*"/>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="188*" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="188*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="33" />
             <RowDefinition Height="74" />
-            <RowDefinition Height="237"/>
+            <RowDefinition Height="237" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Border CornerRadius="5" Margin="0,0,3,1" Grid.ColumnSpan="4">
@@ -25,12 +25,13 @@
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0"/>
-                    <GradientStop Color="Gray" Offset="1"/>
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="Gray" Offset="1" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Duplicate Finder" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Content="Duplicate Finder" Margin="8,0" Foreground="White" Height="28"
+                       HorizontalAlignment="Left" />
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right">File Information</Label>
             </Grid>
         </Border>
@@ -39,23 +40,27 @@
             <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Path:</Label>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="1">
-            <TextBox  Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FileName, Mode=OneWay}" />
-            <TextBox Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding FilePath, Mode=OneWay}" />
+            <TextBox Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True"
+                     Text="{Binding FileName, Mode=OneWay}" />
+            <TextBox Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True"
+                     Text="{Binding FilePath, Mode=OneWay}" />
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="2">
             <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Size:</Label>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="0,10,0,0" Grid.Column="3">
-            <TextBox x:Name="FileSize" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Size, Mode=OneWay}" />
+            <TextBox x:Name="FileSize" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True"
+                     Text="{Binding Size, Mode=OneWay}" />
         </StackPanel>
-        <GroupBox Header="Audio Information" IsEnabled="{Binding HasAudioTags, Mode=OneWay}" Grid.Row="2" Grid.ColumnSpan="4"
+        <GroupBox Header="Audio Information" IsEnabled="{Binding HasAudioTags, Mode=OneWay}" Grid.Row="2"
+                  Grid.ColumnSpan="4"
                   Grid.Column="0" Margin="0,0,0,85">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="184*"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="184*"/>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="184*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="184*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="0,5,0,0">
                     <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Artist:</Label>
@@ -64,10 +69,14 @@
                     <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Track #:</Label>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Margin="0,5,0,0">
-                    <TextBox x:Name="TagArtist" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Artist, Mode=OneWay}" />
-                    <TextBox x:Name="TagYear" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Year, Mode=OneWay}" />
-                    <TextBox x:Name="TagAlbum" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Album, Mode=OneWay}" />
-                    <TextBox x:Name="TagTrackNo" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding TrackNo, Mode=OneWay}" />
+                    <TextBox x:Name="TagArtist" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Artist, Mode=OneWay}" />
+                    <TextBox x:Name="TagYear" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Year, Mode=OneWay}" />
+                    <TextBox x:Name="TagAlbum" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Album, Mode=OneWay}" />
+                    <TextBox x:Name="TagTrackNo" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding TrackNo, Mode=OneWay}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" Margin="0,5,0,0">
                     <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Title:</Label>
@@ -76,16 +85,23 @@
                     <Label Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right">Bitrate:</Label>
                 </StackPanel>
                 <StackPanel Grid.Column="3" Margin="0,5,0,0">
-                    <TextBox x:Name="TagTitle" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Title, Mode=OneWay}" />
-                    <TextBox x:Name="TagGenre" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Genre, Mode=OneWay}" />
-                    <TextBox x:Name="TagDuration" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Duration, Mode=OneWay}" />
-                    <TextBox x:Name="TagBitRate" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding Bitrate, Mode=OneWay}" />
+                    <TextBox x:Name="TagTitle" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Title, Mode=OneWay}" />
+                    <TextBox x:Name="TagGenre" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Genre, Mode=OneWay}" />
+                    <TextBox x:Name="TagDuration" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Duration, Mode=OneWay}" />
+                    <TextBox x:Name="TagBitRate" Margin="0,5,0,0" Height="26" VerticalContentAlignment="Center"
+                             IsReadOnly="True" Text="{Binding Bitrate, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
         </GroupBox>
-        <Button Name="ButtonGoBack" Grid.Row="3" Grid.Column="0" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="5,5,0,5" Click="buttonGoBack_Click" Width="82">
+        <Button Name="ButtonGoBack" Grid.Row="3" Grid.Column="0" Padding="8,0,8,0" HorizontalAlignment="Left"
+                Margin="5,5,0,5" Click="buttonGoBack_Click" Width="82">
             <StackPanel Orientation="Horizontal">
-                <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/go-back.png" Width="16" Height="16" />
+                <Image Margin="0,0,5,0"
+                       Source="/Little_System_Cleaner;component/Resources/privacy cleaner/details/go-back.png"
+                       Width="16" Height="16" />
                 <TextBlock>Go Back</TextBlock>
             </StackPanel>
         </Button>

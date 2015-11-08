@@ -24,7 +24,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             Name = "Multimedia";
 
-            foreach (string filePath in fileList)
+            foreach (var filePath in fileList)
             {
                 string name, desc;
 

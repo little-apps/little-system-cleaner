@@ -31,203 +31,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
     public class InternetExplorer : ScannerBase
     {
-        readonly List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<INTERNET_CACHE_ENTRY_INFO>();
-        readonly List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<INTERNET_CACHE_ENTRY_INFO>();
+        private readonly List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCache = new List<INTERNET_CACHE_ENTRY_INFO>();
+        private readonly List<INTERNET_CACHE_ENTRY_INFO> cacheEntriesCookies = new List<INTERNET_CACHE_ENTRY_INFO>();
 
-        #region Internet Explorer Enums
-        
-
-        /// <summary>
-        /// Flag on the dwFlags parameter of the STATURL structure, used by the SetFilter method.
-        /// </summary>
-        internal enum STATURLFLAGS : uint
-        {
-            /// <summary>
-            /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is in the cache.
-            /// </summary>
-            STATURLFLAG_ISCACHED = 0x00000001,
-            /// <summary>
-            /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is a top-level item.
-            /// </summary>
-            STATURLFLAG_ISTOPLEVEL = 0x00000002
-        }
-
-        /// <summary>
-        /// Used bu the AddHistoryEntry method.
-        /// </summary>
-        internal enum ADDURL_FLAG : uint
-        {
-            /// <summary>
-            /// Write to both the visited links and the dated containers. 
-            /// </summary>
-            ADDURL_ADDTOHISTORYANDCACHE = 0,
-            /// <summary>
-            /// Write to only the visited links container.
-            /// </summary>
-            ADDURL_ADDTOCACHE = 1
-        }
-
-        /// <summary>
-        /// Used by QueryUrl method
-        /// </summary>
-        internal enum STATURL_QUERYFLAGS : uint
-        {
-            /// <summary>
-            /// The specified URL is in the content cache.
-            /// </summary>
-            STATURL_QUERYFLAG_ISCACHED = 0x00010000,
-            /// <summary>
-            /// Space for the URL is not allocated when querying for STATURL.
-            /// </summary>
-            STATURL_QUERYFLAG_NOURL = 0x00020000,
-            /// <summary>
-            /// Space for the Web page's title is not allocated when querying for STATURL.
-            /// </summary>
-            STATURL_QUERYFLAG_NOTITLE = 0x00040000,
-            /// <summary>
-            /// //The item is a top-level item.
-            /// </summary>
-            STATURL_QUERYFLAG_TOPLEVEL = 0x00080000
-
-        }
-
-        #endregion
-        #region Internet Explorer Structures
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct Uuid
-        {
-            public int Data1;
-            public short Data2;
-            public short Data3;
-            public byte[] Data4;
-        }
-
-        /// <summary>
-        /// The structure that contains statistics about a URL. 
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct STATURL
-        {
-            /// <summary>
-            /// Struct size
-            /// </summary>
-            public int cbSize;
-            /// <summary>
-            /// URL
-            /// </summary>                                                                   
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pwcsUrl;
-            /// <summary>
-            /// Page title
-            /// </summary>
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pwcsTitle;
-            /// <summary>
-            /// Last visited date (UTC)
-            /// </summary>
-            public FILETIME ftLastVisited;
-            /// <summary>
-            /// Last updated date (UTC)
-            /// </summary>
-            public FILETIME ftLastUpdated;
-            /// <summary>
-            /// The expiry date of the Web page's content (UTC)
-            /// </summary>
-            public FILETIME ftExpires;
-            /// <summary>
-            /// Flags. STATURLFLAGS Enumaration.
-            /// </summary>
-            public STATURLFLAGS dwFlags;
-
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public string Url => pwcsUrl;
-
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public string Title => pwcsTitle;
-
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime LastVisited => DateTime.MinValue;
-
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime LastUpdated => DateTime.MinValue;
-
-            /// <summary>
-            /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
-            /// </summary>
-            public DateTime Expires => DateTime.MinValue;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct INTERNET_CACHE_ENTRY_INFO
-        {
-            public UInt32 dwStructSize;
-            public string lpszSourceUrlName;
-            public string lpszLocalFileName;
-            public UInt32 CacheEntryType;
-            public UInt32 dwUseCount;
-            public UInt32 dwHitRate;
-            public UInt32 dwSizeLow;
-            public UInt32 dwSizeHigh;
-            public FILETIME LastModifiedTime;
-            public FILETIME ExpireTime;
-            public FILETIME LastAccessTime;
-            public FILETIME LastSyncTime;
-            public IntPtr lpHeaderInfo;
-            public UInt32 dwHeaderInfoSize;
-            public string lpszFileExtension;
-            public ExemptDeltaOrReserverd dwExemptDeltaOrReserved;
-
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        internal struct ExemptDeltaOrReserverd
-        {
-            [FieldOffset(0)]
-            public UInt32 dwReserved;
-            [FieldOffset(0)]
-            public UInt32 dwExemptDelta;
-        }
-        #endregion
-        #region Internet Explorer Interfaces
-        //UrlHistory class
-        [ComImport]
-        [Guid("3C374A40-BAE4-11CF-BF7D-00AA006946EE")]
-        internal class UrlHistoryClass
-        {
-        }
-
-        [ComImport]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
-        internal interface IUrlHistoryStg2
-        {
-            uint AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
-            uint DeleteUrl(string pocsUrl, int dwFlags);
-            uint QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags, ref STATURL lpSTATURL);
-            uint BindToObject([In] string pocsUrl, [In] Uuid riid, IntPtr ppvOut);
-            uint EnumUrls([Out] IntPtr ppEnum);
-            [PreserveSig]
-            uint AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory, IntPtr IOleCommandTarget, IntPtr punkIsFolder);
-            uint ClearHistory();
-        }
-        #endregion
-        #region Internet Explorer Functions
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "DeleteUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        internal static extern bool DeleteUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName);
-
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "UnlockUrlCacheEntryFileA", CallingConvention = CallingConvention.StdCall)]
-        internal static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName, uint dwReserved);
-        #endregion
-
-        public InternetExplorer() 
+        public InternetExplorer()
         {
             Name = "Internet Explorer";
             Icon = Resources.InternetExplorer;
@@ -245,8 +52,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Name = header;
         }
 
+        public override string ProcessName => "iexplore";
+
         /// <summary>
-        /// Checks if IE is installed
+        ///     Checks if IE is installed
         /// </summary>
         /// <returns>True if its installed</returns>
         internal static bool IsInstalled()
@@ -254,8 +63,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             // Automatically return true
             return true;
         }
-
-        public override string ProcessName => "iexplore";
 
         public override void Scan(ScannerBase child)
         {
@@ -295,20 +102,22 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             try
             {
                 var url = new UrlHistoryClass();
-                var obj = (IUrlHistoryStg2)url;
+                var obj = (IUrlHistoryStg2) url;
 
                 obj.ClearHistory();
             }
             catch (Exception ex)
             {
-                Utils.MessageBoxThreadSafe("An error occurred trying to clear Internet Explorer history. The following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe(
+                    "An error occurred trying to clear Internet Explorer history. The following error occurred: " +
+                    ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
         }
 
         private void ScanCookies()
         {
-            var folderSize = MiscFunctions.FindUrlCacheEntries("cookie:").Aggregate(0L, (i, info) => i + info.dwSizeHigh);
+            var folderSize = MiscFunctions.FindUrlCacheEntries("cookie:")
+                .Aggregate(0L, (i, info) => i + info.dwSizeHigh);
 
             cacheEntriesCookies.AddRange(MiscFunctions.FindUrlCacheEntries("cookie:"));
 
@@ -335,7 +144,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private static void ClearFormData()
         {
-            if (Utils.MessageBoxThreadSafe("This will delete your saved form data and passwords. Continue?", Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
+            if (
+                Utils.MessageBoxThreadSafe("This will delete your saved form data and passwords. Continue?",
+                    Utils.ProductName, MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
                 return;
 
             // Clear Form Data
@@ -374,24 +185,240 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        // TODO: Find a way to unlock and remove index.dat files safely
-        //private void ScanIndexFiles()
-        //{
-        //    List<string> fileList = new List<string>();
-
-        //    List<string> fileListTemp = new List<string>() {
-        //        Environment.ExpandEnvironmentVariables("%userprofile%\\Local Settings\\History\\History.IE5\\index.dat"),
-        //        Environment.ExpandEnvironmentVariables("%userprofile%\\Cookies\\index.dat"),
-        //        Environment.ExpandEnvironmentVariables("%userprofile%\\Local Settings\\Temporary Internet Files\\Content.IE5\\index.dat"),
-        //    };
-
-        //    foreach (string file in fileListTemp)
-        //    {
-        //        if (File.Exists(file) && Utils.IsFileValid(file))
-        //            fileList.Add(file);
+        //    Analyze.StoreBadFileList("Clear Index.DAT Files", fileList.ToArray());
         //    }
 
-        //    Analyze.StoreBadFileList("Clear Index.DAT Files", fileList.ToArray());
+        #region Internet Explorer Enums
+
+        /// <summary>
+        ///     Flag on the dwFlags parameter of the STATURL structure, used by the SetFilter method.
+        /// </summary>
+        internal enum STATURLFLAGS : uint
+        {
+            /// <summary>
+            ///     Flag on the dwFlags parameter of the STATURL structure indicating that the item is in the cache.
+            /// </summary>
+            STATURLFLAG_ISCACHED = 0x00000001,
+
+            /// <summary>
+            ///     Flag on the dwFlags parameter of the STATURL structure indicating that the item is a top-level item.
+            /// </summary>
+            STATURLFLAG_ISTOPLEVEL = 0x00000002
+        }
+
+        /// <summary>
+        ///     Used bu the AddHistoryEntry method.
+        /// </summary>
+        internal enum ADDURL_FLAG : uint
+        {
+            /// <summary>
+            ///     Write to both the visited links and the dated containers.
+            /// </summary>
+            ADDURL_ADDTOHISTORYANDCACHE = 0,
+
+            /// <summary>
+            ///     Write to only the visited links container.
+            /// </summary>
+            ADDURL_ADDTOCACHE = 1
+        }
+
+        /// <summary>
+        ///     Used by QueryUrl method
+        /// </summary>
+        internal enum STATURL_QUERYFLAGS : uint
+        {
+            /// <summary>
+            ///     The specified URL is in the content cache.
+            /// </summary>
+            STATURL_QUERYFLAG_ISCACHED = 0x00010000,
+
+            /// <summary>
+            ///     Space for the URL is not allocated when querying for STATURL.
+            /// </summary>
+            STATURL_QUERYFLAG_NOURL = 0x00020000,
+
+            /// <summary>
+            ///     Space for the Web page's title is not allocated when querying for STATURL.
+            /// </summary>
+            STATURL_QUERYFLAG_NOTITLE = 0x00040000,
+
+            /// <summary>
+            ///     //The item is a top-level item.
+            /// </summary>
+            STATURL_QUERYFLAG_TOPLEVEL = 0x00080000
+        }
+
+        #endregion
+
+        #region Internet Explorer Structures
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct Uuid
+        {
+            public int Data1;
+            public short Data2;
+            public short Data3;
+            public byte[] Data4;
+        }
+
+        /// <summary>
+        ///     The structure that contains statistics about a URL.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct STATURL
+        {
+            /// <summary>
+            ///     Struct size
+            /// </summary>
+            public int cbSize;
+
+            /// <summary>
+            ///     URL
+            /// </summary>
+            [MarshalAs(UnmanagedType.LPWStr)] public string pwcsUrl;
+
+            /// <summary>
+            ///     Page title
+            /// </summary>
+            [MarshalAs(UnmanagedType.LPWStr)] public string pwcsTitle;
+
+            /// <summary>
+            ///     Last visited date (UTC)
+            /// </summary>
+            public FILETIME ftLastVisited;
+
+            /// <summary>
+            ///     Last updated date (UTC)
+            /// </summary>
+            public FILETIME ftLastUpdated;
+
+            /// <summary>
+            ///     The expiry date of the Web page's content (UTC)
+            /// </summary>
+            public FILETIME ftExpires;
+
+            /// <summary>
+            ///     Flags. STATURLFLAGS Enumaration.
+            /// </summary>
+            public STATURLFLAGS dwFlags;
+
+            /// <summary>
+            ///     sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public string Url => pwcsUrl;
+
+            /// <summary>
+            ///     sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public string Title => pwcsTitle;
+
+            /// <summary>
+            ///     sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime LastVisited => DateTime.MinValue;
+
+            /// <summary>
+            ///     sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime LastUpdated => DateTime.MinValue;
+
+            /// <summary>
+            ///     sets a column header in the DataGrid control. This property is not needed if you do not use it.
+            /// </summary>
+            public DateTime Expires => DateTime.MinValue;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct INTERNET_CACHE_ENTRY_INFO
+        {
+            public uint dwStructSize;
+            public string lpszSourceUrlName;
+            public string lpszLocalFileName;
+            public uint CacheEntryType;
+            public uint dwUseCount;
+            public uint dwHitRate;
+            public uint dwSizeLow;
+            public uint dwSizeHigh;
+            public FILETIME LastModifiedTime;
+            public FILETIME ExpireTime;
+            public FILETIME LastAccessTime;
+            public FILETIME LastSyncTime;
+            public IntPtr lpHeaderInfo;
+            public uint dwHeaderInfoSize;
+            public string lpszFileExtension;
+            public ExemptDeltaOrReserverd dwExemptDeltaOrReserved;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct ExemptDeltaOrReserverd
+        {
+            [FieldOffset(0)] public uint dwReserved;
+            [FieldOffset(0)] public uint dwExemptDelta;
+        }
+
+        #endregion
+
+        #region Internet Explorer Interfaces
+
+        //UrlHistory class
+        [ComImport]
+        [Guid("3C374A40-BAE4-11CF-BF7D-00AA006946EE")]
+        internal class UrlHistoryClass
+        {
+        }
+
+        [ComImport]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
+        internal interface IUrlHistoryStg2
+        {
+            uint AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
+            uint DeleteUrl(string pocsUrl, int dwFlags);
+
+            uint QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags,
+                ref STATURL lpSTATURL);
+
+            uint BindToObject([In] string pocsUrl, [In] Uuid riid, IntPtr ppvOut);
+            uint EnumUrls([Out] IntPtr ppEnum);
+
+            [PreserveSig]
+            uint AddUrlAndNotify(IntPtr pocsUrl, IntPtr pocsTitle, int dwFlags, int fWriteHistory,
+                IntPtr IOleCommandTarget, IntPtr punkIsFolder);
+
+            uint ClearHistory();
+        }
+
+        #endregion
+
+        #region Internet Explorer Functions
+
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "DeleteUrlCacheEntryA",
+            CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool DeleteUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName);
+
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "UnlockUrlCacheEntryFileA",
+            CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName,
+            uint dwReserved);
+
+        #endregion
+
+        //            fileList.Add(file);
+        //        if (File.Exists(file) && Utils.IsFileValid(file))
+        //    {
+
+        //    foreach (string file in fileListTemp)
+        //    };
+        //        Environment.ExpandEnvironmentVariables("%userprofile%\\Local Settings\\Temporary Internet Files\\Content.IE5\\index.dat"),
+        //        Environment.ExpandEnvironmentVariables("%userprofile%\\Cookies\\index.dat"),
+        //        Environment.ExpandEnvironmentVariables("%userprofile%\\Local Settings\\History\\History.IE5\\index.dat"),
+
+        //    List<string> fileListTemp = new List<string>() {
+        //    List<string> fileList = new List<string>();
+        //{
+        //private void ScanIndexFiles()
+
+        // TODO: Find a way to unlock and remove index.dat files safely
         //}
     }
 }

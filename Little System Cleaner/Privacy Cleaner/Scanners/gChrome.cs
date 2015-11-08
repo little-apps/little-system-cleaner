@@ -35,9 +35,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
     {
         private static string _chromeProfileDir = string.Empty;
 
-        private string ChromeDefaultDir => _chromeProfileDir;
-
-        public GChrome() 
+        public GChrome()
         {
             Name = "Google Chrome";
             Icon = Resources.gChrome;
@@ -54,18 +52,23 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Name = header;
         }
 
+        private string ChromeDefaultDir => _chromeProfileDir;
+
+        public override string ProcessName => "chrome";
+
         /// <summary>
-        /// Checks if Google Chrome is installed
+        ///     Checks if Google Chrome is installed
         /// </summary>
         /// <returns>True if its installed</returns>
         internal static bool IsInstalled()
         {
             RegistryKey regKey = null;
-            bool installed = false;
+            var installed = false;
 
             try
             {
-                regKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome");
+                regKey =
+                    Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome");
 
                 if (regKey != null)
                 {
@@ -87,8 +90,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             return installed;
         }
 
-        public override string ProcessName => "chrome";
-
         public override void Scan(ScannerBase child)
         {
             if (!Children.Contains(child))
@@ -100,7 +101,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             // Just in case
             if (string.IsNullOrEmpty(ChromeDefaultDir))
             {
-                Utils.MessageBoxThreadSafe("Unable to determine Google Chrome profile directory. Skipping...", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe("Unable to determine Google Chrome profile directory. Skipping...",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return;
             }
@@ -124,14 +126,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private static bool GetChromeUserDir()
         {
-            string[] userDataDirs = {
+            string[] userDataDirs =
+            {
                 $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Google\Chrome\User Data",
                 // Taken from http://www.chromium.org/user-experience/user-data-directory
-                $@"C:\Documents and Settings\{Environment.UserName}\Local Settings\Application Data\Google\Chrome\User Data",
+                $@"C:\Documents and Settings\{Environment.UserName
+                    }\Local Settings\Application Data\Google\Chrome\User Data",
                 $@"C:\Users\{Environment.UserName}\AppData\Local\Google\Chrome\User Data"
             };
 
-            foreach (string userDataDir in userDataDirs)
+            foreach (var userDataDir in userDataDirs)
             {
                 if (!Directory.Exists(userDataDir))
                     return false;
@@ -143,7 +147,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     return true;
                 }
 
-                foreach (string dir in Directory.GetDirectories(userDataDir).Where(IsValidProfileDir))
+                foreach (var dir in Directory.GetDirectories(userDataDir).Where(IsValidProfileDir))
                 {
                     _chromeProfileDir = dir;
 
@@ -162,8 +166,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             try
             {
                 // Make sure all the needed files + dirs are there
-                string[] neededFilesDirs = { "Cookies", "History", "Cache" };
-                List<string> fileSysEntries = new List<string>(Directory.EnumerateFileSystemEntries(path));
+                string[] neededFilesDirs = {"Cookies", "History", "Cache"};
+                var fileSysEntries = new List<string>(Directory.EnumerateFileSystemEntries(path));
 
                 if (neededFilesDirs.Any(neededFileDir => !fileSysEntries.Contains(path + "\\" + neededFileDir)))
                     return false;
@@ -187,7 +191,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             if (MiscFunctions.IsFileValid(cookiesFile))
             {
-                Wizard.StoreBadFileList("Clear Cookies", new[] { cookiesFile }, MiscFunctions.GetFileSize(cookiesFile));
+                Wizard.StoreBadFileList("Clear Cookies", new[] {cookiesFile}, MiscFunctions.GetFileSize(cookiesFile));
             }
         }
 
@@ -203,11 +207,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             try
             {
-                using (SQLiteConnection sqliteConn = new SQLiteConnection($"Data Source={$@"{ChromeDefaultDir}\History"};Version=3;FailIfMissing=True"))
+                using (
+                    var sqliteConn =
+                        new SQLiteConnection(
+                            $"Data Source={$@"{ChromeDefaultDir}\History"};Version=3;FailIfMissing=True"))
                 {
                     sqliteConn.Open();
 
-                    using (SQLiteCommand command = sqliteConn.CreateCommand())
+                    using (var command = sqliteConn.CreateCommand())
                     {
                         command.CommandText = "DROP TABLE downloads";
                         command.ExecuteNonQuery();
@@ -216,17 +223,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
             catch (SQLiteException ex)
             {
-                MessageBox.Show(Application.Current.MainWindow, "The following error occurred trying to clear recent downloads in Google Chrome: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "The following error occurred trying to clear recent downloads in Google Chrome: " + ex.Message,
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void ScanCache() 
+        private void ScanCache()
         {
             string cacheDir = $@"{ChromeDefaultDir}\Cache";
-            List<string> fileList = new List<string>();
+            var fileList = new List<string>();
             long nTotalSize = 0;
 
-            foreach (string filePath in Directory.GetFiles(cacheDir))
+            foreach (var filePath in Directory.GetFiles(cacheDir))
             {
                 Wizard.CurrentFile = filePath;
 
@@ -242,9 +251,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanInternetHistory()
         {
-            List<string> fileList = new List<string>();
+            var fileList = new List<string>();
             long nTotalSize = 0;
-            string filePath = "";
+            var filePath = "";
 
             try
             {
@@ -321,7 +330,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             try
             {
-                foreach (string fileHistory in Directory.GetFiles(ChromeDefaultDir, "History Index *"))
+                foreach (var fileHistory in Directory.GetFiles(ChromeDefaultDir, "History Index *"))
                 {
                     Wizard.CurrentFile = filePath;
 

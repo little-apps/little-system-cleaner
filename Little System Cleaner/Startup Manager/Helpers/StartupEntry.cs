@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
@@ -15,7 +14,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         public StartupEntry Parent { get; set; }
 
-        public bool IsLeaf => (Children.Count == 0);
+        public bool IsLeaf => Children.Count == 0;
 
         public string SectionName { get; set; }
         public string Path { get; set; }

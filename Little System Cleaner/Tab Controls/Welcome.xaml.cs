@@ -27,37 +27,18 @@ using Microsoft.Win32;
 namespace Little_System_Cleaner.Tab_Controls
 {
     /// <summary>
-    /// Interaction logic for Welcome.xaml
+    ///     Interaction logic for Welcome.xaml
     /// </summary>
     public partial class Welcome
     {
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal class MEMORYSTATUSEX
+        public Welcome()
         {
-            public uint dwLength;
-            public uint dwMemoryLoad;
-            public ulong ullTotalPhys;
-            public ulong ullAvailPhys;
-            public ulong ullTotalPageFile;
-            public ulong ullAvailPageFile;
-            public ulong ullTotalVirtual;
-            public ulong ullAvailVirtual;
-            public ulong ullAvailExtendedVirtual;
-
-            public MEMORYSTATUSEX()
-            {
-                dwLength = (uint)Marshal.SizeOf(this);
-            }
+            InitializeComponent();
         }
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
-        
-        public Welcome()
-        {
-            InitializeComponent();
-        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -74,7 +55,7 @@ namespace Little_System_Cleaner.Tab_Controls
                 var ts = TimeSpan.FromTicks(Settings.Default.lastScanElapsed);
                 ElapsedTime.Text = $"{Convert.ToInt32(ts.TotalSeconds)} seconds";
             }
-            else 
+            else
                 ElapsedTime.Text = "Unknown";
 
             TotalScans.Text = $"{Settings.Default.totalScans} scans performed";
@@ -101,11 +82,30 @@ namespace Little_System_Cleaner.Tab_Controls
                 regKey?.Close();
             }
 
-            TotalRam.Text = GlobalMemoryStatusEx(memStatus) ?
-                $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory"
+            TotalRam.Text = GlobalMemoryStatusEx(memStatus)
+                ? $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory"
                 : "Unknown";
 
             OsVersion.Text = Misc.OsVersion.GetOsVersion();
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal class MEMORYSTATUSEX
+        {
+            public uint dwLength;
+            public uint dwMemoryLoad;
+            public ulong ullAvailExtendedVirtual;
+            public ulong ullAvailPageFile;
+            public ulong ullAvailPhys;
+            public ulong ullAvailVirtual;
+            public ulong ullTotalPageFile;
+            public ulong ullTotalPhys;
+            public ulong ullTotalVirtual;
+
+            public MEMORYSTATUSEX()
+            {
+                dwLength = (uint) Marshal.SizeOf(this);
+            }
         }
     }
 }

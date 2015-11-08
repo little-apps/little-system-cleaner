@@ -14,42 +14,13 @@ using Little_System_Cleaner.Properties;
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
     /// <summary>
-    /// Interaction logic for Results.xaml
+    ///     Interaction logic for Results.xaml
     /// </summary>
     public partial class Results : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
         private readonly Wizard _scanBase;
-        private Task _taskScan;
         private string _progressBarText;
-
-        public string ProgressBarText
-        {
-            get { return _progressBarText; }
-            set
-            {
-                if (Dispatcher.Thread != Thread.CurrentThread)
-                {
-                    Dispatcher.Invoke(() => ProgressBarText = value);
-                    return;
-                }
-
-                _progressBarText = value;
-                OnPropertyChanged("ProgressBarText");
-            }
-        }
-
-        public ResultModel DuplicateFiles => (Tree.Model as ResultModel);
+        private Task _taskScan;
 
         public Results(Wizard sb)
         {
@@ -67,7 +38,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
             else
             {
-                Utils.MessageBoxThreadSafe("The results could not be prepared. Going back to start screen.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe("The results could not be prepared. Going back to start screen.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 _scanBase.MoveFirst();
             }
 
@@ -76,6 +48,24 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             //Utils.AutoResizeColumns(this._tree);
         }
+
+        public string ProgressBarText
+        {
+            get { return _progressBarText; }
+            set
+            {
+                if (Dispatcher.Thread != Thread.CurrentThread)
+                {
+                    Dispatcher.Invoke(() => ProgressBarText = value);
+                    return;
+                }
+
+                _progressBarText = value;
+                OnPropertyChanged("ProgressBarText");
+            }
+        }
+
+        public ResultModel DuplicateFiles => Tree.Model as ResultModel;
 
         private async void buttonFix_Click(object sender, RoutedEventArgs e)
         {
@@ -94,7 +84,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             if (files.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No files were selected to be removed. If you would like to not remove any files, please click cancel.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "No files were selected to be removed. If you would like to not remove any files, please click cancel.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -111,13 +103,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             ProgressBar.Value = 0;
             ProgressBar.Minimum = 0;
-            ProgressBar.Maximum = (SysRestore.SysRestoreAvailable() ? files.Count + 2 : files.Count);
+            ProgressBar.Maximum = SysRestore.SysRestoreAvailable() ? files.Count + 2 : files.Count;
 
             _taskScan = new Task(() => FixDuplicates(files));
             _taskScan.Start();
             await _taskScan;
 
-            MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName,
+                MessageBoxButton.OK, MessageBoxImage.Information);
 
             Main.TaskbarProgressState = TaskbarItemProgressState.None;
             Main.TaskbarProgressValue = 0;
@@ -140,7 +133,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, "The following error occurred trying to create a system restore point: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow,
+                        "The following error occurred trying to create a system restore point: " + ex.Message,
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
                 Dispatcher.Invoke(() => ProgressBar.Value++);
@@ -160,7 +155,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 catch (Exception ex)
                 {
                     string message = $"Unable to remove file ({filePath}).\nThe following error occurred: {ex.Message}";
-                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
                 Dispatcher.Invoke(() => ProgressBar.Value++);
@@ -182,7 +178,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, "Unable to create system restore point.\nThe following error occurred: " + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow,
+                        "Unable to create system restore point.\nThe following error occurred: " + ex.Message,
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
@@ -198,7 +196,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 _scanBase.MoveFirst();
             }
@@ -223,7 +223,27 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 _scanBase.ShowFileInfo(resultNode.FileEntry);
         }
 
+        private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Math.Abs(ProgressBar.Maximum) > 0)
+            {
+                Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
+            }
+        }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
+
         #region Context Menu Events
+
         private void selectAll_Click(object sender, RoutedEventArgs e)
         {
             SetCheckedItems(true);
@@ -261,13 +281,5 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         }
 
         #endregion
-
-        private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (Math.Abs(ProgressBar.Maximum) > 0)
-            {
-                Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
-            }
-        }
     }
 }

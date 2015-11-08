@@ -32,42 +32,11 @@ using Little_System_Cleaner.Properties;
 namespace Little_System_Cleaner
 {
     /// <summary>
-    /// Interaction logic for CrashReporter.xaml
+    ///     Interaction logic for CrashReporter.xaml
     /// </summary>
     public partial class CrashReporter
     {
         private readonly Exception _exception;
-
-        public BitmapSource ImageSource
-        {
-            get 
-            {
-                IntPtr hBitmap = SystemIcons.Error.ToBitmap().GetHbitmap();
-                return Imaging.CreateBitmapSourceFromHBitmap(
-                    hBitmap,
-                    IntPtr.Zero,
-                    Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions()
-                );
-            }
-        }
-
-        /// <summary>
-        /// Opens crash report window properly
-        /// </summary>
-        /// <param name="ex">Exception</param>
-        public static void ShowCrashReport(Exception ex)
-        {
-            // Are we in the UI thread?
-            if (Thread.CurrentThread != Application.Current.Dispatcher.Thread)
-            {
-                Application.Current.Dispatcher.Invoke(new Action<Exception>(ShowCrashReport), ex);
-                return;
-            }
-
-            CrashReporter crashRep = new CrashReporter(ex);
-            crashRep.Show();
-        }
 
 
         public CrashReporter(Exception e)
@@ -79,14 +48,45 @@ namespace Little_System_Cleaner
             GenerateDialogReport();
         }
 
+        public BitmapSource ImageSource
+        {
+            get
+            {
+                var hBitmap = SystemIcons.Error.ToBitmap().GetHbitmap();
+                return Imaging.CreateBitmapSourceFromHBitmap(
+                    hBitmap,
+                    IntPtr.Zero,
+                    Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions()
+                    );
+            }
+        }
+
         /// <summary>
-        /// Fills in text box with exception info
+        ///     Opens crash report window properly
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        public static void ShowCrashReport(Exception ex)
+        {
+            // Are we in the UI thread?
+            if (Thread.CurrentThread != Application.Current.Dispatcher.Thread)
+            {
+                Application.Current.Dispatcher.Invoke(new Action<Exception>(ShowCrashReport), ex);
+                return;
+            }
+
+            var crashRep = new CrashReporter(ex);
+            crashRep.Show();
+        }
+
+        /// <summary>
+        ///     Fills in text box with exception info
         /// </summary>
         private void GenerateDialogReport()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            Process proc = Process.GetCurrentProcess();
+            var proc = Process.GetCurrentProcess();
 
             // dates and time
             sb.AppendLine($"Current Date/Time: {DateTime.Now}");
@@ -116,13 +116,13 @@ namespace Little_System_Cleaner
             sb.AppendLine($"CLR Version: {Environment.Version}");
 
 
-            Exception ex = _exception;
-            for (int i = 0; ex != null; ex = ex.InnerException, i++)
+            var ex = _exception;
+            for (var i = 0; ex != null; ex = ex.InnerException, i++)
             {
                 sb.AppendLine();
                 sb.AppendLine($"Type #{i} {ex.GetType()}");
 
-                foreach (PropertyInfo propInfo in ex.GetType().GetProperties())
+                foreach (var propInfo in ex.GetType().GetProperties())
                 {
                     string fieldName = $"{propInfo.Name} #{i}";
                     string fieldValue = $"{propInfo.GetValue(ex, null)}";

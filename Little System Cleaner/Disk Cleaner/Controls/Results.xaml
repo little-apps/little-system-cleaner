@@ -1,18 +1,18 @@
 ﻿<UserControl x:Class="Little_System_Cleaner.Disk_Cleaner.Controls.Results"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              MinWidth="579" MinHeight="384"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="74"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="74" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="30" />
             <RowDefinition />
             <RowDefinition Height="80" />
             <RowDefinition Height="40" />
@@ -23,19 +23,22 @@
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0"/>
-                    <GradientStop Color="Gray" Offset="1"/>
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="Gray" Offset="1" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Disk Cleaner" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Content="Disk Cleaner" Margin="8,0" Foreground="White" Height="28"
+                       HorizontalAlignment="Left" />
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
             </Grid>
         </Border>
-        <ListView x:Name="ListViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5" SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.Column="0" Grid.ColumnSpan="2">
+        <ListView x:Name="ListViewFiles" ItemsSource="{Binding ProblemsCollection}" Grid.Row="1" Margin="5,10,5,5"
+                  SelectionMode="Single" SelectionChanged="listViewFiles_SelectionChanged" Grid.Column="0"
+                  Grid.ColumnSpan="2">
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="SelectAll" Header="Select All" Click="selectAll_Click"  />
+                    <MenuItem x:Name="SelectAll" Header="Select All" Click="selectAll_Click" />
                     <MenuItem x:Name="SelectNone" Header="Select None" Click="selectNone_Click" />
                     <MenuItem x:Name="SelectInvert" Header="Invert Selection" Click="selectInvert_Click" />
                 </ContextMenu>
@@ -63,7 +66,7 @@
         <Grid Grid.Column="1" Grid.Row="2" Margin="0,0,5,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="324*" />
-                <ColumnDefinition Width="255"/>
+                <ColumnDefinition Width="255" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50*" />
@@ -71,27 +74,36 @@
             </Grid.RowDefinitions>
 
             <DockPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Height="23">
-                <TextBlock Text="File Name:" Width="60" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
-                <TextBox x:Name="FileName" Text=""  Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
+                <TextBlock Text="File Name:" Width="60" VerticalAlignment="Center" TextAlignment="Right"
+                           DockPanel.Dock="Left" />
+                <TextBox x:Name="FileName" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </DockPanel>
 
             <DockPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Height="23">
-                <TextBlock Text="Location:" Width="60" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
-                <TextBox x:Name="Location" Text=""  Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
+                <TextBlock Text="Location:" Width="60" VerticalAlignment="Center" TextAlignment="Right"
+                           DockPanel.Dock="Left" />
+                <TextBox x:Name="Location" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </DockPanel>
 
             <DockPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Height="23">
-                <TextBlock Text="File Size:" Width="80" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
-                <TextBox x:Name="FileSize" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center"  />
+                <TextBlock Text="File Size:" Width="80" VerticalAlignment="Center" TextAlignment="Right"
+                           DockPanel.Dock="Left" />
+                <TextBox x:Name="FileSize" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </DockPanel>
 
             <DockPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Height="23">
-                <TextBlock Text="Last Accessed:" Width="80" VerticalAlignment="Center" TextAlignment="Right" DockPanel.Dock="Left" />
-                <TextBox x:Name="LastAccessed" Text="" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center" />
+                <TextBlock Text="Last Accessed:" Width="80" VerticalAlignment="Center" TextAlignment="Right"
+                           DockPanel.Dock="Left" />
+                <TextBox x:Name="LastAccessed" Text="" Margin="5,0,0,0" IsReadOnly="True"
+                         VerticalContentAlignment="Center" />
             </DockPanel>
         </Grid>
 
-        <Button Name="ButtonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="3" HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" Grid.Column="1" />
-        <Button Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="8,0,8,0">Cancel</Button>
+        <Button Name="ButtonFix" Content="Fix Problems" Click="buttonFix_Click" Grid.Row="3"
+                HorizontalAlignment="Right" Margin="0,5,5,5" Padding="8,0,8,0" Grid.Column="1" />
+        <Button Name="ButtonCancel" Click="buttonCancel_Click" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left"
+                Margin="5,5,0,5" Padding="8,0,8,0">
+            Cancel
+        </Button>
     </Grid>
 </UserControl>

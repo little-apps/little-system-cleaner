@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
+using System.Security;
 using Little_System_Cleaner.Misc;
-using System.Threading;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -29,7 +30,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         public override string ScannerName => Strings.SharedDLLs;
 
         /// <summary>
-        /// Scan for missing links to DLLS
+        ///     Scan for missing links to DLLS
         /// </summary>
         public override void Scan()
         {
@@ -53,9 +54,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 regKey.Close();
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
     }

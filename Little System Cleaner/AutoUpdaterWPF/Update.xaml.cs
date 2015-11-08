@@ -9,7 +9,7 @@ using Microsoft.Win32;
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
     /// <summary>
-    /// Interaction logic for Update.xaml
+    ///     Interaction logic for Update.xaml
     /// </summary>
     public partial class Update
     {
@@ -28,7 +28,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 Debug.Write(e);
             }
-                
+
             Text = AutoUpdater.DialogTitle;
             TextBlockUpdate.Text = string.Format(TextBlockUpdate.Text, AutoUpdater.AppTitle);
             TextBlockDescription.Text =

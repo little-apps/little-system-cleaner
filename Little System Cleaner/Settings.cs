@@ -6,15 +6,15 @@ using System.IO;
 using System.Reflection;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
-namespace Little_System_Cleaner.Properties {
-    
-    
+namespace Little_System_Cleaner.Properties
+{
     // This class allows you to handle specific events on the settings class:
     //  The SettingChanging event is raised before a setting's value is changed.
     //  The PropertyChanged event is raised after a setting's value is changed.
     //  The SettingsLoaded event is raised after the setting values are loaded.
     //  The SettingsSaving event is raised before the setting values are saved.
-    internal sealed partial class Settings {
+    internal sealed partial class Settings
+    {
         [UserScopedSetting]
         [DebuggerNonUserCode]
         [SettingsSerializeAs(SettingsSerializeAs.Binary)]
@@ -22,15 +22,12 @@ namespace Little_System_Cleaner.Properties {
         {
             get
             {
-                if (((ObservableCollection<ExcludeItem>)(this["ArrayExcludeList"])) == null)
-                    ((this["ArrayExcludeList"])) = new ObservableCollection<ExcludeItem>();
+                if ((ObservableCollection<ExcludeItem>) this["ArrayExcludeList"] == null)
+                    this["ArrayExcludeList"] = new ObservableCollection<ExcludeItem>();
 
-                return ((ObservableCollection<ExcludeItem>)(this["ArrayExcludeList"]));
+                return (ObservableCollection<ExcludeItem>) this["ArrayExcludeList"];
             }
-            set
-            {
-                this["ArrayExcludeList"] = value;
-            }
+            set { this["ArrayExcludeList"] = value; }
         }
 
         [UserScopedSetting]
@@ -40,7 +37,8 @@ namespace Little_System_Cleaner.Properties {
             get
             {
                 if (string.IsNullOrEmpty(this["ProgramSettingsDir"] as string))
-                    this["ProgramSettingsDir"] = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)}\\Little System Cleaner";
+                    this["ProgramSettingsDir"] =
+                        $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)}\\Little System Cleaner";
 
                 if (!Directory.Exists((string) this["ProgramSettingsDir"]))
                     Directory.CreateDirectory((string) this["ProgramSettingsDir"]);
@@ -86,6 +84,9 @@ namespace Little_System_Cleaner.Properties {
 
         [UserScopedSetting]
         [DebuggerNonUserCode]
-        public string BuildTime => new DateTime(2000, 1, 1).AddDays(Assembly.GetExecutingAssembly().GetName().Version.Build).ToString("MM/dd/yyyy");
+        public string BuildTime
+            =>
+                new DateTime(2000, 1, 1).AddDays(Assembly.GetExecutingAssembly().GetName().Version.Build)
+                    .ToString("MM/dd/yyyy");
     }
 }

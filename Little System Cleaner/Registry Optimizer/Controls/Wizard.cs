@@ -25,20 +25,20 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     public class Wizard : WizardBase
     {
-        internal static ObservableCollection<Hive> RegistryHives { get; set; }
-
-        internal static bool IsBusy { get; set; }
-
         public bool HivesLoaded = false;
 
         public Wizard()
         {
-            Controls.Add(typeof(LoadHives));
-            Controls.Add(typeof(Main));
-            Controls.Add(typeof(AnalyzeResults));
+            Controls.Add(typeof (LoadHives));
+            Controls.Add(typeof (Main));
+            Controls.Add(typeof (AnalyzeResults));
 
             IsBusy = false;
         }
+
+        internal static ObservableCollection<Hive> RegistryHives { get; set; }
+
+        internal static bool IsBusy { get; set; }
 
         public override void OnLoaded()
         {
@@ -71,7 +71,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                 if (!exit)
                     return false;
 
-                foreach (var h in RegistryHives) {
+                foreach (var h in RegistryHives)
+                {
                     h.Reset();
                 }
 

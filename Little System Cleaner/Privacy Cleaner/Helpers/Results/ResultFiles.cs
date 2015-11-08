@@ -10,7 +10,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
     public class ResultFiles : ResultNode
     {
         /// <summary>
-        /// Constructor for bad file path (leaf node)
+        ///     Constructor for bad file path (leaf node)
         /// </summary>
         /// <param name="desc">Description of problem</param>
         /// <param name="filePaths">The file paths</param>
@@ -24,7 +24,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
         public override void Clean(Report report)
         {
-            foreach (string filePath in FilePaths.Where(File.Exists))
+            foreach (var filePath in FilePaths.Where(File.Exists))
             {
                 try
                 {

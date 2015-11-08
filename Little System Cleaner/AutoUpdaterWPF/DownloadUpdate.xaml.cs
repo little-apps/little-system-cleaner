@@ -11,7 +11,7 @@ using Little_System_Cleaner.Misc;
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
     /// <summary>
-    /// Interaction logic for DownloadUpdate.xaml
+    ///     Interaction logic for DownloadUpdate.xaml
     /// </summary>
     internal partial class DownloadUpdate
     {
@@ -57,7 +57,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             webClient.DownloadFileCompleted += OnDownloadComplete;
 
             webClient.DownloadFileAsync(uri, _tempPath);
-
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -69,7 +68,11 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (e.Error != null)
             {
-                if (Utils.MessageBoxThreadSafe(this, "Unable to download update: " + e.Error.Message + "\nWould you like to download it in your browser?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                if (
+                    Utils.MessageBoxThreadSafe(this,
+                        "Unable to download update: " + e.Error.Message +
+                        "\nWould you like to download it in your browser?", Utils.ProductName, MessageBoxButton.YesNo,
+                        MessageBoxImage.Error) == MessageBoxResult.Yes)
                 {
                     var processStartInfoDownloadUrl = new ProcessStartInfo(AutoUpdater.DownloadUrl);
 
@@ -99,7 +102,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             var fileName = string.Empty;
 
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            var httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
             httpWebRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
             httpWebRequest.Method = "HEAD";
             httpWebRequest.AllowAutoRedirect = false;
@@ -108,16 +111,19 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-                httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                httpWebResponse = (HttpWebResponse) httpWebRequest.GetResponse();
             }
             catch (WebException ex)
             {
-                Utils.MessageBoxThreadSafe("Unable to download file.\n" + ex.Message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe("Unable to download file.\n" + ex.Message, Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return string.Empty;
             }
 
-            if (httpWebResponse.StatusCode.Equals(HttpStatusCode.Redirect) || httpWebResponse.StatusCode.Equals(HttpStatusCode.Moved) || httpWebResponse.StatusCode.Equals(HttpStatusCode.MovedPermanently))
+            if (httpWebResponse.StatusCode.Equals(HttpStatusCode.Redirect) ||
+                httpWebResponse.StatusCode.Equals(HttpStatusCode.Moved) ||
+                httpWebResponse.StatusCode.Equals(HttpStatusCode.MovedPermanently))
             {
                 if (httpWebResponse.Headers["Location"] != null)
                 {

@@ -34,15 +34,13 @@ using Little_System_Cleaner.Properties;
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Results.xaml
+    ///     Interaction logic for Results.xaml
     /// </summary>
     public partial class Results
     {
         private readonly Task _fixTask;
 
         public Wizard ScanBase;
-
-        public ObservableCollection<ProblemFile> ProblemsCollection => Wizard.FileList;
 
         public Results(Wizard sb)
         {
@@ -62,6 +60,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             ListViewFiles.AutoResizeColumns();
         }
 
+        public ObservableCollection<ProblemFile> ProblemsCollection => Wizard.FileList;
+
         private void listViewFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ListViewFiles.SelectedItem != null)
@@ -76,7 +76,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 // Get icon
                 var fileIcon = System.Drawing.Icon.ExtractAssociatedIcon(fileInfo.FullName) ?? SystemIcons.Application;
 
-                Icon.Source = Imaging.CreateBitmapSourceFromHBitmap(fileIcon.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                Icon.Source = Imaging.CreateBitmapSourceFromHBitmap(fileIcon.ToBitmap().GetHbitmap(), IntPtr.Zero,
+                    Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 FileName.Text = fileInfo.Name;
                 FileSize.Text = Utils.ConvertSizeToString(fileInfo.Length);
@@ -91,7 +92,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void ResetInfo()
         {
-            Icon.Source = Imaging.CreateBitmapSourceFromHBitmap(SystemIcons.Application.ToBitmap().GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            Icon.Source = Imaging.CreateBitmapSourceFromHBitmap(SystemIcons.Application.ToBitmap().GetHbitmap(),
+                IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
             FileName.Text = "N/A";
             FileSize.Text = "N/A";
@@ -115,7 +117,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void selectInvert_Click(object sender, RoutedEventArgs e)
         {
-            ProblemsCollection.ToList().ForEach(lvi => lvi.Checked = !(lvi.Checked));
+            ProblemsCollection.ToList().ForEach(lvi => lvi.Checked = !lvi.Checked);
 
             ListViewFiles.Items.Refresh();
         }
@@ -126,12 +128,15 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (uncheckedFiles == ProblemsCollection.Count)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No files are selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No files are selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (!Settings.Default.diskCleanerAutoClean)
-                if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove these files?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (
+                    MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove these files?",
+                        Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
 
             Main.Watcher.Event("Disk Cleaner", "Remove Files");
@@ -139,7 +144,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             _fixTask.Start();
             await _fixTask;
 
-            MessageBox.Show(Application.Current.MainWindow, "Successfully cleaned files from disk", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Application.Current.MainWindow, "Successfully cleaned files from disk", Utils.ProductName,
+                MessageBoxButton.OK, MessageBoxImage.Information);
 
             ScanBase.MoveFirst();
         }
@@ -155,7 +161,8 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             catch (Win32Exception ex)
             {
                 string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             foreach (var lvi in ProblemsCollection.Where(lvi => lvi.Checked.GetValueOrDefault()))
@@ -206,8 +213,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
                 catch (Win32Exception ex)
                 {
-                    string message = $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
-                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    string message =
+                        $"Unable to create system restore point.\nThe following error occurred: {ex.Message}";
+                    Utils.MessageBoxThreadSafe(Application.Current.MainWindow, message, Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -216,11 +225,14 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             if (_fixTask.Status == TaskStatus.Running)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Please wait for the problems to be fixed.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "Please wait for the problems to be fixed.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to cancel?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
             ResetInfo();

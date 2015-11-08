@@ -17,25 +17,54 @@
 */
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
-using Little_System_Cleaner.Misc;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using System.Reflection;
+using LittleSoftwareStats;
+using Little_System_Cleaner.AutoUpdaterWPF;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Tab_Controls.Options;
+using Application = System.Windows.Application;
+using ContextMenu = System.Windows.Controls.ContextMenu;
+using Cursors = System.Windows.Input.Cursors;
+using Image = System.Windows.Controls.Image;
+using MenuItem = System.Windows.Controls.MenuItem;
+using MessageBox = System.Windows.MessageBox;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Timer = System.Timers.Timer;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Little_System_Cleaner
 {
     public partial class Main
-	{
+    {
+        private readonly Timer _timerCheck = new Timer(500);
+        private bool _ignoreSetTabControl;
+
+        public Main()
+        {
+            InitializeComponent();
+
+            //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
+        }
+
         internal static bool IsTabsEnabled { get; set; }
 
         internal static TaskbarItemProgressState TaskbarProgressState
         {
             get { return (Application.Current.MainWindow as Main).TaskBarItemInfo.ProgressState; }
-            set 
+            set
             {
                 if (Application.Current == null)
                     return;
@@ -68,28 +97,18 @@ namespace Little_System_Cleaner
             }
         }
 
-        private static LittleSoftwareStats.Watcher _watcher;
-        internal static LittleSoftwareStats.Watcher Watcher => _watcher;
+        internal static Watcher Watcher { get; private set; }
 
-        private readonly System.Timers.Timer _timerCheck = new System.Timers.Timer(500);
-        private bool _ignoreSetTabControl;
-
-		public Main()
-		{
-			InitializeComponent();
-
-            //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
-		}
-
-        void timerCheck_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void timerCheck_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (Dispatcher.Thread != System.Threading.Thread.CurrentThread)
+            if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                Dispatcher.BeginInvoke(new EventHandler<System.Timers.ElapsedEventArgs>(timerCheck_Elapsed), sender, e);
+                Dispatcher.BeginInvoke(new EventHandler<ElapsedEventArgs>(timerCheck_Elapsed), sender, e);
                 return;
             }
 
-            TabItemWelcome.IsEnabled = TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
+            TabItemWelcome.IsEnabled =
+                TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -102,8 +121,8 @@ namespace Little_System_Cleaner
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             // Send usage data to Little Software Stats
-            _watcher = new LittleSoftwareStats.Watcher();
-            LittleSoftwareStats.Config.Enabled = Properties.Settings.Default.optionsUsageStats;
+            Watcher = new Watcher();
+            Config.Enabled = Settings.Default.optionsUsageStats;
 
             var appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
@@ -115,23 +134,25 @@ namespace Little_System_Cleaner
             _timerCheck.Start();
 
             // See if we have the current version
-            if (Properties.Settings.Default.updateAuto)
+            if (Settings.Default.updateAuto)
             {
-                AutoUpdaterWPF.AutoUpdater.MainDispatcher = Dispatcher;
-                AutoUpdaterWPF.AutoUpdater.Start(Properties.Settings.Default.updateURL);
+                AutoUpdater.MainDispatcher = Dispatcher;
+                AutoUpdater.Start(Settings.Default.updateURL);
             }
 
             TaskBarItemInfo.Description = Utils.ProductName;
         }
 
-        private void OnClose(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OnClose(object sender, CancelEventArgs e)
         {
-            if (MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var lastCtrl = GetLastControl();
                 var canExit = CallOnUnloaded(lastCtrl, true);
 
-                if ((canExit.HasValue) && canExit.Value == false)
+                if (canExit.HasValue && canExit.Value == false)
                 {
                     // NOTE: Invoked function is responsible for displaying message on why it can't exit
                     e.Cancel = true;
@@ -164,12 +185,12 @@ namespace Little_System_Cleaner
         }
 
         /// <summary>
-        /// Used to create menu items for context menu
+        ///     Used to create menu items for context menu
         /// </summary>
         /// <param name="bMapImg">Icon or null if theres none</param>
         /// <param name="header">Text to display</param>
         /// <returns>MenuItem</returns>
-        private MenuItem CreateMenuItem(System.Drawing.Bitmap bMapImg, string header)
+        private MenuItem CreateMenuItem(Bitmap bMapImg, string header)
         {
             var menuItem = new MenuItem();
 
@@ -178,7 +199,8 @@ namespace Little_System_Cleaner
             if (bMapImg != null)
             {
                 imgCtrl.Height = imgCtrl.Width = 16;
-                imgCtrl.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bMapImg.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                imgCtrl.Source = Imaging.CreateBitmapSourceFromHBitmap(bMapImg.GetHbitmap(), IntPtr.Zero,
+                    Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             }
 
             menuItem.Icon = imgCtrl;
@@ -190,43 +212,45 @@ namespace Little_System_Cleaner
 
         private void menuItem_Click(object sender, RoutedEventArgs e)
         {
-            switch ((string)(sender as MenuItem)?.Header)
+            switch ((string) (sender as MenuItem)?.Header)
             {
                 case "Help":
+                {
+                    if (!File.Exists("Little System Cleaner.chm"))
                     {
-                        if (!File.Exists("Little System Cleaner.chm"))
-                        {
-                            MessageBox.Show(this, "No help file could be found", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-
-                        System.Windows.Forms.Help.ShowHelp(null, "Little System Cleaner.chm");
-                        break;
+                        MessageBox.Show(this, "No help file could be found", Utils.ProductName, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
                     }
+
+                    Help.ShowHelp(null, "Little System Cleaner.chm");
+                    break;
+                }
                 case "Visit Website":
-                    {
-                        if (!Utils.LaunchUri(@"http://www.little-apps.com/little-system-cleaner/"))
-                            MessageBox.Show(this, "Unable to detect web browser to open link", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                {
+                    if (!Utils.LaunchUri(@"http://www.little-apps.com/little-system-cleaner/"))
+                        MessageBox.Show(this, "Unable to detect web browser to open link", Utils.ProductName,
+                            MessageBoxButton.OK, MessageBoxImage.Error);
 
-                        break;
-                    }
+                    break;
+                }
                 case "Check for updates":
-                    {
-                        AutoUpdaterWPF.AutoUpdater.MainDispatcher = Dispatcher;
-                        AutoUpdaterWPF.AutoUpdater.Start(true);
-                        break;
-                    }
+                {
+                    AutoUpdater.MainDispatcher = Dispatcher;
+                    AutoUpdater.Start(true);
+                    break;
+                }
                 case "About...":
+                {
+                    if (IsTabsEnabled)
                     {
-                        if (IsTabsEnabled)
-                        {
-                            TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemOptions);
+                        TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemOptions);
 
-                            var options = TabItemOptions.Content as Options;
-                            options?.ShowAboutTab();
-                        }
-                        break;
+                        var options = TabItemOptions.Content as Options;
+                        options?.ShowAboutTab();
                     }
+                    break;
+                }
             }
         }
 
@@ -275,9 +299,9 @@ namespace Little_System_Cleaner
                 var nextCtrl = selectedContent is DynamicUserControl
                     ? ((DynamicUserControl) selectedContent).InitUserControl()
                     : TabControl.SelectedContent as UserControl;
-                
+
                 var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
-                methodLoad?.Invoke(nextCtrl, new object[] { });
+                methodLoad?.Invoke(nextCtrl, new object[] {});
             }
             else
             {
@@ -289,10 +313,10 @@ namespace Little_System_Cleaner
 
         private UserControl GetLastControl()
         {
-            var lastCtrl = (TabControl.SelectedContent as UserControl);
+            var lastCtrl = TabControl.SelectedContent as UserControl;
 
             if (lastCtrl is DynamicUserControl)
-                lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
+                lastCtrl = (UserControl) (lastCtrl as DynamicUserControl).Content;
 
             return lastCtrl;
         }
@@ -303,18 +327,18 @@ namespace Little_System_Cleaner
 
             var methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
-                canExit = (bool?)methodUnload.Invoke(lastCtrl, new object[] { forceExit });
+                canExit = (bool?) methodUnload.Invoke(lastCtrl, new object[] {forceExit});
 
             return canExit;
         }
 
         /// <summary>
-        /// Calls GC.Collect() and GC.WaitForPendingFinalizers()
+        ///     Calls GC.Collect() and GC.WaitForPendingFinalizers()
         /// </summary>
         private static void GarbageCollectAndFinalize()
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
-	}
+    }
 }

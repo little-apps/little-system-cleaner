@@ -17,12 +17,14 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Security;
 using System.Text;
-using Microsoft.Win32;
 using System.Text.RegularExpressions;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -37,7 +39,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         }
 
         /// <summary>
-        /// Checks MUI Cache for invalid file references (XP Only)
+        ///     Checks MUI Cache for invalid file references (XP Only)
         /// </summary>
         private static void ScanMuiCache()
         {
@@ -58,20 +60,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
         /// <summary>
-        /// Recurses through the recent documents registry keys for invalid files
+        ///     Recurses through the recent documents registry keys for invalid files
         /// </summary>
         private static void ScanExplorerDocs()
         {
             try
             {
-                using (var regKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs"))
+                using (
+                    var regKey =
+                        Registry.CurrentUser.OpenSubKey(
+                            "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs"))
                 {
                     if (regKey == null)
                         return;
@@ -89,9 +94,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     }
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -133,24 +138,25 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         }
 
         /// <summary>
-        /// Converts registry value to filename
+        ///     Converts registry value to filename
         /// </summary>
         /// <param name="keyObj">Value from registry key</param>
         private static string ExtractUnicodeStringFromBinary(object keyObj)
         {
-            var value = keyObj.ToString();    //get object value 
-            var type = keyObj.GetType().Name;  //get object type
+            var value = keyObj.ToString(); //get object value 
+            var type = keyObj.GetType().Name; //get object type
 
             if (type != "Byte[]")
                 return value;
 
             value = "";
-            var bytes = (byte[])keyObj;
+            var bytes = (byte[]) keyObj;
             //this seems crude but cannot find a way to 'cast' a Unicode string to byte[]
             //even in case where we know the beginning format is Unicode
             //so do it the hard way
-            
-            return Encoding.Unicode.GetChars(bytes).TakeWhile(bt => bt != 0).Aggregate(value, (s, c) => s + c); ;
+
+            return Encoding.Unicode.GetChars(bytes).TakeWhile(bt => bt != 0).Aggregate(value, (s, c) => s + c);
+            ;
         }
     }
 }

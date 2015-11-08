@@ -1,46 +1,27 @@
-﻿using Little_System_Cleaner.Privacy_Cleaner.Scanners;
-using Microsoft.VisualBasic.FileIO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Little_System_Cleaner.Privacy_Cleaner.Scanners;
+using Little_System_Cleaner.Properties;
+using Microsoft.VisualBasic.FileIO;
+using SearchOption = System.IO.SearchOption;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
     internal static class MiscFunctions
     {
-        #region Functions
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindFirstUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        internal static extern IntPtr FindFirstUrlCacheEntry([MarshalAs(UnmanagedType.LPStr)] string lpszUrlSearchPattern, IntPtr lpFirstCacheEntryInfo, ref int lpdwFirstCacheEntryInfoBufferSize);
-
-        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindNextUrlCacheEntryA", CallingConvention = CallingConvention.StdCall)]
-        internal static extern bool FindNextUrlCacheEntry(IntPtr hFind, IntPtr lpNextCacheEntryInfo, ref int lpdwNextCacheEntryInfoBufferSize);
-
-        [DllImport("wininet.dll", SetLastError = true)]
-        internal static extern long FindCloseUrlCache(IntPtr hEnumHandle);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        internal static extern uint GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer, uint nSize, string lpFileName);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        internal static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpReturnedString, uint nSize, string lpFileName);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
-        #endregion
-
         internal static List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> FindUrlCacheEntries(string urlPattern)
         {
-            List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO> cacheEntryList = new List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO>();
+            var cacheEntryList = new List<InternetExplorer.INTERNET_CACHE_ENTRY_INFO>();
 
-            int structSize = 0;
+            var structSize = 0;
 
-            IntPtr bufferPtr = IntPtr.Zero;
-            IntPtr cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+            var bufferPtr = IntPtr.Zero;
+            var cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
 
             InternetExplorer.INTERNET_CACHE_ENTRY_INFO? cacheEntry;
 
@@ -48,50 +29,47 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 // ERROR_SUCCESS
                 case 0:
+                {
+                    if (cacheEnumHandle.ToInt32() > 0)
                     {
-                        if (cacheEnumHandle.ToInt32() > 0)
-                        {
-                            // Store entry
-                            if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
-                                cacheEntryList.Add(cacheEntry.Value);
-                        }
-
-                        break;
+                        // Store entry
+                        if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                            cacheEntryList.Add(cacheEntry.Value);
                     }
-                    
+
+                    break;
+                }
+
 
                 // ERROR_INSUFFICIENT_BUFFER
                 case 122:
+                {
+                    // Repeat call to API with size returned by first call
+                    bufferPtr = Marshal.AllocHGlobal(structSize);
+                    cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+
+                    if (cacheEnumHandle.ToInt32() > 0)
                     {
-                        // Repeat call to API with size returned by first call
-                        bufferPtr = Marshal.AllocHGlobal(structSize);
-                        cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+                        // Store entry
+                        if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                            cacheEntryList.Add(cacheEntry.Value);
 
-                        if (cacheEnumHandle.ToInt32() > 0)
-                        {
-                            // Store entry
-                            if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
-                                cacheEntryList.Add(cacheEntry.Value);
-
-                            break;
-                        }
-                        else
-                        {
-                            // Failed to get handle, return...
-                            Marshal.FreeHGlobal(bufferPtr);
-                            FindCloseUrlCache(cacheEnumHandle);
-
-                            return cacheEntryList;
-                        }
+                        break;
                     }
+                    // Failed to get handle, return...
+                    Marshal.FreeHGlobal(bufferPtr);
+                    FindCloseUrlCache(cacheEnumHandle);
+
+                    return cacheEntryList;
+                }
 
                 default:
-                    {
-                        Marshal.FreeHGlobal(bufferPtr);
-                        FindCloseUrlCache(cacheEnumHandle);
+                {
+                    Marshal.FreeHGlobal(bufferPtr);
+                    FindCloseUrlCache(cacheEnumHandle);
 
-                        return cacheEntryList;
-                    }
+                    return cacheEntryList;
+                }
             }
 
             do
@@ -110,43 +88,40 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     {
                         // ERROR_INSUFFICIENT_BUFFER
                         case 122:
+                        {
+                            // Repeat call to API with size returned by first call
+                            bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
+
+                            if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
                             {
-                                // Repeat call to API with size returned by first call
-                                bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
+                                // Store entry
+                                if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                    cacheEntryList.Add(cacheEntry.Value);
 
-                                if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
-                                {
-                                    // Store entry
-                                    if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
-                                        cacheEntryList.Add(cacheEntry.Value);
-
-                                    break;
-                                }
-                                else
-                                {
-                                    Marshal.FreeHGlobal(bufferPtr);
-                                    FindCloseUrlCache(cacheEnumHandle);
-
-                                    return cacheEntryList;
-                                }
+                                break;
                             }
-                            
+                            Marshal.FreeHGlobal(bufferPtr);
+                            FindCloseUrlCache(cacheEnumHandle);
+
+                            return cacheEntryList;
+                        }
+
                         // ERROR_NO_MORE_ITEMS
                         case 259:
-                            {
-                                Marshal.FreeHGlobal(bufferPtr);
-                                FindCloseUrlCache(cacheEnumHandle);
+                        {
+                            Marshal.FreeHGlobal(bufferPtr);
+                            FindCloseUrlCache(cacheEnumHandle);
 
-                                return cacheEntryList;
-                            }
+                            return cacheEntryList;
+                        }
 
                         default:
-                            {
-                                Marshal.FreeHGlobal(bufferPtr);
-                                FindCloseUrlCache(cacheEnumHandle);
+                        {
+                            Marshal.FreeHGlobal(bufferPtr);
+                            FindCloseUrlCache(cacheEnumHandle);
 
-                                return cacheEntryList;
-                            }
+                            return cacheEntryList;
+                        }
                     }
                 }
             } while (true);
@@ -155,7 +130,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Gets INTERNET_CACHE_ENTRY_INFO from buffer
+        ///     Gets INTERNET_CACHE_ENTRY_INFO from buffer
         /// </summary>
         /// <param name="bufferPtr">Pointer to buffer</param>
         /// <returns>INTERNET_CACHE_ENTRY_INFO struct or null on error</returns>
@@ -165,7 +140,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                cacheEntry = (InternetExplorer.INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(bufferPtr, typeof(InternetExplorer.INTERNET_CACHE_ENTRY_INFO));
+                cacheEntry =
+                    (InternetExplorer.INTERNET_CACHE_ENTRY_INFO)
+                        Marshal.PtrToStructure(bufferPtr, typeof (InternetExplorer.INTERNET_CACHE_ENTRY_INFO));
             }
             catch (Exception)
             {
@@ -173,10 +150,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             return cacheEntry;
-        } 
+        }
 
         /// <summary>
-        /// Checks to see if a process is a running
+        ///     Checks to see if a process is a running
         /// </summary>
         /// <param name="procName">The name of the process (ex: firefox for Firefox)</param>
         /// <returns>True if the process is running</returns>
@@ -187,7 +164,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         internal static string ExpandVars(string p)
         {
-            string str = (string)p.Clone();
+            var str = (string) p.Clone();
 
             if (string.IsNullOrEmpty(str))
                 throw new ArgumentNullException(str);
@@ -221,18 +198,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 Debug.WriteLine("Path to INI file cannot be empty or null. Unable to get sections.");
-                return new string[] { };
+                return new string[] {};
             }
 
-            IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
-            uint bytesReturned = GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
+            var pReturnedString = Marshal.AllocCoTaskMem((int) MAX_BUFFER);
+            var bytesReturned = GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
             if (bytesReturned == 0)
             {
                 Marshal.FreeCoTaskMem(pReturnedString);
-                return new string[] { };
+                return new string[] {};
             }
 
-            string local = Marshal.PtrToStringAnsi(pReturnedString, (int)bytesReturned);
+            var local = Marshal.PtrToStringAnsi(pReturnedString, (int) bytesReturned);
             Marshal.FreeCoTaskMem(pReturnedString);
 
             return local.Substring(0, local.Length - 1).Split('\0');
@@ -242,7 +219,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             uint MAX_BUFFER = 32767;
 
-            StringDictionary ret = new StringDictionary();
+            var ret = new StringDictionary();
 
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -256,9 +233,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return ret;
             }
 
-            IntPtr pReturnedString = Marshal.AllocCoTaskMem((int)MAX_BUFFER);
+            var pReturnedString = Marshal.AllocCoTaskMem((int) MAX_BUFFER);
 
-            uint bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, MAX_BUFFER, filePath);
+            var bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, MAX_BUFFER, filePath);
 
             if ((bytesReturned == MAX_BUFFER - 2) || (bytesReturned == 0))
             {
@@ -270,13 +247,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             // NOTE: Calling Marshal.PtrToStringAuto(pReturnedString) will
             //       result in only the first pair being returned
-            string returnedString = Marshal.PtrToStringAuto(pReturnedString, (int)bytesReturned - 1);
+            var returnedString = Marshal.PtrToStringAuto(pReturnedString, (int) bytesReturned - 1);
 
             Marshal.FreeCoTaskMem(pReturnedString);
 
-            foreach (string value in returnedString.Split('\0'))
+            foreach (var value in returnedString.Split('\0'))
             {
-                string[] valueKey = value.Split('=');
+                var valueKey = value.Split('=');
 
                 ret.Add(valueKey[0], valueKey[1]);
             }
@@ -285,7 +262,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Gets the file size
+        ///     Gets the file size
         /// </summary>
         /// <param name="filePath">Path to the filename</param>
         /// <returns>File Size (in bytes)</returns>
@@ -293,7 +270,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             try
             {
-                FileInfo fi = new FileInfo(filePath);
+                var fi = new FileInfo(filePath);
 
                 return fi.Length;
             }
@@ -304,7 +281,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Gets the folder size
+        ///     Gets the folder size
         /// </summary>
         /// <param name="folderPath">Path to the folder</param>
         /// <param name="includeSubDirs">Include sub directories</param>
@@ -315,7 +292,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                totalSize += Directory.GetFiles(folderPath, "*", (includeSubDirs) ? (System.IO.SearchOption.AllDirectories) : (System.IO.SearchOption.TopDirectoryOnly)).Select(GetFileSize).Where(fileSize => fileSize != 0).Sum();
+                totalSize +=
+                    Directory.GetFiles(folderPath, "*",
+                        includeSubDirs ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                        .Select(GetFileSize)
+                        .Where(fileSize => fileSize != 0)
+                        .Sum();
             }
             catch (Exception)
             {
@@ -326,7 +308,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Checks if file is valid for privacy cleaner
+        ///     Checks if file is valid for privacy cleaner
         /// </summary>
         /// <param name="fileInfo">FileInfo</param>
         /// <returns>True if file is valid</returns>
@@ -349,29 +331,32 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return false;
             }
 
-            if ((fileAttribs & FileAttributes.System) == FileAttributes.System && (!Properties.Settings.Default.privacyCleanerIncSysFile))
+            if ((fileAttribs & FileAttributes.System) == FileAttributes.System &&
+                !Settings.Default.privacyCleanerIncSysFile)
                 return false;
 
-            if ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden && (!Properties.Settings.Default.privacyCleanerIncHiddenFile))
+            if ((fileAttribs & FileAttributes.Hidden) == FileAttributes.Hidden &&
+                !Settings.Default.privacyCleanerIncHiddenFile)
                 return false;
 
-            if ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly && (!Properties.Settings.Default.privacyCleanerIncReadOnlyFile))
+            if ((fileAttribs & FileAttributes.ReadOnly) == FileAttributes.ReadOnly &&
+                !Settings.Default.privacyCleanerIncReadOnlyFile)
                 return false;
 
-            if ((fileLength == 0) && (!Properties.Settings.Default.privacyCleanerInc0ByteFile))
+            if ((fileLength == 0) && !Settings.Default.privacyCleanerInc0ByteFile)
                 return false;
 
             return true;
         }
 
         /// <summary>
-        /// Checks if file path is valid
+        ///     Checks if file path is valid
         /// </summary>
         /// <param name="filePath">Path to file</param>
         /// <returns>True if file is valid</returns>
         internal static bool IsFileValid(string filePath)
         {
-            bool bRet = false;
+            var bRet = false;
 
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -381,7 +366,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                FileInfo fileInfo = new FileInfo(filePath);
+                var fileInfo = new FileInfo(filePath);
                 bRet = IsFileValid(fileInfo);
             }
             catch (Exception ex)
@@ -395,7 +380,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Deletes a file
+        ///     Deletes a file
         /// </summary>
         /// <param name="filePath">Path to file</param>
         internal static void DeleteFile(string filePath)
@@ -408,7 +393,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                if (Properties.Settings.Default.privacyCleanerDeletePerm)
+                if (Settings.Default.privacyCleanerDeletePerm)
                     File.Delete(filePath);
                 else
                     FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
@@ -420,7 +405,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Deletes a directory
+        ///     Deletes a directory
         /// </summary>
         /// <param name="dirPath">Path to directory</param>
         /// <param name="recurse">Recursive delete</param>
@@ -434,14 +419,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             try
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+                var dirInfo = new DirectoryInfo(dirPath);
                 if ((dirInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                     dirInfo.Attributes = dirInfo.Attributes & ~FileAttributes.ReadOnly;
 
                 if (!recurse && dirInfo.GetFileSystemInfos().Length > 0)
                     return;
 
-                if (Properties.Settings.Default.privacyCleanerDeletePerm)
+                if (Settings.Default.privacyCleanerDeletePerm)
                     Directory.Delete(dirPath, recurse);
                 else
                     FileSystem.DeleteDirectory(dirPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
@@ -450,7 +435,36 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to delete folder: " + dirPath);
             }
-
         }
+
+        #region Functions
+
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindFirstUrlCacheEntryA",
+            CallingConvention = CallingConvention.StdCall)]
+        internal static extern IntPtr FindFirstUrlCacheEntry(
+            [MarshalAs(UnmanagedType.LPStr)] string lpszUrlSearchPattern, IntPtr lpFirstCacheEntryInfo,
+            ref int lpdwFirstCacheEntryInfoBufferSize);
+
+        [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "FindNextUrlCacheEntryA",
+            CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool FindNextUrlCacheEntry(IntPtr hFind, IntPtr lpNextCacheEntryInfo,
+            ref int lpdwNextCacheEntryInfoBufferSize);
+
+        [DllImport("wininet.dll", SetLastError = true)]
+        internal static extern long FindCloseUrlCache(IntPtr hEnumHandle);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        internal static extern uint GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer, uint nSize, string lpFileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        internal static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpReturnedString, uint nSize,
+            string lpFileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString,
+            string lpFileName);
+
+        #endregion
     }
 }

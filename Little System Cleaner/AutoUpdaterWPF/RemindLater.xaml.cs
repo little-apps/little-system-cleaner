@@ -4,18 +4,18 @@ using System.Windows;
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
     /// <summary>
-    /// Interaction logic for RemindLater.xaml
+    ///     Interaction logic for RemindLater.xaml
     /// </summary>
     internal partial class RemindLater
     {
-        public RemindLaterFormat RemindLaterFormat { get; private set; }
-
-        public int RemindLaterAt { get; private set; }
-
         public RemindLater()
         {
             InitializeComponent();
         }
+
+        public RemindLaterFormat RemindLaterFormat { get; private set; }
+
+        public int RemindLaterAt { get; private set; }
 
         private void RemindLaterWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -70,7 +70,5 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             ComboBoxRemindLater.IsEnabled = RadioButtonYes.IsChecked.GetValueOrDefault();
         }
-
-        
     }
 }

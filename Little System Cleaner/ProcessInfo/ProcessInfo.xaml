@@ -26,101 +26,121 @@
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Process Name:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcName, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcName, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Machine Name:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcMachineName, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcMachineName, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">ID:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcId, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcId, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Handle:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcHandle, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcHandle, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Main Module Name:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcMainModuleName, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcMainModuleName, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Base Address:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcBaseAddress, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcBaseAddress, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Window Handle:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcWindowHandle, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcWindowHandle, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Window Title:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcWindowTitle, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcWindowTitle, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Non-paged System Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcNonPagedSysMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcNonPagedSysMemory, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Private Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPrivateMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPrivateMemory, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Paged Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPagedMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPagedMemory, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Paged System Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPagedSysMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPagedSysMemory, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Peak Paged Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPagedPeakMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPagedPeakMemory, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Peak Virtual Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPagedVirtualMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPagedVirtualMemory, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Virtual Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcVirtMemory, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcVirtMemory, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Working Set Peak Memory:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcWorkingSetPeak, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcWorkingSetPeak, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Priority:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPriority, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPriority, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Priority Boost Enabled:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcPriorityBoostEnabled, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcPriorityBoostEnabled, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
                         <Label DockPanel.Dock="Left">Handles Count:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcHandlesCount, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcHandlesCount, Mode=OneWay}" />
                     </DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Right" Width="265">
                         <Label DockPanel.Dock="Left">Is Responding:</Label>
-                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True" Text="{Binding Path=ProcIsResponding, Mode=OneWay}" />
+                        <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
+                                 Text="{Binding Path=ProcIsResponding, Mode=OneWay}" />
                     </DockPanel>
                 </DockPanel>
             </StackPanel>
@@ -131,12 +151,13 @@
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="Module name" DisplayMemberBinding="{Binding ModuleName}" Width="100" />
                         <GridViewColumn Header="File Version" DisplayMemberBinding="{Binding FileVersion}" Width="100" />
-                        <GridViewColumn Header="Base Address" DisplayMemberBinding="{Binding BaseAddress}"  Width="100"/>
-                        <GridViewColumn Header="Entry Point Address" DisplayMemberBinding="{Binding EntryPointAddress}" Width="100" />
+                        <GridViewColumn Header="Base Address" DisplayMemberBinding="{Binding BaseAddress}" Width="100" />
+                        <GridViewColumn Header="Entry Point Address" DisplayMemberBinding="{Binding EntryPointAddress}"
+                                        Width="100" />
                         <GridViewColumn Header="File Path" DisplayMemberBinding="{Binding FilePath}" Width="100" />
                     </GridView>
                 </ListView.View>
-                
+
             </ListView>
         </Expander>
         <Expander x:Name="ExpanderThreads" Header="Threads" IsExpanded="{Binding ThreadsExpanded}">
@@ -144,8 +165,9 @@
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="25" />
-                        <GridViewColumn Header="Start Address" DisplayMemberBinding="{Binding StartAddress}" Width="100" />
-                        <GridViewColumn Header="Priority" DisplayMemberBinding="{Binding Priority}"  Width="100"/>
+                        <GridViewColumn Header="Start Address" DisplayMemberBinding="{Binding StartAddress}"
+                                        Width="100" />
+                        <GridViewColumn Header="Priority" DisplayMemberBinding="{Binding Priority}" Width="100" />
                         <GridViewColumn Header="State" DisplayMemberBinding="{Binding State}" Width="100" />
                         <GridViewColumn Header="Start Time" DisplayMemberBinding="{Binding StartTime}" Width="100" />
                     </GridView>
@@ -163,13 +185,13 @@
                     <Label VerticalContentAlignment="Center" DockPanel.Dock="Left">End Time:</Label>
                     <TextBox Text="{Binding EndTime}" VerticalAlignment="Center" DockPanel.Dock="Right" Width="Auto" />
                 </DockPanel>
-                
+
             </DockPanel>
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Right" DockPanel.Dock="Right">
                 <Button x:Name="KillProcess" Padding="7" Margin="0,0,5,0" Click="KillProcess_Click">Kill Process</Button>
                 <Button x:Name="Close" Padding="7" HorizontalAlignment="Right" Click="Close_Click">Close</Button>
             </StackPanel>
         </DockPanel>
-        
+
     </StackPanel>
 </Window>

@@ -20,88 +20,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private string _filePath;
         private long _fileSize;
 
-        public string FileName => _fileInfo?.Name ?? Path.GetFileName(_filePath);
-
-        public string FilePath
-        {
-            get
-            {
-                return _fileInfo?.ToString() ?? _filePath;
-            }
-            set
-            {
-                _filePath = value;
-            }
-        }
-
-        public long FileSize
-        {
-            get
-            {
-                return _fileInfo?.Length ?? _fileSize;
-            }
-            set
-            {
-                _fileSize = value;
-            }
-        }
-
-        public bool HasAudioTags { get; private set; }
-
-        public bool IsDeleteable
-        {
-            get
-            {
-                FileSecurity accessControlList;
-                bool deleteAllow = false;
-                bool deleteDeny = false;
-
-                try 
-                {
-                    accessControlList = System.IO.File.GetAccessControl(FilePath);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-                var accessRules = accessControlList?.GetAccessRules(true, true, typeof(SecurityIdentifier));
-                if (accessRules == null)
-                    return false;
-
-                foreach (
-                    var rule in
-                        accessRules.Cast<FileSystemAccessRule>()
-                            .Where(rule => (rule.FileSystemRights & FileSystemRights.Delete) == FileSystemRights.Delete)
-                    )
-                {
-                    switch (rule.AccessControlType)
-                    {
-                        case AccessControlType.Allow:
-                            deleteAllow = true;
-                            break;
-                        case AccessControlType.Deny:
-                            deleteDeny = true;
-                            break;
-                    }
-                }
-
-                return deleteAllow && !deleteDeny;
-            }
-        }
-
-        public string Checksum { get; private set; }
-
-        public string Artist { get; }
-        public string Title { get; }
-        public uint Year { get; }
-        public string Genre { get; }
-        public string Album { get; }
-        public TimeSpan Duration { get; }
-        public uint TrackNo { get; }
-        public int Bitrate { get; }
-        public string TagsChecksum { get; private set; }
-
         public FileEntry()
         {
             _fileInfo = null;
@@ -161,10 +79,83 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 HasAudioTags = false;
         }
 
+        public string FileName => _fileInfo?.Name ?? Path.GetFileName(_filePath);
+
+        public string FilePath
+        {
+            get { return _fileInfo?.ToString() ?? _filePath; }
+            set { _filePath = value; }
+        }
+
+        public long FileSize
+        {
+            get { return _fileInfo?.Length ?? _fileSize; }
+            set { _fileSize = value; }
+        }
+
+        public bool HasAudioTags { get; private set; }
+
+        public bool IsDeleteable
+        {
+            get
+            {
+                FileSecurity accessControlList;
+                var deleteAllow = false;
+                var deleteDeny = false;
+
+                try
+                {
+                    accessControlList = System.IO.File.GetAccessControl(FilePath);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                var accessRules = accessControlList?.GetAccessRules(true, true, typeof (SecurityIdentifier));
+                if (accessRules == null)
+                    return false;
+
+                foreach (
+                    var rule in
+                        accessRules.Cast<FileSystemAccessRule>()
+                            .Where(rule => (rule.FileSystemRights & FileSystemRights.Delete) == FileSystemRights.Delete)
+                    )
+                {
+                    switch (rule.AccessControlType)
+                    {
+                        case AccessControlType.Allow:
+                            deleteAllow = true;
+                            break;
+                        case AccessControlType.Deny:
+                            deleteDeny = true;
+                            break;
+                    }
+                }
+
+                return deleteAllow && !deleteDeny;
+            }
+        }
+
+        public string Checksum { get; private set; }
+
+        public string Artist { get; }
+        public string Title { get; }
+        public uint Year { get; }
+        public string Genre { get; }
+        public string Album { get; }
+        public TimeSpan Duration { get; }
+        public uint TrackNo { get; }
+        public int Bitrate { get; }
+        public string TagsChecksum { get; private set; }
+
         /// <summary>
-        /// Gets audio tags
+        ///     Gets audio tags
         /// </summary>
-        /// <remarks>The direct constructor calls are nessecary as using System.Activator or System.Reflection causes Visual Studio debugger to ignore the try-catch block</remarks>
+        /// <remarks>
+        ///     The direct constructor calls are nessecary as using System.Activator or System.Reflection causes Visual Studio
+        ///     debugger to ignore the try-catch block
+        /// </remarks>
         /// <returns></returns>
         private File GetTags()
         {
@@ -343,7 +334,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
                     return;
                 }
-                
+
                 hashString = CalculateHashString(hashAlgorithm, memStream);
             }
 
@@ -379,7 +370,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Gets checksum of filename (if it includeFilename is true) and file contents
+        ///     Gets checksum of filename (if it includeFilename is true) and file contents
         /// </summary>
         /// <param name="algorithm">Hash algorithm to use (this is not the same as System.Security.Cryptography.HashAlgorithm)</param>
         /// <param name="includeFilename">If true, includes filename when calculating hash</param>
@@ -393,7 +384,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Gets FileStream for file
+        ///     Gets FileStream for file
         /// </summary>
         /// <returns>FileStream or null if it couldn't be opened</returns>
         private FileStream GetFileStream()
@@ -409,7 +400,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("An error occurred ({0}) trying to open a FileStream for a file ({1})", ex.Message, _filePath);
+                Debug.WriteLine("An error occurred ({0}) trying to open a FileStream for a file ({1})", ex.Message,
+                    _filePath);
             }
 
             fileStream?.Seek(0, SeekOrigin.Begin);
@@ -418,7 +410,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Calculate hash using SHA512
+        ///     Calculate hash using SHA512
         /// </summary>
         /// <param name="includeFilename">If true, the filename is including when computing the hash</param>
         /// <returns>A string representation of the computed hash</returns>
@@ -457,7 +449,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Calculates hash and returns as byte array
+        ///     Calculates hash and returns as byte array
         /// </summary>
         /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
         /// <param name="bytes">Bytes to generate hash from</param>
@@ -468,7 +460,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Calculates hash and returns it in string format
+        ///     Calculates hash and returns it in string format
         /// </summary>
         /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
         /// <param name="stream">Stream to read from</param>
@@ -479,7 +471,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Calculates hash and returns it in string format
+        ///     Calculates hash and returns it in string format
         /// </summary>
         /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
         /// <param name="stream">Stream to read from</param>
@@ -494,7 +486,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         /// <summary>
-        /// Calculates the hash of the filename using the specified HashAlgorithm and adds it to the MemoryStream
+        ///     Calculates the hash of the filename using the specified HashAlgorithm and adds it to the MemoryStream
         /// </summary>
         /// <param name="memStream">MemoryStream containing hash bytes</param>
         /// <param name="algo">HashAlgorithm to compute hash (MD5, SHA1, SHA256, etc)</param>

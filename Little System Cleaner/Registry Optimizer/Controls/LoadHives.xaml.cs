@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading;
+using System.Threading.Tasks;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using Microsoft.Win32;
-using System.Threading.Tasks;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
-    /// Interaction logic for LoadHives.xaml
+    ///     Interaction logic for LoadHives.xaml
     /// </summary>
     public partial class LoadHives
     {
-        readonly Wizard _scanBase;
+        private readonly Wizard _scanBase;
 
         public LoadHives(Wizard sb)
         {
             InitializeComponent();
 
             _scanBase = sb;
-            
+
             Task.Run(new Action(InitHives));
         }
 

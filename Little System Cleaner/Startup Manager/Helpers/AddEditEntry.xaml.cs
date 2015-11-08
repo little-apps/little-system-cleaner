@@ -24,21 +24,21 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Little_System_Cleaner.Misc;
 using Microsoft.Win32;
-using Image = System.Windows.Controls.Image;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
     /// <summary>
-    /// Interaction logic for AddEditEntry.xaml
+    ///     Interaction logic for AddEditEntry.xaml
     /// </summary>
     public partial class AddEditEntry
     {
-        readonly bool _isEditing;
-        readonly string _oldStartupPath;
-        readonly RegistryKey _oldRegKey;
-        readonly string _oldValueName;
+        private readonly bool _isEditing;
+        private readonly RegistryKey _oldRegKey;
+        private readonly string _oldStartupPath;
+        private readonly string _oldValueName;
 
-        public AddEditEntry(string sectionName, string entryName, string filePath, string fileArgs, RegistryKey oldRegKey)
+        public AddEditEntry(string sectionName, string entryName, string filePath, string fileArgs,
+            RegistryKey oldRegKey)
         {
             InitializeComponent();
 
@@ -82,41 +82,61 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Startup\Current User"));
 
             // All users startup registry keys (32bit)
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Policies\Explorer\Run"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Services Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                @"Registry\All Users (x86)\Policies\Explorer\Run"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                @"Registry\All Users (x86)\Run Services"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                @"Registry\All Users (x86)\Run Services Once"));
             Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run Once\Setup"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                @"Registry\All Users (x86)\Run Once\Setup"));
             Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x86)\Run"));
 
             // All users startup registry keys (32bit)
-            if (Utils.Is64BitOs) 
+            if (Utils.Is64BitOs)
             {
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Policies\Explorer\Run"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Services Once"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run Once\Setup"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                    @"Registry\All Users (x64)\Policies\Explorer\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                    @"Registry\All Users (x64)\Run Services"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                    @"Registry\All Users (x64)\Run Services Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                    @"Registry\All Users (x64)\Run Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users,
+                    @"Registry\All Users (x64)\Run Once\Setup"));
                 Sections.Items.Add(CreateComboBoxItem(Properties.Resources.all_users, @"Registry\All Users (x64)\Run"));
             }
 
             // Current user startup registry keys (32bit)
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Policies\Explorer\Run"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Services Once"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once"));
-            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run Once\Setup"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                @"Registry\Current User (x86)\Policies\Explorer\Run"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                @"Registry\Current User (x86)\Run Services"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                @"Registry\Current User (x86)\Run Services Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                @"Registry\Current User (x86)\Run Once"));
+            Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                @"Registry\Current User (x86)\Run Once\Setup"));
             Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x86)\Run"));
 
             // Current user startup registry keys (32bit)
             if (Utils.Is64BitOs)
             {
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Policies\Explorer\Run"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Services Once"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run Once\Setup"));
-                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user, @"Registry\Current User (x64)\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                    @"Registry\Current User (x64)\Policies\Explorer\Run"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                    @"Registry\Current User (x64)\Run Services"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                    @"Registry\Current User (x64)\Run Services Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                    @"Registry\Current User (x64)\Run Once"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                    @"Registry\Current User (x64)\Run Once\Setup"));
+                Sections.Items.Add(CreateComboBoxItem(Properties.Resources.current_user,
+                    @"Registry\Current User (x64)\Run"));
             }
         }
 
@@ -130,107 +150,131 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             if (Utils.Is64BitOs)
             {
                 // All users startup registry keys (32bit)
-                if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
+                if (sectionName ==
+                    "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
                     Sections.SelectedIndex = 2;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
                     Sections.SelectedIndex = 3;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
                     Sections.SelectedIndex = 4;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     Sections.SelectedIndex = 5;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
                     Sections.SelectedIndex = 6;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
                     Sections.SelectedIndex = 7;
 
                 // All users startup registry keys (64bit)
-                if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
+                if (sectionName ==
+                    "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
                     Sections.SelectedIndex = 8;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices")
                     Sections.SelectedIndex = 9;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
                     Sections.SelectedIndex = 10;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     Sections.SelectedIndex = 11;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
                     Sections.SelectedIndex = 12;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
                     Sections.SelectedIndex = 13;
 
                 // Current user startup registry keys (32bit)
-                if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
+                if (sectionName ==
+                    "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
                     Sections.SelectedIndex = 14;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
                     Sections.SelectedIndex = 15;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
                     Sections.SelectedIndex = 16;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     Sections.SelectedIndex = 17;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
                     Sections.SelectedIndex = 18;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
                     Sections.SelectedIndex = 19;
 
                 // Current user startup registry keys (64bit)
-                if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
+                if (sectionName ==
+                    "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
                     Sections.SelectedIndex = 20;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices")
                     Sections.SelectedIndex = 21;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
                     Sections.SelectedIndex = 22;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     Sections.SelectedIndex = 23;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
                     Sections.SelectedIndex = 24;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
                     Sections.SelectedIndex = 25;
             }
             else
             {
                 // All users startup registry keys (32bit)
-                if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
+                if (sectionName ==
+                    "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
                     Sections.SelectedIndex = 2;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
                     Sections.SelectedIndex = 3;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
                     Sections.SelectedIndex = 4;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     Sections.SelectedIndex = 5;
-                else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
+                else if (sectionName ==
+                         "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
                     Sections.SelectedIndex = 6;
                 else if (sectionName == "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
                     Sections.SelectedIndex = 7;
 
                 // Current user startup registry keys (32bit)
-                if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
+                if (sectionName ==
+                    "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run")
                     Sections.SelectedIndex = 8;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices")
                     Sections.SelectedIndex = 9;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce")
                     Sections.SelectedIndex = 10;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     Sections.SelectedIndex = 11;
-                else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
+                else if (sectionName ==
+                         "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup")
                     Sections.SelectedIndex = 12;
                 else if (sectionName == "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")
                     Sections.SelectedIndex = 13;
             }
         }
 
-        private ComboBoxItem CreateComboBoxItem(Bitmap bitMap, string startupPath) 
+        private ComboBoxItem CreateComboBoxItem(Bitmap bitMap, string startupPath)
         {
             var comboItem = new ComboBoxItem();
 
-            var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            var stackPanel = new StackPanel {Orientation = Orientation.Horizontal};
 
             var bMapImg = bitMap.CreateBitmapSourceFromBitmap();
 
             // Resize image to 16x16
             bMapImg.Width = bMapImg.Height = 16;
-            
+
             stackPanel.Children.Add(bMapImg);
 
-            var textBlock = new TextBlock { Text = startupPath };
+            var textBlock = new TextBlock {Text = startupPath};
 
             stackPanel.Children.Add(textBlock);
 
@@ -249,7 +293,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
 
             // Remove old key if old entry is in registry
-            if (_isEditing) 
+            if (_isEditing)
             {
                 try
                 {
@@ -260,7 +304,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
                 catch (Exception ex)
                 {
-                    string message = $"There was an error removing the previous startup entry from the registry or folder.\nThe following error occurred: {ex.Message}";
+                    string message =
+                        $"There was an error removing the previous startup entry from the registry or folder.\nThe following error occurred: {ex.Message}";
 
                     MessageBox.Show(this, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
@@ -300,7 +345,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
                 catch (Exception ex)
                 {
-                    string message = $"There was an error creating the shortcut for the startup entry.\nThe following error occurred: {ex.Message}";
+                    string message =
+                        $"There was an error creating the shortcut for the startup entry.\nThe following error occurred: {ex.Message}";
 
                     MessageBox.Show(this, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -330,7 +376,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 }
                 catch (Exception ex)
                 {
-                    string message = $"There was an error adding the startup entry to the registry.\nThe following error occurred: {ex.Message}";
+                    string message =
+                        $"There was an error adding the startup entry to the registry.\nThe following error occurred: {ex.Message}";
 
                     MessageBox.Show(this, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -359,119 +406,179 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 switch (Sections.SelectedIndex)
                 {
                     case 2:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
                     case 3:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
                     case 4:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
                     case 5:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
                     case 6:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
                     case 7:
                         regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
 
                     case 8:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
                     case 9:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
                     case 10:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
                     case 11:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
                     case 12:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
                     case 13:
-                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run");
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
 
                     case 14:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
                     case 15:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
                     case 16:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
                     case 17:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
                     case 18:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
                     case 19:
                         regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
 
                     case 20:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
                     case 21:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
                     case 22:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
                     case 23:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
                     case 24:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
                     case 25:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
                 }
             }
             else
             {
-                switch (Sections.SelectedIndex) 
+                switch (Sections.SelectedIndex)
                 {
-	                case 2:
-	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
-	                    break;
-	                case 3:
-	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
-	                    break;
-	                case 4:
-	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
-	                    break;
-	                case 5:
-	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
-	                    break;
-	                case 6:
-	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
-	                    break;
-	                case 7:
-	                    regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-	                    break;
-	
-	                case 8:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
+                    case 2:
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
+                        break;
+                    case 3:
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
+                        break;
+                    case 4:
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
+                        break;
+                    case 5:
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+                        break;
+                    case 6:
+                        regKey =
+                            Registry.LocalMachine.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
+                        break;
+                    case 7:
+                        regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+                        break;
+
+                    case 8:
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
                     case 9:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
                     case 10:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
                     case 11:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
                     case 12:
-                        regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
+                        regKey =
+                            Registry.CurrentUser.CreateSubKey(
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
                     case 13:
                         regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
@@ -501,8 +608,8 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void BrowseFile()
         {
-            var openFileDlg = new OpenFileDialog { Multiselect = false };
-            
+            var openFileDlg = new OpenFileDialog {Multiselect = false};
+
             if (!string.IsNullOrEmpty(TextBoxPath.Text))
             {
                 openFileDlg.InitialDirectory = Path.GetDirectoryName(TextBoxPath.Text);
@@ -516,7 +623,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         }
 
         /// <summary>
-        /// Creates .lnk shortcut to filename
+        ///     Creates .lnk shortcut to filename
         /// </summary>
         /// <param name="filename">.lnk shortcut</param>
         /// <param name="path">path for filename</param>
@@ -524,11 +631,11 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         /// <returns>True if shortcut was created</returns>
         private static bool CreateShortcut(string filename, string path, string arguments)
         {
-            PInvoke.ShellLink link = new PInvoke.ShellLink();
-            ((PInvoke.IShellLinkW)link).SetPath(path);
+            var link = new PInvoke.ShellLink();
+            ((PInvoke.IShellLinkW) link).SetPath(path);
             if (!string.IsNullOrEmpty(arguments))
-                ((PInvoke.IShellLinkW)link).SetArguments(arguments);
-            ((PInvoke.IPersistFile)link).Save(filename, false);
+                ((PInvoke.IShellLinkW) link).SetArguments(arguments);
+            ((PInvoke.IPersistFile) link).Save(filename, false);
 
             return File.Exists(filename);
         }

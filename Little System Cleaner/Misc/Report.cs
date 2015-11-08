@@ -26,30 +26,11 @@ using Little_System_Cleaner.Properties;
 namespace Little_System_Cleaner.Misc
 {
     /// <summary>
-    /// This log class is used for the scanner modules
+    ///     This log class is used for the scanner modules
     /// </summary>
     public sealed class Report : StreamWriter
     {
         private readonly object _lockObject = new object();
-
-        /// <summary>
-        /// Gets/Sets whether logging is enabled
-        /// </summary>
-        public bool IsEnabled { get; }
-
-        public override Encoding Encoding => Encoding.ASCII;
-
-        /// <summary>
-        /// Creates an instance of a report
-        /// </summary>
-        /// <param name="isEnabled">Whether logging is enabled or not</param>
-        /// <returns></returns>
-        internal static Report CreateReport(bool isEnabled)
-        {
-            MemoryStream stream = new MemoryStream();
-            Report report = new Report(stream, isEnabled);
-            return report;
-        }
 
         public Report(MemoryStream stream, bool isEnabled)
             : base(stream)
@@ -85,20 +66,40 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Moves the temp file to the log directory and opens it with the default viewer
+        ///     Gets/Sets whether logging is enabled
+        /// </summary>
+        public bool IsEnabled { get; }
+
+        public override Encoding Encoding => Encoding.ASCII;
+
+        /// <summary>
+        ///     Creates an instance of a report
+        /// </summary>
+        /// <param name="isEnabled">Whether logging is enabled or not</param>
+        /// <returns></returns>
+        internal static Report CreateReport(bool isEnabled)
+        {
+            var stream = new MemoryStream();
+            var report = new Report(stream, isEnabled);
+            return report;
+        }
+
+        /// <summary>
+        ///     Moves the temp file to the log directory and opens it with the default viewer
         /// </summary>
         /// <returns>True if the file is displayed</returns>
         public bool DisplayLogFile(bool displayFile)
         {
             if (IsEnabled)
             {
-                string strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt", Settings.Default.OptionsLogDir, DateTime.Now);
+                var strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt",
+                    Settings.Default.OptionsLogDir, DateTime.Now);
 
                 try
                 {
                     lock (_lockObject)
                     {
-                        using (FileStream fileStream = new FileStream(strNewFileName, FileMode.Create, FileAccess.Write))
+                        using (var fileStream = new FileStream(strNewFileName, FileMode.Create, FileAccess.Write))
                         {
                             var memoryStream = BaseStream as MemoryStream;
                             memoryStream?.WriteTo(fileStream);
@@ -106,7 +107,7 @@ namespace Little_System_Cleaner.Misc
 
                         if (displayFile)
                         {
-                            ProcessStartInfo startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
+                            var startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
                             {
                                 ErrorDialog = true
                             };
@@ -125,6 +126,5 @@ namespace Little_System_Cleaner.Misc
 
             return false;
         }
-
     }
 }

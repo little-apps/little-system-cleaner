@@ -24,9 +24,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
     [Serializable]
     public class ExcludeItem : ICloneable, IEquatable<ExcludeItem>, INotifyPropertyChanged
     {
-        private string _pathRegistry = "";
-        private string _pathFolder = "";
         private string _pathFile = "";
+        private string _pathFolder = "";
+        private string _pathRegistry = "";
 
         public string RegistryPath
         {
@@ -61,12 +61,21 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
         }
 
-        public bool IsPath => (!string.IsNullOrEmpty(_pathFile) || !string.IsNullOrEmpty(_pathFolder));
+        public bool IsPath => !string.IsNullOrEmpty(_pathFile) || !string.IsNullOrEmpty(_pathFolder);
 
         public string Item => ToString();
 
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
+        #endregion
+
         /// <summary>
-        /// Returns the assigned path (registry/file/folder)
+        ///     Returns the assigned path (registry/file/folder)
         /// </summary>
         public override string ToString()
         {
@@ -82,14 +91,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             return GetType().Name;
         }
 
-        #region ICloneable Members
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
-        #endregion
-
         #region IEquatable Members
+
         public bool Equals(ExcludeItem other)
         {
             return other != null && ToString() == other.ToString();
@@ -114,9 +117,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         {
             return ToString().GetHashCode();
         }
+
         #endregion
 
         #region INotifyPropertyChanged Members
+
         [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 

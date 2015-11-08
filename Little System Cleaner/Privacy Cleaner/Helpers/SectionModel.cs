@@ -25,14 +25,29 @@ using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
-   
     public class SectionModel : ITreeModel
     {
+        public SectionModel()
+        {
+            RootChildren = new ObservableCollection<ScannerBase>();
+        }
+
         public ObservableCollection<ScannerBase> RootChildren { get; }
+
+        public IEnumerable GetChildren(object parent)
+        {
+            return parent == null ? RootChildren : (parent as ScannerBase)?.Children;
+        }
+
+        public bool HasChildren(object parent)
+        {
+            var scannerBase = parent as ScannerBase;
+            return scannerBase != null && scannerBase.Children.Count > 0;
+        }
 
         internal static SectionModel CreateSectionModel()
         {
-            SectionModel sectionModel = new SectionModel();
+            var sectionModel = new SectionModel();
 
             if (InternetExplorer.IsInstalled())
             {
@@ -61,22 +76,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             return sectionModel;
-        }
-
-        public SectionModel()
-        {
-            RootChildren = new ObservableCollection<ScannerBase>();
-        }
-
-        public IEnumerable GetChildren(object parent)
-        {
-            return parent == null ? RootChildren : (parent as ScannerBase)?.Children;
-        }
-
-        public bool HasChildren(object parent)
-        {
-            var scannerBase = parent as ScannerBase;
-            return scannerBase != null && scannerBase.Children.Count > 0;
         }
     }
 }

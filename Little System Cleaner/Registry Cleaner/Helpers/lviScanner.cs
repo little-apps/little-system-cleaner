@@ -4,8 +4,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class lviScanner : INotifyPropertyChanged
     {
-        private string _image;
         private string _animatedImage;
+        private string _image;
+
+        public lviScanner(string section)
+        {
+            Section = section;
+            Status = "Queued";
+            Errors = "0 Errors";
+        }
 
         public string Section { get; }
 
@@ -33,12 +40,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
         }
 
-        public lviScanner(string section)
-        {
-            Section = section;
-            Status = "Queued";
-            Errors = "0 Errors";
-        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void LoadGif()
         {
@@ -51,15 +54,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             Image = @"/Little_System_Cleaner;component/Resources/registry cleaner/finished-scanning.png";
         }
 
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }

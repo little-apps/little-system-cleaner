@@ -1,39 +1,45 @@
 ﻿<Window x:Class="Little_System_Cleaner.Registry_Optimizer.Controls.Analyze"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif"
         mc:Ignorable="d"
-        Title="Analyze" 
+        Title="Analyze"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         Topmost="True"
-        ResizeMode="NoResize" 
+        ResizeMode="NoResize"
         Loaded="Window_Loaded"
         Height="112" Width="350" d:DesignWidth="350"
         Foreground="White" ShowInTaskbar="False">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-            </Grid.RowDefinitions>
-            <Border BorderBrush="#2044AE" BorderThickness="0"  Background="#2044AE" Grid.Row="0">
-                <Grid>
-                    <Image Name="LoadingImg" Width="40" Height="40" HorizontalAlignment="Left" Margin="6,0,0,-2" gif:AnimationBehavior.SourceUri="/Little_System_Cleaner;component/Resources/ajax-loader-blue.gif" />
-                    <Label Height="28" HorizontalAlignment="Left" Margin="46,6,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold">Analyzing The Registry (Step 2 of 4)</Label>
-                </Grid>
-            </Border>
-            <StackPanel Grid.Row="1" Background="#789FE7">
-                <TextBlock Height="20" Name="TextBlockStatus" Text="TextBlock" Margin="3,0,0,0" Width="239" FontWeight="Bold" />
-                <ProgressBar x:Name="ProgressBar" Height="20" VerticalAlignment="Top" Width="238" ValueChanged="progressBar1_ValueChanged" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="#2044AE" BorderThickness="0" Background="#2044AE" Grid.Row="0">
+            <Grid>
+                <Image Name="LoadingImg" Width="40" Height="40" HorizontalAlignment="Left" Margin="6,0,0,-2"
+                       gif:AnimationBehavior.SourceUri="/Little_System_Cleaner;component/Resources/ajax-loader-blue.gif" />
+                <Label Height="28" HorizontalAlignment="Left" Margin="46,6,0,0" VerticalAlignment="Top"
+                       Foreground="White" FontWeight="Bold">
+                    Analyzing The Registry (Step 2 of 4)
+                </Label>
+            </Grid>
+        </Border>
+        <StackPanel Grid.Row="1" Background="#789FE7">
+            <TextBlock Height="20" Name="TextBlockStatus" Text="TextBlock" Margin="3,0,0,0" Width="239"
+                       FontWeight="Bold" />
+            <ProgressBar x:Name="ProgressBar" Height="20" VerticalAlignment="Top" Width="238"
+                         ValueChanged="progressBar1_ValueChanged" />
+        </StackPanel>
+        <Border BorderBrush="Silver" BorderThickness="0" Background="#2044AE" Grid.Row="2">
+            <StackPanel>
+                <TextBlock Height="15" TextAlignment="Center" Width="278">Your computer may not respond for several minutes</TextBlock>
+                <TextBlock Height="15" TextAlignment="Center">  while the scan is being completed.</TextBlock>
             </StackPanel>
-            <Border BorderBrush="Silver" BorderThickness="0" Background="#2044AE" Grid.Row="2">
-                <StackPanel>
-                    <TextBlock Height="15" TextAlignment="Center" Width="278">Your computer may not respond for several minutes</TextBlock>
-                    <TextBlock Height="15" TextAlignment="Center">  while the scan is being completed.</TextBlock>
-                </StackPanel>
-            </Border>
-        </Grid>
+        </Border>
+    </Grid>
 </Window>

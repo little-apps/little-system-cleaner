@@ -19,21 +19,18 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Startup_Manager.Helpers;
-using Microsoft.Win32;
-using ProcessInfo = Little_System_Cleaner.ProcessInfo.ProcessInfo;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {
     public partial class StartupManager
     {
-		public StartupManager()
-		{
-			InitializeComponent();
-		}
+        public StartupManager()
+        {
+            InitializeComponent();
+        }
 
         public void OnLoaded()
         {
@@ -48,7 +45,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
         }
 
         /// <summary>
-        /// Loads files that load on startup
+        ///     Loads files that load on startup
         /// </summary>
         private void LoadStartupFiles()
         {
@@ -79,16 +76,18 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
         {
             if (Tree.SelectedNode == null)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry selectedItem = Tree.SelectedNode.Tag as StartupEntry;
+            var selectedItem = Tree.SelectedNode.Tag as StartupEntry;
 
             // If root node -> display msg box and exit
             if (selectedItem != null && selectedItem.Children.Count > 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "Entry cannot be registry key or folder", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "Entry cannot be registry key or folder",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -97,7 +96,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             if (selectedItem == null)
                 return;
 
-            var addEditEntryWnd = new AddEditEntry(selectedItem.Parent.SectionName, selectedItem.SectionName, selectedItem.Path, selectedItem.Args, selectedItem.RegKey);
+            var addEditEntryWnd = new AddEditEntry(selectedItem.Parent.SectionName, selectedItem.SectionName,
+                selectedItem.Path, selectedItem.Args, selectedItem.RegKey);
 
             if (addEditEntryWnd.ShowDialog().GetValueOrDefault())
                 // Refresh treelistview
@@ -108,11 +108,12 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
         {
             if (Tree.SelectedNode == null)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            StartupEntry node = Tree.SelectedNode.Tag as StartupEntry;
+            var node = Tree.SelectedNode.Tag as StartupEntry;
 
             if (node != null && node.IsLeaf)
             {
@@ -167,7 +168,6 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     if (!bFailed)
                         MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entry",
                             Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
                 }
             }
             else
@@ -188,7 +188,6 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
                         if (Directory.Exists(sectionName))
                         {
-
                             try
                             {
                                 if (Directory.Exists(sectionName))
@@ -210,7 +209,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                             {
                                 if (rk == null)
                                 {
-                                    string message = $"Unable to open registry key ({sectionName}) to delete all entries.";
+                                    string message =
+                                        $"Unable to open registry key ({sectionName}) to delete all entries.";
                                     MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName,
                                         MessageBoxButton.OK, MessageBoxImage.Error);
                                     bFailed = true;
@@ -241,12 +241,10 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     if (!bFailed)
                         MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entries",
                             Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-
                 }
             }
 
             LoadStartupFiles();
-            
         }
 
         private void buttonView_Click(object sender, RoutedEventArgs e)
@@ -292,13 +290,13 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 }
                 catch (Exception ex)
                 {
-                    string message = $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
+                    string message =
+                        $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
 
                     MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
             }
-
         }
 
         private void buttonRun_Click(object sender, RoutedEventArgs e)
@@ -354,8 +352,8 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             if (node == null)
                 return;
 
-            ProcessInfo.ProcessInfo procInfo = new ProcessInfo.ProcessInfo(node.Path, node.Args);
+            var procInfo = new ProcessInfo.ProcessInfo(node.Path, node.Args);
             procInfo.ShowDialog();
-        }   
-	}
+        }
+    }
 }

@@ -28,25 +28,20 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {
+        public Wizard()
+        {
+            Controls.Add(typeof (Start));
+            Controls.Add(typeof (Analyze));
+            Controls.Add(typeof (Results));
+        }
+
         public List<DriveInfo> SelectedDrives { get; } = new List<DriveInfo>();
 
-        internal static ObservableCollection<ProblemFile> FileList
-        {
-            get;
-            set;
-        }
+        internal static ObservableCollection<ProblemFile> FileList { get; set; }
 
-        internal static ObservableCollection<LviDrive> DiskDrives
-        {
-            get;
-            set;
-        }
+        internal static ObservableCollection<LviDrive> DiskDrives { get; set; }
 
-        internal static ObservableCollection<LviFolder> IncludeFolders
-        {
-            get;
-            set;
-        }
+        internal static ObservableCollection<LviFolder> IncludeFolders { get; set; }
 
         internal static bool DrivesLoaded
         {
@@ -61,13 +56,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         internal static DateTime ScanStartTime { get; set; }
 
-        public Wizard()
-        {
-            Controls.Add(typeof(Start));
-            Controls.Add(typeof(Analyze));
-            Controls.Add(typeof(Results));
-        }
-
         public override void OnLoaded()
         {
             MoveFirst();
@@ -81,7 +69,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (analyze != null)
             {
-                exit = forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+                exit = forceExit ||
+                       MessageBox.Show(Application.Current.MainWindow,
+                           "Scanning is currently in progress. Would you like to cancel?", Utils.ProductName,
+                           MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                 if (!exit)
                     return false;
@@ -94,7 +85,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             if (!(CurrentControl is Results))
                 return true;
 
-            exit = forceExit || MessageBox.Show(Application.Current.MainWindow, "Scanning results will be reset. Would you like to continue?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+            exit = forceExit ||
+                   MessageBox.Show(Application.Current.MainWindow,
+                       "Scanning results will be reset. Would you like to continue?", Utils.ProductName,
+                       MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
             if (!exit)
                 return false;

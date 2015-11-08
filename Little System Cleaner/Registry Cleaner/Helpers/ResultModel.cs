@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
@@ -8,7 +9,26 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class ResultModel : ITreeModel
     {
+        public ResultModel()
+        {
+            Root = new BadRegistryKey(null, "");
+        }
+
         public BadRegistryKey Root { get; }
+
+        public IEnumerable GetChildren(object parent)
+        {
+            if (parent == null)
+                parent = Root;
+
+            return (parent as BadRegistryKey)?.Children;
+        }
+
+        public bool HasChildren(object parent)
+        {
+            var badRegistryKey = parent as BadRegistryKey;
+            return badRegistryKey != null && badRegistryKey.Children.Count > 0;
+        }
 
         internal static ResultModel CreateResultModel()
         {
@@ -29,25 +49,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
 
             return model;
-        }
-
-        public ResultModel()
-        {
-            Root = new BadRegistryKey(null, "");
-        }
-
-        public System.Collections.IEnumerable GetChildren(object parent)
-        {
-            if (parent == null)
-                parent = Root;
-
-            return (parent as BadRegistryKey)?.Children;
-        }
-
-        public bool HasChildren(object parent)
-        {
-            var badRegistryKey = parent as BadRegistryKey;
-            return badRegistryKey != null && badRegistryKey.Children.Count > 0;
         }
     }
 }

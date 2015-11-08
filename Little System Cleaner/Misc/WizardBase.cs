@@ -10,27 +10,27 @@ namespace Little_System_Cleaner.Misc
     {
         public List<Type> Controls { get; } = new List<Type>();
 
-        public UserControl CurrentControl => (UserControl)Content;
+        public UserControl CurrentControl => (UserControl) Content;
 
         /// <summary>
-        /// This value is readonly and can only be manipulated with SetCurrentControl()
+        ///     This value is readonly and can only be manipulated with SetCurrentControl()
         /// </summary>
         public int CurrentControlIndex { get; private set; }
 
         /// <summary>
-        /// This function is called when the wizard is loaded
+        ///     This function is called when the wizard is loaded
         /// </summary>
         public abstract void OnLoaded();
 
         /// <summary>
-        /// This function is called if the tab is being changed or the program is trying to exit
+        ///     This function is called if the tab is being changed or the program is trying to exit
         /// </summary>
         /// <param name="forceExit">If true, the program is being forced to exit and the return value will have no effect</param>
         /// <returns>If true, the wizard can be unloaded. Otherwise if false, the wizard will stay loaded</returns>
         public abstract bool OnUnloaded(bool forceExit);
 
         /// <summary>
-        /// Moves the wizard to the first control
+        ///     Moves the wizard to the first control
         /// </summary>
         /// <param name="autoMove">If true, changes to control without having to call ChangeCurrentControl() after (default: true)</param>
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Moves the wizard to the previous control
+        ///     Moves the wizard to the previous control
         /// </summary>
         /// <param name="autoMove">If true, changes to control without having to call ChangeCurrentControl() after (default: true)</param>
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
@@ -52,7 +52,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Moves the wizard to the next control
+        ///     Moves the wizard to the next control
         /// </summary>
         /// <param name="autoMove">If true, changes to control without having to call ChangeCurrentControl() after (default: true)</param>
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
@@ -64,7 +64,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Moves the wizard to the last control
+        ///     Moves the wizard to the last control
         /// </summary>
         /// <param name="autoMove">If true, changes to control without having to call ChangeCurrentControl() after (default: true)</param>
         /// <exception cref="IndexOutOfRangeException">Thrown if the control list is empty or the index doesn't exist</exception>
@@ -74,9 +74,9 @@ namespace Little_System_Cleaner.Misc
 
             SetCurrentControl(lastControl, autoMove);
         }
-        
+
         /// <summary>
-        /// Sets the current control index
+        ///     Sets the current control index
         /// </summary>
         /// <param name="index">Index of control in list</param>
         /// <param name="autoMove">If true, changes to control without having to call ChangeCurrentControl() after (default: true)</param>
@@ -85,7 +85,8 @@ namespace Little_System_Cleaner.Misc
         protected void SetCurrentControl(int index, bool autoMove = true)
         {
             if (Controls.Count == 0)
-                throw new IndexOutOfRangeException($"There are no controls and therefore #{index} doesn't exist in the controls");
+                throw new IndexOutOfRangeException(
+                    $"There are no controls and therefore #{index} doesn't exist in the controls");
 
             if (index < 0 || index > Controls.Count)
                 throw new IndexOutOfRangeException($"There is no control with #{index}");
@@ -97,7 +98,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        /// Changes the current control
+        ///     Changes the current control
         /// </summary>
         /// <remarks>This function can only be called from within the class that inherits this one</remarks>
         protected void ChangeCurrentControl()

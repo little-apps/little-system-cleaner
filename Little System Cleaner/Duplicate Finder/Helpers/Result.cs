@@ -11,7 +11,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
     public class Result : INotifyPropertyChanged
     {
         #region File Types
-        private static readonly Dictionary<string, string> MimeTypesDictionary = new Dictionary<string, string> 
+
+        private static readonly Dictionary<string, string> MimeTypesDictionary = new Dictionary<string, string>
         {
             {"ai", "application/postscript"},
             {"aif", "Audio"},
@@ -31,10 +32,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {"dll", "Dynamically Linked Library (Should not be removed)"},
             {"dmg", "Mac Disk Image"},
             {"doc", "Document"},
-            {"docx","Document"},
+            {"docx", "Document"},
             {"dotx", "Document"},
-            {"docm","Document"},
-            {"dotm","Document"},
+            {"docm", "Document"},
+            {"dotm", "Document"},
             {"dtd", "Document Type Definition"},
             {"dv", "Video"},
             {"dvi", "Document"},
@@ -88,19 +89,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {"pgm", "Picture"},
             {"pic", "Picture"},
             {"pict", "Picture"},
-            {"png", "Picture"}, 
+            {"png", "Picture"},
             {"pnm", "Picture"},
             {"pnt", "Picture"},
             {"pntg", "Picture"},
             {"ppm", "Picture"},
             {"ppt", "Presentation"},
-            {"pptx","Presentation"},
-            {"potx","Presentation"},
-            {"ppsx","Presentation"},
-            {"ppam","Presentation"},
-            {"pptm","Presentation"},
-            {"potm","Presentation"},
-            {"ppsm","Presentation"},
+            {"pptx", "Presentation"},
+            {"potx", "Presentation"},
+            {"ppsx", "Presentation"},
+            {"ppam", "Presentation"},
+            {"pptm", "Presentation"},
+            {"potm", "Presentation"},
+            {"ppsm", "Presentation"},
             {"ps", "Postscript"},
             {"qt", "Video"},
             {"qti", "Picture"},
@@ -132,21 +133,151 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {"xbm", "Picture"},
             {"xht", "Webpage"},
             {"xhtml", "Webpage"},
-            {"xls", "Spreadsheet"}, 
+            {"xls", "Spreadsheet"},
             {"xml", "Document"},
             {"xpm", "Picture"},
             {"xsl", "eXtensible Markup Language File"},
-            {"xlsx","Spreadsheet"},
-            {"xltx","Spreadsheet"},
-            {"xlsm","Spreadsheet"},
-            {"xltm","Spreadsheet"},
-            {"xlam","Spreadsheet"},
-            {"xlsb","Spreadsheet"},
+            {"xlsx", "Spreadsheet"},
+            {"xltx", "Spreadsheet"},
+            {"xlsm", "Spreadsheet"},
+            {"xltm", "Spreadsheet"},
+            {"xlam", "Spreadsheet"},
+            {"xlsb", "Spreadsheet"},
             {"xwd", "Picture"},
-            {"zip", "Compressed File"}  
+            {"zip", "Compressed File"}
         };
 
         #endregion
+
+        private bool? _bIsChecked = false;
+
+        public Result(Result parent = null)
+        {
+            Parent = parent;
+        }
+
+        public Result(FileEntry fileEntry, Result parent)
+        {
+            FileEntry = fileEntry;
+            Parent = parent;
+        }
+
+        public ObservableCollection<Result> Children { get; } = new ObservableCollection<Result>();
+
+        public bool IsParent => Children.Count > 0;
+
+        public bool? IsChecked
+        {
+            get { return _bIsChecked; }
+            set { SetIsChecked(value, true, true); }
+        }
+
+        public Result Parent { get; set; }
+
+        public string FileName
+        {
+            get
+            {
+                if (FileEntry != null)
+                    return FileEntry.FileName;
+
+                if (!IsParent)
+                    return string.Empty;
+
+                var firstFileName = Children.First().FileName;
+
+                if (
+                    Children.All(
+                        s => string.Equals(s.FileName, firstFileName, StringComparison.CurrentCultureIgnoreCase)))
+                    return firstFileName;
+
+                var groupedByFilenames = Children.GroupBy(s => s.FileName.ToLower()).Select(g => g.Key).ToArray();
+
+                var fileNames = string.Join(", ", groupedByFilenames);
+
+                return ShortenStringForDisplay(fileNames);
+            }
+        }
+
+        public string FileSize
+        {
+            get
+            {
+                if (FileEntry != null)
+                    return Utils.ConvertSizeToString(FileEntry.FileSize, false);
+
+                if (!IsParent)
+                    return string.Empty;
+
+                var firstFileSize = Children.First().FileSize;
+
+                if (Children.All(s => s.FileSize == firstFileSize))
+                    return firstFileSize;
+
+                var groupedByFileSizes = Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray();
+
+                var fileSizes = string.Join(", ", groupedByFileSizes);
+
+                return ShortenStringForDisplay(fileSizes);
+            }
+        }
+
+        public string FileFormat
+        {
+            get
+            {
+                if (FileEntry != null)
+                {
+                    var fileExt = Path.GetExtension(FileEntry.FilePath);
+
+                    if (string.IsNullOrEmpty(fileExt))
+                        return "(No Extension)";
+
+                    fileExt = fileExt.Substring(1).ToLower();
+
+                    string ext;
+
+                    if (MimeTypesDictionary.ContainsKey(fileExt))
+                        ext = MimeTypesDictionary[fileExt] + " (." + fileExt.ToUpper() + ")";
+                    else
+                        ext = "." + fileExt.ToUpper() + " File";
+
+                    return ext;
+                }
+
+                if (!IsParent)
+                    return string.Empty;
+
+                var firstFileFormat = Children.First().FileFormat;
+
+                if (Children.All(s => s.FileFormat == firstFileFormat))
+                    return firstFileFormat;
+
+                var groupedByFileFormats = Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray();
+
+                var fileFormats = string.Join(", ", groupedByFileFormats);
+
+                return ShortenStringForDisplay(fileFormats);
+            }
+        }
+
+        public string FilePath => FileEntry != null ? FileEntry.FilePath : string.Empty;
+
+        public FileEntry FileEntry { get; }
+
+        private string ShortenStringForDisplay(string str)
+        {
+            var maxLength = 30;
+            var appendText = "...";
+
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+
+            if (str.Length > maxLength)
+                str = str.Substring(0, maxLength - appendText.Length) + appendText;
+
+            return str;
+        }
 
         #region INotifyPropertyChanged Members
 
@@ -158,13 +289,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         #endregion
-
-        public ObservableCollection<Result> Children { get; } = new ObservableCollection<Result>();
-
-        public bool IsParent => (Children.Count > 0);
-
-        private readonly FileEntry _fileEntry;
-        private bool? _bIsChecked = false;
 
         #region IsChecked Methods
 
@@ -202,130 +326,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
             SetIsChecked(state, false, true);
         }
+
         #endregion
-
-        public bool? IsChecked
-        {
-            get { return _bIsChecked; }
-            set { SetIsChecked(value, true, true); }
-        }
-
-        public Result Parent { get; set; }
-
-        public string FileName
-        {
-            get
-            {
-                if (_fileEntry != null) 
-                    return FileEntry.FileName;
-
-                if (!IsParent)
-                    return string.Empty;
-
-                var firstFileName = Children.First().FileName;
-
-                if (
-                    Children.All(
-                        s => string.Equals(s.FileName, firstFileName, StringComparison.CurrentCultureIgnoreCase)))
-                    return firstFileName;
-
-                var groupedByFilenames = Children.GroupBy(s => s.FileName.ToLower()).Select(g => g.Key).ToArray();
-
-                var fileNames = string.Join(", ", groupedByFilenames);
-
-                return ShortenStringForDisplay(fileNames);
-            }
-        }
-
-        public string FileSize
-        {
-            get
-            {
-                if (_fileEntry != null)
-                    return Utils.ConvertSizeToString(FileEntry.FileSize, false);
-
-                if (!IsParent)
-                    return string.Empty;
-
-                string firstFileSize = Children.First().FileSize;
-
-                if (Children.All(s => s.FileSize == firstFileSize)) 
-                    return firstFileSize;
-
-                var groupedByFileSizes = Children.GroupBy(s => s.FileSize).Select(g => g.Key).ToArray();
-
-                var fileSizes = string.Join(", ", groupedByFileSizes);
-
-                return ShortenStringForDisplay(fileSizes);
-            }
-        }
-
-        public string FileFormat
-        {
-            get
-            {
-                if (_fileEntry != null)
-                {
-                    var fileExt = Path.GetExtension(FileEntry.FilePath);
-
-                    if (string.IsNullOrEmpty(fileExt))
-                        return "(No Extension)";
-
-                    fileExt = fileExt.Substring(1).ToLower();
-
-                    string ext;
-
-                    if (MimeTypesDictionary.ContainsKey(fileExt))
-                        ext = MimeTypesDictionary[fileExt] + " (." + fileExt.ToUpper() + ")";
-                    else
-                        ext = "." + fileExt.ToUpper() + " File";
-
-                    return ext;
-                }
-
-                if (!IsParent)
-                    return string.Empty;
-
-                var firstFileFormat = Children.First().FileFormat;
-
-                if (Children.All(s => s.FileFormat == firstFileFormat)) 
-                    return firstFileFormat;
-
-                var groupedByFileFormats = Children.GroupBy(s => s.FileFormat).Select(g => g.Key).ToArray();
-
-                var fileFormats = string.Join(", ", groupedByFileFormats);
-
-                return ShortenStringForDisplay(fileFormats);
-            }
-        }
-
-        public string FilePath => _fileEntry != null ? _fileEntry.FilePath : string.Empty;
-
-        public FileEntry FileEntry => _fileEntry;
-
-        public Result(Result parent = null)
-        {
-            Parent = parent;
-        }
-
-        public Result(FileEntry fileEntry, Result parent)
-        {
-            _fileEntry = fileEntry;
-            Parent = parent;
-        }
-
-        private string ShortenStringForDisplay(string str)
-        {
-            var maxLength = 30;
-            var appendText = "...";
-
-            if (string.IsNullOrEmpty(str))
-                return string.Empty;
-
-            if (str.Length > maxLength)
-                str = str.Substring(0, maxLength - appendText.Length) + appendText;
-
-            return str;
-        }
     }
 }

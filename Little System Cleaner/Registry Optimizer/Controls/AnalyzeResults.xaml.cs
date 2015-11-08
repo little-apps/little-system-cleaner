@@ -28,7 +28,7 @@ using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
-    /// Interaction logic for Analyze.xaml
+    ///     Interaction logic for Analyze.xaml
     /// </summary>
     public partial class AnalyzeResults
     {
@@ -40,10 +40,11 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             _scanBase = sb;
 
-            double oldRegistrySize = HiveManager.GetOldRegistrySize(), newRegistrySize = HiveManager.GetNewRegistrySize();
+            double oldRegistrySize = HiveManager.GetOldRegistrySize(),
+                newRegistrySize = HiveManager.GetNewRegistrySize();
 
-            var oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
-            var diffRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize - newRegistrySize) / 1024 / 1024, 2);
+            var oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize)/1024/1024, 2);
+            var diffRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize - newRegistrySize)/1024/1024, 2);
 
             ((PieSeries) McChart.Series[0]).ItemsSource =
                 new[]
@@ -53,12 +54,15 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     new KeyValuePair<string, decimal>($"Saving ({diffRegistrySizeMb}MB)", diffRegistrySizeMb)
                 };
 
-            if (100 - ((newRegistrySize / oldRegistrySize) * 100) >= 5) {
+            if (100 - newRegistrySize/oldRegistrySize*100 >= 5)
+            {
                 // Set errors to number of registry hives
                 Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;
 
                 McChart.Title = "The Windows Registry Needs To Be Compacted";
-            } else {
+            }
+            else
+            {
                 // Properties.Settings.Default.lastScanErrors will still equal 0
 
                 McChart.Title = "The Windows Registry Does Not Need To Be Compacted";
@@ -111,5 +115,4 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             _scanBase.MoveFirst();
         }
     }
-
 }

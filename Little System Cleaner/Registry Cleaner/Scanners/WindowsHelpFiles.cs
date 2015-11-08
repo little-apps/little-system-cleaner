@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
+using System.Security;
 using Little_System_Cleaner.Misc;
-using System.Threading;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -36,14 +37,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 CheckHelpFiles(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\HTML Help"));
                 CheckHelpFiles(Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\Help"));
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
         /// <summary>
-        /// Scans for invalid windows help files
+        ///     Scans for invalid windows help files
         /// </summary>
         private static void CheckHelpFiles(RegistryKey regKey)
         {
@@ -61,12 +62,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 )
             {
                 // (Won't include default value name as strHelpFile must not be null/empty)
-                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), string.IsNullOrWhiteSpace(helpFile) ? "(default)" : helpFile);
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(),
+                    string.IsNullOrWhiteSpace(helpFile) ? "(default)" : helpFile);
             }
         }
 
         /// <summary>
-        /// Sees if the help file exists
+        ///     Sees if the help file exists
         /// </summary>
         /// <param name="helpFile">Should contain the filename</param>
         /// <param name="helpPath">Should be the path to file</param>

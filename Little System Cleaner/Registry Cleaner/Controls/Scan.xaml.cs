@@ -19,9 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -35,50 +33,21 @@ using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
-	public partial class Scan
-	{
-	    readonly Wizard _scanBase;
-	    readonly Timer _timerUpdate = new Timer(200);
-        DateTime _dateTimeStart = DateTime.MinValue;
-        int _currentListViewIndex = -1;
-	    readonly ObservableCollection<lviScanner> _sectionCollection = new ObservableCollection<lviScanner>();
-
-        private readonly Task _mainTaskScan;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
+    public partial class Scan
+    {
         private static string _currentItemScanned;
         internal static int TotalItemsScanned = -1;
 
-	    /// <summary>
-        /// Gets the enabled scanners
-        /// </summary>
-        internal static List<ScannerBase> EnabledScanners { get; } = new List<ScannerBase>();
+        private readonly Task _mainTaskScan;
+        private readonly Wizard _scanBase;
+        private readonly Timer _timerUpdate = new Timer(200);
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private int _currentListViewIndex = -1;
+        private DateTime _dateTimeStart = DateTime.MinValue;
 
-	    /// <summary>
-        /// Gets the total problems
-        /// </summary>
-        internal static int TotalProblems => Wizard.badRegKeyArray.Count;
-
-	    /// <summary>
-        /// Sets the currently scanned item and increments the total
-        /// </summary>
-        internal static string CurrentItem
+        public Scan(Wizard sb)
         {
-            get { return _currentItemScanned; }
-            set
-            {
-                TotalItemsScanned++;
-                _currentItemScanned = string.Copy(value);
-            }
-        }
-        
-        public lviScanner CurrentListViewItem => SectionsCollection[_currentListViewIndex];
-
-	    public ObservableCollection<lviScanner> SectionsCollection => _sectionCollection;
-
-	    public Scan(Wizard sb)
-        {
-	        InitializeComponent();
+            InitializeComponent();
 
             Focus();
 
@@ -109,12 +78,39 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             // Populate ListView
             foreach (var lvi in EnabledScanners.Select(scanBase => new lviScanner(scanBase.ScannerName)))
             {
-                _sectionCollection.Add(lvi);
+                SectionsCollection.Add(lvi);
             }
 
             _mainTaskScan = new Task(StartScanning, _cancellationTokenSource.Token);
             _mainTaskScan.Start();
         }
+
+        /// <summary>
+        ///     Gets the enabled scanners
+        /// </summary>
+        internal static List<ScannerBase> EnabledScanners { get; } = new List<ScannerBase>();
+
+        /// <summary>
+        ///     Gets the total problems
+        /// </summary>
+        internal static int TotalProblems => Wizard.badRegKeyArray.Count;
+
+        /// <summary>
+        ///     Sets the currently scanned item and increments the total
+        /// </summary>
+        internal static string CurrentItem
+        {
+            get { return _currentItemScanned; }
+            set
+            {
+                TotalItemsScanned++;
+                _currentItemScanned = string.Copy(value);
+            }
+        }
+
+        public lviScanner CurrentListViewItem => SectionsCollection[_currentListViewIndex];
+
+        public ObservableCollection<lviScanner> SectionsCollection { get; } = new ObservableCollection<lviScanner>();
 
         public void AbortScanThread()
         {
@@ -122,7 +118,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             ScannerBase.CancellationToken?.Cancel();
         }
 
-        void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        private void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (Dispatcher.Thread != Thread.CurrentThread)
             {
@@ -138,7 +134,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         /// <summary>
-        /// Begins scanning for errors in the registry
+        ///     Begins scanning for errors in the registry
         /// </summary>
         private void StartScanning()
         {
@@ -185,7 +181,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 var ts = DateTime.Now.Subtract(_dateTimeStart);
 
                 // Report to Little Software Stats
-                Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int)ts.TotalSeconds, true);
+                Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int) ts.TotalSeconds, true);
 
                 // Set last scan elapsed time (in ticks)
                 Settings.Default.lastScanElapsed = ts.Ticks;
@@ -230,7 +226,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         /// <summary>
-        /// Sets the current section and increments the progress bar
+        ///     Sets the current section and increments the progress bar
         /// </summary>
         private void InvokeCurrentSection(string sectionName)
         {
@@ -265,7 +261,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private async void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Would you like to cancel the scan that's in progress?",
+                    Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 AbortScanThread();
 
@@ -278,8 +276,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Main.TaskbarProgressValue = (e.NewValue / ProgressBar.Maximum);
+                Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
         }
-       
-	}
+    }
 }

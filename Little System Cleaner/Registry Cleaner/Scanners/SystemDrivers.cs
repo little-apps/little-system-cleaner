@@ -16,10 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
+using System.Security;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -28,13 +30,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         public override string ScannerName => Strings.SystemDrivers;
 
         /// <summary>
-        /// Scans for invalid references to drivers
+        ///     Scans for invalid references to drivers
         /// </summary>
         public override void Scan()
         {
             try
             {
-                using (var regKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Drivers32"))
+                using (
+                    var regKey =
+                        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Drivers32"))
                 {
                     if (regKey == null)
                         return;
@@ -51,13 +55,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 .Select(o => o.Name)
                                 .TakeWhile(driverName => !CancellationToken.IsCancellationRequested))
                     {
-                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, string.IsNullOrWhiteSpace(driverName) ? "(default)" : driverName);
+                        Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name,
+                            string.IsNullOrWhiteSpace(driverName) ? "(default)" : driverName);
                     }
                 }
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
     }

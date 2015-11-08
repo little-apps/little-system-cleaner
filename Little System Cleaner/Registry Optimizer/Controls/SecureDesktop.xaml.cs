@@ -16,10 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel;
+
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
     /// <summary>
-    /// Interaction logic for SecureDesktop.xaml
+    ///     Interaction logic for SecureDesktop.xaml
     /// </summary>
     public partial class SecureDesktop
     {
@@ -30,7 +32,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             System.Windows.Forms.Cursor.Hide();
         }
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
             System.Windows.Forms.Cursor.Show();
 

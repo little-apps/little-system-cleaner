@@ -26,12 +26,10 @@ using MessageBox = System.Windows.MessageBox;
 namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 {
     /// <summary>
-    /// Interaction logic for AddExcludeFolder.xaml
+    ///     Interaction logic for AddExcludeFolder.xaml
     /// </summary>
     public partial class AddExcludeFolder
     {
-        public event AddExcludeFolderEventHandler AddExcludeFolderDelegate;
-
         public AddExcludeFolder()
         {
             this.HideIcon();
@@ -39,17 +37,20 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
             InitializeComponent();
         }
 
+        public event AddExcludeFolderEventHandler AddExcludeFolderDelegate;
+
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(TextBox.Text.Trim()))
             {
-                MessageBox.Show(this, "Please enter a folder", Application.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, "Please enter a folder", Application.ProductName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
 
             if (AddExcludeFolderDelegate != null)
             {
-                var eventArgs = new AddExcludeFolderEventArgs { FolderPath = TextBox.Text.Trim() };
+                var eventArgs = new AddExcludeFolderEventArgs {FolderPath = TextBox.Text.Trim()};
                 AddExcludeFolderDelegate(this, eventArgs);
             }
 
@@ -65,20 +66,19 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            const string message = "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
-                                   "Example: ?:\\test matches a root folder named test";
+            const string message =
+                "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
+                "Example: ?:\\test matches a root folder named test";
 
-            MessageBox.Show(this, message, "Add Exclude Folder Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, message, "Add Exclude Folder Information", MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 
     public class AddExcludeFolderEventArgs : EventArgs
     {
-        public string FolderPath
-        {
-            get;
-            set;
-        }
+        public string FolderPath { get; set; }
     }
+
     public delegate void AddExcludeFolderEventHandler(object sender, AddExcludeFolderEventArgs e);
 }

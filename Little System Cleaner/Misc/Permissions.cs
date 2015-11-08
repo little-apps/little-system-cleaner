@@ -17,57 +17,15 @@
 */
 
 using System;
-using System.Security.Principal;
 using System.Diagnostics;
+using System.Security.Principal;
 
 namespace Little_System_Cleaner.Misc
 {
     public static class Permissions
     {
-        internal static void SetPrivileges(bool enabled)
-        {
-            SetPrivilege("SeShutdownPrivilege", enabled);
-            SetPrivilege("SeBackupPrivilege", enabled);
-            SetPrivilege("SeRestorePrivilege", enabled);
-            SetPrivilege("SeDebugPrivilege", enabled);
-        }
-
-        internal static bool SetPrivilege(string privilege, bool enabled)
-        {
-            try
-            {
-                
-                IntPtr hproc = Process.GetCurrentProcess().Handle;
-                IntPtr htok = IntPtr.Zero;
-
-                if (!PInvoke.OpenProcessToken(hproc, PInvoke.TOKEN_ADJUST_PRIVILEGES | PInvoke.TOKEN_QUERY, ref htok))
-                    return false;
-
-                PInvoke.TokPriv1Luid tp = new PInvoke.TokPriv1Luid()
-                {
-                    Count = 1,
-                    Luid = 0,
-                    Attr = enabled ? PInvoke.SE_PRIVILEGE_ENABLED : PInvoke.SE_PRIVILEGE_REMOVED
-                };
-
-                if (!PInvoke.LookupPrivilegeValue(null, privilege, ref tp.Luid))
-                    return false;
-
-                bool bRet = (PInvoke.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero));
-
-                // Cleanup
-                PInvoke.CloseHandle(htok);
-
-                return bRet;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         /// <summary>
-        /// Checks if the user is an admin
+        ///     Checks if the user is an admin
         /// </summary>
         /// <returns>True if it is in admin group</returns>
         internal static bool IsUserAdministrator
@@ -79,8 +37,8 @@ namespace Little_System_Cleaner.Misc
                 try
                 {
                     //get the currently logged in user
-                    WindowsIdentity user = WindowsIdentity.GetCurrent();
-                    WindowsPrincipal principal = new WindowsPrincipal(user);
+                    var user = WindowsIdentity.GetCurrent();
+                    var principal = new WindowsPrincipal(user);
                     isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
                 }
                 catch (UnauthorizedAccessException)
@@ -98,6 +56,47 @@ namespace Little_System_Cleaner.Misc
 #endif
                 }
                 return isAdmin;
+            }
+        }
+
+        internal static void SetPrivileges(bool enabled)
+        {
+            SetPrivilege("SeShutdownPrivilege", enabled);
+            SetPrivilege("SeBackupPrivilege", enabled);
+            SetPrivilege("SeRestorePrivilege", enabled);
+            SetPrivilege("SeDebugPrivilege", enabled);
+        }
+
+        internal static bool SetPrivilege(string privilege, bool enabled)
+        {
+            try
+            {
+                var hproc = Process.GetCurrentProcess().Handle;
+                var htok = IntPtr.Zero;
+
+                if (!PInvoke.OpenProcessToken(hproc, PInvoke.TOKEN_ADJUST_PRIVILEGES | PInvoke.TOKEN_QUERY, ref htok))
+                    return false;
+
+                var tp = new PInvoke.TokPriv1Luid
+                {
+                    Count = 1,
+                    Luid = 0,
+                    Attr = enabled ? PInvoke.SE_PRIVILEGE_ENABLED : PInvoke.SE_PRIVILEGE_REMOVED
+                };
+
+                if (!PInvoke.LookupPrivilegeValue(null, privilege, ref tp.Luid))
+                    return false;
+
+                var bRet = PInvoke.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+
+                // Cleanup
+                PInvoke.CloseHandle(htok);
+
+                return bRet;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

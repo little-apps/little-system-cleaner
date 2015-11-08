@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
@@ -27,22 +26,36 @@ using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.Sections;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {
-        private readonly List<ScannerBase> _arrayScanners = new List<ScannerBase>();
         private SectionModel _model;
-        private static readonly BadRegKeyArray BadRegKeyArray = new BadRegKeyArray();
+
+
+        public Wizard()
+        {
+            Controls.Add(typeof (Start));
+            Controls.Add(typeof (Scan));
+            Controls.Add(typeof (Results));
+
+            Scanners.Add(new ApplicationInfo());
+            Scanners.Add(new ApplicationPaths());
+            Scanners.Add(new ApplicationSettings());
+            Scanners.Add(new ActivexComObjects());
+            Scanners.Add(new SharedDLLs());
+            Scanners.Add(new SystemDrivers());
+            Scanners.Add(new WindowsFonts());
+            Scanners.Add(new WindowsHelpFiles());
+            Scanners.Add(new RecentDocs());
+            Scanners.Add(new WindowsSounds());
+            Scanners.Add(new StartupFiles());
+        }
 
         public SectionModel Model
         {
-            get
-            {
-                return _model;
-            }
+            get { return _model; }
             set
             {
                 _model = value;
@@ -50,46 +63,21 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        internal static string CurrentScannerName
-        {
-            get;
-            set;
-        }
+        internal static string CurrentScannerName { get; set; }
 
-        internal static BadRegKeyArray badRegKeyArray => BadRegKeyArray;
+        internal static BadRegKeyArray badRegKeyArray { get; } = new BadRegKeyArray();
 
-        public List<ScannerBase> Scanners => _arrayScanners;
+        public List<ScannerBase> Scanners { get; } = new List<ScannerBase>();
 
-        private static Report _report;
-        internal static Report Report => _report;
-
-        internal static bool CreateNewLogFile() 
-        {
-            _report = Report.CreateReport(Settings.Default.registryCleanerOptionsLog);
-
-            return true;
-        }
+        internal static Report Report { get; private set; }
 
         internal static DateTime ScanStartTime { get; set; }
-        
 
-        public Wizard()
+        internal static bool CreateNewLogFile()
         {
-            Controls.Add(typeof(Start));
-            Controls.Add(typeof(Scan));
-            Controls.Add(typeof(Results));
+            Report = Report.CreateReport(Settings.Default.registryCleanerOptionsLog);
 
-            _arrayScanners.Add(new ApplicationInfo());
-            _arrayScanners.Add(new ApplicationPaths());
-            _arrayScanners.Add(new ApplicationSettings());
-            _arrayScanners.Add(new ActivexComObjects());
-            _arrayScanners.Add(new SharedDLLs());
-            _arrayScanners.Add(new SystemDrivers());
-            _arrayScanners.Add(new WindowsFonts());
-            _arrayScanners.Add(new WindowsHelpFiles());
-            _arrayScanners.Add(new RecentDocs());
-            _arrayScanners.Add(new WindowsSounds());
-            _arrayScanners.Add(new StartupFiles());
+            return true;
         }
 
         public override void OnLoaded()
@@ -104,7 +92,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             var scan = CurrentControl as Scan;
             if (scan != null)
             {
-                exit = forceExit || MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+                exit = forceExit ||
+                       MessageBox.Show("Would you like to cancel the scan that's in progress?", Utils.ProductName,
+                           MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                 if (!exit)
                     return false;
@@ -123,7 +113,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (!forceExit && ((Results) CurrentControl).FixProblemsRunning)
                 return false;
 
-            exit = forceExit || MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+            exit = forceExit ||
+                   MessageBox.Show("Would you like to cancel?", Utils.ProductName, MessageBoxButton.YesNo,
+                       MessageBoxImage.Question) == MessageBoxResult.Yes;
 
             if (!exit)
                 return false;
@@ -146,7 +138,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         /// <summary>
-        /// Go back to the scan control
+        ///     Go back to the scan control
         /// </summary>
         public void Rescan()
         {
@@ -162,7 +154,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             foreach (var child in model.Root.Children[0].Children)
             {
-                foreach (var scanner in _arrayScanners.Where(scanner => child.SectionName == scanner.ScannerName))
+                foreach (var scanner in Scanners.Where(scanner => child.SectionName == scanner.ScannerName))
                 {
                     if (child.IsChecked.HasValue && child.IsChecked.Value)
                     {
@@ -177,8 +169,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         /// <summary>
-        /// <para>Stores an invalid registry key to array list</para>
-        /// <para>Use IsOnIgnoreList to check for ignored registry keys and paths</para>
+        ///     <para>Stores an invalid registry key to array list</para>
+        ///     <para>Use IsOnIgnoreList to check for ignored registry keys and paths</para>
         /// </summary>
         /// <param name="problem">Reason its invalid</param>
         /// <param name="path">The path to registry key (including registry hive)</param>
@@ -189,8 +181,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         /// <summary>
-        /// <para>Stores an invalid registry key to array list</para>
-        /// <para>Use IsOnIgnoreList to check for ignored registry keys and paths</para>
+        ///     <para>Stores an invalid registry key to array list</para>
+        ///     <para>Use IsOnIgnoreList to check for ignored registry keys and paths</para>
         /// </summary>
         /// <param name="problem">Reason its invalid</param>
         /// <param name="regPath">The path to registry key (including registry hive)</param>
@@ -206,7 +198,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return false;
 
             // Make sure registry key isnt already in array
-            if (BadRegKeyArray.Contains(regPath, valueName))
+            if (badRegKeyArray.Contains(regPath, valueName))
                 return false;
 
             // Make sure registry key exists
@@ -288,7 +280,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 severity = 1;
             }
 
-            BadRegKeyArray.Add(new BadRegistryKey(CurrentScannerName, problem, baseKey, subKey, valueName, severity));
+            badRegKeyArray.Add(new BadRegistryKey(CurrentScannerName, problem, baseKey, subKey, valueName, severity));
 
             Report.WriteLine(!string.IsNullOrEmpty(valueName)
                 ? $"Bad Registry Value Found! Problem: \"{problem}\" Path: \"{regPath}\" Value Name: \"{valueName}\""
@@ -298,7 +290,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         }
 
         /// <summary>
-        /// Checks for the path in ignore list
+        ///     Checks for the path in ignore list
         /// </summary>
         /// <returns>true if it is on the ignore list, otherwise false</returns>
         internal static bool IsOnIgnoreList(string path)
@@ -307,7 +299,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return false;
 
             var expandedPath = string.Empty;
-            var isPath = (!path.ToUpper().StartsWith("HKEY"));
+            var isPath = !path.ToUpper().StartsWith("HKEY");
 
             foreach (var i in Settings.Default.ArrayExcludeList)
             {
@@ -338,6 +330,5 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             return false;
         }
-
     }
 }

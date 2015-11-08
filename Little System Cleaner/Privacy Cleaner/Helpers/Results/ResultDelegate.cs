@@ -8,7 +8,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
     public class ResultDelegate : ResultNode
     {
         /// <summary>
-        /// Constructor for cleaning delegate
+        ///     Constructor for cleaning delegate
         /// </summary>
         /// <param name="cleanDelegate">Delegate pointer</param>
         /// <param name="desc">Description of delegate</param>

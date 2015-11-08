@@ -8,7 +8,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private const uint Polynomial = 0xedb88320u;
         private const uint Seed = 0xffffffffu;
 
-        readonly uint[] _table;
+        private readonly uint[] _table;
         private uint _crc;
 
         public CRC32()
@@ -16,13 +16,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             _table = BuildTable();
         }
 
+        public override int HashSize => 32;
+
         private static uint[] BuildTable()
         {
             var createTable = new uint[256];
 
             for (var i = 0; i < 256; i++)
             {
-                var entry = (uint)i;
+                var entry = (uint) i;
 
                 for (var j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
@@ -53,8 +55,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return hashBuffer;
         }
 
-        public override int HashSize => 32;
-
         public static uint Compute(byte[] buffer)
         {
             return Compute(Seed, buffer);
@@ -81,7 +81,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             var crc = seed;
             for (var i = start; i < size - start; i++)
             {
-                byte b = buffer[i];
+                var b = buffer[i];
                 crc = (crc >> 8) ^ table[b ^ crc & 0xff];
             }
 

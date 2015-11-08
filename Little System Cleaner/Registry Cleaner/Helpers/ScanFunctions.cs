@@ -15,7 +15,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
     public class ScanFunctions
     {
         /// <summary>
-        /// Gets the icon path and sees if it exists
+        ///     Gets the icon path and sees if it exists
         /// </summary>
         /// <param name="iconPath">The icon path</param>
         /// <returns>True if it exists</returns>
@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Sees if the directory exists
+        ///     Sees if the directory exists
         /// </summary>
         /// <remarks>Always use this to check for directories in the scanners!</remarks>
         /// <param name="dirPath">The directory</param>
@@ -96,7 +96,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Checks if registry key + value name exist
+        ///     Checks if registry key + value name exist
         /// </summary>
         /// <param name="inPath">Registry Key</param>
         /// <param name="valueName">Value name</param>
@@ -109,7 +109,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Checks if registry key + value name exist
+        ///     Checks if registry key + value name exist
         /// </summary>
         /// <param name="mainKey">Registry Hive</param>
         /// <param name="subKey">Registry Sub Key</param>
@@ -138,7 +138,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Attempts to grant access to registry key so it can be removed
+        ///     Attempts to grant access to registry key so it can be removed
         /// </summary>
         /// <param name="regKey"></param>
         /// <param name="registryRights"></param>
@@ -154,7 +154,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 var regSecurity = regKey.GetAccessControl();
                 var user = Environment.UserDomainName + "\\" + Environment.UserName;
 
-                var rule = new RegistryAccessRule(user, registryRights, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly, AccessControlType.Allow);
+                var rule = new RegistryAccessRule(user, registryRights,
+                    InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly,
+                    AccessControlType.Allow);
 
                 regSecurity.AddAccessRule(rule);
                 regKey.SetAccessControl(regSecurity);
@@ -162,12 +164,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("An error occurred trying to get permission to remove registry key ({0}). Error: {1}", regKey, ex.Message);
+                Debug.WriteLine("An error occurred trying to get permission to remove registry key ({0}). Error: {1}",
+                    regKey, ex.Message);
             }
         }
 
         /// <summary>
-        /// Gets the value kind and converts it accordingly
+        ///     Gets the value kind and converts it accordingly
         /// </summary>
         /// <returns>Registry value formatted to a string</returns>
         internal static string RegConvertXValueToString(RegistryKey regKey, string valueName)
@@ -183,10 +186,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 {
                     case RegistryValueKind.MultiString:
                     {
-                        string strValue = "";
-                        string[] strValues = (string[]) regKey.GetValue(valueName);
+                        var strValue = "";
+                        var strValues = (string[]) regKey.GetValue(valueName);
 
-                        for (int i = 0; i < strValues.Length; i++)
+                        for (var i = 0; i < strValues.Length; i++)
                         {
                             if (i != 0)
                                 strValue = string.Concat(strValue, ",");
@@ -200,7 +203,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     }
                     case RegistryValueKind.Binary:
                     {
-                        string strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("", (current, b) => $"{current} {b:X2}");
+                        var strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("",
+                            (current, b) => $"{current} {b:X2}");
 
                         strRet = string.Copy(strValue);
 
@@ -236,7 +240,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Checks if we have permission to delete a registry key
+        ///     Checks if we have permission to delete a registry key
         /// </summary>
         /// <param name="key">Registry key</param>
         /// <returns>True if we can delete it</returns>
@@ -261,7 +265,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
                 var regSecurity = key.GetAccessControl();
 
-                return regSecurity.GetAccessRules(true, false, typeof (NTAccount)).Cast<AuthorizationRule>().All(rule => (RegistryRights.Delete & ((RegistryAccessRule) (rule)).RegistryRights) == RegistryRights.Delete);
+                return
+                    regSecurity.GetAccessRules(true, false, typeof (NTAccount))
+                        .Cast<AuthorizationRule>()
+                        .All(
+                            rule =>
+                                (RegistryRights.Delete & ((RegistryAccessRule) rule).RegistryRights) ==
+                                RegistryRights.Delete);
             }
             catch (SecurityException ex)
             {

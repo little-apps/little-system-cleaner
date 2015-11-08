@@ -14,6 +14,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
     public class PluginFunctions
     {
+        public PluginFunctions()
+        {
+            RegistryValueNames = new Dictionary<RegistryKey, string[]>();
+            RegistrySubKeys = new Dictionary<RegistryKey, bool>();
+            Folders = new Dictionary<string, bool>();
+            FilePaths = new List<string>();
+            IniList = new List<IniInfo>();
+            XmlPaths = new Dictionary<string, List<string>>();
+        }
+
         public Dictionary<RegistryKey, string[]> RegistryValueNames { get; }
 
         public Dictionary<RegistryKey, bool> RegistrySubKeys { get; }
@@ -25,16 +35,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         public List<IniInfo> IniList { get; }
 
         public Dictionary<string, List<string>> XmlPaths { get; }
-
-        public PluginFunctions()
-        {
-            RegistryValueNames = new Dictionary<RegistryKey, string[]>();
-            RegistrySubKeys = new Dictionary<RegistryKey, bool>();
-            Folders = new Dictionary<string, bool>();
-            FilePaths = new List<string>();
-            IniList = new List<IniInfo>();
-            XmlPaths = new Dictionary<string, List<string>>();
-        }
 
         public void DeleteKey(RegistryKey regKey, bool recurse)
         {
@@ -61,18 +61,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
             catch (SecurityException ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey);
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " +
+                                regKey);
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " + regKey);
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to get value names for " +
+                                regKey);
             }
 
             if (regValueNames == null)
                 return;
 
             // Get value names that match regex
-            List<string> valueNames = regValueNames.Where(valueName => Regex.IsMatch(valueName, searchText)).ToList();
+            var valueNames = regValueNames.Where(valueName => Regex.IsMatch(valueName, searchText)).ToList();
 
             if (!RegistryValueNames.ContainsKey(regKey))
                 // Create new entry if regkey doesnt exist
@@ -123,7 +125,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (fileList != null)
             {
-                foreach (string filePath in fileList)
+                foreach (var filePath in fileList)
                 {
                     Wizard.CurrentFile = filePath;
 
@@ -155,7 +157,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (dirList != null)
             {
-                foreach (string folderPath in dirList)
+                foreach (var folderPath in dirList)
                 {
                     Wizard.CurrentFile = folderPath;
 
@@ -169,8 +171,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (regKey == null)
                 return;
 
-            Dictionary<string, bool> regexSubKeys = new Dictionary<string, bool>();
-            List<string> regexValueNames = new List<string>();
+            var regexSubKeys = new Dictionary<string, bool>();
+            var regexValueNames = new List<string>();
 
             while (xmlChildren.Read())
             {
@@ -178,15 +180,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 {
                     case "IfSubKey":
                     {
-                        string searchText = xmlChildren.GetAttribute("SearchText");
-                        bool recurse = (xmlChildren.GetAttribute("Recursive") == "Y");
+                        var searchText = xmlChildren.GetAttribute("SearchText");
+                        var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
 
                         regexSubKeys.Add(searchText, recurse);
                     }
                         break;
                     case "IfValueName":
                     {
-                        string searchText = xmlChildren.GetAttribute("SearchText");
+                        var searchText = xmlChildren.GetAttribute("SearchText");
                         regexValueNames.Add(searchText);
                     }
                         break;
@@ -198,34 +200,35 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (valueNames.Count > 0)
             {
-                foreach (KeyValuePair<RegistryKey, string[]> kvp in valueNames)
+                foreach (var kvp in valueNames)
                     RegistryValueNames.Add(kvp.Key, kvp.Value);
             }
 
             if (subKeys.Count > 0)
             {
-                foreach (KeyValuePair<RegistryKey, bool> kvp in subKeys)
+                foreach (var kvp in subKeys)
                     RegistrySubKeys.Add(kvp.Key, kvp.Value);
             }
         }
 
-        public void DeleteFoundPaths(string searchPath, string searchText, SearchOption includeSubFolders, XmlReader xmlChildren)
+        public void DeleteFoundPaths(string searchPath, string searchText, SearchOption includeSubFolders,
+            XmlReader xmlChildren)
         {
-            List<string> regexFiles = new List<string>();
-            Dictionary<string, bool> regexFolders = new Dictionary<string, bool>();
+            var regexFiles = new List<string>();
+            var regexFolders = new Dictionary<string, bool>();
 
             while (xmlChildren.Read())
             {
                 if (xmlChildren.Name == "IfFile")
                 {
-                    string fileName = xmlChildren.GetAttribute("SearchText");
+                    var fileName = xmlChildren.GetAttribute("SearchText");
                     if (!string.IsNullOrEmpty(fileName))
                         regexFiles.Add(fileName);
                 }
                 else if (xmlChildren.Name == "IfFolder")
                 {
-                    string folderName = xmlChildren.GetAttribute("SearchText");
-                    bool recurse = ((xmlChildren.GetAttribute("Recursive") == "Y"));
+                    var folderName = xmlChildren.GetAttribute("SearchText");
+                    var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
 
                     if (!string.IsNullOrEmpty(folderName))
                         regexFolders.Add(folderName, recurse);
@@ -233,7 +236,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             }
 
             // Skip if search path doesnt exist or the lists are empty
-            if (!Directory.Exists(searchPath)|| (regexFiles.Count == 0 && regexFolders.Count == 0))
+            if (!Directory.Exists(searchPath) || (regexFiles.Count == 0 && regexFolders.Count == 0))
                 return;
 
             string[] dirList = null;
@@ -277,7 +280,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    Debug.WriteLine("The following error occurred: {0}\nSkipping trying to get list of files", ex.Message);
+                    Debug.WriteLine("The following error occurred: {0}\nSkipping trying to get list of files",
+                        ex.Message);
                 }
                 catch (PathTooLongException)
                 {
@@ -295,7 +299,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     // Get filename from file path
                     var fileName = Path.GetFileName(filePath);
 
-                    if (regexFiles.Where(regex => !string.IsNullOrEmpty(regex)).Any(regex => Regex.IsMatch(fileName, regex)))
+                    if (
+                        regexFiles.Where(regex => !string.IsNullOrEmpty(regex))
+                            .Any(regex => Regex.IsMatch(fileName, regex)))
                         AddToFiles(filePath);
                 }
             }
@@ -341,7 +347,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             AddToXmlPaths(filePath, xPath);
         }
 
-        Dictionary<RegistryKey, string[]> RecurseRegKeyValueNames(RegistryKey regKey, List<string> regexValueNames, bool recurse)
+        private Dictionary<RegistryKey, string[]> RecurseRegKeyValueNames(RegistryKey regKey,
+            List<string> regexValueNames, bool recurse)
         {
             var ret = new Dictionary<RegistryKey, string[]>();
             var valueNames = new List<string>();
@@ -373,7 +380,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 regValueNames.Where(
                     valueName =>
                         regexValueNames.Any(
-                            regex => Regex.IsMatch(valueName, regex) && (!valueNames.Contains(valueName)))));
+                            regex => Regex.IsMatch(valueName, regex) && !valueNames.Contains(valueName))));
 
             if (recurse)
             {
@@ -385,11 +392,13 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 }
                 catch (SecurityException ex)
                 {
-                    Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.", ex.Message);
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.",
+                        ex.Message);
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.", ex.Message);
+                    Debug.WriteLine("The following error occurred: {0}\nUnable to get registry key sub keys.",
+                        ex.Message);
                 }
 
                 if (subKeys == null)
@@ -412,7 +421,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
                     if (subRegKey == null)
                         continue;
-                    
+
                     foreach (var kvp in RecurseRegKeyValueNames(subRegKey, regexValueNames, true))
                         ret.Add(kvp.Key, kvp.Value);
                 }
@@ -424,7 +433,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             return ret;
         }
 
-        private static Dictionary<RegistryKey, bool> RecurseRegKeySubKeys(RegistryKey regKey, Dictionary<string, bool> regexSubKeys, bool recurse)
+        private static Dictionary<RegistryKey, bool> RecurseRegKeySubKeys(RegistryKey regKey,
+            Dictionary<string, bool> regexSubKeys, bool recurse)
         {
             var ret = new Dictionary<RegistryKey, bool>();
 
@@ -517,7 +527,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Adds a folder to the results
+        ///     Adds a folder to the results
         /// </summary>
         /// <param name="folderPath">Folder path</param>
         /// <param name="recurse">True to recurse when removing folder</param>
@@ -593,7 +603,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (!XmlPaths.ContainsKey(filePath))
             {
-                XmlPaths.Add(filePath, new List<string>(new[] { xPath }));
+                XmlPaths.Add(filePath, new List<string>(new[] {xPath}));
             }
             else
             {
@@ -610,7 +620,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         /// <summary>
-        /// Checks if the folder (from the path) is already added as a recursive directory
+        ///     Checks if the folder (from the path) is already added as a recursive directory
         /// </summary>
         /// <param name="path">File or folder path</param>
         /// <param name="startDir">Is it the starting directory?</param>
@@ -644,7 +654,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 if (Folders.Contains(new KeyValuePair<string, bool>(actualFolder, true)))
                     return false;
             }
-            
+
             // Check parent folders
             DirectoryInfo diParent = null;
 

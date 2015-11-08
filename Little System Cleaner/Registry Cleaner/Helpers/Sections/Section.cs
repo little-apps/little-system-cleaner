@@ -9,58 +9,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
     public class Section : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
-        public ObservableCollection<Section> Children { get; } = new ObservableCollection<Section>();
-
         private bool? _bIsChecked = true;
 
-        #region IsChecked Methods
-
-        private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
-        {
-            if (value == _bIsChecked)
-                return;
-
-            _bIsChecked = value;
-
-            if (updateChildren && _bIsChecked.HasValue)
-                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
-
-            if (updateParent)
-                Parent?.VerifyCheckState();
-
-            OnPropertyChanged("IsChecked");
-        }
-
-        private void VerifyCheckState()
-        {
-            bool? state = null;
-            for (int i = 0; i < Children.Count; ++i)
-            {
-                bool? current = Children[i].IsChecked;
-                if (i == 0)
-                {
-                    state = current;
-                }
-                else if (state != current)
-                {
-                    state = null;
-                    break;
-                }
-            }
-            SetIsChecked(state, false, true);
-        }
-        #endregion
+        public ObservableCollection<Section> Children { get; } = new ObservableCollection<Section>();
 
         public bool? IsChecked
         {
@@ -90,5 +41,55 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
                 }
             }
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
+
+        #region IsChecked Methods
+
+        private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
+        {
+            if (value == _bIsChecked)
+                return;
+
+            _bIsChecked = value;
+
+            if (updateChildren && _bIsChecked.HasValue)
+                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+
+            if (updateParent)
+                Parent?.VerifyCheckState();
+
+            OnPropertyChanged("IsChecked");
+        }
+
+        private void VerifyCheckState()
+        {
+            bool? state = null;
+            for (var i = 0; i < Children.Count; ++i)
+            {
+                var current = Children[i].IsChecked;
+                if (i == 0)
+                {
+                    state = current;
+                }
+                else if (state != current)
+                {
+                    state = null;
+                    break;
+                }
+            }
+            SetIsChecked(state, false, true);
+        }
+
+        #endregion
     }
 }

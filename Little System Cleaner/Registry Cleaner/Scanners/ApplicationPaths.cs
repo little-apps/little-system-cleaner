@@ -17,12 +17,13 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.Win32;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
+using System.Security;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using System.Threading;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -31,7 +32,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         public override string ScannerName => Strings.ApplicationPaths;
 
         /// <summary>
-        /// Verifies programs in App Paths
+        ///     Verifies programs in App Paths
         /// </summary>
         public override void Scan()
         {
@@ -43,9 +44,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 Wizard.Report.WriteLine("Checking for invalid application paths");
                 ScanAppPaths();
             }
-            catch (System.Security.SecurityException ex)
+            catch (SecurityException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -72,7 +73,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (var strSubKey in regKey.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+            foreach (
+                var strSubKey in
+                    regKey.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
                 var regKey2 = regKey.OpenSubKey(strSubKey);
 

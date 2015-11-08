@@ -6,45 +6,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     public class IncludeFolder : INotifyPropertyChanged, IEquatable<IncludeFolder>
     {
-        #region INotifyPropertyChanged Members
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
-        private string _name;
         private bool? _bIsChecked = true;
 
-
-        public bool? IsChecked
-        {
-            get { return _bIsChecked; }
-            set 
-            { 
-                _bIsChecked = value;
-                OnPropertyChanged("IsChecked");
-            }
-        }
-
-        public string Name
-        {
-            get { return _name; }
-            set 
-            { 
-                _name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-
-        public DirectoryInfo DirInfo { get; }
+        private string _name;
 
         public IncludeFolder()
         {
-
         }
 
         public IncludeFolder(DirectoryInfo dirInfo)
@@ -59,10 +26,34 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             DirInfo = new DirectoryInfo(folderPath);
         }
 
+
+        public bool? IsChecked
+        {
+            get { return _bIsChecked; }
+            set
+            {
+                _bIsChecked = value;
+                OnPropertyChanged("IsChecked");
+            }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+
+        public DirectoryInfo DirInfo { get; }
+
         public bool Equals(IncludeFolder other)
         {
             return other != null && Name == other.Name;
         }
+
         public override bool Equals(object obj)
         {
             var a = obj as IncludeFolder;
@@ -74,5 +65,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             return Name.GetHashCode();
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
     }
 }

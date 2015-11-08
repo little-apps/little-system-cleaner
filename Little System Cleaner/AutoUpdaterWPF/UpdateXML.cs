@@ -7,51 +7,27 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
     [XmlRoot("items")]
     public class UpdateXml
     {
+        [XmlElement("item")]
+        public List<Item> Items { get; set; }
+
         public class Item
         {
             [XmlElement("version")]
-            public string VersionString
-            {
-                get;
-                set;
-            }
+            public string VersionString { get; set; }
 
             public Version Version => !string.IsNullOrEmpty(VersionString) ? new Version(VersionString) : null;
 
             [XmlElement("title")]
-            public string Title
-            {
-                get;
-                set;
-            }
+            public string Title { get; set; }
 
             [XmlElement("changelog")]
-            public string ChangeLog
-            {
-                get;
-                set;
-            }
+            public string ChangeLog { get; set; }
 
             [XmlElement("url")]
-            public string Url
-            {
-                get;
-                set;
-            }
+            public string Url { get; set; }
 
             [XmlElement("filename")]
-            public string FileName
-            {
-                get;
-                set;
-            }
-        }
-
-        [XmlElement("item")]
-        public List<Item> Items
-        {
-            get;
-            set;
+            public string FileName { get; set; }
         }
     }
 }

@@ -37,23 +37,49 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
     public partial class Results : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        #endregion
-
         private readonly Wizard _scanWiz;
-        private Task<bool> _taskClean;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private int _progressBarValue;
-        private string _progressBarText;
         private BitmapSource _bMapSrcFinishedScanning;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private string _progressBarText;
+        private int _progressBarValue;
+        private Task<bool> _taskClean;
+
+        public Results(Wizard scanBase)
+        {
+            InitializeComponent();
+
+            // Insert code required on object creation below this point.
+            _scanWiz = scanBase;
+
+            Tree.Model = ResultModel.CreateResultModel();
+            Tree.ExpandAll();
+
+            var resultModel = Tree.Model as ResultModel;
+            if (resultModel != null && resultModel.Root.Children.Count == 0)
+            {
+                MessageBox.Show(Application.Current.MainWindow, "There were no errors found!", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                Wizard.Report.DisplayLogFile(Settings.Default.registryCleanerOptionsShowLog &&
+                                             !Settings.Default.registryCleanerOptionsAutoRepair);
+
+                // Set last scan errors found
+                var model = Tree.Model as ResultModel;
+                if (model != null)
+                    Settings.Default.lastScanErrors =
+                        model.Root.Children
+                            .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
+                            .Count();
+
+                // Set total errors found
+                Settings.Default.totalErrorsFound += Settings.Default.lastScanErrors;
+
+                if (Settings.Default.registryCleanerOptionsAutoRepair)
+                    FixProblems();
+            }
+        }
 
         public int ProgressBarValue
         {
@@ -71,7 +97,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 _progressBarValue = val;
 
                 if (Math.Abs(ProgressBar.Maximum) > 0)
-                    Main.TaskbarProgressValue = (val / ProgressBar.Maximum);
+                    Main.TaskbarProgressValue = val/ProgressBar.Maximum;
 
                 OnPropertyChanged("ProgressBarValue");
             }
@@ -93,63 +119,31 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        public bool FixProblemsRunning => ((_taskClean != null) &&_taskClean.Status == TaskStatus.Running);
+        public bool FixProblemsRunning => (_taskClean != null) && _taskClean.Status == TaskStatus.Running;
 
         /// <summary>
-        /// The finished scanning bitmap is converted once to a BitmapSource and stored so it can be used again in order to save resources
+        ///     The finished scanning bitmap is converted once to a BitmapSource and stored so it can be used again in order to
+        ///     save resources
         /// </summary>
         public BitmapSource bMapSrcFinishedScanning => _bMapSrcFinishedScanning ??
                                                        (_bMapSrcFinishedScanning =
                                                            Imaging.CreateBitmapSourceFromHBitmap(
-                                                               Properties.Resources.finished_scanning.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
+                                                               Properties.Resources.finished_scanning.GetHbitmap(),
+                                                               IntPtr.Zero, Int32Rect.Empty,
                                                                BitmapSizeOptions.FromEmptyOptions()));
-
-        public Results(Wizard scanBase)
-		{
-			InitializeComponent();
-
-			// Insert code required on object creation below this point.
-            _scanWiz = scanBase;
-
-            Tree.Model = ResultModel.CreateResultModel();
-            Tree.ExpandAll();
-
-            var resultModel = Tree.Model as ResultModel;
-            if (resultModel != null && resultModel.Root.Children.Count == 0)
-            {
-                MessageBox.Show(Application.Current.MainWindow, "There were no errors found!", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                Wizard.Report.DisplayLogFile((Settings.Default.registryCleanerOptionsShowLog && !Settings.Default.registryCleanerOptionsAutoRepair));
-
-                // Set last scan errors found
-                var model = Tree.Model as ResultModel;
-                if (model != null)
-                    Settings.Default.lastScanErrors =
-                        model.Root.Children
-                            .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
-                            .Count();
-
-                // Set total errors found
-                Settings.Default.totalErrorsFound += Settings.Default.lastScanErrors;
-
-                if (Settings.Default.registryCleanerOptionsAutoRepair)
-                    FixProblems();
-            }
-		}
 
         private List<BadRegistryKey> GetSelectedRegKeys()
         {
             return (Tree.Model as ResultModel)?.Root.Children
                 .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
-                .Where(child => (child.IsChecked.HasValue) && child.IsChecked.Value)
+                .Where(child => child.IsChecked.HasValue && child.IsChecked.Value)
                 .ToList();
         }
 
         private void SetCheckedItems(bool? isChecked)
         {
-            var badRegistryKeys = (Tree.Model as ResultModel)?.Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children);
+            var badRegistryKeys =
+                (Tree.Model as ResultModel)?.Root.Children.SelectMany(badRegKeyRoot => badRegKeyRoot.Children);
 
             if (badRegistryKeys == null)
                 return;
@@ -174,13 +168,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (selectedCount == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "You must select registry keys to be removed first.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "You must select registry keys to be removed first.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             // Ask to remove registry keys
             if (!Settings.Default.registryCleanerOptionsAutoRepair)
-                if (MessageBox.Show("Would you like to fix all selected problems?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (
+                    MessageBox.Show("Would you like to fix all selected problems?", Utils.ProductName,
+                        MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
 
             // Report
@@ -213,7 +210,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 else
                 {
                     // Display message box and go back to first control
-                    MessageBox.Show(Application.Current.MainWindow, "Removed problems from registry", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(Application.Current.MainWindow, "Removed problems from registry", Utils.ProductName,
+                        MessageBoxButton.OK, MessageBoxImage.Information);
 
                     if (Settings.Default.registryCleanerOptionsAutoRescan)
                         _scanWiz.Rescan();
@@ -235,17 +233,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 ProgressBarValue = 0;
                 ProgressBarText = "";
             }
-
-
         }
 
         /// <summary>
-        /// Fixes registry problems
+        ///     Fixes registry problems
         /// </summary>
         /// <returns>Returns true if fix was successful</returns>
         private bool FixProblems()
         {
-            bool cancelled = false;
+            var cancelled = false;
 
             try
             {
@@ -291,7 +287,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 Settings.Default.lastScanErrorsFixed = 0;
 
-                foreach (BadRegistryKey brk in badRegKeys)
+                foreach (var brk in badRegKeys)
                 {
                     var skip = false;
 
@@ -313,7 +309,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                         }
                         else
                         {
-                            skip = (!Settings.Default.registryCleanerOptionsDeleteOnBackupError);
+                            skip = !Settings.Default.registryCleanerOptionsDeleteOnBackupError;
                         }
                     }
 
@@ -411,70 +407,87 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void contextMenuResults_Clicked(object sender, RoutedEventArgs e)
         {
-            switch ((string)(sender as MenuItem)?.Header)
+            switch ((string) (sender as MenuItem)?.Header)
             {
                 case "Select All":
-                    {
-                        SetCheckedItems(true);
-                        break;
-                    }
+                {
+                    SetCheckedItems(true);
+                    break;
+                }
                 case "Select None":
-                    {
-                        SetCheckedItems(false);
-                        break;
-                    }
+                {
+                    SetCheckedItems(false);
+                    break;
+                }
                 case "Invert Selection":
-                    {
-                        SetCheckedItems(null);
-                        break;
-                    }
+                {
+                    SetCheckedItems(null);
+                    break;
+                }
                 case "Exclude Selection":
+                {
+                    if (Tree.SelectedNode == null)
                     {
-                        if (Tree.SelectedNode == null)
-                        {
-                            MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-
-                        var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
-
-                        var excludeItem = new ExcludeItem { RegistryPath = regKeyPath };
-                        if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
-                        {
-                            Settings.Default.ArrayExcludeList.Add(excludeItem);
-                            MessageBox.Show(Application.Current.MainWindow, $"Added registry key ({regKeyPath}) to the exclude list", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
-                            Tree.RemoveNode(Tree.SelectedNode);
-                        }
-                        else
-                            MessageBox.Show(Application.Current.MainWindow, $"Registry key ({regKeyPath}) already exists", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        break;
+                        MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName,
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
                     }
+
+                    var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
+
+                    var excludeItem = new ExcludeItem {RegistryPath = regKeyPath};
+                    if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
+                    {
+                        Settings.Default.ArrayExcludeList.Add(excludeItem);
+                        MessageBox.Show(Application.Current.MainWindow,
+                            $"Added registry key ({regKeyPath}) to the exclude list", Utils.ProductName,
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        Tree.RemoveNode(Tree.SelectedNode);
+                    }
+                    else
+                        MessageBox.Show(Application.Current.MainWindow, $"Registry key ({regKeyPath}) already exists",
+                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+                }
                 case "View In RegEdit":
+                {
+                    if (Tree.SelectedNode == null)
                     {
-                        if (Tree.SelectedNode == null)
-                        {
-                            MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-
-                        try
-                        {
-                            var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
-                            var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
-
-                            RegEditGo.GoTo(regKeyPath, regKeyValueName);
-                        }
-                        catch (Exception ex)
-                        {
-                            string message = $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
-
-                            MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                        
-                        break;
+                        MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName,
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
                     }
+
+                    try
+                    {
+                        var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
+                        var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
+
+                        RegEditGo.GoTo(regKeyPath, regKeyValueName);
+                    }
+                    catch (Exception ex)
+                    {
+                        string message =
+                            $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
+
+                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
+
+                    break;
+                }
             }
         }
-        
-	}
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
+    }
 }

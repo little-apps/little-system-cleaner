@@ -26,13 +26,11 @@ using Little_System_Cleaner.Properties;
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
     /// <summary>
-    /// Interaction logic for Start.xaml
+    ///     Interaction logic for Start.xaml
     /// </summary>
     public partial class Start
     {
-        readonly Wizard _scanBase;
-
-        public SectionModel Model { get; set; } = null;
+        private readonly Wizard _scanBase;
 
         public Start(Wizard sb)
         {
@@ -53,12 +51,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
             CheckBoxDisplayLog.IsChecked = Settings.Default.privacyCleanerDisplayLog;
         }
 
+        public SectionModel Model { get; set; } = null;
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             Wizard.SqLiteLoaded = Utils.IsAssemblyLoaded("System.Data.SQLite", new Version(1, 0, 66), true);
 
             if (!Wizard.SqLiteLoaded)
-                MessageBox.Show(Application.Current.MainWindow, "It appears that System.Data.SQLite.dll is not loaded, because of this, some privacy information will not be able to be cleaned.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.66.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);   
+                MessageBox.Show(Application.Current.MainWindow,
+                    "It appears that System.Data.SQLite.dll is not loaded, because of this, some privacy information will not be able to be cleaned.\n\nPlease ensure that the file is located in the same folder as Little System Cleaner and that the version is at least 1.0.66.",
+                    Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void UpdateSettings(object sender, RoutedEventArgs e)
@@ -82,15 +84,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             _scanBase.Model = Tree.Model as SectionModel;
 
-            if (_scanBase.Model != null && !_scanBase.Model.RootChildren.Any(n => n.IsChecked == null || n.IsChecked == true))
+            if (_scanBase.Model != null &&
+                !_scanBase.Model.RootChildren.Any(n => n.IsChecked == null || n.IsChecked == true))
             {
-                MessageBox.Show(Application.Current.MainWindow, "At least one item must be selected in order for privacy issues to be found.", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow,
+                    "At least one item must be selected in order for privacy issues to be found.", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             _scanBase.MoveNext();
         }
-
-        
     }
 }

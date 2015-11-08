@@ -2,11 +2,6 @@
 {
     public class LviFolder
     {
-        public string Folder
-        {
-            get;
-            set;
-        }
-
+        public string Folder { get; set; }
     }
 }

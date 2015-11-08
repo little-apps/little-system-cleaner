@@ -3,22 +3,21 @@ using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
-    [XmlInclude(typeof(IncludeDrive))]
+    [XmlInclude(typeof (IncludeDrive))]
     public class IncludeDrive
     {
-        public bool? IsChecked { get; set; } = true;
-
-        public string Name { get; set; }
-
         public IncludeDrive()
         {
-
         }
 
         public IncludeDrive(DriveInfo drive)
         {
             Name = drive.ToString();
         }
+
+        public bool? IsChecked { get; set; } = true;
+
+        public string Name { get; set; }
 
         public override bool Equals(object obj)
         {

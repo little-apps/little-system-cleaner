@@ -1,18 +1,18 @@
 ﻿<UserControl x:Class="Little_System_Cleaner.Privacy_Cleaner.Controls.Start"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              MinWidth="579" MinHeight="384"
              Loaded="UserControl_Loaded"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition/>
-            <RowDefinition Height="47"/>
+            <RowDefinition Height="30" />
+            <RowDefinition />
+            <RowDefinition Height="47" />
         </Grid.RowDefinitions>
         <Border CornerRadius="5" Margin="0,0,0,0" Grid.Row="0">
             <Border.Effect>
@@ -20,12 +20,13 @@
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0"/>
-                    <GradientStop Color="Gray" Offset="1"/>
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="Gray" Offset="1" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Privacy Cleaner" Margin="8,0" Foreground="White" Height="28" HorizontalAlignment="Left" />
+                <Label FontSize="14" Content="Privacy Cleaner" Margin="8,0" Foreground="White" Height="28"
+                       HorizontalAlignment="Left" />
                 <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 1 of 3</Label>
             </Grid>
         </Border>
@@ -35,7 +36,7 @@
                     <tree:TreeList.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <tree:RowExpander/>
+                                <tree:RowExpander />
                                 <CheckBox Margin="0,0,5,0" IsChecked="{Binding IsChecked}" />
                                 <Image Margin="0,0,5,0" Width="16" Height="16" Source="{Binding bMapImg}" />
                                 <TextBlock Margin="0,0,5,0" Text="{Binding Name}" />
@@ -48,35 +49,46 @@
                 <StackPanel>
                     <GroupBox Header="Select how files will be cleaned from the disk">
                         <StackPanel Margin="5,5,5,5">
-                            <RadioButton x:Name="RadioButtonPerm" Content="Permanently remove files from hard disk (recommended)" Click="UpdateSettings" />
-                            <RadioButton x:Name="RadioButtonMove" Content="Remove files and move them to the recycle bin" Click="UpdateSettings" />
+                            <RadioButton x:Name="RadioButtonPerm"
+                                         Content="Permanently remove files from hard disk (recommended)"
+                                         Click="UpdateSettings" />
+                            <RadioButton x:Name="RadioButtonMove"
+                                         Content="Remove files and move them to the recycle bin" Click="UpdateSettings" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Search options">
                         <StackPanel Margin="5,5,5,5">
                             <DockPanel LastChildFill="False">
-                                <CheckBox x:Name="CheckBoxReadOnly" Content="Include read-only files" DockPanel.Dock="Left" Click="UpdateSettings" />
-                                <CheckBox x:Name="CheckBoxSystem" Content="Include system files" DockPanel.Dock="Right" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxReadOnly" Content="Include read-only files"
+                                          DockPanel.Dock="Left" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxSystem" Content="Include system files" DockPanel.Dock="Right"
+                                          Click="UpdateSettings" />
                             </DockPanel>
                             <DockPanel LastChildFill="False" Margin="0,5,0,0">
-                                <CheckBox x:Name="CheckBoxHidden" Content="Include hidden files" DockPanel.Dock="Left" Click="UpdateSettings" />
-                                <CheckBox x:Name="CheckBoxZeroByte" Content="Include zero-byte files" DockPanel.Dock="Right" Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxHidden" Content="Include hidden files" DockPanel.Dock="Left"
+                                          Click="UpdateSettings" />
+                                <CheckBox x:Name="CheckBoxZeroByte" Content="Include zero-byte files"
+                                          DockPanel.Dock="Right" Click="UpdateSettings" />
                             </DockPanel>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Log">
                         <StackPanel Margin="5,5,5,5">
-                            <CheckBox x:Name="CheckBoxLogScan" Content="Log privacy scan and repairs" Click="UpdateSettings" />
-                            <CheckBox x:Name="CheckBoxDisplayLog" Content="Show log after finished scanning" Click="UpdateSettings" Margin="0,5,0,0" />
+                            <CheckBox x:Name="CheckBoxLogScan" Content="Log privacy scan and repairs"
+                                      Click="UpdateSettings" />
+                            <CheckBox x:Name="CheckBoxDisplayLog" Content="Show log after finished scanning"
+                                      Click="UpdateSettings" Margin="0,5,0,0" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <Button x:Name="ButtonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center"  Click="buttonScan_Click">
+        <Button x:Name="ButtonScan" Margin="0,5,0,5" Padding="8,0,8,0" Grid.Row="2" HorizontalAlignment="Center"
+                Click="buttonScan_Click">
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal">
                 <Image Width="32" Height="32" Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
-                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now" TextWrapping="Wrap"/>
+                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="16" Text="Scan Now"
+                           TextWrapping="Wrap" />
             </StackPanel>
         </Button>
     </Grid>
