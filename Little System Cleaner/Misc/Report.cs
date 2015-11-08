@@ -105,15 +105,15 @@ namespace Little_System_Cleaner.Misc
                             memoryStream?.WriteTo(fileStream);
                         }
 
-                        if (displayFile)
-                        {
-                            var startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
-                            {
-                                ErrorDialog = true
-                            };
+                        if (!displayFile)
+                            return true;
 
-                            Process.Start(startInfo);
-                        }
+                        var startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
+                        {
+                            ErrorDialog = true
+                        };
+
+                        Process.Start(startInfo);
 
                         return true;
                     }
