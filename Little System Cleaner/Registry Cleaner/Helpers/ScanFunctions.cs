@@ -73,11 +73,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             var ret = Utils.ValidDriveType(strDirectory);
             switch (ret)
             {
-                case Utils.VDTReturn.InvalidDrive:
+                case Utils.VdtReturn.InvalidDrive:
                     return false;
-                case Utils.VDTReturn.SkipCheck:
+                case Utils.VdtReturn.SkipCheck:
                     return true;
-                case Utils.VDTReturn.ValidDrive:
+                case Utils.VdtReturn.ValidDrive:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

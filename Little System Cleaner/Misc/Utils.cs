@@ -114,11 +114,11 @@ namespace Little_System_Cleaner.Misc
         /// </summary>
         /// <param name="path">Path containing drive</param>
         /// <returns>ValidDriveTypeReturn enum</returns>
-        internal static VDTReturn ValidDriveType(string path)
+        internal static VdtReturn ValidDriveType(string path)
         {
             var sb = new StringBuilder(path);
             if (!PInvoke.PathStripToRoot(sb))
-                return VDTReturn.ValidDrive;
+                return VdtReturn.ValidDrive;
 
             var dt = PInvoke.GetDriveType(sb.ToString());
 
@@ -128,15 +128,15 @@ namespace Little_System_Cleaner.Misc
                 if (dt == DriveType.Removable ||
                     dt == DriveType.Network ||
                     dt == DriveType.CDRom)
-                    return VDTReturn.SkipCheck;
+                    return VdtReturn.SkipCheck;
             }
 
             // Return false for unkown and no root dir
             if (dt == DriveType.NoRootDirectory ||
                 dt == DriveType.Unknown)
-                return VDTReturn.InvalidDrive;
+                return VdtReturn.InvalidDrive;
 
-            return VDTReturn.ValidDrive;
+            return VdtReturn.ValidDrive;
         }
 
 
@@ -226,11 +226,11 @@ namespace Little_System_Cleaner.Misc
             var ret = ValidDriveType(strFileName);
             switch (ret)
             {
-                case VDTReturn.InvalidDrive:
+                case VdtReturn.InvalidDrive:
                     return false;
-                case VDTReturn.SkipCheck:
+                case VdtReturn.SkipCheck:
                     return true;
-                case VDTReturn.ValidDrive:
+                case VdtReturn.ValidDrive:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -836,7 +836,7 @@ namespace Little_System_Cleaner.Misc
             return System.Windows.Application.Current.Dispatcher.BeginInvoke(showMsgBox);
         }
 
-        internal enum VDTReturn
+        internal enum VdtReturn
         {
             ValidDrive = 0,
             InvalidDrive = 1,
