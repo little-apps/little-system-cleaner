@@ -89,6 +89,7 @@ namespace Little_System_Cleaner.Misc
 
         /// <summary>
         ///     Starts system restore
+        ///     Use SysRestore.EndRestore or SysRestore.CancelRestore to end the system restore
         /// </summary>
         /// <param name="strDescription">The description of the restore</param>
         /// <param name="lSeqNum">Returns the sequence number</param>
@@ -96,7 +97,6 @@ namespace Little_System_Cleaner.Misc
         ///     Thrown when STATEMGRSTATUS.nStatus doesn't equal 0
         ///     (ERROR_SUCCESS)
         /// </exception>
-        /// <seealso cref="Use SysRestore.EndRestore or SysRestore.CancelRestore to end the system restore" />
         internal static void StartRestore(string strDescription, out long lSeqNum)
         {
             var rpInfo = new RestorePointInfo();
