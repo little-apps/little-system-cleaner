@@ -1,5 +1,7 @@
-﻿using CommonTools.TreeListView.Tree;
+﻿using System.Linq;
+using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Duplicate_Finder.Controls;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -17,10 +19,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 {
                     var res = new Result();
 
-                    foreach (var fileEntry in kvp.Value)
-                    {
-                        res.Children.Add(new Result(fileEntry, res));
-                    }
+                    res.Children.AddRange(kvp.Value.Select(fileEntry => new Result(fileEntry, res)));
 
                     model.Root.Children.Add(res);
                 }
@@ -33,10 +32,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 var res = new Result();
 
-                foreach (var fileEntry in kvp.Value)
-                {
-                    res.Children.Add(new Result(fileEntry, res));
-                }
+                res.Children.AddRange(kvp.Value.Select(fileEntry => new Result(fileEntry, res)));
 
                 model.Root.Children.Add(res);
             }

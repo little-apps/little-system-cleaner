@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
@@ -17,13 +18,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 var rootBadRegKey = new BadRegistryKey(scanner.bMapImg, scanner.ScannerName);
 
-                foreach (
-                    var childBadRegKey in
-                        Wizard.badRegKeyArray.Cast<BadRegistryKey>()
-                            .Where(childBadRegKey => scanner.ScannerName == childBadRegKey.SectionName))
-                {
-                    rootBadRegKey.Children.Add(childBadRegKey);
-                }
+                rootBadRegKey.Children.AddRange(
+                    Wizard.badRegKeyArray.Cast<BadRegistryKey>()
+                        .Where(childBadRegKey => scanner.ScannerName == childBadRegKey.SectionName));
 
                 rootBadRegKey.Init();
 

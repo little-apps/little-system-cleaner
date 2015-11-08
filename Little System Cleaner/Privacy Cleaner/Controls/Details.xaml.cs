@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using Little_System_Cleaner.Misc;
@@ -64,27 +65,28 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
             if (resultNode.FilePaths != null)
             {
-                foreach (var filePath in resultNode.FilePaths)
-                {
-                    var fileSize = Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath));
-                    var lastAccessDate = Directory.GetLastAccessTime(filePath).ToString();
-
-                    DetailItemCollection.Add(new DetailItem { Name = filePath, Size = fileSize, AccessDate = lastAccessDate });
-                }
+                DetailItemCollection.AddRange(resultNode.FilePaths.Select(
+                    filePath =>
+                        new DetailItem
+                        {
+                            Name = filePath,
+                            Size = Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath)),
+                            AccessDate = Directory.GetLastAccessTime(filePath).ToString()
+                        }));
             }
 
             if (resultNode.FolderPaths != null)
             {
-                foreach (var kvp in resultNode.FolderPaths)
-                {
-                    var folderPath = kvp.Key;
-                    //SearchOption recurse = ((kvp.Value)?(SearchOption.AllDirectories):(SearchOption.TopDirectoryOnly));
-
-                    var folderSize = Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false));
-                    var lastAccessDate = Directory.GetLastAccessTime(folderPath).ToString();
-
-                    DetailItemCollection.Add(new DetailItem { Name = folderPath, Size = folderSize, AccessDate = lastAccessDate });
-                }
+                DetailItemCollection.AddRange(
+                    resultNode.FolderPaths.Select(kvp => kvp.Key)
+                        .Select(
+                            folderPath =>
+                                new DetailItem
+                                {
+                                    Name = folderPath,
+                                    Size = Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false)),
+                                    AccessDate = Directory.GetLastAccessTime(folderPath).ToString()
+                                }));
             }
 
             ListView.AutoResizeColumns();

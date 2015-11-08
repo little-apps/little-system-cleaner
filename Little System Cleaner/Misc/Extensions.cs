@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -166,6 +167,14 @@ namespace Little_System_Cleaner.Misc
             totalSize += dirs.Sum(dir => dir.CalculateDirectorySize(true));
 
             return totalSize;
+        }
+
+        internal static void AddRange<T>(this ObservableCollection<T> observableCollection, IEnumerable<T> enumerable)
+        {
+            foreach (var item in enumerable)
+            {
+                observableCollection.Add(item);
+            }
         }
     }
 }

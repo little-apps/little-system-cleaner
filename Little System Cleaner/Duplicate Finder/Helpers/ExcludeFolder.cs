@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -83,13 +84,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) // AppData directory
             };
 
-            foreach (
-                var excFolder in
-                    folderPaths.Select(folderPath => new ExcludeFolder(folderPath, true))
-                        .Where(excFolder => !excFolders.Contains(excFolder)))
-            {
-                excFolders.Add(excFolder);
-            }
+            excFolders.AddRange(
+                folderPaths.Select(folderPath => new ExcludeFolder(folderPath, true))
+                    .Where(excFolder => !excFolders.Contains(excFolder)));
 
             return excFolders;
         }

@@ -33,17 +33,17 @@ using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Controls
 {
-	public partial class UninstallManager
-	{
-        GridViewColumn _lastColumnClicked;
-        ListSortDirection _lastDirection = ListSortDirection.Ascending;
+    public partial class UninstallManager
+    {
+        private GridViewColumn _lastColumnClicked;
+        private ListSortDirection _lastDirection = ListSortDirection.Ascending;
 
-	    public ObservableCollection<ProgramInfo> ProgramInfos { get; } = new ObservableCollection<ProgramInfo>();
+        public UninstallManager()
+        {
+            InitializeComponent();
+        }
 
-	    public UninstallManager()
-		{
-			InitializeComponent();
-		}
+        public ObservableCollection<ProgramInfo> ProgramInfos { get; } = new ObservableCollection<ProgramInfo>();
 
         public void OnLoaded()
         {
@@ -53,7 +53,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             Sort((ListViewProgs.View as GridView)?.Columns[0], _lastDirection);
         }
 
-	    public bool OnUnloaded(bool forceExit)
+        public bool OnUnloaded(bool forceExit)
         {
             if (ProgramInfos.Count > 0)
                 ProgramInfos.Clear();
@@ -70,11 +70,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             ProgramInfos.Clear();
 
             // Turn textbox into regex pattern
-            Regex regex = new Regex("", RegexOptions.IgnoreCase);
+            var regex = new Regex("", RegexOptions.IgnoreCase);
 
             if (TextBoxSearch.HasText)
             {
-                StringBuilder result = new StringBuilder();
+                var result = new StringBuilder();
                 foreach (var str in TextBoxSearch.Text.Split(' '))
                 {
                     result.Append(Regex.Escape(str));
@@ -104,7 +104,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName + "...");
+                            Debug.WriteLine("The following error occurred: " + ex.Message +
+                                            "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName + "...");
                         }
                         finally
                         {
@@ -115,7 +116,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to open " + @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+                Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to open " +
+                                @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             }
             finally
             {
@@ -127,7 +129,9 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             {
                 try
                 {
-                    regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+                    regKey =
+                        Registry.LocalMachine.OpenSubKey(
+                            @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
 
                     if (regKey != null)
                     {
@@ -144,7 +148,9 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                             }
                             catch (Exception ex)
                             {
-                                Debug.WriteLine("The following error occurred: " + ex.Message + "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName + "...");
+                                Debug.WriteLine("The following error occurred: " + ex.Message +
+                                                "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName +
+                                                "...");
                             }
                             finally
                             {
@@ -155,7 +161,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("The following error occurred: " + ex.Message + "\n" + @"Unable to open SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+                    Debug.WriteLine("The following error occurred: " + ex.Message + "\n" +
+                                    @"Unable to open SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
                 }
                 finally
                 {
@@ -165,13 +172,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
 
             // Populate list view
-            foreach (var progInfo in listProgInfo.Where(progInfo => !string.IsNullOrEmpty(progInfo.DisplayName)
-                                                                    && string.IsNullOrEmpty(progInfo.ParentKeyName)
-                                                                    && !progInfo.SystemComponent)
-                .Where(progInfo => regex.IsMatch(progInfo.Program)))
-            {
-                ProgramInfos.Add(progInfo);
-            }
+            ProgramInfos.AddRange(
+                listProgInfo.Where(
+                    progInfo =>
+                        !string.IsNullOrEmpty(progInfo.DisplayName) && string.IsNullOrEmpty(progInfo.ParentKeyName) &&
+                        !progInfo.SystemComponent).Where(progInfo => regex.IsMatch(progInfo.Program)));
 
             // Resize columns
             ListViewProgs.AutoResizeColumns();
@@ -195,7 +200,9 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                     if (!Equals(headerClicked.Column, _lastColumnClicked))
                         direction = ListSortDirection.Ascending;
                     else
-                        direction = _lastDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+                        direction = _lastDirection == ListSortDirection.Ascending
+                            ? ListSortDirection.Descending
+                            : ListSortDirection.Ascending;
 
                     Sort(headerClicked.Column, direction);
                 }
@@ -212,7 +219,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             dataView.SortDescriptions.Add(sd);
             dataView.Refresh();*/
 
-            var dataView = (ListCollectionView)CollectionViewSource.GetDefaultView(ListViewProgs.ItemsSource);
+            var dataView = (ListCollectionView) CollectionViewSource.GetDefaultView(ListViewProgs.ItemsSource);
             dataView.CustomSort = new ProgramInfoSorter(column, direction);
             dataView.Refresh();
 
@@ -233,13 +240,17 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
         {
             if (ListViewProgs.SelectedItems.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             var progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program from the registry?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow,
+                    "Are you sure you want to remove this program from the registry?", Utils.ProductName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Main.Watcher.Event("Uninstall Manager", "Remove from registry");
                 progInfo?.RemoveFromRegistry();
@@ -255,13 +266,16 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
         {
             if (ListViewProgs.SelectedItems.Count == 0)
             {
-                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Application.Current.MainWindow, "No entry selected", Utils.ProductName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             var progInfo = ListViewProgs.SelectedItems[0] as ProgramInfo;
 
-            if (MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?", Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (
+                MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?",
+                    Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Main.Watcher.Event("Uninstall Manager", "Uninstall");
                 progInfo?.Uninstall();
@@ -280,6 +294,5 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             // Manually sort listview
             Sort((ListViewProgs.View as GridView)?.Columns[0], _lastDirection);
         }
-
-	}
+    }
 }

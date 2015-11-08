@@ -406,18 +406,13 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 var winDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
 
-                foreach (
-                    var listViewItem in
-                        DriveInfo.GetDrives()
-                            .Where(driveInfo => driveInfo.IsReady && driveInfo.DriveType == DriveType.Fixed)
-                            .Select(
-                                driveInfo =>
-                                    new LviDrive(winDir.Contains(driveInfo.Name), driveInfo.Name, driveInfo.DriveFormat,
-                                        Utils.ConvertSizeToString(driveInfo.TotalSize),
-                                        Utils.ConvertSizeToString(driveInfo.TotalFreeSpace), driveInfo)))
-                {
-                    DrivesCollection.Add(listViewItem);
-                }
+                DrivesCollection.AddRange(DriveInfo.GetDrives()
+                    .Where(driveInfo => driveInfo.IsReady && driveInfo.DriveType == DriveType.Fixed)
+                    .Select(
+                        driveInfo =>
+                            new LviDrive(winDir.Contains(driveInfo.Name), driveInfo.Name, driveInfo.DriveFormat,
+                                Utils.ConvertSizeToString(driveInfo.TotalSize),
+                                Utils.ConvertSizeToString(driveInfo.TotalFreeSpace), driveInfo)));
 
                 if (Settings.Default.diskCleanerIncludedFolders == null)
                 {
@@ -434,18 +429,21 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             OnPropertyChanged("DrivesCollection");
 
             // Excluded Dirs
-            foreach (var excludeDir in Settings.Default.diskCleanerExcludedDirs)
-                ExcFoldersCollection.Add(new LviFolder { Folder = excludeDir });
+            ExcFoldersCollection.AddRange(
+                Settings.Default.diskCleanerExcludedDirs.Cast<string>()
+                    .Select(excludeDir => new LviFolder {Folder = excludeDir}));
             //this.listViewExcludeFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Excluded Files
-            foreach (var excludeFile in Settings.Default.diskCleanerExcludedFileTypes)
-                ExcFilesCollection.Add(new LviFile { File = excludeFile });
+            ExcFilesCollection.AddRange(
+                Settings.Default.diskCleanerExcludedFileTypes.Cast<string>()
+                    .Select(excludeFile => new LviFile { File = excludeFile }));
             //this.listViewFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Included Folders
-            foreach (var includedFolder in Settings.Default.diskCleanerIncludedFolders)
-                IncFoldersCollection.Add(new LviFolder { Folder = includedFolder });
+            IncFoldersCollection.AddRange(
+                Settings.Default.diskCleanerIncludedFolders.Cast<string>()
+                    .Select(includedFolder => new LviFolder {Folder = includedFolder}));
             //this.listViewIncFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
@@ -453,18 +451,18 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             // Included Folders
             Settings.Default.diskCleanerIncludedFolders.Clear();
-            foreach (var lvi in IncFoldersCollection)
-                Settings.Default.diskCleanerIncludedFolders.Add(lvi.Folder);
+            Settings.Default.diskCleanerIncludedFolders.AddRange(
+                IncFoldersCollection.Select(lvi => lvi.Folder).ToArray());
 
             // Excluded Folders
             Settings.Default.diskCleanerExcludedDirs.Clear();
-            foreach (var lvi in ExcFoldersCollection)
-                Settings.Default.diskCleanerExcludedDirs.Add(lvi.Folder);
+            Settings.Default.diskCleanerExcludedDirs.AddRange(
+                ExcFoldersCollection.Select(lvi => lvi.Folder).ToArray());
 
             // Excluded Files
             Settings.Default.diskCleanerExcludedFileTypes.Clear();
-            foreach (var lvi in ExcFilesCollection)
-                Settings.Default.diskCleanerExcludedFileTypes.Add(lvi.File);
+            Settings.Default.diskCleanerExcludedFileTypes.AddRange(
+                ExcFilesCollection.Select(lvi => lvi.File).ToArray());
         }
 
         private void buttonAddIncFolder_Click(object sender, RoutedEventArgs e)
@@ -476,7 +474,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void addIncFolder_AddIncFolder(object sender, AddIncFolderEventArgs e)
         {
-            IncFoldersCollection.Add(new LviFolder { Folder = e.FolderPath });
+            IncFoldersCollection.Add(new LviFolder {Folder = e.FolderPath});
         }
 
         private void buttonAddExcludeFolder_Click(object sender, RoutedEventArgs e)
@@ -488,7 +486,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         void addFolder_AddExcludeFolder(object sender, AddExcludeFolderEventArgs e)
         {
-            ExcFoldersCollection.Add(new LviFolder { Folder = e.FolderPath });
+            ExcFoldersCollection.Add(new LviFolder {Folder = e.FolderPath});
         }
 
         private void buttonFilesAdd_Click(object sender, RoutedEventArgs e)
@@ -500,7 +498,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void addFileType_AddFileType(object sender, AddFileTypeEventArgs e)
         {
-            ExcFilesCollection.Add(new LviFile { File = e.FileType });
+            ExcFilesCollection.Add(new LviFile {File = e.FileType});
         }
 
         private void buttonRemExcludeFile_Click(object sender, RoutedEventArgs e)
@@ -551,15 +549,32 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         private void SearchFilterChange()
         {
             var masks = new List<string>();
-            string[] allFilters = { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous" };
+            string[] allFilters =
+            {
+                "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$",
+                "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$",
+                "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps",
+                "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous"
+            };
             string[] filters = { };
 
             if (SearchFilterSafe.GetValueOrDefault())
-                filters = new[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*" };
+                filters = new[] {"*.tmp", "*.temp", "*.gid", "*.chk", "*.~*"};
             else if (SearchFilterMedium.GetValueOrDefault())
-                filters = new[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir" };
+                filters = new[]
+                {
+                    "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*",
+                    "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*",
+                    "mscreate.dir"
+                };
             else if (SearchFilterAggressive.GetValueOrDefault())
-                filters = new[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*", "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous" };
+                filters = new[]
+                {
+                    "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*", "*.old", "*.fts", "*.ftg", "*.$$$", "*.---", "~*.*",
+                    "*.??$", "*.___", "*._mp", "*.dmp", "*.prv", "CHKLIST.MS", "*.$db", "*.??~", "*.db$", "chklist.*",
+                    "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps", "*.ncb",
+                    "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous"
+                };
 
             masks.AddRange(
                 SearchFilter.Split(';')
