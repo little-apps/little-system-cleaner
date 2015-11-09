@@ -21,7 +21,7 @@ using System.Windows;
 
 [assembly: ComVisible(false)]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
+// The following GUID is for the Id of the typelib if this project is exposed to COM
 //[assembly: Guid("ae58f2e2-9659-4fa7-8cce-564106f98dd4")]
 
 [assembly: ThemeInfo(

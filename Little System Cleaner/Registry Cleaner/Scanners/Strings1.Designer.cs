@@ -39,7 +39,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    var temp = new global::System.Resources.ResourceManager("Little_System_Cleaner.Registry_Cleaner.Scanners.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Little_System_Cleaner.Registry_Cleaner.Scanners.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -133,7 +133,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unused ProgID/File Extension.
+        ///   Looks up a localized string similar to Unused ProgId/File Extension.
         /// </summary>
         internal static string InvalidProgIDFileExt {
             get {
@@ -160,7 +160,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing AppID reference.
+        ///   Looks up a localized string similar to Missing AppId reference.
         /// </summary>
         internal static string MissingAppID {
             get {
@@ -169,7 +169,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing CLSID reference.
+        ///   Looks up a localized string similar to Missing CLSId reference.
         /// </summary>
         internal static string MissingCLSID {
             get {
@@ -178,7 +178,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing ProgID reference.
+        ///   Looks up a localized string similar to Missing ProgId reference.
         /// </summary>
         internal static string MissingProgID {
             get {

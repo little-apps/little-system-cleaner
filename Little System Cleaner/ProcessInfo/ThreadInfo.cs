@@ -11,7 +11,7 @@ namespace Little_System_Cleaner.ProcessInfo
             _processThread = thread;
         }
 
-        public string ID => ProcessInfo.TryCatch(() => _processThread.Id.ToString(), nameof(ID), true);
+        public string Id => ProcessInfo.TryCatch(() => _processThread.Id.ToString(), nameof(Id), true);
 
         public string StartAddress
             => ProcessInfo.TryCatch(() => _processThread.StartAddress.ToString("X8"), nameof(StartAddress), true);

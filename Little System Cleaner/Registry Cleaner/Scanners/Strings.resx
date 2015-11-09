@@ -142,7 +142,7 @@
     <value>Unable to find InprocServer32</value>
   </data>
   <data name="InvalidProgIDFileExt" xml:space="preserve">
-    <value>Unused ProgID/File Extension</value>
+    <value>Unused ProgId/File Extension</value>
   </data>
   <data name="InvalidRegKey" xml:space="preserve">
     <value>Invalid registry key</value>
@@ -151,13 +151,13 @@
     <value>Toolbar is invalid</value>
   </data>
   <data name="MissingAppID" xml:space="preserve">
-    <value>Missing AppID reference</value>
+    <value>Missing AppId reference</value>
   </data>
   <data name="MissingCLSID" xml:space="preserve">
-    <value>Missing CLSID reference</value>
+    <value>Missing CLSId reference</value>
   </data>
   <data name="MissingProgID" xml:space="preserve">
-    <value>Missing ProgID reference</value>
+    <value>Missing ProgId reference</value>
   </data>
   <data name="NoRegKey" xml:space="preserve">
     <value>The registry key doesn't contain any data</value>

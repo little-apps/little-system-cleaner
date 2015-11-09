@@ -330,11 +330,11 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 Thread.Sleep(1000);
 
                 if (proc.HasExited)
-                    message = $"The program was started with ID {proc.Id} but then exited with exit code {proc.ExitCode}";
+                    message = $"The program was started with Id {proc.Id} but then exited with exit code {proc.ExitCode}";
                 else if (proc.MainWindowHandle == IntPtr.Zero)
-                    message = $"The program was started with ID {proc.Id} but it does not appear to have a graphical interface";
+                    message = $"The program was started with Id {proc.Id} but it does not appear to have a graphical interface";
                 else
-                    message = $"Successfully started program with ID {proc.Id}";
+                    message = $"Successfully started program with Id {proc.Id}";
 
                 MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
             }

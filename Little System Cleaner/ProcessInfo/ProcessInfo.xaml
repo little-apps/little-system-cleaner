@@ -37,7 +37,7 @@
                 </DockPanel>
                 <DockPanel>
                     <DockPanel LastChildFill="True" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="265">
-                        <Label DockPanel.Dock="Left">ID:</Label>
+                        <Label DockPanel.Dock="Left">Id:</Label>
                         <TextBox Width="Auto" DockPanel.Dock="Right" IsReadOnly="True"
                                  Text="{Binding Path=ProcId, Mode=OneWay}" />
                     </DockPanel>
@@ -164,7 +164,7 @@
             <ListView Height="180" ItemsSource="{Binding Path=ProcThreads}">
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}" Width="25" />
+                        <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="25" />
                         <GridViewColumn Header="Start Address" DisplayMemberBinding="{Binding StartAddress}"
                                         Width="100" />
                         <GridViewColumn Header="Priority" DisplayMemberBinding="{Binding Priority}" Width="100" />
