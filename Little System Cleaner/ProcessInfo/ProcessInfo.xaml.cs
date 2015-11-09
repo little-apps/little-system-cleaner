@@ -16,10 +16,9 @@ namespace Little_System_Cleaner.ProcessInfo
     /// </summary>
     public partial class ProcessInfo : INotifyPropertyChanged
     {
-        private static readonly Dictionary<string, string> _props = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> Props = new Dictionary<string, string>();
         private readonly Timer _timer = new Timer();
         private string _endDateTime;
-        private IntPtr _mainWindowHandle = IntPtr.Zero;
         private bool _modulesExpanded;
 
         private bool _moreDetailsExpanded;
@@ -341,16 +340,16 @@ namespace Little_System_Cleaner.ProcessInfo
             {
                 var ret = action();
 
-                if (!_props.ContainsKey(propName))
-                    _props.Add(propName, ret);
+                if (!Props.ContainsKey(propName))
+                    Props.Add(propName, ret);
                 else if (valueChanges)
-                    _props[propName] = ret;
+                    Props[propName] = ret;
 
-                return _props[propName];
+                return Props[propName];
             }
             catch (Exception e)
             {
-                var origValue = _props.ContainsKey(propName) ? _props[propName] : defaultValue;
+                var origValue = Props.ContainsKey(propName) ? Props[propName] : defaultValue;
 
                 return returnErrorMessage ? e.Message : origValue;
             }
