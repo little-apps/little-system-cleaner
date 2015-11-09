@@ -81,12 +81,9 @@ namespace Little_System_Cleaner
                     else
                     {
                         // If mutex isnt available, show message and exit...
-                        if (!bMutexCreated)
-                        {
-                            MessageBox.Show("Another program seems to be already running...", Utils.ProductName,
-                                MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
+                        MessageBox.Show("Another program seems to be already running...", Utils.ProductName,
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
                     }
                 }
 
