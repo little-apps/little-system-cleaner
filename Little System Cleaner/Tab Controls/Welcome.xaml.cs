@@ -82,6 +82,7 @@ namespace Little_System_Cleaner.Tab_Controls
                 regKey?.Close();
             }
 
+            // TODO: Returning wrong memory size
             TotalRam.Text = GlobalMemoryStatusEx(memStatus)
                 ? $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory"
                 : "Unknown";

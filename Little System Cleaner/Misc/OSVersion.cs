@@ -23,6 +23,11 @@ namespace Little_System_Cleaner.Misc
 {
     internal static class OsVersion
     {
+        /// <summary>
+        /// Gets the OS version as a name
+        /// </summary>
+        /// <remarks>TODO: Fix GetVersionEx from always returning 6.2 on Windows 8.1 and Windows 10</remarks>
+        /// <returns>Name of OS version</returns>
         internal static string GetOsVersion()
         {
             var osVersionInfo = new PInvoke.OsVersionInfoEx
@@ -157,8 +162,9 @@ namespace Little_System_Cleaner.Misc
                             switch (osVersionInfo.dwMinorVersion)
                             {
                                 case 0:
-                                    // TODO: May need updating when next version of Windows Server announced
-                                    osName += "Windows 10";
+                                    osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
+                                        ? "Windows 10"
+                                        : "Windows Server 2016";
                                     break;
                             }
                         }
