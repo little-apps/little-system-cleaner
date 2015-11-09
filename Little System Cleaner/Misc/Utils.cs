@@ -391,10 +391,7 @@ namespace Little_System_Cleaner.Misc
         {
             var path = new StringBuilder(260);
 
-            if (PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, csidl, false))
-                return string.Copy(path.ToString());
-
-            return "";
+            return PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, csidl, false) ? string.Copy(path.ToString()) : "";
         }
 
         internal static bool SearchPath(string fileName)
@@ -500,12 +497,7 @@ namespace Little_System_Cleaner.Misc
 
             var nResult = PInvoke.FindExecutableA(strFilename, string.Empty, strResultBuffer);
 
-            if (nResult >= 32)
-            {
-                return strResultBuffer.ToString();
-            }
-
-            return $"Error: ({nResult})";
+            return nResult >= 32 ? strResultBuffer.ToString() : $"Error: ({nResult})";
         }
 
         /// <summary>
