@@ -37,31 +37,31 @@ namespace Little_System_Cleaner.Misc
         {
             IsEnabled = isEnabled;
 
-            if (IsEnabled)
+            if (!IsEnabled)
+                return;
+
+            try
             {
-                try
-                {
-                    // Flush the buffers automatically
-                    AutoFlush = true;
+                // Flush the buffers automatically
+                AutoFlush = true;
 
-                    // Create log directory if it doesnt exist
-                    if (!Directory.Exists(Settings.Default.OptionsLogDir))
-                        Directory.CreateDirectory(Settings.Default.OptionsLogDir);
+                // Create log directory if it doesnt exist
+                if (!Directory.Exists(Settings.Default.OptionsLogDir))
+                    Directory.CreateDirectory(Settings.Default.OptionsLogDir);
 
-                    lock (_lockObject)
-                    {
-                        // Writes header to log file
-                        WriteLine("Little System Cleaner " + Application.ProductVersion);
-                        WriteLine("Website: http://www.little-apps.com/little-system-cleaner/");
-                        WriteLine("Date & Time: " + DateTime.Now);
-                        WriteLine("OS: " + OsVersion.GetOsVersion());
-                        WriteLine();
-                    }
-                }
-                catch (Exception ex)
+                lock (_lockObject)
                 {
-                    Debug.WriteLine(ex);
+                    // Writes header to log file
+                    WriteLine("Little System Cleaner " + Application.ProductVersion);
+                    WriteLine("Website: http://www.little-apps.com/little-system-cleaner/");
+                    WriteLine("Date & Time: " + DateTime.Now);
+                    WriteLine("OS: " + OsVersion.GetOsVersion());
+                    WriteLine();
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
             }
         }
 
@@ -90,38 +90,38 @@ namespace Little_System_Cleaner.Misc
         /// <returns>True if the file is displayed</returns>
         public bool DisplayLogFile(bool displayFile)
         {
-            if (IsEnabled)
+            if (!IsEnabled)
+                return false;
+
+            var strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt",
+                Settings.Default.OptionsLogDir, DateTime.Now);
+
+            try
             {
-                var strNewFileName = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.txt",
-                    Settings.Default.OptionsLogDir, DateTime.Now);
-
-                try
+                lock (_lockObject)
                 {
-                    lock (_lockObject)
+                    using (var fileStream = new FileStream(strNewFileName, FileMode.Create, FileAccess.Write))
                     {
-                        using (var fileStream = new FileStream(strNewFileName, FileMode.Create, FileAccess.Write))
-                        {
-                            var memoryStream = BaseStream as MemoryStream;
-                            memoryStream?.WriteTo(fileStream);
-                        }
-
-                        if (!displayFile)
-                            return true;
-
-                        var startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
-                        {
-                            ErrorDialog = true
-                        };
-
-                        Process.Start(startInfo);
-
-                        return true;
+                        var memoryStream = BaseStream as MemoryStream;
+                        memoryStream?.WriteTo(fileStream);
                     }
+
+                    if (!displayFile)
+                        return true;
+
+                    var startInfo = new ProcessStartInfo("NOTEPAD.EXE", strNewFileName)
+                    {
+                        ErrorDialog = true
+                    };
+
+                    Process.Start(startInfo);
+
+                    return true;
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
             }
 
             return false;
