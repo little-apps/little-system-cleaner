@@ -81,11 +81,19 @@ namespace Little_System_Cleaner.Tab_Controls
             {
                 regKey?.Close();
             }
+            
+            try
+            {
+                if (!GlobalMemoryStatusEx(memStatus))
+                    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
 
-            // TODO: Returning wrong memory size
-            TotalRam.Text = GlobalMemoryStatusEx(memStatus)
-                ? $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory"
-                : "Unknown";
+                TotalRam.Text = $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory";
+            }
+            catch
+            {
+                TotalRam.Text = "Unknown";
+            }
+            
 
             OsVersion.Text = Misc.OsVersion.GetOsVersion();
         }
@@ -95,13 +103,13 @@ namespace Little_System_Cleaner.Tab_Controls
         {
             public uint dwLength;
             public uint dwMemoryLoad;
-            public ulong ullAvailExtendedVirtual;
-            public ulong ullAvailPageFile;
-            public ulong ullAvailPhys;
-            public ulong ullAvailVirtual;
-            public ulong ullTotalPageFile;
             public ulong ullTotalPhys;
+            public ulong ullAvailPhys;
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
             public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
+            public ulong ullAvailExtendedVirtual;
 
             public MEMORYSTATUSEX()
             {
