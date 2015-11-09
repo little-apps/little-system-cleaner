@@ -77,9 +77,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             get
             {
-                if (Parent != null)
-                    return Parent.Skipped;
-                return _skipped;
+                return Parent?.Skipped ?? _skipped;
             }
             set
             {
