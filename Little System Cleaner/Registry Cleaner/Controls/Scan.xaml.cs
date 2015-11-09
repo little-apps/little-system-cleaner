@@ -93,7 +93,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <summary>
         ///     Gets the total problems
         /// </summary>
-        internal static int TotalProblems => Wizard.badRegKeyArray.Count;
+        internal static int TotalProblems => Wizard.BadRegKeyArray.Count;
 
         /// <summary>
         ///     Sets the currently scanned item and increments the total
@@ -128,7 +128,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             if (_currentListViewIndex != -1)
             {
-                CurrentListViewItem.Errors = $"{Wizard.badRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
+                CurrentListViewItem.Errors = $"{Wizard.BadRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
                 ListView.Items.Refresh();
             }
         }
@@ -239,7 +239,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (_currentListViewIndex != -1)
             {
                 // Update number of errors in case it wasn't updated yet
-                CurrentListViewItem.Errors = $"{Wizard.badRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
+                CurrentListViewItem.Errors = $"{Wizard.BadRegKeyArray.Problems(CurrentListViewItem.Section)} Errors";
 
                 CurrentListViewItem.Status = "Finished";
                 CurrentListViewItem.UnloadGif();
