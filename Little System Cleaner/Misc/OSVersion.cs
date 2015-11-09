@@ -47,11 +47,11 @@ namespace Little_System_Cleaner.Misc
             {
                 case PlatformID.Win32Windows:
                 {
-                    switch (osVersionInfo.dwMajorVersion)
+                    switch (Environment.OSVersion.Version.Major)
                     {
                         case 4:
                         {
-                            switch (osVersionInfo.dwMinorVersion)
+                            switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
                                     if (osVersionInfo.szCSDVersion == "B" ||
@@ -78,7 +78,7 @@ namespace Little_System_Cleaner.Misc
 
                 case PlatformID.Win32NT:
                 {
-                    switch (osVersionInfo.dwMajorVersion)
+                    switch (Environment.OSVersion.Version.Major)
                     {
                         case 3:
                             osName += "Windows NT 3.5.1";
@@ -96,9 +96,10 @@ namespace Little_System_Cleaner.Misc
                             }
                             break;
 
-                        case 5:
+                            // TODO: Use version helper functions if OS is Windows 2000 Pro/Server or greater (https://msdn.microsoft.com/en-us/library/windows/desktop/dn424972%28v=vs.85%29.aspx)
+                            case 5:
                         {
-                            switch (osVersionInfo.dwMinorVersion)
+                            switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
                                     osName += "Windows 2000";
@@ -125,7 +126,7 @@ namespace Little_System_Cleaner.Misc
 
                         case 6:
                         {
-                            switch (osVersionInfo.dwMinorVersion)
+                            switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
@@ -159,7 +160,7 @@ namespace Little_System_Cleaner.Misc
                             break;
                         case 10:
                         {
-                            switch (osVersionInfo.dwMinorVersion)
+                            switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
@@ -173,10 +174,10 @@ namespace Little_System_Cleaner.Misc
                 }
                     break;
             }
-
+            
             osName += " ";
 
-            switch (osVersionInfo.dwMajorVersion)
+            switch (Environment.OSVersion.Version.Major)
             {
                 case 4:
                 {
