@@ -119,9 +119,10 @@ namespace Little_System_Cleaner.ProcessInfo
             {
                 try
                 {
-                    return ToObservableCollection(_process.Modules
-                        .Cast<ProcessModule>()
-                        .Select(procModule => new ModuleInfo(procModule)));
+                    return
+                        _process.Modules.Cast<ProcessModule>()
+                            .Select(procModule => new ModuleInfo(procModule))
+                            .ToObservableCollection();
                 }
                 catch
                 {
@@ -136,9 +137,10 @@ namespace Little_System_Cleaner.ProcessInfo
             {
                 try
                 {
-                    return ToObservableCollection(_process.Threads
-                        .Cast<ProcessThread>()
-                        .Select(procThread => new ThreadInfo(procThread)));
+                    return
+                        _process.Threads.Cast<ProcessThread>()
+                            .Select(procThread => new ThreadInfo(procThread))
+                            .ToObservableCollection();
                 }
                 catch
                 {
@@ -326,11 +328,6 @@ namespace Little_System_Cleaner.ProcessInfo
             }
 
             _timer.Stop();
-        }
-
-        public ObservableCollection<T> ToObservableCollection<T>(IEnumerable<T> enumeration)
-        {
-            return new ObservableCollection<T>(enumeration);
         }
 
         public static string TryCatch(Func<string> action, string propName, bool valueChanges = false,

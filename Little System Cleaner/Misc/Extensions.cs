@@ -178,5 +178,10 @@ namespace Little_System_Cleaner.Misc
                 observableCollection.Add(item);
             }
         }
+
+        internal static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> enumeration)
+        {
+            return new ObservableCollection<T>(enumeration);
+        }
     }
 }
