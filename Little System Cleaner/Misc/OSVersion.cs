@@ -25,17 +25,17 @@ namespace Little_System_Cleaner.Misc
     {
         internal static string GetOsVersion()
         {
-            var osVersionInfo = new OSVERSIONINFOEX
+            var osVersionInfo = new PInvoke.OsVersionInfoEx
             {
-                dwOSVersionInfoSize = (uint) Marshal.SizeOf(typeof (OSVERSIONINFOEX))
+                dwOSVersionInfoSize = (uint) Marshal.SizeOf(typeof (PInvoke.OsVersionInfoEx))
             };
 
-            var systemInfo = new SYSTEM_INFO();
-            GetSystemInfo(ref systemInfo);
+            var systemInfo = new PInvoke.SystemInfo();
+            PInvoke.GetSystemInfo(ref systemInfo);
 
             var osName = "Microsoft ";
 
-            if (!GetVersionEx(ref osVersionInfo))
+            if (!PInvoke.GetVersionEx(ref osVersionInfo))
                 return string.Empty;
 
             switch (Environment.OSVersion.Platform)
@@ -103,13 +103,13 @@ namespace Little_System_Cleaner.Misc
                                     break;
                                 case 2:
                                 {
-                                    if (osVersionInfo.wSuiteMask == VER_SUITE_WH_SERVER)
+                                    if (osVersionInfo.wSuiteMask == PInvoke.VER_SUITE_WH_SERVER)
                                         osName += "Windows Home Server";
-                                    else if (osVersionInfo.wProductType == VER_NT_WORKSTATION &&
-                                             systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+                                    else if (osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION &&
+                                             systemInfo.wProcessorArchitecture == PInvoke.PROCESSOR_ARCHITECTURE_AMD64)
                                         osName += "Windows XP Professional";
                                     else
-                                        osName += GetSystemMetrics(SM_SERVERR2) == 0
+                                        osName += PInvoke.GetSystemMetrics(PInvoke.SM_SERVERR2) == 0
                                             ? "Windows Server 2003"
                                             : "Windows Server 2003 R2";
                                 }
@@ -123,25 +123,25 @@ namespace Little_System_Cleaner.Misc
                             switch (osVersionInfo.dwMinorVersion)
                             {
                                 case 0:
-                                    osName += osVersionInfo.wProductType == VER_NT_WORKSTATION
+                                    osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
                                         ? "Windows Vista"
                                         : "Windows Server 2008";
                                     break;
 
                                 case 1:
-                                    osName += osVersionInfo.wProductType == VER_NT_WORKSTATION
+                                    osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
                                         ? "Windows 7"
                                         : "Windows Server 2008 R2";
                                     break;
 
                                 case 2:
-                                    osName += osVersionInfo.wProductType == VER_NT_WORKSTATION
+                                    osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
                                         ? "Windows 8"
                                         : "Windows Server 2012";
                                     break;
 
                                 case 3:
-                                    osName += osVersionInfo.wProductType == VER_NT_WORKSTATION
+                                    osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
                                         ? "Windows 8.1"
                                         : "Windows Server 2012 R2";
                                     break;
@@ -176,12 +176,12 @@ namespace Little_System_Cleaner.Misc
                 {
                     switch (osVersionInfo.wProductType)
                     {
-                        case VER_NT_WORKSTATION:
+                        case PInvoke.VER_NT_WORKSTATION:
                             osName += "Workstation";
                             break;
 
-                        case VER_NT_SERVER:
-                            osName += (osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) != 0
+                        case PInvoke.VER_NT_SERVER:
+                            osName += (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0
                                 ? "Enterprise Server"
                                 : "Standard Server";
                             break;
@@ -193,19 +193,19 @@ namespace Little_System_Cleaner.Misc
                 {
                     switch (osVersionInfo.wProductType)
                     {
-                        case VER_NT_WORKSTATION:
-                            osName += (osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) != 0 ? "Home" : "Professional";
+                        case PInvoke.VER_NT_WORKSTATION:
+                            osName += (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_PERSONAL) != 0 ? "Home" : "Professional";
                             break;
 
-                        case VER_NT_SERVER:
+                        case PInvoke.VER_NT_SERVER:
                         {
                             switch (osVersionInfo.dwMinorVersion)
                             {
                                 case 0:
                                 {
-                                    if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) != 0)
+                                    if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_DATACENTER) != 0)
                                         osName += "Data Center Server";
-                                    else if ((osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
+                                    else if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0)
                                         osName += "Advanced Server";
                                     else
                                         osName += "Server";
@@ -214,11 +214,11 @@ namespace Little_System_Cleaner.Misc
 
                                 default:
                                 {
-                                    if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) != 0)
+                                    if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_DATACENTER) != 0)
                                         osName += "Data Center Server";
-                                    else if ((osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) != 0)
+                                    else if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0)
                                         osName += "Enterprise Server";
-                                    else if ((osVersionInfo.wSuiteMask & VER_SUITE_BLADE) != 0)
+                                    else if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_BLADE) != 0)
                                         osName += "Web Edition";
                                     else
                                         osName += "Standard Server";
@@ -234,128 +234,128 @@ namespace Little_System_Cleaner.Misc
                 case 6:
                 {
                     uint ed;
-                    if (GetProductInfo(osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion,
+                    if (PInvoke.GetProductInfo(osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion,
                         osVersionInfo.wServicePackMajor, osVersionInfo.wServicePackMinor, out ed))
                     {
                         switch (ed)
                         {
-                            case PRODUCT_BUSINESS:
+                            case PInvoke.PRODUCT_BUSINESS:
                                 osName += "Business";
                                 break;
-                            case PRODUCT_BUSINESS_N:
+                            case PInvoke.PRODUCT_BUSINESS_N:
                                 osName += "Business N";
                                 break;
-                            case PRODUCT_CLUSTER_SERVER:
+                            case PInvoke.PRODUCT_CLUSTER_SERVER:
                                 osName += "HPC Edition";
                                 break;
-                            case PRODUCT_DATACENTER_SERVER:
+                            case PInvoke.PRODUCT_DATACENTER_SERVER:
                                 osName += "Data Center Server";
                                 break;
-                            case PRODUCT_DATACENTER_SERVER_CORE:
+                            case PInvoke.PRODUCT_DATACENTER_SERVER_CORE:
                                 osName += "Data Center Server Core";
                                 break;
-                            case PRODUCT_ENTERPRISE:
+                            case PInvoke.PRODUCT_ENTERPRISE:
                                 osName += "Enterprise";
                                 break;
-                            case PRODUCT_ENTERPRISE_N:
+                            case PInvoke.PRODUCT_ENTERPRISE_N:
                                 osName += "Enterprise N";
                                 break;
-                            case PRODUCT_ENTERPRISE_SERVER:
+                            case PInvoke.PRODUCT_ENTERPRISE_SERVER:
                                 osName += "Enterprise Server";
                                 break;
-                            case PRODUCT_ENTERPRISE_SERVER_CORE:
+                            case PInvoke.PRODUCT_ENTERPRISE_SERVER_CORE:
                                 osName += "Enterprise Server Core Installation";
                                 break;
-                            case PRODUCT_ENTERPRISE_SERVER_CORE_V:
+                            case PInvoke.PRODUCT_ENTERPRISE_SERVER_CORE_V:
                                 osName += "Enterprise Server Without Hyper-V Core Installation";
                                 break;
-                            case PRODUCT_ENTERPRISE_SERVER_IA64:
+                            case PInvoke.PRODUCT_ENTERPRISE_SERVER_IA64:
                                 osName += "Enterprise Server For Itanium Based Systems";
                                 break;
-                            case PRODUCT_ENTERPRISE_SERVER_V:
+                            case PInvoke.PRODUCT_ENTERPRISE_SERVER_V:
                                 osName += "Enterprise Server Without Hyper-V";
                                 break;
-                            case PRODUCT_HOME_BASIC:
+                            case PInvoke.PRODUCT_HOME_BASIC:
                                 osName += "Home Basic";
                                 break;
-                            case PRODUCT_HOME_BASIC_N:
+                            case PInvoke.PRODUCT_HOME_BASIC_N:
                                 osName += "Home Basic N";
                                 break;
-                            case PRODUCT_HOME_PREMIUM:
+                            case PInvoke.PRODUCT_HOME_PREMIUM:
                                 osName += "Home Premium";
                                 break;
-                            case PRODUCT_HOME_PREMIUM_N:
+                            case PInvoke.PRODUCT_HOME_PREMIUM_N:
                                 osName += "Home Premium N";
                                 break;
-                            case PRODUCT_HYPERV:
+                            case PInvoke.PRODUCT_HYPERV:
                                 osName += "Hyper-V Server";
                                 break;
-                            case PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT:
+                            case PInvoke.PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT:
                                 osName += "Essential Business Management Server";
                                 break;
-                            case PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING:
+                            case PInvoke.PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING:
                                 osName += "Essential Business Messaging Server";
                                 break;
-                            case PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY:
+                            case PInvoke.PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY:
                                 osName += "Essential Business Security Server";
                                 break;
-                            case PRODUCT_SERVER_FOR_SMALLBUSINESS:
+                            case PInvoke.PRODUCT_SERVER_FOR_SMALLBUSINESS:
                                 osName += "Essential Server Solutions";
                                 break;
-                            case PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
+                            case PInvoke.PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
                                 osName += "Essential Server Solutions Without Hyper-V";
                                 break;
-                            case PRODUCT_SMALLBUSINESS_SERVER:
+                            case PInvoke.PRODUCT_SMALLBUSINESS_SERVER:
                                 osName += "Small Business Server";
                                 break;
-                            case PRODUCT_STANDARD_SERVER:
+                            case PInvoke.PRODUCT_STANDARD_SERVER:
                                 osName += "Standard Server";
                                 break;
-                            case PRODUCT_STANDARD_SERVER_CORE:
+                            case PInvoke.PRODUCT_STANDARD_SERVER_CORE:
                                 osName += "Standard Server Core Installation";
                                 break;
-                            case PRODUCT_STANDARD_SERVER_CORE_V:
+                            case PInvoke.PRODUCT_STANDARD_SERVER_CORE_V:
                                 osName += "Standard Server Without Hyper-V Core Installation";
                                 break;
-                            case PRODUCT_STANDARD_SERVER_V:
+                            case PInvoke.PRODUCT_STANDARD_SERVER_V:
                                 osName += "Standard Server Without Hyper-V";
                                 break;
-                            case PRODUCT_STARTER:
+                            case PInvoke.PRODUCT_STARTER:
                                 osName += "Starter";
                                 break;
-                            case PRODUCT_STORAGE_ENTERPRISE_SERVER:
+                            case PInvoke.PRODUCT_STORAGE_ENTERPRISE_SERVER:
                                 osName += "Enterprise Storage Server";
                                 break;
-                            case PRODUCT_STORAGE_EXPRESS_SERVER:
+                            case PInvoke.PRODUCT_STORAGE_EXPRESS_SERVER:
                                 osName += "Express Storage Server";
                                 break;
-                            case PRODUCT_STORAGE_STANDARD_SERVER:
+                            case PInvoke.PRODUCT_STORAGE_STANDARD_SERVER:
                                 osName += "Standard Storage Server";
                                 break;
-                            case PRODUCT_STORAGE_WORKGROUP_SERVER:
+                            case PInvoke.PRODUCT_STORAGE_WORKGROUP_SERVER:
                                 osName += "Workgroup Storage Server";
                                 break;
-                            case PRODUCT_UNDEFINED:
+                            case PInvoke.PRODUCT_UNDEFINED:
                                 break;
-                            case PRODUCT_ULTIMATE:
+                            case PInvoke.PRODUCT_ULTIMATE:
                                 osName += "Ultimate";
                                 break;
-                            case PRODUCT_ULTIMATE_N:
+                            case PInvoke.PRODUCT_ULTIMATE_N:
                                 osName += "Ultimate N";
                                 break;
-                            case PRODUCT_WEB_SERVER:
+                            case PInvoke.PRODUCT_WEB_SERVER:
                                 osName += "Web Server";
                                 break;
-                            case PRODUCT_WEB_SERVER_CORE:
+                            case PInvoke.PRODUCT_WEB_SERVER_CORE:
                                 osName += "Web Server Core Installation";
                                 break;
-                            case PRODUCT_PROFESSIONAL:
+                            case PInvoke.PRODUCT_PROFESSIONAL:
                                 osName += "Professional";
                                 break;
-                            case PRODUCT_PROFESSIONAL_N:
+                            case PInvoke.PRODUCT_PROFESSIONAL_N:
                                 osName += "Professional N";
                                 break;
-                            case PRODUCT_STARTER_N:
+                            case PInvoke.PRODUCT_STARTER_N:
                                 osName += "Starter N";
                                 break;
                         }
@@ -373,121 +373,5 @@ namespace Little_System_Cleaner.Misc
 
             return osName;
         }
-
-        #region PInvoke Signatures
-
-        public const byte VER_NT_WORKSTATION = 1;
-        public const byte VER_NT_DOMAIN_CONTROLLER = 2;
-        public const byte VER_NT_SERVER = 3;
-
-        public const ushort VER_SUITE_SMALLBUSINESS = 1;
-        public const ushort VER_SUITE_ENTERPRISE = 2;
-        public const ushort VER_SUITE_TERMINAL = 16;
-        public const ushort VER_SUITE_DATACENTER = 128;
-        public const ushort VER_SUITE_SINGLEUSERTS = 256;
-        public const ushort VER_SUITE_PERSONAL = 512;
-        public const ushort VER_SUITE_BLADE = 1024;
-        public const ushort VER_SUITE_WH_SERVER = 32768;
-
-        public const uint PRODUCT_UNDEFINED = 0x00000000;
-        public const uint PRODUCT_ULTIMATE = 0x00000001;
-        public const uint PRODUCT_HOME_BASIC = 0x00000002;
-        public const uint PRODUCT_HOME_PREMIUM = 0x00000003;
-        public const uint PRODUCT_ENTERPRISE = 0x00000004;
-        public const uint PRODUCT_HOME_BASIC_N = 0x00000005;
-        public const uint PRODUCT_BUSINESS = 0x00000006;
-        public const uint PRODUCT_STANDARD_SERVER = 0x00000007;
-        public const uint PRODUCT_DATACENTER_SERVER = 0x00000008;
-        public const uint PRODUCT_SMALLBUSINESS_SERVER = 0x00000009;
-        public const uint PRODUCT_ENTERPRISE_SERVER = 0x0000000A;
-        public const uint PRODUCT_STARTER = 0x0000000B;
-        public const uint PRODUCT_DATACENTER_SERVER_CORE = 0x0000000C;
-        public const uint PRODUCT_STANDARD_SERVER_CORE = 0x0000000D;
-        public const uint PRODUCT_ENTERPRISE_SERVER_CORE = 0x0000000E;
-        public const uint PRODUCT_ENTERPRISE_SERVER_IA64 = 0x0000000F;
-        public const uint PRODUCT_BUSINESS_N = 0x00000010;
-        public const uint PRODUCT_WEB_SERVER = 0x00000011;
-        public const uint PRODUCT_CLUSTER_SERVER = 0x00000012;
-        public const uint PRODUCT_HOME_SERVER = 0x00000013;
-        public const uint PRODUCT_STORAGE_EXPRESS_SERVER = 0x00000014;
-        public const uint PRODUCT_STORAGE_STANDARD_SERVER = 0x00000015;
-        public const uint PRODUCT_STORAGE_WORKGROUP_SERVER = 0x00000016;
-        public const uint PRODUCT_STORAGE_ENTERPRISE_SERVER = 0x00000017;
-        public const uint PRODUCT_SERVER_FOR_SMALLBUSINESS = 0x00000018;
-        public const uint PRODUCT_SMALLBUSINESS_SERVER_PREMIUM = 0x00000019;
-        public const uint PRODUCT_HOME_PREMIUM_N = 0x0000001A;
-        public const uint PRODUCT_ENTERPRISE_N = 0x0000001B;
-        public const uint PRODUCT_ULTIMATE_N = 0x0000001C;
-        public const uint PRODUCT_WEB_SERVER_CORE = 0x0000001D;
-        public const uint PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT = 0x0000001E;
-        public const uint PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY = 0x0000001F;
-        public const uint PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING = 0x00000020;
-        public const uint PRODUCT_SERVER_FOR_SMALLBUSINESS_V = 0x00000023;
-        public const uint PRODUCT_STANDARD_SERVER_V = 0x00000024;
-        public const uint PRODUCT_ENTERPRISE_SERVER_V = 0x00000026;
-        public const uint PRODUCT_STANDARD_SERVER_CORE_V = 0x00000028;
-        public const uint PRODUCT_ENTERPRISE_SERVER_CORE_V = 0x00000029;
-        public const uint PRODUCT_HYPERV = 0x0000002A;
-        public const uint PRODUCT_PROFESSIONAL = 0x00000030;
-        public const uint PRODUCT_PROFESSIONAL_N = 0x00000031;
-        public const uint PRODUCT_STARTER_N = 0x0000002F;
-
-        public const ushort PROCESSOR_ARCHITECTURE_INTEL = 0;
-        public const ushort PROCESSOR_ARCHITECTURE_IA64 = 6;
-        public const ushort PROCESSOR_ARCHITECTURE_AMD64 = 9;
-        public const ushort PROCESSOR_ARCHITECTURE_UNKNOWN = 0xFFFF;
-
-        public const int SM_SERVERR2 = 89;
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct OSVERSIONINFOEX
-        {
-            public uint dwOSVersionInfoSize;
-            public uint dwMajorVersion;
-            public uint dwMinorVersion;
-            public uint dwBuildNumber;
-            public uint dwPlatformId;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szCSDVersion;
-            public ushort wServicePackMajor;
-            public ushort wServicePackMinor;
-            public ushort wSuiteMask;
-            public byte wProductType;
-            public byte wReserved;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SYSTEM_INFO
-        {
-            public uint wProcessorArchitecture;
-            public uint wReserved;
-            public uint dwPageSize;
-            public uint lpMinimumApplicationAddress;
-            public uint lpMaximumApplicationAddress;
-            public uint dwActiveProcessorMask;
-            public uint dwNumberOfProcessors;
-            public uint dwProcessorType;
-            public uint dwAllocationGranularity;
-            public uint dwProcessorLevel;
-            public uint dwProcessorRevision;
-        }
-
-        [DllImport("Kernel32.dll")]
-        internal static extern bool GetProductInfo(
-            uint osMajorVersion,
-            uint osMinorVersion,
-            uint spMajorVersion,
-            uint spMinorVersion,
-            out uint edition);
-
-        [DllImport("kernel32.dll")]
-        internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
-
-        [DllImport("kernel32.dll")]
-        internal static extern void GetSystemInfo(ref SYSTEM_INFO pSI);
-
-        [DllImport("user32.dll")]
-        internal static extern int GetSystemMetrics(int nIndex);
-
-        #endregion
     }
 }
