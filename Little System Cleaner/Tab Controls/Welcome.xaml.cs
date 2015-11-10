@@ -36,13 +36,9 @@ namespace Little_System_Cleaner.Tab_Controls
             InitializeComponent();
         }
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var memStatus = new MEMORYSTATUSEX();
+            var memStatus = new PInvoke.MemoryStatusEx();
             RegistryKey regKey = null;
 
             LastDateTime.Text = Settings.Default.lastScanDate != 0
@@ -84,7 +80,7 @@ namespace Little_System_Cleaner.Tab_Controls
             
             try
             {
-                if (!GlobalMemoryStatusEx(memStatus))
+                if (!PInvoke.GlobalMemoryStatusEx(memStatus))
                     Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
 
                 TotalRam.Text = $"{Utils.ConvertSizeToString(Convert.ToInt64(memStatus.ullTotalPhys))} total memory";
@@ -98,23 +94,6 @@ namespace Little_System_Cleaner.Tab_Controls
             OsVersion.Text = Misc.OsVersion.GetOsVersion();
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal class MEMORYSTATUSEX
-        {
-            public uint dwLength;
-            public uint dwMemoryLoad;
-            public ulong ullTotalPhys;
-            public ulong ullAvailPhys;
-            public ulong ullTotalPageFile;
-            public ulong ullAvailPageFile;
-            public ulong ullTotalVirtual;
-            public ulong ullAvailVirtual;
-            public ulong ullAvailExtendedVirtual;
-
-            public MEMORYSTATUSEX()
-            {
-                dwLength = (uint) Marshal.SizeOf(this);
-            }
-        }
+        
     }
 }

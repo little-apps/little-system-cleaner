@@ -31,6 +31,10 @@ namespace Little_System_Cleaner.Misc
         [DllImport("kernel32.dll")]
         internal static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPStr)] string lpRootPathName);
 
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern bool GlobalMemoryStatusEx([In, Out] MemoryStatusEx lpBuffer);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool CloseHandle(IntPtr handle);
 
@@ -137,6 +141,25 @@ namespace Little_System_Cleaner.Misc
             public uint dwAllocationGranularity;
             public uint dwProcessorLevel;
             public uint dwProcessorRevision;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal class MemoryStatusEx
+        {
+            public uint dwLength;
+            public uint dwMemoryLoad;
+            public ulong ullTotalPhys;
+            public ulong ullAvailPhys;
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
+            public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
+            public ulong ullAvailExtendedVirtual;
+
+            public MemoryStatusEx()
+            {
+                dwLength = (uint)Marshal.SizeOf(this);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
