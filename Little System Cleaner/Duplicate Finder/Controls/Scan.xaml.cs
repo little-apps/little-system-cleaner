@@ -45,6 +45,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             "mp1"
         };
 
+        internal static List<string> ValidImageFiles = new List<string>
+        {
+            "jpg",
+            "jpeg",
+            "png",
+            "gif",
+            "bmp",
+            "ico"
+        };
+
         internal static Dictionary<string, KeyValuePair<int, byte[]>> CompressedFiles = new Dictionary
             <string, KeyValuePair<int, byte[]>>
         {

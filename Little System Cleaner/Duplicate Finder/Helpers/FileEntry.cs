@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Principal;
@@ -9,6 +14,7 @@ using System.Text;
 using CommonTools.TagLib;
 using CommonTools.TagLib.Mpeg;
 using Little_System_Cleaner.Duplicate_Finder.Controls;
+using Little_System_Cleaner.Misc;
 using File = CommonTools.TagLib.File;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
@@ -93,7 +99,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set { _fileSize = value; }
         }
 
+        public Size ThumbnailSize { get; } = new Size(16, 16);
+        
         public bool HasAudioTags { get; private set; }
+
+
 
         public bool IsDeleteable
         {
@@ -148,6 +158,151 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         public uint TrackNo { get; }
         public int Bitrate { get; }
         public string TagsChecksum { get; private set; }
+
+        private Bitmap GetImage()
+        {
+            var ext = Path.GetExtension(FilePath);
+
+            if (string.IsNullOrEmpty(ext))
+                return null;
+
+            ext = ext.Substring(1).ToLower();
+
+            if (!Scan.ValidImageFiles.Contains(ext))
+                return null;
+            
+            Image img = null;
+
+            try
+            {
+                img = (Image) Image.FromFile(FilePath).Clone();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("The following exception occurred: " + ex.Message);
+            }
+            
+            // Image is valid if img is not null
+
+            return img != null ? ResizeImage(img, ThumbnailSize.Width, ThumbnailSize.Height) : null;
+        }
+
+        /// <summary>
+        /// Resize the image to the specified width and height.
+        /// </summary>
+        /// <param name="image">The image to resize.</param>
+        /// <param name="width">The width to resize to.</param>
+        /// <param name="height">The height to resize to.</param>
+        /// <returns>The resized image.</returns>
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        /// <summary>
+        ///     Compares current file entry with other file entry image
+        /// </summary>
+        /// <param name="otherFileEntry">Other file entry</param>
+        /// <returns>Decimal value between 0 and 1 of percentage of same pixels (with 0 being no pixels)</returns>
+        public decimal CompareImages(FileEntry otherFileEntry)
+        {
+            var imageFirst = GetImage();
+            var imageSecond = otherFileEntry.GetImage();
+
+            var pixelsFirst = GetPixels(imageFirst);
+            var pixelsSecond = GetPixels(imageSecond);
+
+            var pixelsFirstEnum = pixelsFirst as Color[] ?? pixelsFirst.ToArray();
+            if (pixelsFirstEnum.Length != pixelsSecond.Count())
+                return 0;
+
+            var sameColor = GetPixels(imageFirst)
+                .Zip(GetPixels(imageSecond), (colorFirst, colorSecond) => colorFirst == colorSecond).Count(x => x);
+
+            return sameColor/(decimal) pixelsFirstEnum.Length;
+        }
+
+        private static IEnumerable<Color> GetPixels(Bitmap bitmap)
+        {
+            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            var pixelCount = bitmap.Width * bitmap.Height;
+            var depth = Image.GetPixelFormatSize(bitmap.PixelFormat);
+
+            // create byte array to copy pixel values
+            var pixelsFirst = new byte[pixelCount * (depth / 8)];
+
+            // Copy data from pointer to array
+            Marshal.Copy(bitmapData.Scan0, pixelsFirst, 0, pixelsFirst.Length);
+
+            for (var y = 0; y < bitmap.Height; y++)
+            {
+                for (var x = 0; x < bitmap.Width; x++)
+                {
+                    var color = Color.Empty;
+
+                    // Get color components count
+                    var cCount = depth / 8;
+
+                    // Get start index of the specified pixel
+                    var i = (y * bitmap.Width + x) * cCount;
+
+                    if (i > pixelsFirst.Length - cCount)
+                        throw new IndexOutOfRangeException();
+
+                    switch (depth)
+                    {
+                        case 32:
+                            {
+                                var b = pixelsFirst[i];
+                                var g = pixelsFirst[i + 1];
+                                var r = pixelsFirst[i + 2];
+                                var a = pixelsFirst[i + 3]; // a
+                                color = Color.FromArgb(a, r, g, b);
+                                break;
+                            }
+                        case 24:
+                            {
+                                var b = pixelsFirst[i];
+                                var g = pixelsFirst[i + 1];
+                                var r = pixelsFirst[i + 2];
+                                color = Color.FromArgb(r, g, b);
+                            }
+                            break;
+                        case 8:
+                            {
+                                var c = pixelsFirst[i];
+                                color = Color.FromArgb(c, c, c);
+                                break;
+                            }
+                    }
+
+                    yield return color;
+                }
+            }
+
+            bitmap.UnlockBits(bitmapData);
+        } 
 
         /// <summary>
         ///     Gets audio tags
