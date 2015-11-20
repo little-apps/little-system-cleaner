@@ -223,6 +223,24 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
+                if (ScanBase.Options.CompareImages.GetValueOrDefault())
+                {
+                    // Group by pixels
+                    GroupByImage();
+
+                    if (ScanBase.FilesGroupedByFilename.Count == 0)
+                    {
+                        Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName,
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        ResetInfo(false);
+                        SetLastScanElapsed(dtStart);
+
+                        return;
+                    }
+
+                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
+                }
+
                 _cancelTokenSource.Token.ThrowIfCancellationRequested();
 
                 SetLastScanElapsed(dtStart);
@@ -663,6 +681,40 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
 
             return expectedSignature.SequenceEqual(actualSignature);
+        }
+
+        private void GroupByImage()
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
+
+                if (!ProgressBar.IsIndeterminate)
+                    ProgressBar.IsIndeterminate = true;
+            }));
+            
+            StatusText = "Grouping files by pixels";
+
+            Main.Watcher.Event("Duplicate Finder", "Group by pixels");
+
+            // TODO: Improve memory usage
+            foreach (var fileEntry1 in _fileList.Where(fileEntry => fileEntry.IsImage))
+            {
+                // TODO: Display file being compared
+
+                var likeImages =
+                    _fileList.Where(
+                        fileEntry2 =>
+                            fileEntry2.IsImage &&
+                            fileEntry1.FilePath != fileEntry2.FilePath &&
+                            fileEntry1.CompareImages(fileEntry2) > (decimal) 0.9f).ToList();
+
+                if (likeImages.Count > 0)
+                    likeImages.Add(fileEntry1);
+
+                ScanBase.FilesGroupedByFilename.Add(fileEntry1.FileName, likeImages);
+            }
         }
 
         private void GroupByFilename()

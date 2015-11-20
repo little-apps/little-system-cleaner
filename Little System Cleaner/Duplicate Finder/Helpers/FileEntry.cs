@@ -159,6 +159,41 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         public int Bitrate { get; }
         public string TagsChecksum { get; private set; }
 
+        private bool? _isImage;
+
+        public bool IsImage
+        {
+            get
+            {
+                if (_isImage != null)
+                    return _isImage.GetValueOrDefault();
+
+                using (var fileStream = _fileInfo.OpenRead())
+                {
+                    var fileFormats = new Dictionary<string, byte[]>
+                    {
+                        {"jpg", new byte[] {0xFF, 0xD8}},
+                        {"bmp", new byte[] {0x42, 0x4D}},
+                        {"gif", new byte[] {0x47, 0x49, 0x46}},
+                        {"png", new byte[] {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}}
+                    };
+
+                    var startBytesLen = fileFormats.Values.Max(bytes => bytes.Length);
+                    var startBytes = new byte[startBytesLen];
+
+                    fileStream.Read(startBytes, 0, startBytes.Length);
+
+                    _isImage =
+                        fileFormats.Where(fileFormat => fileStream.Length >= fileFormat.Value.Length)
+                            .Any(
+                                fileFormat =>
+                                    startBytes.Take(fileFormat.Value.Length).SequenceEqual(fileFormat.Value));
+                }
+
+                return _isImage.GetValueOrDefault();
+            }
+        }
+
         private Bitmap GetImage()
         {
             var ext = Path.GetExtension(FilePath);
@@ -229,21 +264,33 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             var imageFirst = GetImage();
             var imageSecond = otherFileEntry.GetImage();
 
-            var pixelsFirst = GetPixels(imageFirst);
-            var pixelsSecond = GetPixels(imageSecond);
+            if (imageFirst == null || imageSecond == null)
+                return decimal.Zero;
+            
+            if (_pixels == null)
+                _pixels = new List<Color>(GetPixels(imageFirst));
 
-            var pixelsFirstEnum = pixelsFirst as Color[] ?? pixelsFirst.ToArray();
-            if (pixelsFirstEnum.Length != pixelsSecond.Count())
+            if (otherFileEntry._pixels == null)
+                otherFileEntry._pixels = new List<Color>(GetPixels(imageSecond));
+
+            var pixelsFirst = _pixels;    
+            var pixelsSecond = otherFileEntry._pixels;
+
+            if (pixelsFirst.Count != pixelsSecond.Count)
                 return 0;
 
             var sameColor = GetPixels(imageFirst)
                 .Zip(GetPixels(imageSecond), (colorFirst, colorSecond) => colorFirst == colorSecond).Count(x => x);
 
-            return sameColor/(decimal) pixelsFirstEnum.Length;
+            return sameColor/(decimal)pixelsFirst.Count;
         }
 
-        private static IEnumerable<Color> GetPixels(Bitmap bitmap)
+        private List<Color> _pixels = null; 
+
+
+        private IEnumerable<Color> GetPixels(Bitmap bitmap)
         {
+
             var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadOnly, bitmap.PixelFormat);
             var pixelCount = bitmap.Width * bitmap.Height;

@@ -121,10 +121,17 @@
                                              IsChecked="{Binding CompareFilename}">
                                     Filename Only
                                 </RadioButton>
-                                <RadioButton x:Name="TypeImages" GroupName="SearchMethod" Height="20"
+                                <RadioButton x:Name="TypeMusicTags" GroupName="SearchMethod" Height="20"
                                              VerticalContentAlignment="Center" HorizontalAlignment="Right"
                                              IsChecked="{Binding CompareMusicTags}">
                                     Compare Music Tags
+                                </RadioButton>
+                            </DockPanel>
+                            <DockPanel Margin="0,0,0,5">
+                                <RadioButton x:Name="TypeImages" GroupName="SearchMethod" Height="20"
+                                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                                             IsChecked="{Binding CompareImages}">
+                                    Compare Images Pixel by Pixel
                                 </RadioButton>
                             </DockPanel>
                         </StackPanel>

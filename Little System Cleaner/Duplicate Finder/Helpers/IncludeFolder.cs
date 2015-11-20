@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -44,10 +45,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 _name = value;
                 OnPropertyChanged("Name");
+
+                if (DirInfo == null)
+                    DirInfo = new DirectoryInfo(_name);
             }
         }
 
-        public DirectoryInfo DirInfo { get; }
+        [XmlIgnore]
+        public DirectoryInfo DirInfo { get; private set; }
 
         public bool Equals(IncludeFolder other)
         {

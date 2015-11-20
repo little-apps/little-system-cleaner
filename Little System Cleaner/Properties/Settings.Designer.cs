@@ -430,79 +430,6 @@ namespace Little_System_Cleaner.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\r\n        <?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n        <ArrayOfString xmlns:x" +
-            "si=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001" +
-            "/XMLSchema\">\r\n        <string>?:\\program files\\common files</string>\r\n        <s" +
-            "tring>?:\\program files\\uninstall information</string>\r\n        <string>?:\\win*\\s" +
-            "ecurity</string>\r\n        <string>*\\sendto</string>\r\n        <string>*\\i386</str" +
-            "ing>\r\n        <string>*\\resources\\themes</string>\r\n        <string>*\\microsoft\\o" +
-            "ffice\\data</string>\r\n        <string>*\\microsoft\\money\\*\\webcache</string>\r\n    " +
-            "    <string>*\\chaos32</string>\r\n        <string>*\\paprport\\data</string>\r\n      " +
-            "  <string>*\\symantec shared\\virusdefs</string>\r\n        <string>?:\\system volume" +
-            " information</string>\r\n        <string>?:\\_restore</string>\r\n        <string>?:\\" +
-            "recycle?</string>\r\n        <string>*\\temp\\incredimail</string>\r\n        <string>" +
-            "*\\norton antivirus\\quarantine</string>\r\n        <string>*\\system32\\usmt</string>" +
-            "\r\n        <string>*\\system32\\catroot2</string>\r\n        <string>*\\application da" +
-            "ta\\microsoft</string>\r\n        <string>?:\\windows</string>\r\n        <string>?:\\w" +
-            "innt</string>\r\n        <string>?:\\win*\\pif</string>\r\n        <string>?:\\win*\\res" +
-            "ources</string>\r\n        <string>\\win*\\system32\\oldole</string>\r\n        <string" +
-            ">?:\\win*\\Sysbackup</string>\r\n        <string>?:\\win*\\system32\\olebackup</string>" +
-            "\r\n        <string>?:\\win*\\system32\\usmt</string>\r\n        <string>?:\\$recycle.bi" +
-            "n</string>\r\n        <string>*\\Application Data\\Aim</string>\r\n        <string>*\\s" +
-            "ymantec shared\\virusdefs</string>\r\n        </ArrayOfString>\r\n      ")]
-        public global::System.Collections.Specialized.StringCollection diskCleanerExcludedDirs {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["diskCleanerExcludedDirs"]));
-            }
-            set {
-                this["diskCleanerExcludedDirs"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-        <?xml version=""1.0"" encoding=""utf-16""?>
-        <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-        <string>config.*</string>
-        <string>autoexec.*</string>
-        <string>data.bak</string>
-        <string>_Default.pif</string>
-        <string>Calendar.tmp</string>
-        <string>Data.sav</string>
-        <string>Default.pif</string>
-        <string>Donotdel.tmp</string>
-        <string>DonotDelete.tmp</string>
-        <string>Drelres.pif</string>
-        <string>FTP.log</string>
-        <string>Http.log</string>
-        <string>Index.dat</string>
-        <string>Install.log</string>
-        <string>MM2048.DAT</string>
-        <string>MM256.DAT</string>
-        <string>Modem.log</string>
-        <string>Script.bak</string>
-        <string>System.old</string>
-        <string>Uninstall.log</string>
-        <string>User.old</string>
-        <string>WebPoolFileFile</string>
-        <string>Win.bak</string>
-        <string>Win.old</string>
-        <string>Wnccdctl.log</string>
-        <string>wz.pif</string>
-        </ArrayOfString>
-      ")]
-        public global::System.Collections.Specialized.StringCollection diskCleanerExcludedFileTypes {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["diskCleanerExcludedFileTypes"]));
-            }
-            set {
-                this["diskCleanerExcludedFileTypes"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool diskCleanerFindNotAccessed {
             get {
@@ -821,6 +748,90 @@ namespace Little_System_Cleaner.Properties {
             }
             set {
                 this["duplicateFinderOptions"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>?:\program files\common files</string>
+  <string>?:\program files\uninstall information</string>
+  <string>?:\win*\security</string>
+  <string>*\sendto</string>
+  <string>*\i386</string>
+  <string>*\resources\themes</string>
+  <string>*\microsoft\office\data</string>
+  <string>*\microsoft\money\*\webcache</string>
+  <string>*\chaos32</string>
+  <string>*\paprport\data</string>
+  <string>*\symantec shared\virusdefs</string>
+  <string>?:\system volume information</string>
+  <string>?:\_restore</string>
+  <string>?:\recycle?</string>
+  <string>*\temp\incredimail</string>
+  <string>*\norton antivirus\quarantine</string>
+  <string>*\system32\usmt</string>
+  <string>*\system32\catroot2</string>
+  <string>*\application data\microsoft</string>
+  <string>?:\windows</string>
+  <string>?:\winnt</string>
+  <string>?:\win*\pif</string>
+  <string>?:\win*\resources</string>
+  <string>\win*\system32\oldole</string>
+  <string>?:\win*\Sysbackup</string>
+  <string>?:\win*\system32\olebackup</string>
+  <string>?:\win*\system32\usmt</string>
+  <string>?:\$recycle.bin</string>
+  <string>*\Application Data\Aim</string>
+  <string>*\symantec shared\virusdefs</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection diskCleanerExcludedDirs {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["diskCleanerExcludedDirs"]));
+            }
+            set {
+                this["diskCleanerExcludedDirs"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>config.*</string>
+  <string>autoexec.*</string>
+  <string>data.bak</string>
+  <string>_Default.pif</string>
+  <string>Calendar.tmp</string>
+  <string>Data.sav</string>
+  <string>Default.pif</string>
+  <string>Donotdel.tmp</string>
+  <string>DonotDelete.tmp</string>
+  <string>Drelres.pif</string>
+  <string>FTP.log</string>
+  <string>Http.log</string>
+  <string>Index.dat</string>
+  <string>Install.log</string>
+  <string>MM2048.DAT</string>
+  <string>MM256.DAT</string>
+  <string>Modem.log</string>
+  <string>Script.bak</string>
+  <string>System.old</string>
+  <string>Uninstall.log</string>
+  <string>User.old</string>
+  <string>WebPoolFileFile</string>
+  <string>Win.bak</string>
+  <string>Win.old</string>
+  <string>Wnccdctl.log</string>
+  <string>wz.pif</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection diskCleanerExcludedFileTypes {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["diskCleanerExcludedFileTypes"]));
+            }
+            set {
+                this["diskCleanerExcludedFileTypes"] = value;
             }
         }
     }

@@ -1,7 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
-              GeneratedClassNamespace="Little_System_Cleaner.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Little_System_Cleaner.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="registryCleanerOptionsLog" Type="System.Boolean" Scope="User">
@@ -106,76 +104,6 @@
     <Setting Name="diskCleanerDateTimeBefore" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">06/14/2010 21:39:00</Value>
     </Setting>
-    <Setting Name="diskCleanerExcludedDirs" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)">
-        &lt;?xml version="1.0" encoding="utf-16"?&gt;
-        &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-        &lt;string&gt;?:\program files\common files&lt;/string&gt;
-        &lt;string&gt;?:\program files\uninstall information&lt;/string&gt;
-        &lt;string&gt;?:\win*\security&lt;/string&gt;
-        &lt;string&gt;*\sendto&lt;/string&gt;
-        &lt;string&gt;*\i386&lt;/string&gt;
-        &lt;string&gt;*\resources\themes&lt;/string&gt;
-        &lt;string&gt;*\microsoft\office\data&lt;/string&gt;
-        &lt;string&gt;*\microsoft\money\*\webcache&lt;/string&gt;
-        &lt;string&gt;*\chaos32&lt;/string&gt;
-        &lt;string&gt;*\paprport\data&lt;/string&gt;
-        &lt;string&gt;*\symantec shared\virusdefs&lt;/string&gt;
-        &lt;string&gt;?:\system volume information&lt;/string&gt;
-        &lt;string&gt;?:\_restore&lt;/string&gt;
-        &lt;string&gt;?:\recycle?&lt;/string&gt;
-        &lt;string&gt;*\temp\incredimail&lt;/string&gt;
-        &lt;string&gt;*\norton antivirus\quarantine&lt;/string&gt;
-        &lt;string&gt;*\system32\usmt&lt;/string&gt;
-        &lt;string&gt;*\system32\catroot2&lt;/string&gt;
-        &lt;string&gt;*\application data\microsoft&lt;/string&gt;
-        &lt;string&gt;?:\windows&lt;/string&gt;
-        &lt;string&gt;?:\winnt&lt;/string&gt;
-        &lt;string&gt;?:\win*\pif&lt;/string&gt;
-        &lt;string&gt;?:\win*\resources&lt;/string&gt;
-        &lt;string&gt;\win*\system32\oldole&lt;/string&gt;
-        &lt;string&gt;?:\win*\Sysbackup&lt;/string&gt;
-        &lt;string&gt;?:\win*\system32\olebackup&lt;/string&gt;
-        &lt;string&gt;?:\win*\system32\usmt&lt;/string&gt;
-        &lt;string&gt;?:\$recycle.bin&lt;/string&gt;
-        &lt;string&gt;*\Application Data\Aim&lt;/string&gt;
-        &lt;string&gt;*\symantec shared\virusdefs&lt;/string&gt;
-        &lt;/ArrayOfString&gt;
-      </Value>
-    </Setting>
-    <Setting Name="diskCleanerExcludedFileTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)">
-        &lt;?xml version="1.0" encoding="utf-16"?&gt;
-        &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-        &lt;string&gt;config.*&lt;/string&gt;
-        &lt;string&gt;autoexec.*&lt;/string&gt;
-        &lt;string&gt;data.bak&lt;/string&gt;
-        &lt;string&gt;_Default.pif&lt;/string&gt;
-        &lt;string&gt;Calendar.tmp&lt;/string&gt;
-        &lt;string&gt;Data.sav&lt;/string&gt;
-        &lt;string&gt;Default.pif&lt;/string&gt;
-        &lt;string&gt;Donotdel.tmp&lt;/string&gt;
-        &lt;string&gt;DonotDelete.tmp&lt;/string&gt;
-        &lt;string&gt;Drelres.pif&lt;/string&gt;
-        &lt;string&gt;FTP.log&lt;/string&gt;
-        &lt;string&gt;Http.log&lt;/string&gt;
-        &lt;string&gt;Index.dat&lt;/string&gt;
-        &lt;string&gt;Install.log&lt;/string&gt;
-        &lt;string&gt;MM2048.DAT&lt;/string&gt;
-        &lt;string&gt;MM256.DAT&lt;/string&gt;
-        &lt;string&gt;Modem.log&lt;/string&gt;
-        &lt;string&gt;Script.bak&lt;/string&gt;
-        &lt;string&gt;System.old&lt;/string&gt;
-        &lt;string&gt;Uninstall.log&lt;/string&gt;
-        &lt;string&gt;User.old&lt;/string&gt;
-        &lt;string&gt;WebPoolFileFile&lt;/string&gt;
-        &lt;string&gt;Win.bak&lt;/string&gt;
-        &lt;string&gt;Win.old&lt;/string&gt;
-        &lt;string&gt;Wnccdctl.log&lt;/string&gt;
-        &lt;string&gt;wz.pif&lt;/string&gt;
-        &lt;/ArrayOfString&gt;
-      </Value>
-    </Setting>
     <Setting Name="diskCleanerFindNotAccessed" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -256,6 +184,72 @@
     </Setting>
     <Setting Name="duplicateFinderOptions" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="diskCleanerExcludedDirs" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;?:\program files\common files&lt;/string&gt;
+  &lt;string&gt;?:\program files\uninstall information&lt;/string&gt;
+  &lt;string&gt;?:\win*\security&lt;/string&gt;
+  &lt;string&gt;*\sendto&lt;/string&gt;
+  &lt;string&gt;*\i386&lt;/string&gt;
+  &lt;string&gt;*\resources\themes&lt;/string&gt;
+  &lt;string&gt;*\microsoft\office\data&lt;/string&gt;
+  &lt;string&gt;*\microsoft\money\*\webcache&lt;/string&gt;
+  &lt;string&gt;*\chaos32&lt;/string&gt;
+  &lt;string&gt;*\paprport\data&lt;/string&gt;
+  &lt;string&gt;*\symantec shared\virusdefs&lt;/string&gt;
+  &lt;string&gt;?:\system volume information&lt;/string&gt;
+  &lt;string&gt;?:\_restore&lt;/string&gt;
+  &lt;string&gt;?:\recycle?&lt;/string&gt;
+  &lt;string&gt;*\temp\incredimail&lt;/string&gt;
+  &lt;string&gt;*\norton antivirus\quarantine&lt;/string&gt;
+  &lt;string&gt;*\system32\usmt&lt;/string&gt;
+  &lt;string&gt;*\system32\catroot2&lt;/string&gt;
+  &lt;string&gt;*\application data\microsoft&lt;/string&gt;
+  &lt;string&gt;?:\windows&lt;/string&gt;
+  &lt;string&gt;?:\winnt&lt;/string&gt;
+  &lt;string&gt;?:\win*\pif&lt;/string&gt;
+  &lt;string&gt;?:\win*\resources&lt;/string&gt;
+  &lt;string&gt;\win*\system32\oldole&lt;/string&gt;
+  &lt;string&gt;?:\win*\Sysbackup&lt;/string&gt;
+  &lt;string&gt;?:\win*\system32\olebackup&lt;/string&gt;
+  &lt;string&gt;?:\win*\system32\usmt&lt;/string&gt;
+  &lt;string&gt;?:\$recycle.bin&lt;/string&gt;
+  &lt;string&gt;*\Application Data\Aim&lt;/string&gt;
+  &lt;string&gt;*\symantec shared\virusdefs&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="diskCleanerExcludedFileTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;config.*&lt;/string&gt;
+  &lt;string&gt;autoexec.*&lt;/string&gt;
+  &lt;string&gt;data.bak&lt;/string&gt;
+  &lt;string&gt;_Default.pif&lt;/string&gt;
+  &lt;string&gt;Calendar.tmp&lt;/string&gt;
+  &lt;string&gt;Data.sav&lt;/string&gt;
+  &lt;string&gt;Default.pif&lt;/string&gt;
+  &lt;string&gt;Donotdel.tmp&lt;/string&gt;
+  &lt;string&gt;DonotDelete.tmp&lt;/string&gt;
+  &lt;string&gt;Drelres.pif&lt;/string&gt;
+  &lt;string&gt;FTP.log&lt;/string&gt;
+  &lt;string&gt;Http.log&lt;/string&gt;
+  &lt;string&gt;Index.dat&lt;/string&gt;
+  &lt;string&gt;Install.log&lt;/string&gt;
+  &lt;string&gt;MM2048.DAT&lt;/string&gt;
+  &lt;string&gt;MM256.DAT&lt;/string&gt;
+  &lt;string&gt;Modem.log&lt;/string&gt;
+  &lt;string&gt;Script.bak&lt;/string&gt;
+  &lt;string&gt;System.old&lt;/string&gt;
+  &lt;string&gt;Uninstall.log&lt;/string&gt;
+  &lt;string&gt;User.old&lt;/string&gt;
+  &lt;string&gt;WebPoolFileFile&lt;/string&gt;
+  &lt;string&gt;Win.bak&lt;/string&gt;
+  &lt;string&gt;Win.old&lt;/string&gt;
+  &lt;string&gt;Wnccdctl.log&lt;/string&gt;
+  &lt;string&gt;wz.pif&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
     </Setting>
   </Settings>
 </SettingsFile>

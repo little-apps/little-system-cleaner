@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     .Select(di => new IncludeDrive(di))
                     // Iterate through drives and check drive if checked in previous list
                     .Select(
-                        includeDriveToAdd => new IncludeDrive {IsChecked = drivesChecked.Contains(includeDriveToAdd)}));
+                        includeDriveToAdd => new IncludeDrive {IsChecked = drivesChecked.Contains(includeDriveToAdd), Name = includeDriveToAdd.Name}));
             }
             catch (UnauthorizedAccessException ex)
             {

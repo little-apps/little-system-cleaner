@@ -1,10 +1,13 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using Little_System_Cleaner.Annotations;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     [XmlInclude(typeof (IncludeDrive))]
-    public class IncludeDrive
+    public class IncludeDrive : INotifyPropertyChanged
     {
         public IncludeDrive()
         {
@@ -15,9 +18,28 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             Name = drive.ToString();
         }
 
-        public bool? IsChecked { get; set; } = true;
+        private bool? _isChecked = true;
+        private string _name;
 
-        public string Name { get; set; }
+        public bool? IsChecked
+        {
+            get { return _isChecked; }
+            set
+            {
+                _isChecked = value;
+                OnPropertyChanged(nameof(IsChecked));
+            }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
 
         public override bool Equals(object obj)
         {
@@ -32,6 +54,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

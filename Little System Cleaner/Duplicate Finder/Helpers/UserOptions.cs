@@ -180,6 +180,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
+        public bool? CompareImages
+        {
+            get { return _scanMethod == 4; }
+            set
+            {
+                if (value.GetValueOrDefault())
+                    _scanMethod = 4;
+            }
+        }
+
         public bool? SkipTempFiles
         {
             get { return _skipTempFiles; }
