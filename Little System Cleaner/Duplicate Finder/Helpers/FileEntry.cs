@@ -298,9 +298,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             
             if (_pixels == null)
                 _pixels = new List<Color>(GetPixels(imageFirst));
+            else if (_pixels.Count == 0)
+                _pixels.AddRange(GetPixels(imageFirst));
 
             if (otherFileEntry._pixels == null)
                 otherFileEntry._pixels = new List<Color>(GetPixels(imageSecond));
+            else if (otherFileEntry._pixels.Count == 0)
+                otherFileEntry._pixels.AddRange(GetPixels(imageSecond));
 
             var pixelsFirst = _pixels;    
             var pixelsSecond = otherFileEntry._pixels;
