@@ -701,7 +701,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             // TODO: Improve memory usage
             foreach (var fileEntry1 in _fileList.Where(fileEntry => fileEntry.IsImage))
             {
-                // TODO: Display file being compared
+                CurrentFile = fileEntry1.FilePath;
 
                 var likeImages =
                     _fileList.Where(
