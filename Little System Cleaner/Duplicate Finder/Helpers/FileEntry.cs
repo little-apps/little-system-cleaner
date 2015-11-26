@@ -159,6 +159,16 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         public int Bitrate { get; }
         public string TagsChecksum { get; private set; }
 
+        private static readonly Dictionary<string, byte[]> ImageFileFormats = new Dictionary<string, byte[]>
+        {
+            {"jpg", new byte[] {0xFF, 0xD8}},
+            {"bmp", new byte[] {0x42, 0x4D}},
+            {"gif", new byte[] {0x47, 0x49, 0x46}},
+            {"png", new byte[] {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}}
+        };
+
+        private static readonly int ImageFileFormatsMaxLen = ImageFileFormats.Values.Max(bytes => bytes.Length);
+
         private bool? _isImage;
 
         public bool IsImage
@@ -168,28 +178,32 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 if (_isImage != null)
                     return _isImage.GetValueOrDefault();
 
-                using (var fileStream = _fileInfo.OpenRead())
-                {
-                    var fileFormats = new Dictionary<string, byte[]>
-                    {
-                        {"jpg", new byte[] {0xFF, 0xD8}},
-                        {"bmp", new byte[] {0x42, 0x4D}},
-                        {"gif", new byte[] {0x47, 0x49, 0x46}},
-                        {"png", new byte[] {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}}
-                    };
+                FileStream fileStream = null;
 
-                    var startBytesLen = fileFormats.Values.Max(bytes => bytes.Length);
-                    var startBytes = new byte[startBytesLen];
+                try
+                {
+                    fileStream = _fileInfo.OpenRead();
+                    
+                    var startBytes = new byte[ImageFileFormatsMaxLen];
 
                     fileStream.Read(startBytes, 0, startBytes.Length);
 
                     _isImage =
-                        fileFormats.Where(fileFormat => fileStream.Length >= fileFormat.Value.Length)
+                        ImageFileFormats.Where(fileFormat => fileStream.Length >= fileFormat.Value.Length)
                             .Any(
                                 fileFormat =>
                                     startBytes.Take(fileFormat.Value.Length).SequenceEqual(fileFormat.Value));
                 }
-
+                catch
+                {
+                    // Unable to determine if image or not
+                    _isImage = null;
+                }
+                finally
+                {
+                    fileStream?.Close();
+                }
+                
                 return _isImage.GetValueOrDefault();
             }
         }
@@ -254,6 +268,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return destImage;
         }
 
+        private static readonly Dictionary<long, decimal> CachedImageDifferences = new Dictionary<long, decimal>(); 
+
         /// <summary>
         ///     Compares current file entry with other file entry image
         /// </summary>
@@ -261,6 +277,19 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <returns>Decimal value between 0 and 1 of percentage of same pixels (with 0 being no pixels)</returns>
         public decimal CompareImages(FileEntry otherFileEntry)
         {
+            if (this == otherFileEntry)
+                return decimal.MinusOne;
+
+            var hash1 = ((long)GetHashCode() << 32) + otherFileEntry.GetHashCode();
+
+            if (CachedImageDifferences.ContainsKey(hash1))
+                return CachedImageDifferences[hash1];
+
+            var hash2 = ((long)otherFileEntry.GetHashCode() << 32) + GetHashCode();
+
+            if (CachedImageDifferences.ContainsKey(hash2))
+                return CachedImageDifferences[hash2];
+
             var imageFirst = GetImage();
             var imageSecond = otherFileEntry.GetImage();
 
@@ -282,7 +311,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             var sameColor = GetPixels(imageFirst)
                 .Zip(GetPixels(imageSecond), (colorFirst, colorSecond) => colorFirst == colorSecond).Count(x => x);
 
-            return sameColor/(decimal)pixelsFirst.Count;
+            CachedImageDifferences.Add(hash1, sameColor/(decimal) pixelsFirst.Count);
+
+            return CachedImageDifferences[hash1];
         }
 
         private List<Color> _pixels = null; 
@@ -708,6 +739,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             if (hashFileName.Length > 0)
                 memStream.Write(hashFileName, 0, hashFileName.Length);
+        }
+
+        public override int GetHashCode()
+        {
+            return FilePath.GetHashCode();
         }
     }
 }

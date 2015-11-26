@@ -685,14 +685,56 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void GroupByImage()
         {
+            StatusText = "Determing if files are images";
+
+            var countFileEntries = 0;
+
+            foreach (var fileEntry in _fileList.Where(fileEntry => fileEntry.IsImage))
+            {
+                CurrentFile = fileEntry.FilePath;
+                countFileEntries++;
+            }
+
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
+                if (Main.TaskbarProgressState == TaskbarItemProgressState.Indeterminate)
+                    Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
 
-                if (!ProgressBar.IsIndeterminate)
-                    ProgressBar.IsIndeterminate = true;
+                if (ProgressBar.IsIndeterminate)
+                    ProgressBar.IsIndeterminate = false;
+                
+                ProgressBar.Maximum = countFileEntries;
             }));
+
+            StatusText = "Comparing images by pixels";
+
+            var i = 0;
+            var firstFileEntry = _fileList.FirstOrDefault(fileEntry => fileEntry.IsImage);
+
+            if (firstFileEntry == null)
+                return;
+
+            foreach (
+                var fileEntry in
+                    _fileList.Where(fileEntry => fileEntry.IsImage && firstFileEntry.FilePath != fileEntry.FilePath)
+                        .OrderBy(fileEntry => fileEntry.FileSize)
+                        .TakeWhile(fileEntry => !_cancelTokenSource.IsCancellationRequested))
+            {
+                Dispatcher.BeginInvoke(new Action<int>(currentIndex =>
+                {
+                    CurrentFile = fileEntry.FilePath;
+
+                    ProgressBar.Value = currentIndex;
+                    Main.TaskbarProgressValue = currentIndex/(double) countFileEntries;
+                }), i++);
+
+                firstFileEntry.CompareImages(fileEntry);
+            }
+
+            if (_cancelTokenSource.IsCancellationRequested)
+                return;
+
+            i = 0;
             
             StatusText = "Grouping files by pixels";
 
@@ -701,8 +743,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             // TODO: Improve memory usage
             foreach (var fileEntry1 in _fileList.Where(fileEntry => fileEntry.IsImage))
             {
-                CurrentFile = fileEntry1.FilePath;
+                Dispatcher.BeginInvoke(new Action<int>(currentIndex =>
+                {
+                    CurrentFile = fileEntry1.FilePath;
 
+                    ProgressBar.Value = currentIndex;
+                    Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
+                }), i++);
+                
                 var likeImages =
                     _fileList.Where(
                         fileEntry2 =>
