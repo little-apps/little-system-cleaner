@@ -31,58 +31,63 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             _fileInfo = null;
         }
 
-        public FileEntry(FileInfo fi, bool compareMusicTags)
+        public FileEntry(FileInfo fi, UserOptions.ScanMethods scanMethod)
         {
             _fileInfo = fi;
 
-            if (!compareMusicTags)
-                return;
+            switch (scanMethod)
+            {
+                case UserOptions.ScanMethods.MusicTags:
+                    var file = GetTags();
 
-            var file = GetTags();
+                    if (HasAudioTags && file.Tag.IsEmpty)
+                        HasAudioTags = false;
 
-            if (HasAudioTags && file.Tag.IsEmpty)
-                HasAudioTags = false;
+                    if (!HasAudioTags)
+                        return;
 
-            if (!HasAudioTags)
-                return;
+                    if (file.Tag.AlbumArtists.Length == 0 && file.Tag.Performers.Length > 0)
+                        Artist = string.Join(",", file.Tag.Performers);
+                    else if (file.Tag.Performers.Length == 0 && file.Tag.AlbumArtists.Length > 0)
+                        Artist = string.Join(",", file.Tag.AlbumArtists);
+                    else
+                        Artist = string.Empty;
 
-            if (file.Tag.AlbumArtists.Length == 0 && file.Tag.Performers.Length > 0)
-                Artist = string.Join(",", file.Tag.Performers);
-            else if (file.Tag.Performers.Length == 0 && file.Tag.AlbumArtists.Length > 0)
-                Artist = string.Join(",", file.Tag.AlbumArtists);
-            else
-                Artist = string.Empty;
+                    if (!string.IsNullOrEmpty(file.Tag.Title))
+                        Title = file.Tag.Title;
 
-            if (!string.IsNullOrEmpty(file.Tag.Title))
-                Title = file.Tag.Title;
+                    if (file.Tag.Year > 0)
+                        Year = file.Tag.Year;
 
-            if (file.Tag.Year > 0)
-                Year = file.Tag.Year;
+                    if (file.Tag.Genres.Length > 0)
+                        Genre = string.Join(",", file.Tag.Genres);
 
-            if (file.Tag.Genres.Length > 0)
-                Genre = string.Join(",", file.Tag.Genres);
+                    if (!string.IsNullOrEmpty(file.Tag.Album))
+                        Album = file.Tag.Album;
 
-            if (!string.IsNullOrEmpty(file.Tag.Album))
-                Album = file.Tag.Album;
+                    if (file.Properties.Duration != TimeSpan.Zero)
+                        Duration = file.Properties.Duration;
 
-            if (file.Properties.Duration != TimeSpan.Zero)
-                Duration = file.Properties.Duration;
+                    if (file.Tag.Track > 0)
+                        TrackNo = file.Tag.Track;
 
-            if (file.Tag.Track > 0)
-                TrackNo = file.Tag.Track;
+                    if (file.Properties.AudioBitrate > 0)
+                        Bitrate = file.Properties.AudioBitrate;
 
-            if (file.Properties.AudioBitrate > 0)
-                Bitrate = file.Properties.AudioBitrate;
-
-            if (string.IsNullOrEmpty(Artist) &&
-                string.IsNullOrEmpty(Title) &&
-                Year <= 0 &&
-                string.IsNullOrEmpty(Genre) &&
-                string.IsNullOrEmpty(Album) &&
-                Duration.TotalSeconds == 0 &&
-                TrackNo <= 0 &&
-                Bitrate <= 0)
-                HasAudioTags = false;
+                    if (string.IsNullOrEmpty(Artist) &&
+                        string.IsNullOrEmpty(Title) &&
+                        Year <= 0 &&
+                        string.IsNullOrEmpty(Genre) &&
+                        string.IsNullOrEmpty(Album) &&
+                        Duration.TotalSeconds == 0 &&
+                        TrackNo <= 0 &&
+                        Bitrate <= 0)
+                        HasAudioTags = false;
+                    break;
+                case UserOptions.ScanMethods.Images:
+                    IsImage();
+                    break;
+            }
         }
 
         public string FileName => _fileInfo?.Name ?? Path.GetFileName(_filePath);
@@ -171,41 +176,38 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private bool? _isImage;
 
-        public bool IsImage
+        public bool IsImage()
         {
-            get
-            {
-                if (_isImage != null)
-                    return _isImage.GetValueOrDefault();
-
-                FileStream fileStream = null;
-
-                try
-                {
-                    fileStream = _fileInfo.OpenRead();
-                    
-                    var startBytes = new byte[ImageFileFormatsMaxLen];
-
-                    fileStream.Read(startBytes, 0, startBytes.Length);
-
-                    _isImage =
-                        ImageFileFormats.Where(fileFormat => fileStream.Length >= fileFormat.Value.Length)
-                            .Any(
-                                fileFormat =>
-                                    startBytes.Take(fileFormat.Value.Length).SequenceEqual(fileFormat.Value));
-                }
-                catch
-                {
-                    // Unable to determine if image or not
-                    _isImage = null;
-                }
-                finally
-                {
-                    fileStream?.Close();
-                }
-                
+            if (_isImage != null)
                 return _isImage.GetValueOrDefault();
+
+            FileStream fileStream = null;
+
+            try
+            {
+                fileStream = _fileInfo.OpenRead();
+
+                var startBytes = new byte[ImageFileFormatsMaxLen];
+
+                fileStream.Read(startBytes, 0, startBytes.Length);
+
+                _isImage =
+                    ImageFileFormats.Where(fileFormat => fileStream.Length >= fileFormat.Value.Length)
+                        .Any(
+                            fileFormat =>
+                                startBytes.Take(fileFormat.Value.Length).SequenceEqual(fileFormat.Value));
             }
+            catch
+            {
+                // Unable to determine if image or not
+                _isImage = null;
+            }
+            finally
+            {
+                fileStream?.Close();
+            }
+
+            return _isImage.GetValueOrDefault();
         }
 
         private Bitmap GetImage()
@@ -268,7 +270,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return destImage;
         }
 
-        private static readonly Dictionary<long, decimal> CachedImageDifferences = new Dictionary<long, decimal>(); 
+        private static readonly Dictionary<string, decimal> CachedImageDifferences = new Dictionary<string, decimal>(); 
 
         /// <summary>
         ///     Compares current file entry with other file entry image
@@ -280,12 +282,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (this == otherFileEntry)
                 return decimal.MinusOne;
 
-            var hash1 = ((long)GetHashCode() << 32) + otherFileEntry.GetHashCode();
+            var hash1 = FilePath + "|" + otherFileEntry.FilePath;
 
             if (CachedImageDifferences.ContainsKey(hash1))
                 return CachedImageDifferences[hash1];
 
-            var hash2 = ((long)otherFileEntry.GetHashCode() << 32) + GetHashCode();
+            var hash2 = otherFileEntry.FilePath + "|" + FilePath;
 
             if (CachedImageDifferences.ContainsKey(hash2))
                 return CachedImageDifferences[hash2];

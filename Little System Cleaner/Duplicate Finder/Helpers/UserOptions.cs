@@ -30,7 +30,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             Images = 4
         }
 
-        private ScanMethods _scanMethod;
+        public ScanMethods ScanMethod;
+
         private int _skipFilesGreaterSize = 512;
         private bool? _skipFilesGreaterThan = true;
         private string _skipFilesGreaterUnit = "MB";
@@ -149,41 +150,41 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? CompareChecksumFilename
         {
-            get { return _scanMethod == ScanMethods.ChecksumFilename; }
+            get { return ScanMethod == ScanMethods.ChecksumFilename; }
             set
             {
                 if (value.GetValueOrDefault())
-                    _scanMethod = ScanMethods.ChecksumFilename;
+                    ScanMethod = ScanMethods.ChecksumFilename;
             }
         }
 
         public bool? CompareChecksum
         {
-            get { return _scanMethod == ScanMethods.Checksum; }
+            get { return ScanMethod == ScanMethods.Checksum; }
             set
             {
                 if (value.GetValueOrDefault())
-                    _scanMethod = ScanMethods.Checksum;
+                    ScanMethod = ScanMethods.Checksum;
             }
         }
 
         public bool? CompareFilename
         {
-            get { return _scanMethod == ScanMethods.Filename; }
+            get { return ScanMethod == ScanMethods.Filename; }
             set
             {
                 if (value.GetValueOrDefault())
-                    _scanMethod = ScanMethods.Filename;
+                    ScanMethod = ScanMethods.Filename;
             }
         }
 
         public bool? CompareMusicTags
         {
-            get { return _scanMethod == ScanMethods.MusicTags; }
+            get { return ScanMethod == ScanMethods.MusicTags; }
             set
             {
                 if (value.GetValueOrDefault())
-                    _scanMethod = ScanMethods.MusicTags;
+                    ScanMethod = ScanMethods.MusicTags;
 
                 OnPropertyChanged("MusicTagsEnabled");
             }
@@ -191,11 +192,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? CompareImages
         {
-            get { return _scanMethod == ScanMethods.Images; }
+            get { return ScanMethod == ScanMethods.Images; }
             set
             {
                 if (value.GetValueOrDefault())
-                    _scanMethod = ScanMethods.Images;
+                    ScanMethod = ScanMethods.Images;
             }
         }
 
