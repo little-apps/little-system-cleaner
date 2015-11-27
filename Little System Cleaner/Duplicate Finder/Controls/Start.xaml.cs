@@ -238,6 +238,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
             }
 
+            if (_scanBase.Options.CompareImages.GetValueOrDefault())
+            {
+                Utils.MessageBoxThreadSafe("Please note that this scan can take a very long time to complete",
+                        Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
             UserOptions.StoreUserOptions(_scanBase.Options);
 
             _scanBase.MoveNext();

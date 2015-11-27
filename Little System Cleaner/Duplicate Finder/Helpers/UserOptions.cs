@@ -2,7 +2,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using System.Xml.Serialization;
+using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
