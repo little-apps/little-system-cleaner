@@ -269,9 +269,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             return destImage;
         }
-
-        private static readonly Dictionary<string, decimal> CachedImageDifferences = new Dictionary<string, decimal>(); 
-
+        
         /// <summary>
         ///     Compares current file entry with other file entry image
         /// </summary>
@@ -281,16 +279,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         {
             if (this == otherFileEntry)
                 return decimal.MinusOne;
-
-            var hash1 = FilePath + "|" + otherFileEntry.FilePath;
-
-            if (CachedImageDifferences.ContainsKey(hash1))
-                return CachedImageDifferences[hash1];
-
-            var hash2 = otherFileEntry.FilePath + "|" + FilePath;
-
-            if (CachedImageDifferences.ContainsKey(hash2))
-                return CachedImageDifferences[hash2];
 
             if (Pixels.Count == 0)
             {
@@ -319,9 +307,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 Pixels.Zip(otherFileEntry.Pixels, (colorFirst, colorSecond) => colorFirst == colorSecond)
                     .Count(x => x);
 
-            CachedImageDifferences.Add(hash1, sameColor/(decimal) Pixels.Count);
-
-            return CachedImageDifferences[hash1];
+            return sameColor/(decimal) Pixels.Count;
         }
 
         public List<Color> Pixels { get; private set; } = new List<Color>();
