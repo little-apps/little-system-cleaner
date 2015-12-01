@@ -228,7 +228,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     // Group by pixels
                     GroupByImage();
 
-                    if (ScanBase.FilesGroupedByFilename.Count == 0)
+                    if (ScanBase.FilesGroupedByHash.Count == 0)
                     {
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName,
                             MessageBoxButton.OK, MessageBoxImage.Information);
@@ -758,10 +758,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                             fileEntry1.FilePath != fileEntry2.FilePath &&
                             fileEntry1.CompareImages(fileEntry2) > (decimal) 0.9f).ToList();
 
-                if (likeImages.Count > 0)
-                    likeImages.Add(fileEntry1);
+                if (likeImages.Count <= 0)
+                    continue;
 
-                ScanBase.FilesGroupedByFilename.Add(fileEntry1.FileName, likeImages);
+                likeImages.Add(fileEntry1);
+
+                ScanBase.FilesGroupedByHash.Add(fileEntry1.FilePath, likeImages);
             }
         }
 
