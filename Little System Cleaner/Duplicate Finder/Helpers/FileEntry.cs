@@ -322,10 +322,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return CachedImageDifferences[hash1];
         }
 
-        private List<Color> _pixels = null; 
-
-
-        private IEnumerable<Color> GetPixels(Bitmap bitmap)
+        private List<Color> _pixels; 
+        
+        private static IEnumerable<Color> GetPixels(Bitmap bitmap)
         {
 
             var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
