@@ -310,7 +310,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return sameColor/(decimal) Pixels.Count;
         }
 
-        public List<Color> Pixels { get; private set; } = new List<Color>();
+        public List<Color> Pixels { get; } = new List<Color>();
 
         private static IEnumerable<Color> GetPixels(Bitmap bitmap)
         {
