@@ -689,6 +689,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             
             var countFileEntries = _fileList.Count(fileEntry => fileEntry.IsImage());
 
+            if (countFileEntries == 0)
+                // No images
+                return;
+
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 if (Main.TaskbarProgressState == TaskbarItemProgressState.Indeterminate)
@@ -700,38 +704,29 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 ProgressBar.Maximum = countFileEntries;
             }));
 
-            StatusText = "Comparing images by pixels";
+            StatusText = "Analyzing images";
 
-            int i;
+            var firstFileEntry = _fileList.First(fileEntry => fileEntry.IsImage());
+
+            var i = 0;
 
             foreach (
-                var firstFileEntry in
-                    _fileList.Where(fileEntry => fileEntry.IsImage())
-                        .TakeWhile(fileEntry => !_cancelTokenSource.IsCancellationRequested))
-            {
-                StatusText = "Comparing " + firstFileEntry.FilePath + " to images";
-
-                i = 0;
-
-                foreach (
                     var fileEntry in
                         _fileList.Where(
                             fileEntry => fileEntry.IsImage() && firstFileEntry.FilePath != fileEntry.FilePath)
                             .OrderBy(fileEntry => fileEntry.FileSize)
                             .TakeWhile(fileEntry => !_cancelTokenSource.IsCancellationRequested))
+            {
+                Dispatcher.BeginInvoke(new Action<int>(currentIndex =>
                 {
-                    Dispatcher.BeginInvoke(new Action<int>(currentIndex =>
-                    {
-                        CurrentFile = fileEntry.FilePath;
+                    CurrentFile = fileEntry.FilePath;
 
-                        ProgressBar.Value = currentIndex;
-                        Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
-                    }), i++);
+                    ProgressBar.Value = currentIndex;
+                    Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
+                }), i++);
 
-                    firstFileEntry.CompareImages(fileEntry);
-                }
+                firstFileEntry.CompareImages(fileEntry);
             }
-
 
             if (_cancelTokenSource.IsCancellationRequested)
                 return;
@@ -743,7 +738,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Main.Watcher.Event("Duplicate Finder", "Group by pixels");
 
             // TODO: Improve memory usage
-            foreach (var fileEntry1 in _fileList.Where(fileEntry => fileEntry.IsImage()))
+            foreach (
+                var fileEntry1 in
+                    _fileList.Where(fileEntry => fileEntry.IsImage())
+                        .TakeWhile(fileEntry => !_cancelTokenSource.IsCancellationRequested))
             {
                 Dispatcher.BeginInvoke(new Action<int>(currentIndex =>
                 {
