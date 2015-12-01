@@ -307,17 +307,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 otherFileEntry._pixels = new List<Color>(GetPixels(imageSecond));
             else if (otherFileEntry._pixels.Count == 0)
                 otherFileEntry._pixels.AddRange(GetPixels(imageSecond));
-
-            var pixelsFirst = _pixels;    
-            var pixelsSecond = otherFileEntry._pixels;
-
-            if (pixelsFirst.Count != pixelsSecond.Count)
+            
+            if (_pixels.Count != otherFileEntry._pixels.Count)
                 return 0;
 
-            var sameColor = GetPixels(imageFirst)
-                .Zip(GetPixels(imageSecond), (colorFirst, colorSecond) => colorFirst == colorSecond).Count(x => x);
+            var sameColor =
+                _pixels.Zip(otherFileEntry._pixels, (colorFirst, colorSecond) => colorFirst == colorSecond)
+                    .Count(x => x);
 
-            CachedImageDifferences.Add(hash1, sameColor/(decimal) pixelsFirst.Count);
+            CachedImageDifferences.Add(hash1, sameColor/(decimal) _pixels.Count);
 
             return CachedImageDifferences[hash1];
         }
