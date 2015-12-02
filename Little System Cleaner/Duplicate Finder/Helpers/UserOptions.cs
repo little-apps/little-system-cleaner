@@ -407,6 +407,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         #endregion
 
+        #region Compare Images Pixels by Pixels Options
+        public bool CompareImagesOptionsEnabled => CompareImages.GetValueOrDefault();
+        public decimal CompareImagesMinPercent { get; set; } = 0.01M;
+
+        #endregion
+
         #region Exclude Folders Properties
 
         public ObservableCollection<ExcludeFolder> ExcludeFolders { get; } = new ObservableCollection<ExcludeFolder>();

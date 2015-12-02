@@ -201,9 +201,9 @@
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Music Tags">
+            <TabItem Header="Search Method Options">
                 <StackPanel Margin="5,5,5,5">
-                    <GroupBox Header="Compare These Tags">
+                    <GroupBox Header="Compare These Music Tags">
                         <StackPanel Margin="5,5,5,5">
                             <DockPanel Margin="0,0,0,5">
                                 <CheckBox x:Name="MusicTagTitle" IsEnabled="{Binding MusicTagsEnabled}"
@@ -255,6 +255,16 @@
                             </DockPanel>
                         </StackPanel>
 
+                    </GroupBox>
+                    <GroupBox Header="Compare Images Pixels by Pixels">
+                        <StackPanel Orientation="Vertical">
+                            <DockPanel Margin="0,0,0,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>Find images that are similar by at least </Label>
+                                    <xctk:DecimalUpDown IsEnabled="{Binding Path=CompareImagesOptionsEnabled}" Maximum="1" Minimum="0.01" Value="{Binding Path=CompareImagesMinPercent}" Increment="0.01" FormatString="P0" />
+                                </StackPanel>
+                            </DockPanel>
+                        </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>

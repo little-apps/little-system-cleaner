@@ -24,6 +24,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             InitializeComponent();
 
             _scanBase = sb;
+            
 
             DataContext = _scanBase.Options;
 
