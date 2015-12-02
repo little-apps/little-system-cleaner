@@ -750,13 +750,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     ProgressBar.Value = currentIndex;
                     Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
                 }), i++);
-                
+
                 var likeImages =
                     _fileList.Where(
                         fileEntry2 =>
                             fileEntry2.IsImage() &&
                             fileEntry1.FilePath != fileEntry2.FilePath &&
-                            fileEntry1.CompareImages(fileEntry2) > (decimal) 0.9f).ToList();
+                            fileEntry1.CompareImages(fileEntry2) > ScanBase.Options.CompareImagesMinPercent).ToList();
 
                 if (likeImages.Count <= 0)
                     continue;

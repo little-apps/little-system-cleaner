@@ -199,6 +199,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 if (value.GetValueOrDefault())
                     ScanMethod = ScanMethods.Images;
+
+                OnPropertyChanged(nameof(CompareImagesOptionsEnabled));
             }
         }
 
@@ -409,7 +411,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         #region Compare Images Pixels by Pixels Options
         public bool CompareImagesOptionsEnabled => CompareImages.GetValueOrDefault();
-        public decimal CompareImagesMinPercent { get; set; } = 0.01M;
+        public decimal CompareImagesMinPercent { get; set; } = 0.95M;
 
         #endregion
 
