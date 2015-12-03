@@ -706,14 +706,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             StatusText = "Analyzing images";
 
-            var firstFileEntry = _fileList.First(fileEntry => fileEntry.IsImage());
-
             var i = 0;
 
             foreach (
                     var fileEntry in
                         _fileList.Where(
-                            fileEntry => fileEntry.IsImage() && firstFileEntry.FilePath != fileEntry.FilePath)
+                            fileEntry => fileEntry.IsImage())
                             .OrderBy(fileEntry => fileEntry.FileSize)
                             .TakeWhile(fileEntry => !_cancelTokenSource.IsCancellationRequested))
             {
@@ -725,7 +723,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
                 }), i++);
 
-                firstFileEntry.CompareImages(fileEntry);
+                fileEntry.AnalyzeImage();
             }
 
             if (_cancelTokenSource.IsCancellationRequested)
