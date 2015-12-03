@@ -462,49 +462,46 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             try
             {
-                var files = Directory.GetFiles(di.FullName);
-
-                if (files.Length > 0)
+                foreach (
+                    var file in
+                        Directory.GetFiles(di.FullName).TakeWhile(file => !_cancelTokenSource.IsCancellationRequested))
                 {
-                    foreach (var file in files)
-                    {
-                        CurrentFile = file;
+                    CurrentFile = file;
 
-                        if (file.Length > 260)
+                    if (file.Length > 260)
+                        continue;
+
+                    try
+                    {
+                        var fi = new FileInfo(file);
+
+                        if (ScanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
                             continue;
 
-                        try
+                        if (!ScanBase.Options.IncHiddenFiles.GetValueOrDefault() &&
+                            (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                            continue;
+
+                        if (IsSizeGreaterThan(fi.Length))
+                            continue;
+
+                        if (ScanBase.Options.SkipCompressedFiles.GetValueOrDefault() && IsCompressedFile(fi))
+                            continue;
+
+                        _fileList.Add(new FileEntry(fi, ScanBase.Options.ScanMethod));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                    }
+                    catch (SecurityException)
+                    {
+                    }
+                    catch (IOException ex)
+                    {
+                        if (ex is PathTooLongException)
                         {
-                            var fi = new FileInfo(file);
-
-                            if (ScanBase.Options.SkipZeroByteFiles.GetValueOrDefault() && fi.Length == 0)
-                                continue;
-
-                            if (!ScanBase.Options.IncHiddenFiles.GetValueOrDefault() &&
-                                (fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                                continue;
-
-                            if (IsSizeGreaterThan(fi.Length))
-                                continue;
-
-                            if (ScanBase.Options.SkipCompressedFiles.GetValueOrDefault() && IsCompressedFile(fi))
-                                continue;
-
-                            _fileList.Add(new FileEntry(fi, ScanBase.Options.ScanMethod));
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                        }
-                        catch (SecurityException)
-                        {
-                        }
-                        catch (IOException ex)
-                        {
-                            if (ex is PathTooLongException)
-                            {
-                                // Just in case
-                                Debug.WriteLine("Path ({0}) is too long", (object) file);
-                            }
+                            // Just in case
+                            Debug.WriteLine("Path ({0}) is too long", (object) file);
                         }
                     }
                 }
@@ -528,12 +525,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             try
             {
-                var dirs = Directory.GetDirectories(di.FullName);
-
-                if (dirs.Length <= 0)
-                    return;
-
-                foreach (var dir in dirs)
+                foreach (
+                    var dir in
+                        Directory.GetDirectories(di.FullName)
+                            .TakeWhile(dir => !_cancelTokenSource.IsCancellationRequested))
                 {
                     CurrentFile = dir;
 
