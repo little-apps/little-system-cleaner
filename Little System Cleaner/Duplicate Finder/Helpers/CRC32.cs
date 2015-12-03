@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -76,12 +78,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             return CalculateHash(_table, seed, buffer, start, size);
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static uint CalculateHash(uint[] table, uint seed, IList<byte> buffer, int start, int size)
         {
             var crc = seed;
             for (var i = start; i < size - start; i++)
             {
-                var b = buffer[i];
+                var b = buffer[i]; 
                 crc = (crc >> 8) ^ table[b ^ crc & 0xff];
             }
 
