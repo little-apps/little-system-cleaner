@@ -269,6 +269,30 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             return destImage;
         }
+
+        /// <summary>
+        /// Analyzes image by resizing it and storing pixels in list
+        /// </summary>
+        /// <param name="forceReanalyze">If true, the image is analyzed even if it's already been</param>
+        public void AnalyzeImage(bool forceReanalyze = false)
+        {
+            if (Pixels.Count != 0 && !forceReanalyze)
+                return;
+
+            if (forceReanalyze && Pixels.Count > 0)
+                Pixels.Clear();
+
+            var image = GetImage();
+
+            if (image == null)
+            {
+                // Image is invalid
+                _isImage = false;
+                return;
+            }
+
+            Pixels.AddRange(GetPixels(image));
+        }
         
         /// <summary>
         ///     Compares current file entry with other file entry image
@@ -280,25 +304,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (this == otherFileEntry)
                 return decimal.MinusOne;
 
-            if (Pixels.Count == 0)
-            {
-                var imageFirst = GetImage();
-                
-                if (imageFirst == null)
-                    return decimal.Zero;
-
-                Pixels.AddRange(GetPixels(imageFirst));
-            }
-
-            if (otherFileEntry.Pixels.Count == 0)
-            {
-                var imageSecond = otherFileEntry.GetImage();
-
-                if (imageSecond == null)
-                    return decimal.Zero;
-
-                otherFileEntry.Pixels.AddRange(GetPixels(imageSecond));
-            }
+            if (Pixels.Count == 0 || otherFileEntry.Pixels.Count == 0)
+                // No pixels, images are not similar at all
+                return decimal.Zero;
             
             if (Pixels.Count != otherFileEntry.Pixels.Count)
                 return 0;
