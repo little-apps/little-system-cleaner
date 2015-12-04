@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Shell;
 using System.Windows.Threading;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
@@ -57,7 +58,9 @@ namespace Little_System_Cleaner
         {
             bool bMutexCreated;
 
-            var bWaitToExit = Environment.GetCommandLineArgs().Any(arg => arg == "/restart" || arg == "--restart");
+            var parseArgs = new ParseArgs(Environment.GetCommandLineArgs());
+
+            var bWaitToExit = parseArgs.Arguments.ContainsKey("restart");
 
             using (var mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated))
             {
