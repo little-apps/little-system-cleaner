@@ -26,7 +26,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _folderPath = value;
-                OnPropertyChanged("FolderPath");
+                OnPropertyChanged(nameof(FolderPath));
             }
         }
 

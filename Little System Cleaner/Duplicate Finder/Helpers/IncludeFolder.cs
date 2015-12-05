@@ -34,7 +34,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _bIsChecked = value;
-                OnPropertyChanged("IsChecked");
+                OnPropertyChanged(nameof(IsChecked));
             }
         }
 
@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
 
                 if (DirInfo == null)
                     DirInfo = new DirectoryInfo(_name);

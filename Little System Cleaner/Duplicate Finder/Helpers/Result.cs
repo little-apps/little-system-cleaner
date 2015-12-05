@@ -305,7 +305,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (updateParent)
                 Parent?.VerifyCheckState();
 
-            OnPropertyChanged("IsChecked");
+            OnPropertyChanged(nameof(IsChecked));
         }
 
         private void VerifyCheckState()
