@@ -79,7 +79,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                         Year <= 0 &&
                         string.IsNullOrEmpty(Genre) &&
                         string.IsNullOrEmpty(Album) &&
-                        Duration.TotalSeconds == 0 &&
+                        Duration == TimeSpan.Zero &&
                         TrackNo <= 0 &&
                         Bitrate <= 0)
                         HasAudioTags = false;
