@@ -61,7 +61,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 _progressBarText = value;
-                OnPropertyChanged("ProgressBarText");
+                OnPropertyChanged(nameof(ProgressBarText));
             }
         }
 

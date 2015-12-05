@@ -79,7 +79,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             {
                 _excludeArray = value;
 
-                OnPropertyChanged("ExcludeArray");
+                OnPropertyChanged(nameof(ExcludeArray));
             }
         }
 
@@ -90,7 +90,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             {
                 _restoreFiles = value;
 
-                OnPropertyChanged("RestoreFiles");
+                OnPropertyChanged(nameof(RestoreFiles));
             }
         }
 

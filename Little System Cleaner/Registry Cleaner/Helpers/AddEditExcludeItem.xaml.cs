@@ -62,10 +62,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             RootKey = RootKeys[0];
             SelectedType = excType;
 
-            OnPropertyChanged("Description");
-            OnPropertyChanged("RegistryVisible");
-            OnPropertyChanged("FileVisible");
-            OnPropertyChanged("FolderVisible");
+            OnPropertyChanged(nameof(Description));
+            OnPropertyChanged(nameof(RegistryVisible));
+            OnPropertyChanged(nameof(FileVisible));
+            OnPropertyChanged(nameof(FolderVisible));
         }
 
         public AddEditExcludeItem(ExcludeItem excItem)
@@ -110,10 +110,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             SelectedType = excType;
 
-            OnPropertyChanged("Description");
-            OnPropertyChanged("RegistryVisible");
-            OnPropertyChanged("FileVisible");
-            OnPropertyChanged("FolderVisible");
+            OnPropertyChanged(nameof(Description));
+            OnPropertyChanged(nameof(RegistryVisible));
+            OnPropertyChanged(nameof(FileVisible));
+            OnPropertyChanged(nameof(FolderVisible));
         }
 
         public ExcludeItem ExcludeItem
@@ -150,7 +150,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 _winTitle = value;
 
-                OnPropertyChanged("WindowTitle");
+                OnPropertyChanged(nameof(WindowTitle));
             }
         }
 
@@ -161,7 +161,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 _addEditText = value;
 
-                OnPropertyChanged("AddEditText");
+                OnPropertyChanged(nameof(AddEditText));
             }
         }
 
@@ -200,7 +200,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 _rootKey = value;
 
-                OnPropertyChanged("RootKey");
+                OnPropertyChanged(nameof(RootKey));
             }
         }
 
@@ -212,7 +212,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 var val = string.IsNullOrEmpty(value) ? string.Empty : value.Trim();
                 _filePath = val;
 
-                OnPropertyChanged("FilePath");
+                OnPropertyChanged(nameof(FilePath));
             }
         }
 
@@ -224,7 +224,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 var val = string.IsNullOrEmpty(value) ? string.Empty : value.Trim();
                 _folderPath = val;
 
-                OnPropertyChanged("FolderPath");
+                OnPropertyChanged(nameof(FolderPath));
             }
         }
 
@@ -258,7 +258,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 var val = string.IsNullOrEmpty(value) ? string.Empty : value.Trim();
                 _subKey = val;
 
-                OnPropertyChanged("SubKeyPath");
+                OnPropertyChanged(nameof(SubKeyPath));
             }
         }
 

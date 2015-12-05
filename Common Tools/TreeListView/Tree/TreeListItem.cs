@@ -20,7 +20,7 @@ namespace CommonTools.TreeListView.Tree
 			internal set
 			{
 				_node = value;
-				OnPropertyChanged("Node");
+				OnPropertyChanged(nameof(Node));
 			}
 		}
 

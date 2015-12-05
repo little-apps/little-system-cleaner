@@ -63,9 +63,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (value.GetValueOrDefault())
                     Settings.Default.diskCleanerRemoveMode = 0;
 
-                OnPropertyChanged("JunkFilesDelete");
-                OnPropertyChanged("JunkFilesRecycle");
-                OnPropertyChanged("JunkFilesMove");
+                OnPropertyChanged(nameof(JunkFilesDelete));
+                OnPropertyChanged(nameof(JunkFilesRecycle));
+                OnPropertyChanged(nameof(JunkFilesMove));
             }
         }
 
@@ -77,9 +77,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (value.GetValueOrDefault())
                     Settings.Default.diskCleanerRemoveMode = 1;
 
-                OnPropertyChanged("JunkFilesDelete");
-                OnPropertyChanged("JunkFilesRecycle");
-                OnPropertyChanged("JunkFilesMove");
+                OnPropertyChanged(nameof(JunkFilesDelete));
+                OnPropertyChanged(nameof(JunkFilesRecycle));
+                OnPropertyChanged(nameof(JunkFilesMove));
             }
         }
 
@@ -91,9 +91,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (value.GetValueOrDefault())
                     Settings.Default.diskCleanerRemoveMode = 2;
 
-                OnPropertyChanged("JunkFilesDelete");
-                OnPropertyChanged("JunkFilesRecycle");
-                OnPropertyChanged("JunkFilesMove");
+                OnPropertyChanged(nameof(JunkFilesDelete));
+                OnPropertyChanged(nameof(JunkFilesRecycle));
+                OnPropertyChanged(nameof(JunkFilesMove));
             }
         }
 
@@ -103,7 +103,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             set
             {
                 Settings.Default.diskCleanerMoveFolder = value;
-                OnPropertyChanged("MoveFolder");
+                OnPropertyChanged(nameof(MoveFolder));
             }
         }
 
@@ -113,7 +113,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             set
             {
                 Settings.Default.diskCleanerIgnoreWriteProtected = value.GetValueOrDefault();
-                OnPropertyChanged("IgnoreWriteProtectedFiles");
+                OnPropertyChanged(nameof(IgnoreWriteProtectedFiles));
             }
         }
 
@@ -123,7 +123,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             set
             {
                 Settings.Default.diskCleanerSearchZeroByte = value.GetValueOrDefault();
-                OnPropertyChanged("ZeroLengthFilesAreJunk");
+                OnPropertyChanged(nameof(ZeroLengthFilesAreJunk));
             }
         }
 
@@ -134,7 +134,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerSearchFilters = value;
 
-                OnPropertyChanged("SearchFilter");
+                OnPropertyChanged(nameof(SearchFilter));
             }
         }
 
@@ -148,9 +148,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 SearchFilterChange();
 
-                OnPropertyChanged("SearchFilterSafe");
-                OnPropertyChanged("SearchFilterMedium");
-                OnPropertyChanged("SearchFilterAggressive");
+                OnPropertyChanged(nameof(SearchFilterSafe));
+                OnPropertyChanged(nameof(SearchFilterMedium));
+                OnPropertyChanged(nameof(SearchFilterAggressive));
             }
         }
 
@@ -164,9 +164,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 SearchFilterChange();
 
-                OnPropertyChanged("SearchFilterSafe");
-                OnPropertyChanged("SearchFilterMedium");
-                OnPropertyChanged("SearchFilterAggressive");
+                OnPropertyChanged(nameof(SearchFilterSafe));
+                OnPropertyChanged(nameof(SearchFilterMedium));
+                OnPropertyChanged(nameof(SearchFilterAggressive));
             }
         }
 
@@ -180,9 +180,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
                 SearchFilterChange();
 
-                OnPropertyChanged("SearchFilterSafe");
-                OnPropertyChanged("SearchFilterMedium");
-                OnPropertyChanged("SearchFilterAggressive");
+                OnPropertyChanged(nameof(SearchFilterSafe));
+                OnPropertyChanged(nameof(SearchFilterMedium));
+                OnPropertyChanged(nameof(SearchFilterAggressive));
             }
         }
 
@@ -193,7 +193,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerAutoClean = value.GetValueOrDefault();
 
-                OnPropertyChanged("AutoRemoveFiles");
+                OnPropertyChanged(nameof(AutoRemoveFiles));
             }
         }
 
@@ -204,7 +204,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerSearchHidden = value.GetValueOrDefault();
 
-                OnPropertyChanged("AttributesHidden");
+                OnPropertyChanged(nameof(AttributesHidden));
             }
         }
 
@@ -215,7 +215,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerSearchReadOnly = value.GetValueOrDefault();
 
-                OnPropertyChanged("AttributesReadonly");
+                OnPropertyChanged(nameof(AttributesReadonly));
             }
         }
 
@@ -226,7 +226,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerSearchArchives = value.GetValueOrDefault();
 
-                OnPropertyChanged("AttributesArchive");
+                OnPropertyChanged(nameof(AttributesArchive));
             }
         }
 
@@ -237,7 +237,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerSearchSystem = value.GetValueOrDefault();
 
-                OnPropertyChanged("AttributesSystem");
+                OnPropertyChanged(nameof(AttributesSystem));
             }
         }
 
@@ -250,9 +250,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (value.GetValueOrDefault())
                     Settings.Default.diskCleanerFindFilesMode = 0;
 
-                OnPropertyChanged("FindFilesCreated");
-                OnPropertyChanged("FindFilesModified");
-                OnPropertyChanged("FindFilesAccessed");
+                OnPropertyChanged(nameof(FindFilesCreated));
+                OnPropertyChanged(nameof(FindFilesModified));
+                OnPropertyChanged(nameof(FindFilesAccessed));
             }
         }
 
@@ -264,9 +264,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (value.GetValueOrDefault())
                     Settings.Default.diskCleanerFindFilesMode = 1;
 
-                OnPropertyChanged("FindFilesCreated");
-                OnPropertyChanged("FindFilesModified");
-                OnPropertyChanged("FindFilesAccessed");
+                OnPropertyChanged(nameof(FindFilesCreated));
+                OnPropertyChanged(nameof(FindFilesModified));
+                OnPropertyChanged(nameof(FindFilesAccessed));
             }
         }
 
@@ -278,9 +278,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 if (value.GetValueOrDefault())
                     Settings.Default.diskCleanerFindFilesMode = 2;
 
-                OnPropertyChanged("FindFilesCreated");
-                OnPropertyChanged("FindFilesModified");
-                OnPropertyChanged("FindFilesAccessed");
+                OnPropertyChanged(nameof(FindFilesCreated));
+                OnPropertyChanged(nameof(FindFilesModified));
+                OnPropertyChanged(nameof(FindFilesAccessed));
             }
         }
 
@@ -291,7 +291,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerFindFilesAfter = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesAfter");
+                OnPropertyChanged(nameof(FindFilesAfter));
             }
         }
 
@@ -302,7 +302,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerFindFilesBefore = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesBefore");
+                OnPropertyChanged(nameof(FindFilesBefore));
             }
         }
 
@@ -313,7 +313,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerDateTimeAfter = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesAfterDateTime");
+                OnPropertyChanged(nameof(FindFilesAfterDateTime));
             }
         }
 
@@ -324,7 +324,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerDateTimeBefore = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesBeforeDateTime");
+                OnPropertyChanged(nameof(FindFilesBeforeDateTime));
             }
         }
 
@@ -335,7 +335,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerCheckFileSize = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesBySize");
+                OnPropertyChanged(nameof(FindFilesBySize));
             }
         }
 
@@ -346,7 +346,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerCheckFileSizeLeast = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesBySizeAtLeast");
+                OnPropertyChanged(nameof(FindFilesBySizeAtLeast));
             }
         }
 
@@ -357,7 +357,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Settings.Default.diskCleanerCheckFileSizeMost = value.GetValueOrDefault();
 
-                OnPropertyChanged("FindFilesBySizeAtMost");
+                OnPropertyChanged(nameof(FindFilesBySizeAtMost));
             }
         }
 
@@ -417,7 +417,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
             }
 
-            OnPropertyChanged("DrivesCollection");
+            OnPropertyChanged(nameof(DrivesCollection));
 
             // Excluded Dirs
             ExcFoldersCollection.AddRange(

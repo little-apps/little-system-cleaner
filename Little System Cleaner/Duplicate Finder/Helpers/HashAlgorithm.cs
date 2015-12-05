@@ -56,7 +56,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 

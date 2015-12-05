@@ -35,7 +35,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 _pathRegistry = value;
 
-                OnPropertyChanged("Item");
+                OnPropertyChanged(nameof(Item));
             }
         }
 
@@ -46,7 +46,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 _pathFolder = value;
 
-                OnPropertyChanged("Item");
+                OnPropertyChanged(nameof(Item));
             }
         }
 
@@ -57,7 +57,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 _pathFile = value;
 
-                OnPropertyChanged("Item");
+                OnPropertyChanged(nameof(Item));
             }
         }
 

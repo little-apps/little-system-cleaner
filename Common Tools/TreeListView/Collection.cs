@@ -24,7 +24,7 @@ namespace CommonTools.TreeListView
 
 		private void OnReset()
 		{
-			OnPropertyChanged("Count");
+			OnPropertyChanged(nameof(Count));
 			OnPropertyChanged("Item[]");
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(
 				NotifyCollectionChangedAction.Reset));

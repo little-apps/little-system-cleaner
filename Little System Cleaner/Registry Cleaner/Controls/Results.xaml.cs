@@ -99,7 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (Math.Abs(ProgressBar.Maximum) > 0)
                     Main.TaskbarProgressValue = val/ProgressBar.Maximum;
 
-                OnPropertyChanged("ProgressBarValue");
+                OnPropertyChanged(nameof(ProgressBarValue));
             }
         }
 
@@ -115,7 +115,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 }
 
                 _progressBarText = value;
-                OnPropertyChanged("ProgressBarText");
+                OnPropertyChanged(nameof(ProgressBarText));
             }
         }
 

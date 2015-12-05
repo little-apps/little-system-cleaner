@@ -26,7 +26,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             set
             {
                 _image = value;
-                OnPropertyChanged("Image");
+                OnPropertyChanged(nameof(Image));
             }
         }
 
@@ -36,7 +36,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             set
             {
                 _animatedImage = value;
-                OnPropertyChanged("AnimatedImage");
+                OnPropertyChanged(nameof(AnimatedImage));
             }
         }
 

@@ -75,7 +75,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                         break;
                 }
 
-                OnPropertyChanged("SelectedUpdateDelay");
+                OnPropertyChanged(nameof(SelectedUpdateDelay));
             }
         }
 
@@ -86,7 +86,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.updateAuto = value.GetValueOrDefault();
 
-                OnPropertyChanged("AutoUpdate");
+                OnPropertyChanged(nameof(AutoUpdate));
             }
         }
 
@@ -97,7 +97,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.optionsSysRestore = value.GetValueOrDefault();
 
-                OnPropertyChanged("SysRestore");
+                OnPropertyChanged(nameof(SysRestore));
             }
         }
 
@@ -108,7 +108,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.optionsUsageStats = value.GetValueOrDefault();
 
-                OnPropertyChanged("UsageStats");
+                OnPropertyChanged(nameof(UsageStats));
             }
         }
 
@@ -119,7 +119,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.OptionsLogDir = value;
 
-                OnPropertyChanged("LogDirectory");
+                OnPropertyChanged(nameof(LogDirectory));
             }
         }
 
@@ -131,10 +131,10 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                 if (value.GetValueOrDefault())
                     Settings.Default.optionsUseProxy = 0;
 
-                OnPropertyChanged("NoProxy");
-                OnPropertyChanged("IEProxy");
-                OnPropertyChanged("Proxy");
-                OnPropertyChanged("ShowProxySettings");
+                OnPropertyChanged(nameof(NoProxy));
+                OnPropertyChanged(nameof(IeProxy));
+                OnPropertyChanged(nameof(Proxy));
+                OnPropertyChanged(nameof(ShowProxySettings));
             }
         }
 
@@ -146,10 +146,10 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                 if (value.GetValueOrDefault())
                     Settings.Default.optionsUseProxy = 1;
 
-                OnPropertyChanged("NoProxy");
-                OnPropertyChanged("IEProxy");
-                OnPropertyChanged("Proxy");
-                OnPropertyChanged("ShowProxySettings");
+                OnPropertyChanged(nameof(NoProxy));
+                OnPropertyChanged(nameof(IeProxy));
+                OnPropertyChanged(nameof(Proxy));
+                OnPropertyChanged(nameof(ShowProxySettings));
             }
         }
 
@@ -161,10 +161,10 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                 if (value.GetValueOrDefault())
                     Settings.Default.optionsUseProxy = 2;
 
-                OnPropertyChanged("NoProxy");
-                OnPropertyChanged("IEProxy");
-                OnPropertyChanged("Proxy");
-                OnPropertyChanged("ShowProxySettings");
+                OnPropertyChanged(nameof(NoProxy));
+                OnPropertyChanged(nameof(IeProxy));
+                OnPropertyChanged(nameof(Proxy));
+                OnPropertyChanged(nameof(ShowProxySettings));
             }
         }
 
@@ -177,7 +177,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.optionsProxyHost = value;
 
-                OnPropertyChanged("ProxyAddress");
+                OnPropertyChanged(nameof(ProxyAddress));
             }
         }
 
@@ -188,7 +188,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.optionsProxyPort = value.GetValueOrDefault();
 
-                OnPropertyChanged("ProxyPort");
+                OnPropertyChanged(nameof(ProxyPort));
             }
         }
 
@@ -199,7 +199,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.optionsProxyAuthenticate = value.GetValueOrDefault();
 
-                OnPropertyChanged("ProxyAuthenticate");
+                OnPropertyChanged(nameof(ProxyAuthenticate));
             }
         }
 
@@ -210,7 +210,7 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             {
                 Settings.Default.optionsProxyUser = value;
 
-                OnPropertyChanged("ProxyUser");
+                OnPropertyChanged(nameof(ProxyUser));
             }
         }
 

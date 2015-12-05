@@ -99,7 +99,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 bMapImg = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
                     BitmapSizeOptions.FromEmptyOptions());
 
-                OnPropertyChanged("bMapImg");
+                OnPropertyChanged(nameof(bMapImg));
             }
         }
 
@@ -113,7 +113,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 else
                 {
                     _errors = value;
-                    OnPropertyChanged("Errors");
+                    OnPropertyChanged(nameof(Errors));
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 else
                 {
                     _status = value;
-                    OnPropertyChanged("Status");
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
@@ -175,7 +175,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 else
                 {
                     _image = value;
-                    OnPropertyChanged("Image");
+                    OnPropertyChanged(nameof(Image));
                 }
             }
         }
@@ -190,7 +190,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 else
                 {
                     _animatedImage = value;
-                    OnPropertyChanged("AnimatedImage");
+                    OnPropertyChanged(nameof(AnimatedImage));
                 }
             }
         }
@@ -260,7 +260,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             if (updateParent)
                 Parent?.VerifyCheckState();
 
-            OnPropertyChanged("IsChecked");
+            OnPropertyChanged(nameof(IsChecked));
         }
 
         private void VerifyCheckState()

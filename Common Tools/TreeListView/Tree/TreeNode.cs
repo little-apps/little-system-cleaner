@@ -146,8 +146,8 @@ namespace CommonTools.TreeListView.Tree
 				if (value != IsExpanded)
 				{
 					Tree.SetIsExpanded(this, value);
-					OnPropertyChanged("IsExpanded");
-					OnPropertyChanged("IsExpandable");
+					OnPropertyChanged(nameof(IsExpanded));
+					OnPropertyChanged(nameof(IsExpandable));
 				}
 			}
 		}
@@ -197,7 +197,7 @@ namespace CommonTools.TreeListView.Tree
 				if (value != _isSelected)
 				{
 					_isSelected = value;
-					OnPropertyChanged("IsSelected");
+					OnPropertyChanged(nameof(IsSelected));
 				}
 			}
 		}
@@ -376,7 +376,7 @@ namespace CommonTools.TreeListView.Tree
 					break;
 			}
 			HasChildren = Children.Count > 0;
-			OnPropertyChanged("IsExpandable");
+			OnPropertyChanged(nameof(IsExpandable));
 		}
 
 		private void RemoveChildAt(int index)

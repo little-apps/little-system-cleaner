@@ -131,7 +131,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 _statusText = value;
-                OnPropertyChanged("StatusText");
+                OnPropertyChanged(nameof(StatusText));
             }
         }
 
@@ -147,7 +147,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 _currentFile = value;
-                OnPropertyChanged("CurrentFile");
+                OnPropertyChanged(nameof(CurrentFile));
             }
         }
 

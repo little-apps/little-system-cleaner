@@ -272,7 +272,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             if (updateParent)
                 _parent?.VerifyCheckState();
 
-            OnPropertyChanged("IsChecked");
+            OnPropertyChanged(nameof(IsChecked));
         }
 
         private void VerifyCheckState()
