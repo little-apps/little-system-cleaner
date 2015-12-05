@@ -60,9 +60,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             _scanBase.Options.SkipSysAppDirs = true;
             _scanBase.Options.SkipWindowsDir = true;
 
-            _scanBase.Options.OnPropertyChanged("SkipFilesGreaterThan");
-            _scanBase.Options.OnPropertyChanged("SkipFilesGreaterSize");
-            _scanBase.Options.OnPropertyChanged("SkipFilesGreaterUnit");
+            _scanBase.Options.OnPropertyChanged(nameof(_scanBase.Options.SkipFilesGreaterThan));
+            _scanBase.Options.OnPropertyChanged(nameof(_scanBase.Options.SkipFilesGreaterSize));
+            _scanBase.Options.OnPropertyChanged(nameof(_scanBase.Options.SkipFilesGreaterUnit));
 
             _scanBase.Options.HashAlgorithms = HashAlgorithm.CreateList();
             _scanBase.Options.HashAlgorithm = _scanBase.Options.HashAlgorithms[2]; // SHA1

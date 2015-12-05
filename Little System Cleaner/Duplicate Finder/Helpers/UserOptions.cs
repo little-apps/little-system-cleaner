@@ -98,7 +98,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _incFolderSelected = value;
-                OnPropertyChanged("IncludeFolderSelected");
+                OnPropertyChanged(nameof(IncludeFolderSelected));
             }
         }
 
@@ -110,7 +110,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _allExceptDrives = value;
-                OnPropertyChanged("AllExceptEnabled");
+                OnPropertyChanged(nameof(AllExceptEnabled));
             }
         }
 
@@ -126,7 +126,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _onlySelectedDrives = value;
-                OnPropertyChanged("SelectedDrivesEnabled");
+                OnPropertyChanged(nameof(SelectedDrivesEnabled));
             }
         }
 
@@ -136,7 +136,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _onlySelectedFolders = value;
-                OnPropertyChanged("SelectedFoldersEnabled");
+                OnPropertyChanged(nameof(SelectedFoldersEnabled));
             }
         }
 
@@ -188,7 +188,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 if (value.GetValueOrDefault())
                     ScanMethod = ScanMethods.MusicTags;
 
-                OnPropertyChanged("MusicTagsEnabled");
+                OnPropertyChanged(nameof(MusicTagsEnabled));
             }
         }
 
@@ -236,8 +236,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     }
                 }
 
-                OnPropertyChanged("SkipTempFiles");
-                OnPropertyChanged("ExcludeFolders");
+                OnPropertyChanged(nameof(SkipTempFiles));
+                OnPropertyChanged(nameof(ExcludeFolders));
             }
         }
 
@@ -281,8 +281,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     }
                 }
 
-                OnPropertyChanged("SkipSysAppDirs");
-                OnPropertyChanged("ExcludeFolders");
+                OnPropertyChanged(nameof(SkipSysAppDirs));
+                OnPropertyChanged(nameof(ExcludeFolders));
             }
         }
 
@@ -323,8 +323,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     }
                 }
 
-                OnPropertyChanged("SkipWindowsDir");
-                OnPropertyChanged("ExcludeFolders");
+                OnPropertyChanged(nameof(SkipWindowsDir));
+                OnPropertyChanged(nameof(ExcludeFolders));
             }
         }
 
@@ -334,8 +334,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _skipFilesGreaterThan = value;
-                OnPropertyChanged("SkipFilesGreaterThan");
-                OnPropertyChanged("SkipFilesGreaterEnabled");
+                OnPropertyChanged(nameof(SkipFilesGreaterThan));
+                OnPropertyChanged(nameof(SkipFilesGreaterEnabled));
             }
         }
 
@@ -345,7 +345,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _skipFilesGreaterSize = value;
-                OnPropertyChanged("SkipFilesGreaterSize");
+                OnPropertyChanged(nameof(SkipFilesGreaterSize));
             }
         }
 
@@ -357,7 +357,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _skipFilesGreaterUnit = value;
-                OnPropertyChanged("SkipFilesGreaterUnit");
+                OnPropertyChanged(nameof(SkipFilesGreaterUnit));
             }
         }
 
@@ -370,7 +370,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _hashAlgorithm = value;
-                OnPropertyChanged("HashAlgorithm");
+                OnPropertyChanged(nameof(HashAlgorithm));
             }
         }
 
@@ -381,7 +381,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _hashAlgorithms = value;
-                OnPropertyChanged("HashAlgorithms");
+                OnPropertyChanged(nameof(HashAlgorithm));
             }
         }
 
@@ -425,7 +425,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             set
             {
                 _excFolderSelected = value;
-                OnPropertyChanged("ExcludeFolderSelected");
+                OnPropertyChanged(nameof(ExcludeFolderSelected));
             }
         }
 
