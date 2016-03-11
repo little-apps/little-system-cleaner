@@ -136,17 +136,26 @@ namespace Little_System_Cleaner.Misc
 
             const int TVGN_CARET = 0x0009;
 
-            if (path.StartsWith("HKLM"))
+            try
             {
-                path = "HKEY_LOCAL_MACHINE" + path.Remove(0, 4);
+                switch (path.Substring(0, 4))
+                {
+                    case "HKLM":
+                        path = "HKEY_LOCAL_MACHINE" + path.Remove(0, 4);
+                        break;
+                    case "HKCU":
+                        path = "HKEY_CURRENT_USER" + path.Remove(0, 4);
+                        break;
+                    case "HKCR":
+                        path = "HKEY_CLASSES_ROOT" + path.Remove(0, 4);
+                        break;
+                    default:
+                        return;
+                }
             }
-            else if (path.StartsWith("HKCU"))
+            catch (ArgumentOutOfRangeException)
             {
-                path = "HKEY_CURRENT_USER" + path.Remove(0, 4);
-            }
-            else if (path.StartsWith("HKCR"))
-            {
-                path = "HKEY_CLASSES_ROOT" + path.Remove(0, 4);
+                return;
             }
 
             Interop.SendMessage(_wndTreeView, Interop.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
