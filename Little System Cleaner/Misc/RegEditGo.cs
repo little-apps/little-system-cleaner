@@ -18,6 +18,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32;
@@ -152,10 +153,9 @@ namespace Little_System_Cleaner.Misc
 
             var tvItem = Interop.SendMessage(_wndTreeView, Interop.TVM_GETNEXTITEM, (IntPtr) Interop.TVGN_ROOT,
                 IntPtr.Zero);
-            foreach (var key in path.Split('\\'))
-            {
-                if (key.Length == 0) continue;
 
+            foreach (var key in path.Split('\\').Where(key => key.Length != 0))
+            {
                 tvItem = FindKey(tvItem, key);
                 if (tvItem == IntPtr.Zero)
                 {
