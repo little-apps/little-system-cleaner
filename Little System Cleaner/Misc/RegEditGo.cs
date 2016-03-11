@@ -122,11 +122,11 @@ namespace Little_System_Cleaner.Misc
                 var hasValue = !string.IsNullOrEmpty(valueName);
                 locator.OpenKey(keyPath, hasValue);
 
-                if (hasValue)
-                {
-                    Thread.Sleep(200);
-                    locator.OpenValue(valueName);
-                }
+                if (!hasValue)
+                    return;
+
+                Thread.Sleep(200);
+                locator.OpenValue(valueName);
             }
         }
 
