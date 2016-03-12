@@ -18,10 +18,8 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Shell;
 using System.Windows.Threading;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;

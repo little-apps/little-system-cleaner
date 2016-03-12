@@ -296,8 +296,9 @@ namespace Little_System_Cleaner
 
                 var selectedContent = TabControl.SelectedContent;
 
-                var nextCtrl = selectedContent is DynamicUserControl
-                    ? ((DynamicUserControl) selectedContent).InitUserControl()
+                var control = selectedContent as DynamicUserControl;
+                var nextCtrl = control != null
+                    ? control.InitUserControl()
                     : TabControl.SelectedContent as UserControl;
 
                 var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");

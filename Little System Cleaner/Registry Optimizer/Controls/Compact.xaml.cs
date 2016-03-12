@@ -33,9 +33,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
     /// </summary>
     public partial class Compact
     {
-        private Thread _threadScan;
-        private Thread _threadCurrent;
-
         public Compact()
         {
             InitializeComponent();

@@ -46,7 +46,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
                     if (Stream.Length > 0)
                     {
-                        var fileStream = Stream as FileStream;
+                        var fileStream = (FileStream) Stream;
                         fileStream?.SetLength(0);
                     }
                 }

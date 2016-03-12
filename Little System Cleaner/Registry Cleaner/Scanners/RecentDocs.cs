@@ -156,7 +156,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             //so do it the hard way
 
             return Encoding.Unicode.GetChars(bytes).TakeWhile(bt => bt != 0).Aggregate(value, (s, c) => s + c);
-            ;
         }
     }
 }

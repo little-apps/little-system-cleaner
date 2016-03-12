@@ -520,7 +520,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                         ValidateFileExt(regKeyFileExt);
 
-                        regKeyFileExt?.Close();
+                        regKeyFileExt.Close();
                     }
                     catch (Exception)
                     {

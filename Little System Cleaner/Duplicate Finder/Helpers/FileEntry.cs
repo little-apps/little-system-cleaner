@@ -14,7 +14,6 @@ using System.Text;
 using CommonTools.TagLib;
 using CommonTools.TagLib.Mpeg;
 using Little_System_Cleaner.Duplicate_Finder.Controls;
-using Little_System_Cleaner.Misc;
 using File = CommonTools.TagLib.File;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
