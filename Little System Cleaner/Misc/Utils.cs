@@ -195,6 +195,28 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
+        /// Sanitizes the file path (checks for environment variables, illegal characters, etc)
+        /// </summary>
+        /// <param name="filePath">File Path</param>
+        /// <returns>Sanitized file path, or, an empty string</returns>
+        internal static string SanitizeFilePath(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return string.Empty;
+
+            var fileName = string.Copy(filePath.Trim().ToLower());
+
+            // Remove quotes
+            fileName = UnqouteSpaces(fileName);
+
+            // Remove environment variables
+            fileName = Environment.ExpandEnvironmentVariables(fileName);
+
+            // Check for illegal characters
+            return FindAnyIllegalChars(fileName) ? string.Empty : fileName;
+        }
+
+        /// <summary>
         ///     Sees if the file exists
         /// </summary>
         /// <remarks>
@@ -207,23 +229,10 @@ namespace Little_System_Cleaner.Misc
         /// </returns>
         internal static bool FileExists(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
-                return false;
-
-            var strFileName = string.Copy(filePath.Trim().ToLower());
-
-            // Remove quotes
-            strFileName = UnqouteSpaces(strFileName);
-
-            // Remove environment variables
-            strFileName = Environment.ExpandEnvironmentVariables(strFileName);
-
-            // Check for illegal characters
-            if (FindAnyIllegalChars(strFileName))
-                return false;
+            var fileName = SanitizeFilePath(filePath);
 
             // Check Drive Type
-            var ret = ValidDriveType(strFileName);
+            var ret = ValidDriveType(fileName);
             switch (ret)
             {
                 case VdtReturn.InvalidDrive:
@@ -237,10 +246,10 @@ namespace Little_System_Cleaner.Misc
             }
 
             // Now see if file exists
-            if (File.Exists(strFileName))
+            if (File.Exists(fileName))
                 return true;
 
-            return PInvoke.PathFileExists(strFileName) || SearchPath(strFileName);
+            return PInvoke.PathFileExists(fileName) || SearchPath(fileName);
         }
 
         /// <summary>
