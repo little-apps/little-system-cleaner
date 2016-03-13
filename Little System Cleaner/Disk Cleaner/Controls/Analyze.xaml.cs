@@ -401,7 +401,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             return
                 includeDirsList.Any(
-                    includeDir => Utils.CompareWildcard(dirPath, includeDir) || string.Compare(includeDir, dirPath) == 0);
+                    includeDir => Utils.CompareWildcard(dirPath, includeDir) || includeDir == dirPath);
         }
 
         private static bool FolderIsExcluded(string dirPath)

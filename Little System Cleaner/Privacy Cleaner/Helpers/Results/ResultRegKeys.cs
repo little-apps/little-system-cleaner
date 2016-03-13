@@ -57,28 +57,30 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
                     try
                     {
-                        if (rootKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
+                        switch (rootKey.ToUpper())
                         {
-                            reg = Registry.ClassesRoot;
+                            case "HKEY_CLASSES_ROOT":
+                                reg = Registry.ClassesRoot;
+                                break;
+
+                            case "HKEY_CURRENT_USER":
+                                reg = Registry.CurrentUser;
+                                break;
+
+                            case "HKEY_LOCAL_MACHINE":
+                                reg = Registry.LocalMachine;
+                                break;
+
+                            case "HKEY_USERS":
+                                reg = Registry.Users;
+                                break;
+
+                            case "HKEY_CURRENT_CONFIG":
+                                reg = Registry.CurrentConfig;
+                                break;
+                            default:
+                                continue; // break here
                         }
-                        else if (rootKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
-                        {
-                            reg = Registry.CurrentUser;
-                        }
-                        else if (rootKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
-                        {
-                            reg = Registry.LocalMachine;
-                        }
-                        else if (rootKey.ToUpper().CompareTo("HKEY_USERS") == 0)
-                        {
-                            reg = Registry.Users;
-                        }
-                        else if (rootKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
-                        {
-                            reg = Registry.CurrentConfig;
-                        }
-                        else
-                            continue; // break here
                     }
                     catch (Exception)
                     {

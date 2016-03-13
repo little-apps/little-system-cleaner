@@ -646,11 +646,11 @@ namespace Little_System_Cleaner.Misc
                 wildString = string.Empty;
 
             // If Mask is * and WildString isn't empty -> return true
-            if (string.Compare(mask, "*") == 0 && !string.IsNullOrEmpty(wildString))
+            if (mask == "*" && !string.IsNullOrEmpty(wildString))
                 return true;
 
             // If Mask is ? and WildString length is 1 -> return true
-            if (string.Compare(mask, "?") == 0 && wildString.Length == 1)
+            if (mask == "?" && wildString.Length == 1)
                 return true;
 
             // If WildString and Mask match -> no need to go any further
@@ -700,7 +700,7 @@ namespace Little_System_Cleaner.Misc
 
             foreach (var asmLoaded in asm.GetReferencedAssemblies())
             {
-                if (string.Compare(asmLoaded.Name, assembly) == 0)
+                if (asmLoaded.Name == assembly)
                 {
                     if (ver != null)
                     {
@@ -1038,7 +1038,7 @@ namespace Little_System_Cleaner.Misc
 
             try
             {
-                var slashPos = mainKeyName.IndexOf("\\");
+                var slashPos = mainKeyName.IndexOf("\\", StringComparison.Ordinal);
                 if (slashPos > -1)
                 {
                     baseKey = mainKeyName.Substring(0, slashPos);

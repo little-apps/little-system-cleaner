@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -30,10 +31,10 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 switch ((string) _column.Header)
                 {
                     case "Program":
-                        priority = string.Compare(x.Program, y.Program);
+                        priority = string.CompareOrdinal(x.Program, y.Program);
                         break;
                     case "Publisher":
-                        priority = string.Compare(x.Publisher, y.Publisher);
+                        priority = string.CompareOrdinal(x.Publisher, y.Publisher);
                         break;
                     case "Size":
                         priority = x.SizeBytes.CompareTo(y.SizeBytes);

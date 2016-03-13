@@ -210,7 +210,7 @@ namespace Little_System_Cleaner.Misc
                 {
                     return;
                 }
-                if (string.Compare(itemText, value, true) == 0)
+                if (string.Compare(itemText, value, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     break;
                 }
@@ -317,7 +317,7 @@ namespace Little_System_Cleaner.Misc
                 itemParent);
             while (itemChild != IntPtr.Zero)
             {
-                if (string.Compare(GetTVItemTextEx(_wndTreeView, itemChild), key, true) == 0)
+                if (string.Compare(GetTVItemTextEx(_wndTreeView, itemChild), key, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return itemChild;
                 }

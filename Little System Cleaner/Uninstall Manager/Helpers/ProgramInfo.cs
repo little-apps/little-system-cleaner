@@ -499,7 +499,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public int CompareTo(ProgramInfo other)
         {
-            return DisplayName?.CompareTo(other.DisplayName) ?? 0;
+            return string.Compare(DisplayName, other?.DisplayName, StringComparison.Ordinal);
         }
 
         public bool Equals(ProgramInfo other)
