@@ -295,7 +295,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// <returns>True if plugin is valid</returns>
         public bool PluginIsValid(string xmlFilePath, out string name, out string description)
         {
-            var bRet = false;
+            var ret = false;
             name = description = string.Empty;
 
             if (!File.Exists(xmlFilePath))
@@ -330,9 +330,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             {
                                 var regKeyPath = xmlReader.ReadElementContentAsString();
 
-                                bRet = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
+                                ret = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
 
-                                if (!bRet)
+                                if (!ret)
                                     return false;
                             }
                                 break;
@@ -342,7 +342,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 var valueNameRegEx = xmlReader.GetAttribute("ValueName");
 
                                 if (string.IsNullOrWhiteSpace(regKeyPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
-                                    bRet = false;
+                                    ret = false;
                                 else
                                 {
                                     using (var rk = Utils.RegOpenKey(regKeyPath))
@@ -361,14 +361,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                             Debug.WriteLine("The following exception occurred: " + ex.Message +
                                                             "\nUnable to get registry key (" + regKeyPath +
                                                             ") value names.");
-                                            bRet = false;
+                                            ret = false;
                                         }
                                         catch (UnauthorizedAccessException ex)
                                         {
                                             Debug.WriteLine("The following exception occurred: " + ex.Message +
                                                             "\nUnable to get registry key (" + regKeyPath +
                                                             ") value names.");
-                                            bRet = false;
+                                            ret = false;
                                         }
 
                                         if (valueNames != null)
@@ -376,12 +376,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                             if (
                                                 valueNames.Where(valueName => !string.IsNullOrWhiteSpace(valueName))
                                                     .Any(valueName => Regex.IsMatch(valueName, valueNameRegEx)))
-                                                bRet = true;
+                                                ret = true;
                                         }
                                     }
                                 }
 
-                                if (!bRet)
+                                if (!ret)
                                     return false;
                             }
                                 break;
@@ -389,28 +389,28 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 var filePath = xmlReader.ReadElementContentAsString();
 
                                 if (string.IsNullOrWhiteSpace(filePath))
-                                    bRet = false;
+                                    ret = false;
                                 else
                                 {
                                     filePath = MiscFunctions.ExpandVars(filePath);
-                                    bRet = File.Exists(filePath);
+                                    ret = File.Exists(filePath);
                                 }
 
-                                if (!bRet)
+                                if (!ret)
                                     return false;
                                 break;
                             case "FolderExist":
                                 var folderPath = xmlReader.ReadElementContentAsString();
 
                                 if (string.IsNullOrWhiteSpace(folderPath))
-                                    bRet = false;
+                                    ret = false;
                                 else
                                 {
                                     folderPath = MiscFunctions.ExpandVars(folderPath);
-                                    bRet = Directory.Exists(folderPath);
+                                    ret = Directory.Exists(folderPath);
                                 }
 
-                                if (!bRet)
+                                if (!ret)
                                     return false;
                                 break;
                         }
@@ -422,14 +422,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 {
                     if (string.IsNullOrWhiteSpace(xmlReader.ReadElementContentAsString()))
                     {
-                        bRet = false;
+                        ret = false;
                         break;
                     }
                 }
 
                 // Ensure Action commands are valid before being added
                 if (!xmlReader.ReadToFollowing("Action"))
-                    return bRet;
+                    return ret;
 
                 while (xmlReader.Read())
                 {
@@ -442,7 +442,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(regPath))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -454,7 +454,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(regPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -465,7 +465,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(filePath))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -476,7 +476,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(folderPath))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -487,7 +487,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         var searchText = xmlReader.GetAttribute("SearchText");
                         if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -499,7 +499,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -510,7 +510,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(regKey))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
 
@@ -519,7 +519,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         {
                             if (children.IsEmptyElement)
                             {
-                                bRet = false;
+                                ret = false;
                                 break;
                             }
 
@@ -536,7 +536,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (!hasChildren)
                             {
-                                bRet = false;
+                                ret = false;
                                 break;
                             }
                         }
@@ -549,7 +549,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(searchPath) || string.IsNullOrWhiteSpace(searchText))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
 
@@ -558,7 +558,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         {
                             if (children.IsEmptyElement)
                             {
-                                bRet = false;
+                                ret = false;
                                 break;
                             }
 
@@ -575,7 +575,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                             if (!hasChildren)
                             {
-                                bRet = false;
+                                ret = false;
                                 break;
                             }
                         }
@@ -590,7 +590,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(sectionRegEx) ||
                             string.IsNullOrWhiteSpace(valueRegEx))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -602,7 +602,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(sectionRegEx))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
@@ -614,14 +614,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                         if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(xPath))
                         {
-                            bRet = false;
+                            ret = false;
                             break;
                         }
                     }
                 }
             }
 
-            return bRet;
+            return ret;
         }
 
         /// <summary>

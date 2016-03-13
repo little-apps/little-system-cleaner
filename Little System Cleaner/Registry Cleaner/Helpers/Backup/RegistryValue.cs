@@ -105,9 +105,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 }
                 case RegistryValueKind.DWord:
                 {
-                    var strValue = Encoding.UTF8.GetString(valByte);
+                    var valStr = Encoding.UTF8.GetString(valByte);
 
-                    var val = Convert.ToUInt32(strValue);
+                    var val = Convert.ToUInt32(valStr);
 
                     Value = val;
 
@@ -115,9 +115,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 }
                 case RegistryValueKind.QWord:
                 {
-                    var strValue = Encoding.UTF8.GetString(valByte);
+                    var valStr = Encoding.UTF8.GetString(valByte);
 
-                    var val = Convert.ToUInt64(strValue);
+                    var val = Convert.ToUInt64(valStr);
 
                     Value = val;
 
@@ -184,7 +184,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
             writer.WriteAttributeString("Type", Type.ToString());
 
-            string strValue;
+            string valStr;
 
             switch (Type)
             {
@@ -201,9 +201,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 {
                     var val = Convert.ToUInt32(Value);
 
-                    strValue = Convert.ToString(val);
+                    valStr = Convert.ToString(val);
 
-                    WriteBase64(writer, strValue);
+                    WriteBase64(writer, valStr);
 
                     break;
                 }
@@ -211,9 +211,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 {
                     var val = Convert.ToUInt64(Value);
 
-                    strValue = Convert.ToString(val);
+                    valStr = Convert.ToString(val);
 
-                    WriteBase64(writer, strValue);
+                    WriteBase64(writer, valStr);
 
                     break;
                 }
@@ -236,9 +236,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
                 {
-                    strValue = (string) Value;
+                    valStr = (string) Value;
 
-                    WriteBase64(writer, strValue);
+                    WriteBase64(writer, valStr);
 
                     break;
                 }
@@ -259,9 +259,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     var asciiChars = new char[Encoding.ASCII.GetCharCount(rawBuffer, 0, nLen)];
                     Encoding.ASCII.GetChars(rawBuffer, 0, nLen, asciiChars, 0);
 
-                    strValue = new string(asciiChars);
+                    valStr = new string(asciiChars);
 
-                    WriteBase64(writer, strValue);
+                    WriteBase64(writer, valStr);
 
                     break;
                 }

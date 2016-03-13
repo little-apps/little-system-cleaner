@@ -242,7 +242,7 @@ namespace Little_System_Cleaner.Misc
         internal static bool ExtractArguments2(string cmdLine, out string filePath, out string fileArgs)
         {
             var cmdLineCopy = string.Copy(cmdLine.ToLower().Trim());
-            var bRet = false;
+            var ret = false;
 
             filePath = fileArgs = "";
 
@@ -271,14 +271,14 @@ namespace Little_System_Cleaner.Misc
                     continue;
 
                 filePath = string.Copy(fileFullPath.ToString());
-                bRet = true;
+                ret = true;
                 break;
             }
 
-            if (bRet && pos > 0)
+            if (ret && pos > 0)
                 fileArgs = cmdLineCopy.Remove(0, pos).Trim();
 
-            return bRet;
+            return ret;
         }
 
         /// <summary>

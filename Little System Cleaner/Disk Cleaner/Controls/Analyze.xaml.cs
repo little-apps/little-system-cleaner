@@ -288,7 +288,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         private static bool FileCheckDate(FileSystemInfo fileInfo)
         {
             var dateTimeFile = DateTime.MinValue;
-            var bRet = false;
+            var ret = false;
 
             try
             {
@@ -314,16 +314,16 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             if (Settings.Default.diskCleanerFindFilesAfter)
             {
                 if (DateTime.Compare(dateTimeFile, Settings.Default.diskCleanerDateTimeAfter) >= 0)
-                    bRet = true;
+                    ret = true;
             }
 
             if (Settings.Default.diskCleanerFindFilesBefore)
             {
                 if (DateTime.Compare(dateTimeFile, Settings.Default.diskCleanerDateTimeBefore) <= 0)
-                    bRet = true;
+                    ret = true;
             }
 
-            return bRet;
+            return ret;
         }
 
         /// <summary>

@@ -356,7 +356,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         /// <returns>True if file is valid</returns>
         internal static bool IsFileValid(string filePath)
         {
-            var bRet = false;
+            var ret = false;
 
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -367,16 +367,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             try
             {
                 var fileInfo = new FileInfo(filePath);
-                bRet = IsFileValid(fileInfo);
+                ret = IsFileValid(fileInfo);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to check if file is valid.");
-                return bRet;
+                return ret;
             }
 
 
-            return bRet;
+            return ret;
         }
 
         /// <summary>

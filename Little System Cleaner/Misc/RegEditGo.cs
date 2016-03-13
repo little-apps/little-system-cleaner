@@ -294,16 +294,16 @@ namespace Little_System_Cleaner.Misc
             };
 
             // copy local tvItem to remote buffer
-            var bSuccess = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref tvi,
+            var success = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref tvi,
                 Marshal.SizeOf(typeof (Interop.TVITEM)), IntPtr.Zero);
-            if (!bSuccess)
+            if (!success)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
 
             Interop.SendMessage(wndTreeView, Interop.TVM_GETITEMW, IntPtr.Zero, _lpRemoteBuffer);
 
             // copy tvItem back into local buffer (copy whole buffer because we don't yet know how big the string is)
-            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, BufferSize, IntPtr.Zero);
-            if (!bSuccess)
+            success = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, BufferSize, IntPtr.Zero);
+            if (!success)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
             var nLocalBufferPtr = _lpLocalBuffer.ToInt64() + Marshal.SizeOf(typeof (Interop.TVITEM));

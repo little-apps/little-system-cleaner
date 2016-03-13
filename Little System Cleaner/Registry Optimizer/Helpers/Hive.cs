@@ -146,7 +146,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
         private void OpenHKey()
         {
-            var nRet = 0;
+            var ret = 0;
 
             if (string.IsNullOrEmpty(_rootKey))
                 _rootKey = _hiveName.ToLower();
@@ -158,12 +158,12 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
             // Open Handle to registry key
             if (_rootKey.StartsWith(@"\registry\machine"))
-                nRet = PInvoke.RegOpenKeyA((uint) PInvoke.HKEY.HKEY_LOCAL_MACHINE, _keyName, ref _hKey);
+                ret = PInvoke.RegOpenKeyA((uint) PInvoke.HKEY.HKEY_LOCAL_MACHINE, _keyName, ref _hKey);
             if (_rootKey.StartsWith(@"\registry\user"))
-                nRet = PInvoke.RegOpenKeyA((uint) PInvoke.HKEY.HKEY_USERS, _keyName, ref _hKey);
+                ret = PInvoke.RegOpenKeyA((uint) PInvoke.HKEY.HKEY_USERS, _keyName, ref _hKey);
 
-            if (nRet != 0)
-                throw new Win32Exception(nRet);
+            if (ret != 0)
+                throw new Win32Exception(ret);
 
             if (_hKey == 0)
                 throw new Win32Exception(6); // ERROR_INVALID_HANDLE
