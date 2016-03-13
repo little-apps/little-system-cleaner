@@ -91,13 +91,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
                 if (regKey != null)
                 {
-                    foreach (var strSubKeyName in regKey.GetSubKeyNames())
+                    foreach (var subKeyName in regKey.GetSubKeyNames())
                     {
                         RegistryKey subKey = null;
 
                         try
                         {
-                            subKey = regKey.OpenSubKey(strSubKeyName);
+                            subKey = regKey.OpenSubKey(subKeyName);
 
                             if (subKey != null)
                                 listProgInfo.Add(new ProgramInfo(subKey));
@@ -105,7 +105,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                         catch (Exception ex)
                         {
                             Debug.WriteLine("The following error occurred: " + ex.Message +
-                                            "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName + "...");
+                                            "\nSkipping uninstall entry for " + regKey + "\\" + subKeyName + "...");
                         }
                         finally
                         {
@@ -135,13 +135,13 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
                     if (regKey != null)
                     {
-                        foreach (var strSubKeyName in regKey.GetSubKeyNames())
+                        foreach (var subKeyName in regKey.GetSubKeyNames())
                         {
                             RegistryKey subKey = null;
 
                             try
                             {
-                                subKey = regKey.OpenSubKey(strSubKeyName);
+                                subKey = regKey.OpenSubKey(subKeyName);
 
                                 if (subKey != null)
                                     listProgInfo.Add(new ProgramInfo(subKey));
@@ -149,7 +149,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                             catch (Exception ex)
                             {
                                 Debug.WriteLine("The following error occurred: " + ex.Message +
-                                                "\nSkipping uninstall entry for " + regKey + "\\" + strSubKeyName +
+                                                "\nSkipping uninstall entry for " + regKey + "\\" + subKeyName +
                                                 "...");
                             }
                             finally

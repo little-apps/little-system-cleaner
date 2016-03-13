@@ -270,17 +270,17 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 // Generate filename to backup registry
                 ProgressBarText = "Creating backup file";
-                var strBackupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx",
+                var backupFile = string.Format("{0}\\{1:yyyy}_{1:MM}_{1:dd}_{1:HH}{1:mm}{1:ss}.bakx",
                     Settings.Default.OptionsBackupDir, DateTime.Now);
 
                 try
                 {
-                    backupReg = new BackupRegistry(strBackupFile);
+                    backupReg = new BackupRegistry(backupFile);
                     backupReg.Open(false);
                 }
                 catch (Exception ex)
                 {
-                    string message = $"Unable to create backup file ({strBackupFile}).\nError: {ex.Message}";
+                    string message = $"Unable to create backup file ({backupFile}).\nError: {ex.Message}";
                     Utils.MessageBoxThreadSafe(message, Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }

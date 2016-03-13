@@ -24,35 +24,35 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void InitHives()
         {
-            RegistryKey rkHives;
+            RegistryKey regKeyHives;
             var i = 0;
             Wizard.RegistryHives = new ObservableCollection<Hive>();
 
-            using (rkHives = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\hivelist"))
+            using (regKeyHives = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\hivelist"))
             {
-                if (rkHives == null)
+                if (regKeyHives == null)
                     throw new ApplicationException("Unable to open hive list... this can be a problem!");
 
-                foreach (var strValueName in rkHives.GetValueNames())
+                foreach (var valueName in regKeyHives.GetValueNames())
                 {
-                    Dispatcher.Invoke(new Action(() => Message.Text = $"Loading {++i}/{rkHives.ValueCount} Hives"));
+                    Dispatcher.Invoke(new Action(() => Message.Text = $"Loading {++i}/{regKeyHives.ValueCount} Hives"));
 
                     // Don't touch these hives because they are critical for Windows
-                    if (strValueName.Contains("BCD") || strValueName.Contains("HARDWARE"))
+                    if (valueName.Contains("BCD") || valueName.Contains("HARDWARE"))
                         continue;
 
-                    var strHivePath = rkHives.GetValue(strValueName) as string;
+                    var hivePath = regKeyHives.GetValue(valueName) as string;
 
-                    if (string.IsNullOrEmpty(strHivePath))
+                    if (string.IsNullOrEmpty(hivePath))
                         continue;
 
-                    if (strHivePath[strHivePath.Length - 1] == 0)
-                        strHivePath = strHivePath.Substring(0, strHivePath.Length - 1);
+                    if (hivePath[hivePath.Length - 1] == 0)
+                        hivePath = hivePath.Substring(0, hivePath.Length - 1);
 
-                    if (string.IsNullOrEmpty(strValueName) || string.IsNullOrEmpty(strHivePath))
+                    if (string.IsNullOrEmpty(valueName) || string.IsNullOrEmpty(hivePath))
                         continue;
 
-                    var h = new Hive(strValueName, strHivePath);
+                    var h = new Hive(valueName, hivePath);
 
                     if (h.IsValid)
                         Wizard.RegistryHives.Add(h);

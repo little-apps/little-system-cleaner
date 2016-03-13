@@ -353,7 +353,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
             else
             {
-                var strPath = !string.IsNullOrEmpty(TextBoxPath.Text) && !string.IsNullOrEmpty(TextBoxArgs.Text)
+                var path = !string.IsNullOrEmpty(TextBoxPath.Text) && !string.IsNullOrEmpty(TextBoxArgs.Text)
                     ? $"\"{TextBoxPath.Text}\" {TextBoxArgs.Text}"
                     : $"\"{TextBoxPath.Text}\"";
 
@@ -370,7 +370,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                         return;
                     }
 
-                    regKey.SetValue(TextBoxName.Text, strPath);
+                    regKey.SetValue(TextBoxName.Text, path);
 
                     created = true;
                 }

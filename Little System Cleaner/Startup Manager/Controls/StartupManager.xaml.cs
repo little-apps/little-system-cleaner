@@ -122,7 +122,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                         "Are you sure you want to remove the selected entry from startup?", Utils.ProductName,
                         MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    var bFailed = false;
+                    var failed = false;
                     var sectionName = node.Parent.SectionName;
 
                     Main.Watcher.Event("Startup Manager", "Delete Single Entry");
@@ -130,42 +130,42 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     if (Directory.Exists(sectionName))
                     {
                         // Startup folder
-                        var strPath = Path.Combine(sectionName, node.SectionName);
+                        var path = Path.Combine(sectionName, node.SectionName);
 
                         try
                         {
-                            if (File.Exists(strPath))
-                                File.Delete(strPath);
+                            if (File.Exists(path))
+                                File.Delete(path);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName,
                                 MessageBoxButton.OK, MessageBoxImage.Error);
-                            bFailed = true;
+                            failed = true;
                         }
                     }
                     else
                     {
                         // Registry key
-                        var strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
-                        var strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
-                        var rk = Utils.RegOpenKey(strMainKey, strSubKey, false);
+                        var mainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
+                        var subKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
+                        var regKey = Utils.RegOpenKey(mainKey, subKey, false);
 
                         try
                         {
-                            rk?.DeleteValue(node.SectionName);
+                            regKey?.DeleteValue(node.SectionName);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName,
                                 MessageBoxButton.OK, MessageBoxImage.Error);
-                            bFailed = true;
+                            failed = true;
                         }
 
-                        rk?.Close();
+                        regKey?.Close();
                     }
 
-                    if (!bFailed)
+                    if (!failed)
                         MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entry",
                             Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -177,7 +177,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                         "Are you sure you want to remove these entries from startup?\nNOTE: This will remove all the entries in the selected startup area",
                         Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    var bFailed = false;
+                    var failed = false;
 
                     // Registry key or folder
                     if (node != null)
@@ -197,48 +197,48 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                             {
                                 MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName,
                                     MessageBoxButton.OK, MessageBoxImage.Error);
-                                bFailed = true;
+                                failed = true;
                             }
                         }
                         else
                         {
                             // Registry key
-                            var strMainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
-                            var strSubKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
-                            using (var rk = Utils.RegOpenKey(strMainKey, strSubKey, false))
+                            var mainKey = sectionName.Substring(0, sectionName.IndexOf('\\'));
+                            var subKey = sectionName.Substring(sectionName.IndexOf('\\') + 1);
+                            using (var regKey = Utils.RegOpenKey(mainKey, subKey, false))
                             {
-                                if (rk == null)
+                                if (regKey == null)
                                 {
                                     string message =
                                         $"Unable to open registry key ({sectionName}) to delete all entries.";
                                     MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName,
                                         MessageBoxButton.OK, MessageBoxImage.Error);
-                                    bFailed = true;
+                                    failed = true;
                                 }
                                 else
                                 {
                                     try
                                     {
-                                        var valueNames = rk.GetValueNames();
+                                        var valueNames = regKey.GetValueNames();
 
                                         // Clear all values
                                         foreach (var valueName in valueNames)
                                         {
-                                            rk.DeleteValue(valueName, false);
+                                            regKey.DeleteValue(valueName, false);
                                         }
                                     }
                                     catch (Exception ex)
                                     {
                                         MessageBox.Show(Application.Current.MainWindow, ex.Message, Utils.ProductName,
                                             MessageBoxButton.OK, MessageBoxImage.Error);
-                                        bFailed = true;
+                                        failed = true;
                                     }
                                 }
                             }
                         }
                     }
 
-                    if (!bFailed)
+                    if (!failed)
                         MessageBox.Show(Application.Current.MainWindow, "Successfully removed startup entries",
                             Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Information);
                 }

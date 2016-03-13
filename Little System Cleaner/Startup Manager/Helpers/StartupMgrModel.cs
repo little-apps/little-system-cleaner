@@ -187,7 +187,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             if (regKey.ValueCount <= 0)
                 return;
 
-            string[] strValueNames;
+            string[] valueNames;
             var bitmap = regKey.Name.Contains(Registry.CurrentUser.ToString())
                 ? Resources.current_user
                 : Resources.all_users;
@@ -200,7 +200,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             try
             {
-                strValueNames = regKey.GetValueNames();
+                valueNames = regKey.GetValueNames();
             }
             catch (Exception ex)
             {
@@ -209,38 +209,38 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 return;
             }
 
-            foreach (var strItem in strValueNames)
+            foreach (var item in valueNames)
             {
                 try
                 {
-                    var strFilePath = regKey.GetValue(strItem) as string;
+                    var filePath = regKey.GetValue(item) as string;
 
-                    if (string.IsNullOrEmpty(strFilePath))
+                    if (string.IsNullOrEmpty(filePath))
                         continue;
 
                     // Get file arguments
-                    string strFile, strArgs = "";
+                    string file, args = "";
 
-                    if (Utils.FileExists(strFilePath))
-                        strFile = strFilePath;
+                    if (Utils.FileExists(filePath))
+                        file = filePath;
                     else
                     {
-                        if (!Utils.ExtractArguments(strFilePath, out strFile, out strArgs))
-                            if (!Utils.ExtractArguments2(strFilePath, out strFile, out strArgs))
+                        if (!Utils.ExtractArguments(filePath, out file, out args))
+                            if (!Utils.ExtractArguments2(filePath, out file, out args))
                                 // If command line cannot be extracted, set file path to command line
-                                strFile = strFilePath;
+                                file = filePath;
                     }
 
                     var node = new StartupEntry
                     {
                         Parent = nodeRoot,
-                        SectionName = strItem,
-                        Path = strFile,
-                        Args = strArgs,
+                        SectionName = item,
+                        Path = file,
+                        Args = args,
                         RegKey = regKey
                     };
 
-                    var ico = Utils.ExtractIcon(strFile);
+                    var ico = Utils.ExtractIcon(file);
                     node.bMapImg = ico != null
                         ? (ico.ToBitmap().Clone() as Bitmap).CreateBitmapSourceFromBitmap()
                         : Resources.appinfo.ToBitmap().CreateBitmapSourceFromBitmap();
@@ -250,7 +250,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 catch (Exception ex)
                 {
                     Debug.WriteLine("The following error occurred: " + ex.Message +
-                                    "\nSkipping trying to get value for " + strItem + " in " + regKey + "...");
+                                    "\nSkipping trying to get value for " + item + " in " + regKey + "...");
                 }
             }
 

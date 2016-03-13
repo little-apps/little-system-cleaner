@@ -57,12 +57,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (regKey == null)
                 return;
 
-            foreach (var strFolder in regKey.GetValueNames()
-                .Where(strFolder => !string.IsNullOrWhiteSpace(strFolder))
-                .Where(strFolder => !ScanFunctions.DirExists(strFolder) && !Wizard.IsOnIgnoreList(strFolder))
-                .TakeWhile(strFolder => !CancellationToken.IsCancellationRequested))
+            foreach (var folder in regKey.GetValueNames()
+                .Where(folder => !string.IsNullOrWhiteSpace(folder))
+                .Where(folder => !ScanFunctions.DirExists(folder) && !Wizard.IsOnIgnoreList(folder))
+                .TakeWhile(folder => !CancellationToken.IsCancellationRequested))
             {
-                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFolder);
+                Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, folder);
             }
         }
 
@@ -74,10 +74,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 return;
 
             foreach (
-                var strSubKey in
-                    regKey.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+                var subKey in
+                    regKey.GetSubKeyNames().TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
-                var regKey2 = regKey.OpenSubKey(strSubKey);
+                var regKey2 = regKey.OpenSubKey(subKey);
 
                 if (regKey2 == null)
                     continue;
@@ -85,27 +85,27 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 if (Convert.ToInt32(regKey2.GetValue("BlockOnTSNonInstallMode")) == 1)
                     continue;
 
-                var strAppPath = regKey2.GetValue("") as string;
-                var strAppDir = regKey2.GetValue("Path") as string;
+                var appPath = regKey2.GetValue("") as string;
+                var appDir = regKey2.GetValue("Path") as string;
 
-                if (string.IsNullOrEmpty(strAppPath))
+                if (string.IsNullOrEmpty(appPath))
                 {
                     Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey2.ToString());
                     continue;
                 }
 
-                if (!string.IsNullOrEmpty(strAppDir))
+                if (!string.IsNullOrEmpty(appDir))
                 {
-                    if (Wizard.IsOnIgnoreList(strAppDir))
+                    if (Wizard.IsOnIgnoreList(appDir))
                         continue;
-                    if (Utils.SearchPath(strAppPath, strAppDir))
+                    if (Utils.SearchPath(appPath, appDir))
                         continue;
-                    if (Utils.SearchPath(strSubKey, strAppDir))
+                    if (Utils.SearchPath(subKey, appDir))
                         continue;
                 }
                 else
                 {
-                    if (ScanFunctions.FileExists(strAppPath) || Wizard.IsOnIgnoreList(strAppPath))
+                    if (ScanFunctions.FileExists(appPath) || Wizard.IsOnIgnoreList(appPath))
                         continue;
                 }
 

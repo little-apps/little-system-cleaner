@@ -87,7 +87,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     EnumMruList(regKey);
 
                     foreach (var subKey in regKey.GetSubKeyNames()
-                        .Select(strSubKey => regKey.OpenSubKey(strSubKey))
+                        .Select(subKey => regKey.OpenSubKey(subKey))
                         .Where(subKey => subKey != null)
                         .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
                     {
@@ -103,20 +103,20 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
         private static void EnumMruList(RegistryKey regKey)
         {
-            foreach (var strValueName in regKey.GetValueNames())
+            foreach (var valueName in regKey.GetValueNames())
             {
                 var filePath = "";
                 string fileArgs;
 
                 // Skip if value name is null/empty
-                if (string.IsNullOrWhiteSpace(strValueName))
+                if (string.IsNullOrWhiteSpace(valueName))
                     continue;
 
                 // Ignore MRUListEx and others
-                if (!Regex.IsMatch(strValueName, "[0-9]"))
+                if (!Regex.IsMatch(valueName, "[0-9]"))
                     continue;
 
-                var value = regKey.GetValue(strValueName);
+                var value = regKey.GetValue(valueName);
 
                 var fileName = ExtractUnicodeStringFromBinary(value);
                 string shortcutPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Recent)}\\{fileName}.lnk";
@@ -124,7 +124,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // See if file exists in Recent Docs folder
                 if (!string.IsNullOrEmpty(fileName))
                 {
-                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey.ToString(), strValueName);
+                    Wizard.StoreInvalidKey(Strings.InvalidRegKey, regKey.ToString(), valueName);
                     continue;
                 }
 
@@ -133,7 +133,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                 if (!Wizard.IsOnIgnoreList(shortcutPath) && !Wizard.IsOnIgnoreList(filePath))
                 {
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), strValueName);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), valueName);
                 }
             }
         }

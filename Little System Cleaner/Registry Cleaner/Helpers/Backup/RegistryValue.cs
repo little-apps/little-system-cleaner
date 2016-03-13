@@ -71,9 +71,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
             Name = reader.GetAttribute("Name");
 
-            var strType = reader.GetAttribute("Type");
-            if (strType != null)
-                Type = (RegistryValueKind) Enum.Parse(typeof (RegistryValueKind), strType);
+            var type = reader.GetAttribute("Type");
+            if (type != null)
+                Type = (RegistryValueKind) Enum.Parse(typeof (RegistryValueKind), type);
 
             var valByte = new byte[1];
             var buffer = new byte[50];
@@ -190,10 +190,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             {
                 case RegistryValueKind.Binary:
                 {
-                    var bRawBuffer = (byte[]) Value;
-                    var bufLen = bRawBuffer.Length;
+                    var rawBuffer = (byte[]) Value;
+                    var bufLen = rawBuffer.Length;
 
-                    writer.WriteBase64(bRawBuffer, 0, bufLen);
+                    writer.WriteBase64(rawBuffer, 0, bufLen);
 
                     break;
                 }
@@ -244,7 +244,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 }
                 default:
                 {
-                    byte[] bRawBuffer;
+                    byte[] rawBuffer;
                     int nLen;
 
                     var bf = new BinaryFormatter();
@@ -252,12 +252,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                     {
                         bf.Serialize(ms, Value);
                         nLen = (int) ms.Length;
-                        bRawBuffer = ms.ToArray();
+                        rawBuffer = ms.ToArray();
                     }
 
                     // Convert the new byte[] into a char[] and then into a string.
-                    var asciiChars = new char[Encoding.ASCII.GetCharCount(bRawBuffer, 0, nLen)];
-                    Encoding.ASCII.GetChars(bRawBuffer, 0, nLen, asciiChars, 0);
+                    var asciiChars = new char[Encoding.ASCII.GetCharCount(rawBuffer, 0, nLen)];
+                    Encoding.ASCII.GetChars(rawBuffer, 0, nLen, asciiChars, 0);
 
                     strValue = new string(asciiChars);
 

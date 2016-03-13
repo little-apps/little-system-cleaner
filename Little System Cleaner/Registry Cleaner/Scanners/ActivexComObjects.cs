@@ -161,10 +161,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     regKeyInprocSrvr = regKeyClsid.OpenSubKey("InprocServer");
                     if (regKeyInprocSrvr != null)
                     {
-                        var strInprocServer = regKeyInprocSrvr.GetValue("") as string;
+                        var inprocServer = regKeyInprocSrvr.GetValue("") as string;
 
-                        if (!string.IsNullOrEmpty(strInprocServer))
-                            if (!ScanFunctions.FileExists(strInprocServer) && !Wizard.IsOnIgnoreList(strInprocServer))
+                        if (!string.IsNullOrEmpty(inprocServer))
+                            if (!ScanFunctions.FileExists(inprocServer) && !Wizard.IsOnIgnoreList(inprocServer))
                                 Wizard.StoreInvalidKey(Strings.InvalidInprocServer, regKeyInprocSrvr.ToString());
 
                         regKeyInprocSrvr.Close();
@@ -185,10 +185,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     regKeyInprocSrvr32 = regKeyClsid.OpenSubKey("InprocServer32");
                     if (regKeyInprocSrvr32 != null)
                     {
-                        var strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
+                        var inprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
-                        if (!string.IsNullOrEmpty(strInprocServer32))
-                            if (!ScanFunctions.FileExists(strInprocServer32) && !Wizard.IsOnIgnoreList(strInprocServer32))
+                        if (!string.IsNullOrEmpty(inprocServer32))
+                            if (!ScanFunctions.FileExists(inprocServer32) && !Wizard.IsOnIgnoreList(inprocServer32))
                                 Wizard.StoreInvalidKey(Strings.InvalidInprocServer32, regKeyInprocSrvr32.ToString());
 
                         regKeyInprocSrvr32.Close();
@@ -274,7 +274,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             foreach (
                 var subKey in
-                    classList.Where(strSubKey => strSubKey != "*")
+                    classList.Where(subKey => subKey != "*")
                         .TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
                 if (subKey[0] == '.')

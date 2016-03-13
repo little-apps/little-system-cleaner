@@ -302,12 +302,12 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public bool RemoveFromRegistry()
         {
-            var strKeyName = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + Key;
+            var keyName = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + Key;
 
             try
             {
-                if (Registry.LocalMachine.OpenSubKey(strKeyName, true) != null)
-                    Registry.LocalMachine.DeleteSubKeyTree(strKeyName);
+                if (Registry.LocalMachine.OpenSubKey(keyName, true) != null)
+                    Registry.LocalMachine.DeleteSubKeyTree(keyName);
             }
             catch (Exception ex)
             {

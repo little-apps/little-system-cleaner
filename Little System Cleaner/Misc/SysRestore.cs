@@ -91,13 +91,13 @@ namespace Little_System_Cleaner.Misc
         ///     Starts system restore
         ///     Use SysRestore.EndRestore or SysRestore.CancelRestore to end the system restore
         /// </summary>
-        /// <param name="strDescription">The description of the restore</param>
+        /// <param name="description">The description of the restore</param>
         /// <param name="lSeqNum">Returns the sequence number</param>
         /// <exception cref="System.ComponentModel.Win32Exception">
         ///     Thrown when STATEMGRSTATUS.nStatus doesn't equal 0
         ///     (ERROR_SUCCESS)
         /// </exception>
-        internal static void StartRestore(string strDescription, out long lSeqNum)
+        internal static void StartRestore(string description, out long lSeqNum)
         {
             var rpInfo = new RestorePointInfo();
             var rpStatus = new STATEMGRSTATUS();
@@ -115,7 +115,7 @@ namespace Little_System_Cleaner.Misc
                 // By default we create a verification system
                 rpInfo.dwRestorePtType = (int) RestoreType.Restore;
                 rpInfo.llSequenceNumber = 0;
-                rpInfo.szDescription = strDescription;
+                rpInfo.szDescription = description;
 
                 SRSetRestorePointW(ref rpInfo, out rpStatus);
             }

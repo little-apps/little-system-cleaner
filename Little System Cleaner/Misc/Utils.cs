@@ -100,9 +100,9 @@ namespace Little_System_Cleaner.Misc
                     if (!Settings.Default.optionsProxyAuthenticate)
                         return webProxy;
 
-                    using (var strPass = DecryptString(Settings.Default.optionsProxyPassword))
+                    using (var pass = DecryptString(Settings.Default.optionsProxyPassword))
                     {
-                        webProxy.Credentials = new NetworkCredential(Settings.Default.optionsProxyUser, strPass);
+                        webProxy.Credentials = new NetworkCredential(Settings.Default.optionsProxyUser, pass);
                     }
 
                     return webProxy;
@@ -120,9 +120,9 @@ namespace Little_System_Cleaner.Misc
             var largeIcon = IntPtr.Zero;
             var smallIcon = IntPtr.Zero;
 
-            var strPath = UnqouteSpaces(path);
+            path = UnqouteSpaces(path);
 
-            PInvoke.ExtractIconExA(strPath, 0, ref largeIcon, ref smallIcon, 1);
+            PInvoke.ExtractIconExA(path, 0, ref largeIcon, ref smallIcon, 1);
 
             //Transform the bits into the icon image
             Icon returnIcon = null;

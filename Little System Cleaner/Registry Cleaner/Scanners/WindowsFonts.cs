@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// </summary>
         public override void Scan()
         {
-            var strPath = new StringBuilder(260);
+            var path = new StringBuilder(260);
 
             try
             {
@@ -57,7 +57,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
                     Wizard.Report.WriteLine("Scanning for invalid fonts");
 
-                    if (!SHGetSpecialFolderPath(IntPtr.Zero, strPath, CSIDL_FONTS, false))
+                    if (!SHGetSpecialFolderPath(IntPtr.Zero, path, CSIDL_FONTS, false))
                         return;
 
                     foreach (var fontName in 
@@ -68,7 +68,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             // Check value by itself
                             .Where(o => !ScanFunctions.FileExists(o.Value))
                             .Where(o => !Wizard.IsOnIgnoreList(o.Value))
-                            .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}"})
+                            .Select(o => new {o.Name, o.Value, Path = $"{path.ToString()}\\{o.Value}"})
                             // Check for font in fonts folder
                             .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
                             .Select(o => o.Name)

@@ -45,12 +45,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 Wizard.Report.WriteLine("Scanning for missing shared DLLs");
 
                 // Validate Each DLL from the value names
-                foreach (var strFilePath in regKey.GetValueNames()
-                    .Where(strFilePath => !string.IsNullOrWhiteSpace(strFilePath))
-                    .Where(strFilePath => !ScanFunctions.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
-                    .TakeWhile(strFilePath => !CancellationToken.IsCancellationRequested))
+                foreach (var filePath in regKey.GetValueNames()
+                    .Where(filePath => !string.IsNullOrWhiteSpace(filePath))
+                    .Where(filePath => !ScanFunctions.FileExists(filePath) && !Wizard.IsOnIgnoreList(filePath))
+                    .TakeWhile(filePath => !CancellationToken.IsCancellationRequested))
                 {
-                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);
+                    Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, filePath);
                 }
 
                 regKey.Close();

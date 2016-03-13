@@ -86,12 +86,12 @@ namespace Little_System_Cleaner.Misc
                 if (!PInvoke.LookupPrivilegeValue(null, privilege, ref tp.Luid))
                     return false;
 
-                var bRet = PInvoke.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+                var retVal = PInvoke.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
 
                 // Cleanup
                 PInvoke.CloseHandle(htok);
 
-                return bRet;
+                return retVal;
             }
             catch
             {

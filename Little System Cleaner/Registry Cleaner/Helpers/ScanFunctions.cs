@@ -81,34 +81,34 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if it exists</returns>
         internal static bool IconExists(string iconPath)
         {
-            var strFileName = string.Copy(iconPath.Trim().ToLower());
+            var fileName = string.Copy(iconPath.Trim().ToLower());
 
             // Remove quotes
-            strFileName = Utils.UnqouteSpaces(strFileName);
+            fileName = Utils.UnqouteSpaces(fileName);
 
             // Remove starting @
-            if (strFileName.StartsWith("@"))
-                strFileName = strFileName.Substring(1);
+            if (fileName.StartsWith("@"))
+                fileName = fileName.Substring(1);
 
             // Return true if %1
-            if (strFileName == "%1")
+            if (fileName == "%1")
                 return true;
 
             // Get icon path
-            var nSlash = strFileName.IndexOf(',');
-            if (nSlash > -1)
+            var commaPos = fileName.IndexOf(',');
+            if (commaPos > -1)
             {
-                strFileName = strFileName.Substring(0, nSlash);
+                fileName = fileName.Substring(0, commaPos);
 
-                return FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName);
+                return FileExists(fileName) || Wizard.IsOnIgnoreList(fileName);
             }
 
-            var sb = new StringBuilder(strFileName);
+            var sb = new StringBuilder(fileName);
             if (PInvoke.PathParseIconLocation(sb) < 0)
                 return false;
 
             if (!string.IsNullOrEmpty(sb.ToString()))
-                return FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName);
+                return FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(fileName);
 
             return false;
         }
@@ -121,16 +121,16 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if it exists or if the path should be skipped. Otherwise, false if the file path is empty or doesnt exist</returns>
         internal static bool DirExists(string dirPath)
         {
-            var strDirectory = string.Copy(dirPath.Trim().ToLower());
+            var dirCopy = string.Copy(dirPath.Trim().ToLower());
 
             // Remove quotes
-            strDirectory = Utils.UnqouteSpaces(strDirectory);
+            dirCopy = Utils.UnqouteSpaces(dirCopy);
 
             // Expand enviroment variables
-            strDirectory = Environment.ExpandEnvironmentVariables(strDirectory);
+            dirCopy = Environment.ExpandEnvironmentVariables(dirCopy);
 
             // Check drive type
-            var ret = ValidDriveType(strDirectory);
+            var ret = ValidDriveType(dirCopy);
             switch (ret)
             {
                 case VdtReturn.InvalidDrive:
@@ -142,15 +142,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
 
             // Check for illegal chars
-            if (Utils.FindAnyIllegalChars(strDirectory))
+            if (Utils.FindAnyIllegalChars(dirCopy))
                 return false;
 
             // Remove filename.ext and trailing backslash from path
-            var sb = new StringBuilder(strDirectory);
+            var sb = new StringBuilder(dirCopy);
             if (!PInvoke.PathRemoveFileSpec(sb))
-                return Directory.Exists(strDirectory);
+                return Directory.Exists(dirCopy);
 
-            return Directory.Exists(sb.ToString()) || Directory.Exists(strDirectory);
+            return Directory.Exists(sb.ToString()) || Directory.Exists(dirCopy);
         }
 
         /// <summary>
@@ -175,24 +175,24 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>True if value name exists in registry key</returns>
         internal static bool ValueNameExists(string mainKey, string subKey, string valueName)
         {
-            var bKeyExists = false;
+            var keyExists = false;
             var reg = Utils.RegOpenKey(mainKey, subKey);
 
             try
             {
                 if (reg?.GetValue(valueName) != null)
-                    bKeyExists = true;
+                    keyExists = true;
             }
             catch
             {
-                bKeyExists = false;
+                keyExists = false;
             }
             finally
             {
                 reg?.Close();
             }
 
-            return bKeyExists;
+            return keyExists;
         }
 
         /// <summary>
@@ -233,10 +233,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
         /// <returns>Registry value formatted to a string</returns>
         internal static string RegConvertXValueToString(RegistryKey regKey, string valueName)
         {
-            var strRet = "";
+            var retVal = "";
 
             if (regKey == null)
-                return strRet;
+                return retVal;
 
             try
             {
@@ -244,34 +244,34 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 {
                     case RegistryValueKind.MultiString:
                     {
-                        var strValue = "";
-                        var strValues = (string[]) regKey.GetValue(valueName);
+                        var value = "";
+                        var values = (string[]) regKey.GetValue(valueName);
 
-                        for (var i = 0; i < strValues.Length; i++)
+                        for (var i = 0; i < values.Length; i++)
                         {
                             if (i != 0)
-                                strValue = string.Concat(strValue, ",");
+                                value = string.Concat(value, ",");
 
-                            strValue = $"{strValue} {strValues[i]}";
+                            value = $"{value} {values[i]}";
                         }
 
-                        strRet = string.Copy(strValue);
+                        retVal = string.Copy(value);
 
                         break;
                     }
                     case RegistryValueKind.Binary:
                     {
-                        var strValue = ((byte[]) regKey.GetValue(valueName)).Aggregate("",
+                        var value = ((byte[]) regKey.GetValue(valueName)).Aggregate("",
                             (current, b) => $"{current} {b:X2}");
 
-                        strRet = string.Copy(strValue);
+                        retVal = string.Copy(value);
 
                         break;
                     }
                     case RegistryValueKind.DWord:
                     case RegistryValueKind.QWord:
                     {
-                        strRet = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
+                        retVal = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
                         break;
                     }
                     case RegistryValueKind.String:
@@ -279,7 +279,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     case RegistryValueKind.Unknown:
                     case RegistryValueKind.None:
                     {
-                        strRet = $"{regKey.GetValue(valueName)}";
+                        retVal = $"{regKey.GetValue(valueName)}";
                         break;
                     }
 
@@ -294,7 +294,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 return "";
             }
 
-            return strRet;
+            return retVal;
         }
 
         /// <summary>

@@ -48,11 +48,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         return;
 
                     foreach (
-                        var strProgName in
-                            regKey.GetSubKeyNames().TakeWhile(strProgName => !CancellationToken.IsCancellationRequested)
+                        var progName in
+                            regKey.GetSubKeyNames().TakeWhile(progName => !CancellationToken.IsCancellationRequested)
                         )
                     {
-                        using (var regKey2 = regKey.OpenSubKey(strProgName))
+                        using (var regKey2 = regKey.OpenSubKey(progName))
                         {
                             if (regKey2 == null)
                                 continue;

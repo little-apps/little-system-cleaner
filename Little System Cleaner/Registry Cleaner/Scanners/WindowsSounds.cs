@@ -57,26 +57,26 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         private static void ParseSoundKeys(RegistryKey rk)
         {
             foreach (
-                var strSubKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+                var subKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
             {
                 // Ignores ".Default" Subkey
-                if ((string.Compare(strSubKey, ".Current", StringComparison.Ordinal) == 0) ||
-                    (string.Compare(strSubKey, ".Modified", StringComparison.Ordinal) == 0))
+                if ((string.Compare(subKey, ".Current", StringComparison.Ordinal) == 0) ||
+                    (string.Compare(subKey, ".Modified", StringComparison.Ordinal) == 0))
                 {
                     // Gets the (default) key and sees if the file exists
-                    var rk2 = rk.OpenSubKey(strSubKey);
+                    var rk2 = rk.OpenSubKey(subKey);
 
-                    var strSoundPath = rk2?.GetValue("") as string;
+                    var soundPath = rk2?.GetValue("") as string;
 
-                    if (string.IsNullOrEmpty(strSoundPath))
+                    if (string.IsNullOrEmpty(soundPath))
                         continue;
 
-                    if (!ScanFunctions.FileExists(strSoundPath) && !Wizard.IsOnIgnoreList(strSoundPath))
+                    if (!ScanFunctions.FileExists(soundPath) && !Wizard.IsOnIgnoreList(soundPath))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
                 }
-                else if (!string.IsNullOrEmpty(strSubKey))
+                else if (!string.IsNullOrEmpty(subKey))
                 {
-                    var rk2 = rk.OpenSubKey(strSubKey);
+                    var rk2 = rk.OpenSubKey(subKey);
                     if (rk2 != null)
                     {
                         ParseSoundKeys(rk2);
