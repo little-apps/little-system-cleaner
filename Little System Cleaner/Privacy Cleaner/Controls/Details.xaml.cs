@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -35,7 +36,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         {
                             Name = filePath,
                             Size = Utils.ConvertSizeToString(MiscFunctions.GetFileSize(filePath)),
-                            AccessDate = Directory.GetLastAccessTime(filePath).ToString()
+                            AccessDate = Directory.GetLastAccessTime(filePath).ToString(CultureInfo.CurrentCulture)
                         }));
             }
 
@@ -49,7 +50,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                                 {
                                     Name = folderPath,
                                     Size = Utils.ConvertSizeToString(MiscFunctions.GetFolderSize(folderPath, false)),
-                                    AccessDate = Directory.GetLastAccessTime(folderPath).ToString()
+                                    AccessDate = Directory.GetLastAccessTime(folderPath).ToString(CultureInfo.CurrentCulture)
                                 }));
             }
 
