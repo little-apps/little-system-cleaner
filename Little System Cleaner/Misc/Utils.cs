@@ -965,29 +965,41 @@ namespace Little_System_Cleaner.Misc
 
             try
             {
-                var mainKeyUpper = mainKey.ToUpper();
-
-                if (mainKeyUpper.CompareTo("HKEY_CLASSES_ROOT") == 0)
-                    reg = Registry.ClassesRoot;
-                else if (mainKeyUpper.CompareTo("HKEY_CURRENT_USER") == 0)
-                    reg = Registry.CurrentUser;
-                else if (mainKeyUpper.CompareTo("HKEY_LOCAL_MACHINE") == 0)
-                    reg = Registry.LocalMachine;
-                else if (mainKeyUpper.CompareTo("HKEY_USERS") == 0)
-                    reg = Registry.Users;
-                else if (mainKeyUpper.CompareTo("HKEY_CURRENT_CONFIG") == 0)
-                    reg = Registry.CurrentConfig;
-                else
+                switch (mainKey.ToUpper())
                 {
-                    if (throwOnError)
+                    case "HKEY_CLASSES_ROOT":
                     {
-                        string message = $"Unable to parse registry key.\nMain key: {mainKey}\nSub Key: {subKey}";
-                        throw new Exception(message);
+                        reg = Registry.ClassesRoot;
+                        break;
                     }
+                    case "HKEY_CURRENT_USER":
+                    {
+                        reg = Registry.CurrentUser;
+                        break;
+                    }
+                    case "HKEY_LOCAL_MACHINE":
+                    {
+                        reg = Registry.LocalMachine;
+                        break;
+                    }
+                    case "HKEY_USERS":
+                    {
+                        reg = Registry.Users;
+                        break;
+                    }
+                    case "HKEY_CURRENT_CONFIG":
+                    {
+                        reg = Registry.CurrentConfig;
+                        break;
+                    }
+                    default:
+                    {
+                        if (!throwOnError)
+                            return null;
 
-                    return null; // break here
+                        throw new Exception($"Unable to parse registry key.\nMain key: {mainKey}\nSub Key: {subKey}"); // break here
+                    }
                 }
-
 
                 if (!string.IsNullOrWhiteSpace(subKey))
                     reg = reg.OpenSubKey(subKey, !openReadOnly);
@@ -1039,10 +1051,7 @@ namespace Little_System_Cleaner.Misc
                 else
                 {
                     if (throwOnError)
-                    {
-                        string message = $"Unable to parse registry key ({inPath})";
-                        throw new Exception(message);
-                    }
+                        throw new Exception($"Unable to parse registry key ({inPath})");
 
                     return false;
                 }
