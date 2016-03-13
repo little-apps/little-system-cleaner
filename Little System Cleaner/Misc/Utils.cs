@@ -215,18 +215,18 @@ namespace Little_System_Cleaner.Misc
         /// <returns>False if the path doesnt exist</returns>
         internal static bool ExtractArguments(string cmdLine, out string filePath, out string fileArgs)
         {
-            var strCmdLine = new StringBuilder(cmdLine.ToLower().Trim());
+            var cmdLineStrBuilder = new StringBuilder(cmdLine.ToLower().Trim());
 
             filePath = fileArgs = "";
 
-            if (string.IsNullOrEmpty(strCmdLine.ToString()))
+            if (string.IsNullOrEmpty(cmdLineStrBuilder.ToString()))
                 throw new ArgumentNullException(nameof(cmdLine));
 
-            fileArgs = Marshal.PtrToStringAuto(PInvoke.PathGetArgs(strCmdLine.ToString()));
+            fileArgs = Marshal.PtrToStringAuto(PInvoke.PathGetArgs(cmdLineStrBuilder.ToString()));
 
-            PInvoke.PathRemoveArgs(strCmdLine);
+            PInvoke.PathRemoveArgs(cmdLineStrBuilder);
 
-            filePath = string.Copy(strCmdLine.ToString());
+            filePath = string.Copy(cmdLineStrBuilder.ToString());
 
             return !string.IsNullOrEmpty(filePath) && FileExists(filePath);
         }
@@ -241,42 +241,42 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Returns true if file was located</returns>
         internal static bool ExtractArguments2(string cmdLine, out string filePath, out string fileArgs)
         {
-            var strCmdLine = string.Copy(cmdLine.ToLower().Trim());
+            var cmdLineCopy = string.Copy(cmdLine.ToLower().Trim());
             var bRet = false;
 
             filePath = fileArgs = "";
 
-            if (string.IsNullOrEmpty(strCmdLine))
+            if (string.IsNullOrEmpty(cmdLineCopy))
                 throw new ArgumentNullException(cmdLine);
 
             // Remove Quotes
-            strCmdLine = UnqouteSpaces(strCmdLine);
+            cmdLineCopy = UnqouteSpaces(cmdLineCopy);
 
             // Expand variables
-            strCmdLine = Environment.ExpandEnvironmentVariables(strCmdLine);
+            cmdLineCopy = Environment.ExpandEnvironmentVariables(cmdLineCopy);
 
             // Try to see file exists by combining parts
-            var strFileFullPath = new StringBuilder(260);
-            var nPos = 0;
-            foreach (var ch in strCmdLine)
+            var fileFullPath = new StringBuilder(260);
+            var pos = 0;
+            foreach (var ch in cmdLineCopy)
             {
-                strFileFullPath = strFileFullPath.Append(ch);
-                nPos++;
+                fileFullPath = fileFullPath.Append(ch);
+                pos++;
 
-                if (FindAnyIllegalChars(strFileFullPath.ToString()))
+                if (FindAnyIllegalChars(fileFullPath.ToString()))
                     break;
 
                 // See if part exists
-                if (!File.Exists(strFileFullPath.ToString()))
+                if (!File.Exists(fileFullPath.ToString()))
                     continue;
 
-                filePath = string.Copy(strFileFullPath.ToString());
+                filePath = string.Copy(fileFullPath.ToString());
                 bRet = true;
                 break;
             }
 
-            if (bRet && nPos > 0)
-                fileArgs = strCmdLine.Remove(0, nPos).Trim();
+            if (bRet && pos > 0)
+                fileArgs = cmdLineCopy.Remove(0, pos).Trim();
 
             return bRet;
         }
@@ -308,40 +308,40 @@ namespace Little_System_Cleaner.Misc
             if (length < 0)
                 return "";
 
-            decimal nSize;
-            string strSizeFmt, strUnit;
+            decimal size;
+            string sizeFormatted, unit;
 
             if (length < 1000) // 1KB
             {
-                nSize = length;
-                strUnit = shortFormat ? " B" : " Bytes";
+                size = length;
+                unit = shortFormat ? " B" : " Bytes";
             }
             else if (length < 1000000) // 1MB
             {
-                nSize = length/(decimal) 0x400;
-                strUnit = shortFormat ? " KB" : " Kilobytes";
+                size = length/(decimal) 0x400;
+                unit = shortFormat ? " KB" : " Kilobytes";
             }
             else if (length < 1000000000) // 1GB
             {
-                nSize = length/(decimal) 0x100000;
-                strUnit = shortFormat ? " MB" : " Megabytes";
+                size = length/(decimal) 0x100000;
+                unit = shortFormat ? " MB" : " Megabytes";
             }
             else
             {
-                nSize = length/(decimal) 0x40000000;
-                strUnit = shortFormat ? " GB" : " Gigabytes";
+                size = length/(decimal) 0x40000000;
+                unit = shortFormat ? " GB" : " Gigabytes";
             }
 
-            if (decimal.Subtract(nSize, nSize) == decimal.Zero)
-                strSizeFmt = nSize.ToString("0");
-            else if (nSize < 10)
-                strSizeFmt = nSize.ToString("0.00");
-            else if (nSize < 100)
-                strSizeFmt = nSize.ToString("0.0");
+            if (decimal.Subtract(size, size) == decimal.Zero)
+                sizeFormatted = size.ToString("0");
+            else if (size < 10)
+                sizeFormatted = size.ToString("0.00");
+            else if (size < 100)
+                sizeFormatted = size.ToString("0.0");
             else
-                strSizeFmt = nSize.ToString("0");
+                sizeFormatted = size.ToString("0");
 
-            return strSizeFmt + strUnit;
+            return sizeFormatted + unit;
         }
 
         /// <summary>
@@ -384,13 +384,13 @@ namespace Little_System_Cleaner.Misc
         /// <returns>True if it was found</returns>
         internal static bool SearchPath(string fileName, string path, out string retPath)
         {
-            var strBuffer = new StringBuilder(260);
+            var buffer = new StringBuilder(260);
 
-            var ret = PInvoke.SearchPath(!string.IsNullOrEmpty(path) ? path : null, fileName, null, 260, strBuffer, null);
+            var ret = PInvoke.SearchPath(!string.IsNullOrEmpty(path) ? path : null, fileName, null, 260, buffer, null);
 
-            if (ret != 0 && !string.IsNullOrWhiteSpace(strBuffer.ToString()))
+            if (ret != 0 && !string.IsNullOrWhiteSpace(buffer.ToString()))
             {
-                retPath = strBuffer.ToString();
+                retPath = buffer.ToString();
 
                 return true;
             }
@@ -425,14 +425,14 @@ namespace Little_System_Cleaner.Misc
             // Get directory portion of the path.
             var dirName = path;
             var fullFileName = "";
-            int pos;
-            if ((pos = path.LastIndexOf(Path.DirectorySeparatorChar)) >= 0)
+            int dirSepPosastPos;
+            if ((dirSepPosastPos = path.LastIndexOf(Path.DirectorySeparatorChar)) >= 0)
             {
-                dirName = path.Substring(0, pos);
+                dirName = path.Substring(0, dirSepPosastPos);
 
                 // Get filename portion of the path.
-                if (pos >= 0 && pos + 1 < path.Length)
-                    fullFileName = path.Substring(pos + 1);
+                if (dirSepPosastPos >= 0 && dirSepPosastPos + 1 < path.Length)
+                    fullFileName = path.Substring(dirSepPosastPos + 1);
             }
 
             // Find any characters in the directory that are illegal.
@@ -451,15 +451,15 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         ///     Uses the FindExecutable API to search for the file that opens the specified document
         /// </summary>
-        /// <param name="strFilename">The document to search for</param>
+        /// <param name="fileName">The document to search for</param>
         /// <returns>The file that opens the document</returns>
-        internal static string FindExecutable(string strFilename)
+        internal static string FindExecutable(string fileName)
         {
-            var strResultBuffer = new StringBuilder(1024);
+            var resultBuffer = new StringBuilder(1024);
 
-            var nResult = PInvoke.FindExecutableA(strFilename, string.Empty, strResultBuffer);
+            var ret = PInvoke.FindExecutableA(fileName, string.Empty, resultBuffer);
 
-            return nResult >= 32 ? strResultBuffer.ToString() : $"Error: ({nResult})";
+            return ret >= 32 ? resultBuffer.ToString() : $"Error: ({ret})";
         }
 
         /// <summary>
@@ -469,30 +469,30 @@ namespace Little_System_Cleaner.Misc
         /// <returns>Shortened registry path  (EX: HKCU/...) </returns>
         internal static string PrefixRegPath(string subKey)
         {
-            var strSubKey = string.Copy(subKey);
+            var subKeyUpper = subKey.ToUpper();
 
-            if (strSubKey.ToUpper().StartsWith("HKEY_CLASSES_ROOT"))
+            if (subKeyUpper.StartsWith("HKEY_CLASSES_ROOT"))
             {
-                strSubKey = strSubKey.Replace("HKEY_CLASSES_ROOT", "HKCR");
+                subKey = subKey.Replace("HKEY_CLASSES_ROOT", "HKCR");
             }
-            else if (strSubKey.ToUpper().StartsWith("HKEY_CURRENT_USER"))
+            else if (subKeyUpper.StartsWith("HKEY_CURRENT_USER"))
             {
-                strSubKey = strSubKey.Replace("HKEY_CURRENT_USER", "HKCU");
+                subKey = subKey.Replace("HKEY_CURRENT_USER", "HKCU");
             }
-            else if (strSubKey.ToUpper().StartsWith("HKEY_LOCAL_MACHINE"))
+            else if (subKeyUpper.StartsWith("HKEY_LOCAL_MACHINE"))
             {
-                strSubKey = strSubKey.Replace("HKEY_LOCAL_MACHINE", "HKLM");
+                subKey = subKey.Replace("HKEY_LOCAL_MACHINE", "HKLM");
             }
-            else if (strSubKey.ToUpper().StartsWith("HKEY_USERS"))
+            else if (subKeyUpper.StartsWith("HKEY_USERS"))
             {
-                strSubKey = strSubKey.Replace("HKEY_USERS", "HKU");
+                subKey = subKey.Replace("HKEY_USERS", "HKU");
             }
-            else if (strSubKey.ToUpper().StartsWith("HKEY_CURRENT_CONFIG"))
+            else if (subKeyUpper.StartsWith("HKEY_CURRENT_CONFIG"))
             {
-                strSubKey = strSubKey.Replace("HKEY_CURRENT_CONFIG", "HKCC");
+                subKey = subKey.Replace("HKEY_CURRENT_CONFIG", "HKCC");
             }
 
-            return strSubKey;
+            return subKey;
         }
 
         /// <summary>
@@ -917,9 +917,9 @@ namespace Little_System_Cleaner.Misc
         /// <returns>True if it exists</returns>
         internal static bool RegKeyExists(string inPath)
         {
-            string strBaseKey, strSubKey;
+            string baseKey, subKey;
 
-            return ParseRegKeyPath(inPath, out strBaseKey, out strSubKey) && RegKeyExists(strBaseKey, strSubKey);
+            return ParseRegKeyPath(inPath, out baseKey, out subKey) && RegKeyExists(baseKey, subKey);
         }
 
         internal static bool RegKeyExists(string mainKey, string subKey)
@@ -965,15 +965,17 @@ namespace Little_System_Cleaner.Misc
 
             try
             {
-                if (mainKey.ToUpper().CompareTo("HKEY_CLASSES_ROOT") == 0)
+                var mainKeyUpper = mainKey.ToUpper();
+
+                if (mainKeyUpper.CompareTo("HKEY_CLASSES_ROOT") == 0)
                     reg = Registry.ClassesRoot;
-                else if (mainKey.ToUpper().CompareTo("HKEY_CURRENT_USER") == 0)
+                else if (mainKeyUpper.CompareTo("HKEY_CURRENT_USER") == 0)
                     reg = Registry.CurrentUser;
-                else if (mainKey.ToUpper().CompareTo("HKEY_LOCAL_MACHINE") == 0)
+                else if (mainKeyUpper.CompareTo("HKEY_LOCAL_MACHINE") == 0)
                     reg = Registry.LocalMachine;
-                else if (mainKey.ToUpper().CompareTo("HKEY_USERS") == 0)
+                else if (mainKeyUpper.CompareTo("HKEY_USERS") == 0)
                     reg = Registry.Users;
-                else if (mainKey.ToUpper().CompareTo("HKEY_CURRENT_CONFIG") == 0)
+                else if (mainKeyUpper.CompareTo("HKEY_CURRENT_CONFIG") == 0)
                     reg = Registry.CurrentConfig;
                 else
                 {
@@ -1020,19 +1022,19 @@ namespace Little_System_Cleaner.Misc
             if (string.IsNullOrEmpty(inPath))
                 return false;
 
-            var strMainKeyname = inPath;
+            var mainKeyName = inPath;
 
             try
             {
-                var nSlash = strMainKeyname.IndexOf("\\");
-                if (nSlash > -1)
+                var slashPos = mainKeyName.IndexOf("\\");
+                if (slashPos > -1)
                 {
-                    baseKey = strMainKeyname.Substring(0, nSlash);
-                    subKey = strMainKeyname.Substring(nSlash + 1);
+                    baseKey = mainKeyName.Substring(0, slashPos);
+                    subKey = mainKeyName.Substring(slashPos + 1);
                 }
-                else if (strMainKeyname.ToUpper().StartsWith("HKEY"))
+                else if (mainKeyName.ToUpper().StartsWith("HKEY"))
                 {
-                    baseKey = strMainKeyname;
+                    baseKey = mainKeyName;
                 }
                 else
                 {
