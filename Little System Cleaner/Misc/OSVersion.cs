@@ -34,149 +34,177 @@ namespace Little_System_Cleaner.Misc
             {
                 dwOSVersionInfoSize = (uint) Marshal.SizeOf(typeof (PInvoke.OsVersionInfoEx))
             };
-
-            var systemInfo = new PInvoke.SystemInfo();
-            PInvoke.GetSystemInfo(ref systemInfo);
-
-            var osName = "Microsoft ";
-
+            
             if (!PInvoke.GetVersionEx(ref osVersionInfo))
                 return string.Empty;
+            
+            var osName = GetOsName(osVersionInfo);
+            var osEdition = GetOsEdition(osVersionInfo);
+
+            var operatingSystem = (osName + " " + osEdition).Trim();
+
+            // If 64 bit OS then append (x64), otherwise, append (x86)
+            operatingSystem += " " + (Environment.Is64BitOperatingSystem ? "(x64)" : "(x86)");
+
+            return operatingSystem;
+        }
+
+        /// <summary>
+        /// Returns the name of the operating system
+        /// </summary>
+        /// <param name="osVersionInfo">OsVersionInfoEx from GetVersionEx() call</param>
+        /// <returns>Operating system name (Microsoft Windows, Unix, etc)</returns>
+        private static string GetOsName(PInvoke.OsVersionInfoEx osVersionInfo)
+        {
+            string osName;
 
             switch (Environment.OSVersion.Platform)
             {
+                case PlatformID.Win32S:
+                case PlatformID.WinCE:
                 case PlatformID.Win32Windows:
-                {
-                    switch (Environment.OSVersion.Version.Major)
-                    {
-                        case 4:
-                        {
-                            switch (Environment.OSVersion.Version.Minor)
-                            {
-                                case 0:
-                                    if (osVersionInfo.szCSDVersion == "B" ||
-                                        osVersionInfo.szCSDVersion == "C")
-                                        osName += "Windows 95 R2";
-                                    else
-                                        osName += "Windows 95";
-                                    break;
-                                case 10:
-                                    if (osVersionInfo.szCSDVersion == "A")
-                                        osName += "Windows 98 SE";
-                                    else
-                                        osName += "Windows 98";
-                                    break;
-                                case 90:
-                                    osName += "Windows ME";
-                                    break;
-                            }
-                        }
-                            break;
-                    }
-                }
-                    break;
-
                 case PlatformID.Win32NT:
                 {
+                    osName = "Microsoft Windows ";
+
                     switch (Environment.OSVersion.Version.Major)
                     {
                         case 3:
-                            osName += "Windows NT 3.5.1";
+                            osName += "NT 3.5.1";
                             break;
-
                         case 4:
-                            switch (osVersionInfo.wProductType)
+                        {
+                            if (Environment.OSVersion.Platform == PlatformID.Win32Windows)
                             {
-                                case 1:
-                                    osName += "Windows NT 4.0";
-                                    break;
-                                case 3:
-                                    osName += "Windows NT 4.0 Server";
-                                    break;
+                                switch (Environment.OSVersion.Version.Minor)
+                                {
+                                    case 0:
+                                        osName += osVersionInfo.szCSDVersion == "B" ||
+                                                  osVersionInfo.szCSDVersion == "C"
+                                            ? "95 R2"
+                                            : "95";
+                                        break;
+                                    case 10:
+                                        osName += osVersionInfo.szCSDVersion == "A" ? "98 SE" : "98";
+                                        break;
+                                    case 90:
+                                        osName += "ME";
+                                        break;
+                                }
                             }
-                            break;
+                            else
+                            {
+                                switch (osVersionInfo.wProductType)
+                                {
+                                    case 1:
+                                        osName += "NT 4.0";
+                                        break;
+                                    case 3:
+                                        osName += "NT 4.0 Server";
+                                        break;
+                                }
+                            }
 
-                            // TODO: Use version helper functions if OS is Windows 2000 Pro/Server or greater (https://msdn.microsoft.com/en-us/library/windows/desktop/dn424972%28v=vs.85%29.aspx)
-                            case 5:
+                            break;
+                        }
+
+                        // TODO: Use version helper functions if OS is Windows 2000 Pro/Server or greater (https://msdn.microsoft.com/en-us/library/windows/desktop/dn424972%28v=vs.85%29.aspx)
+                        case 5:
                         {
                             switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
-                                    osName += "Windows 2000";
+                                    osName += "2000";
                                     break;
                                 case 1:
-                                    osName += "Windows XP";
+                                    osName += "XP";
                                     break;
                                 case 2:
                                 {
+                                    var systemInfo = new PInvoke.SystemInfo();
+                                    PInvoke.GetSystemInfo(ref systemInfo);
+
                                     if (osVersionInfo.wSuiteMask == PInvoke.VER_SUITE_WH_SERVER)
-                                        osName += "Windows Home Server";
+                                        osName += "Home Server";
                                     else if (osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION &&
-                                             systemInfo.wProcessorArchitecture == PInvoke.PROCESSOR_ARCHITECTURE_AMD64)
-                                        osName += "Windows XP Professional";
+                                             systemInfo.wProcessorArchitecture ==
+                                             PInvoke.PROCESSOR_ARCHITECTURE_AMD64)
+                                        osName += "XP Professional";
                                     else
                                         osName += PInvoke.GetSystemMetrics(PInvoke.SM_SERVERR2) == 0
-                                            ? "Windows Server 2003"
-                                            : "Windows Server 2003 R2";
-                                }
-                                    break;
-                            }
-                        }
-                            break;
+                                            ? "Server 2003"
+                                            : "Server 2003 R2";
 
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
                         case 6:
                         {
                             switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
-                                        ? "Windows Vista"
-                                        : "Windows Server 2008";
+                                        ? "Vista"
+                                        : "Server 2008";
                                     break;
-
                                 case 1:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
-                                        ? "Windows 7"
-                                        : "Windows Server 2008 R2";
+                                        ? "7"
+                                        : "Server 2008 R2";
                                     break;
-
                                 case 2:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
-                                        ? "Windows 8"
-                                        : "Windows Server 2012";
+                                        ? "8"
+                                        : "Server 2012";
                                     break;
-
                                 case 3:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
-                                        ? "Windows 8.1"
-                                        : "Windows Server 2012 R2";
+                                        ? "8.1"
+                                        : "Server 2012 R2";
                                     break;
                                 case 4:
                                     // Windows 10 was originally v6.4 
-                                    osName += "Windows 10 (Technical Preview)";
+                                    osName += "10 (Technical Preview)";
                                     break;
                             }
-                        }
+
                             break;
+                        }
                         case 10:
                         {
                             switch (Environment.OSVersion.Version.Minor)
                             {
                                 case 0:
                                     osName += osVersionInfo.wProductType == PInvoke.VER_NT_WORKSTATION
-                                        ? "Windows 10"
-                                        : "Windows Server 2016";
+                                        ? "10"
+                                        : "Server 2016";
                                     break;
                             }
-                        }
                             break;
+                        }
                     }
+                    break;
                 }
+                    
+                default:
+                    // Unix, MacOSX, Xbox, etc
+                    osName = Environment.OSVersion.Platform.ToString();
                     break;
             }
-            
-            osName += " ";
 
+            return osName.Trim();
+        }
+
+        /// <summary>
+        /// Gets the edition of the operating system
+        /// </summary>
+        /// <param name="osVersionInfo">OsVersionInfoEx from GetVersionEx() call</param>
+        /// <returns>Returns the operating system edition</returns>
+        private static string GetOsEdition(PInvoke.OsVersionInfoEx osVersionInfo)
+        {
             switch (Environment.OSVersion.Version.Major)
             {
                 case 4:
@@ -184,26 +212,25 @@ namespace Little_System_Cleaner.Misc
                     switch (osVersionInfo.wProductType)
                     {
                         case PInvoke.VER_NT_WORKSTATION:
-                            osName += "Workstation";
-                            break;
-
+                            return "Workstation";
                         case PInvoke.VER_NT_SERVER:
-                            osName += (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0
+                            return (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0
                                 ? "Enterprise Server"
                                 : "Standard Server";
-                            break;
                     }
-                }
+
                     break;
+                }
+
 
                 case 5:
                 {
                     switch (osVersionInfo.wProductType)
                     {
                         case PInvoke.VER_NT_WORKSTATION:
-                            osName += (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_PERSONAL) != 0 ? "Home" : "Professional";
-                            break;
-
+                            return (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_PERSONAL) != 0
+                                ? "Home"
+                                : "Professional";
                         case PInvoke.VER_NT_SERVER:
                         {
                             switch (osVersionInfo.dwMinorVersion)
@@ -211,32 +238,28 @@ namespace Little_System_Cleaner.Misc
                                 case 0:
                                 {
                                     if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_DATACENTER) != 0)
-                                        osName += "Data Center Server";
-                                    else if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0)
-                                        osName += "Advanced Server";
-                                    else
-                                        osName += "Server";
+                                        return "Data Center Server";
+                                    return (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0
+                                        ? "Advanced Server"
+                                        : "Server";
                                 }
-                                    break;
-
                                 default:
                                 {
                                     if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_DATACENTER) != 0)
-                                        osName += "Data Center Server";
-                                    else if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0)
-                                        osName += "Enterprise Server";
-                                    else if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_BLADE) != 0)
-                                        osName += "Web Edition";
-                                    else
-                                        osName += "Standard Server";
+                                        return "Data Center Server";
+                                    if ((osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_ENTERPRISE) != 0)
+                                        return "Enterprise Server";
+                                    return (osVersionInfo.wSuiteMask & PInvoke.VER_SUITE_BLADE) != 0
+                                        ? "Web Edition"
+                                        : "Standard Server";
                                 }
-                                    break;
                             }
                         }
-                            break;
                     }
-                }
+
                     break;
+                }
+
 
                 case 6:
                 {
@@ -247,138 +270,93 @@ namespace Little_System_Cleaner.Misc
                         switch (ed)
                         {
                             case PInvoke.PRODUCT_BUSINESS:
-                                osName += "Business";
-                                break;
+                                return "Business";
                             case PInvoke.PRODUCT_BUSINESS_N:
-                                osName += "Business N";
-                                break;
+                                return "Business N";
                             case PInvoke.PRODUCT_CLUSTER_SERVER:
-                                osName += "HPC Edition";
-                                break;
+                                return "HPC Edition";
                             case PInvoke.PRODUCT_DATACENTER_SERVER:
-                                osName += "Data Center Server";
-                                break;
+                                return "Data Center Server";
                             case PInvoke.PRODUCT_DATACENTER_SERVER_CORE:
-                                osName += "Data Center Server Core";
-                                break;
+                                return "Data Center Server Core";
                             case PInvoke.PRODUCT_ENTERPRISE:
-                                osName += "Enterprise";
-                                break;
+                                return "Enterprise";
                             case PInvoke.PRODUCT_ENTERPRISE_N:
-                                osName += "Enterprise N";
-                                break;
+                                return "Enterprise N";
                             case PInvoke.PRODUCT_ENTERPRISE_SERVER:
-                                osName += "Enterprise Server";
-                                break;
+                                return "Enterprise Server";
                             case PInvoke.PRODUCT_ENTERPRISE_SERVER_CORE:
-                                osName += "Enterprise Server Core Installation";
-                                break;
+                                return "Enterprise Server Core Installation";
                             case PInvoke.PRODUCT_ENTERPRISE_SERVER_CORE_V:
-                                osName += "Enterprise Server Without Hyper-V Core Installation";
-                                break;
+                                return "Enterprise Server Without Hyper-V Core Installation";
                             case PInvoke.PRODUCT_ENTERPRISE_SERVER_IA64:
-                                osName += "Enterprise Server For Itanium Based Systems";
-                                break;
+                                return "Enterprise Server For Itanium Based Systems";
                             case PInvoke.PRODUCT_ENTERPRISE_SERVER_V:
-                                osName += "Enterprise Server Without Hyper-V";
-                                break;
+                                return "Enterprise Server Without Hyper-V";
                             case PInvoke.PRODUCT_HOME_BASIC:
-                                osName += "Home Basic";
-                                break;
+                                return "Home Basic";
                             case PInvoke.PRODUCT_HOME_BASIC_N:
-                                osName += "Home Basic N";
-                                break;
+                                return "Home Basic N";
                             case PInvoke.PRODUCT_HOME_PREMIUM:
-                                osName += "Home Premium";
-                                break;
+                                return "Home Premium";
                             case PInvoke.PRODUCT_HOME_PREMIUM_N:
-                                osName += "Home Premium N";
-                                break;
+                                return "Home Premium N";
                             case PInvoke.PRODUCT_HYPERV:
-                                osName += "Hyper-V Server";
-                                break;
+                                return "Hyper-V Server";
                             case PInvoke.PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT:
-                                osName += "Essential Business Management Server";
-                                break;
+                                return "Essential Business Management Server";
                             case PInvoke.PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING:
-                                osName += "Essential Business Messaging Server";
-                                break;
+                                return "Essential Business Messaging Server";
                             case PInvoke.PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY:
-                                osName += "Essential Business Security Server";
-                                break;
+                                return "Essential Business Security Server";
                             case PInvoke.PRODUCT_SERVER_FOR_SMALLBUSINESS:
-                                osName += "Essential Server Solutions";
-                                break;
+                                return "Essential Server Solutions";
                             case PInvoke.PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
-                                osName += "Essential Server Solutions Without Hyper-V";
-                                break;
+                                return "Essential Server Solutions Without Hyper-V";
                             case PInvoke.PRODUCT_SMALLBUSINESS_SERVER:
-                                osName += "Small Business Server";
-                                break;
+                                return "Small Business Server";
                             case PInvoke.PRODUCT_STANDARD_SERVER:
-                                osName += "Standard Server";
-                                break;
+                                return "Standard Server";
                             case PInvoke.PRODUCT_STANDARD_SERVER_CORE:
-                                osName += "Standard Server Core Installation";
-                                break;
+                                return "Standard Server Core Installation";
                             case PInvoke.PRODUCT_STANDARD_SERVER_CORE_V:
-                                osName += "Standard Server Without Hyper-V Core Installation";
-                                break;
+                                return "Standard Server Without Hyper-V Core Installation";
                             case PInvoke.PRODUCT_STANDARD_SERVER_V:
-                                osName += "Standard Server Without Hyper-V";
-                                break;
+                                return "Standard Server Without Hyper-V";
                             case PInvoke.PRODUCT_STARTER:
-                                osName += "Starter";
-                                break;
+                                return "Starter";
                             case PInvoke.PRODUCT_STORAGE_ENTERPRISE_SERVER:
-                                osName += "Enterprise Storage Server";
-                                break;
+                                return "Enterprise Storage Server";
                             case PInvoke.PRODUCT_STORAGE_EXPRESS_SERVER:
-                                osName += "Express Storage Server";
-                                break;
+                                return "Express Storage Server";
                             case PInvoke.PRODUCT_STORAGE_STANDARD_SERVER:
-                                osName += "Standard Storage Server";
-                                break;
+                                return "Standard Storage Server";
                             case PInvoke.PRODUCT_STORAGE_WORKGROUP_SERVER:
-                                osName += "Workgroup Storage Server";
-                                break;
-                            case PInvoke.PRODUCT_UNDEFINED:
-                                break;
+                                return "Workgroup Storage Server";
                             case PInvoke.PRODUCT_ULTIMATE:
-                                osName += "Ultimate";
-                                break;
+                                return "Ultimate";
                             case PInvoke.PRODUCT_ULTIMATE_N:
-                                osName += "Ultimate N";
-                                break;
+                                return "Ultimate N";
                             case PInvoke.PRODUCT_WEB_SERVER:
-                                osName += "Web Server";
-                                break;
+                                return "Web Server";
                             case PInvoke.PRODUCT_WEB_SERVER_CORE:
-                                osName += "Web Server Core Installation";
-                                break;
+                                return "Web Server Core Installation";
                             case PInvoke.PRODUCT_PROFESSIONAL:
-                                osName += "Professional";
-                                break;
+                                return "Professional";
                             case PInvoke.PRODUCT_PROFESSIONAL_N:
-                                osName += "Professional N";
-                                break;
+                                return "Professional N";
                             case PInvoke.PRODUCT_STARTER_N:
-                                osName += "Starter N";
-                                break;
+                                return "Starter N";
+                            default:
+                                return string.Empty;
                         }
                     }
-                }
+
                     break;
+                }
             }
 
-            // If 64 bit OS -> Append (x64)
-            if (Environment.Is64BitOperatingSystem)
-                osName = osName.Trim() + " (x64)";
-            else
-            // Otherwise (x86)
-                osName = osName.Trim() + " (x86)";
-
-            return osName;
+            return string.Empty;
         }
     }
 }
