@@ -22,6 +22,7 @@ using System.Linq;
 using System.Security;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -70,7 +71,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (string.IsNullOrEmpty(strSoundPath))
                         continue;
 
-                    if (!Utils.FileExists(strSoundPath) && !Wizard.IsOnIgnoreList(strSoundPath))
+                    if (!ScanFunctions.FileExists(strSoundPath) && !Wizard.IsOnIgnoreList(strSoundPath))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, rk2.Name, "(default)");
                 }
                 else if (!string.IsNullOrEmpty(strSubKey))

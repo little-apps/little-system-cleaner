@@ -24,6 +24,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -53,8 +54,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     foreach (var valueName in regKey.GetValueNames()
                         .Where(valueName => !string.IsNullOrWhiteSpace(valueName))
                         .Where(valueName => !valueName.StartsWith("@") && valueName != "LangID")
-                        .Where(valueName => !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName))
-                        .TakeWhile(valueName => !Utils.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName)))
+                        .Where(valueName => !ScanFunctions.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName))
+                        .TakeWhile(valueName => !ScanFunctions.FileExists(valueName) && !Wizard.IsOnIgnoreList(valueName)))
                     {
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, valueName);
                     }
@@ -127,7 +128,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     continue;
                 }
 
-                if (Utils.FileExists(shortcutPath) && Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs))
+                if (ScanFunctions.FileExists(shortcutPath) && Utils.ResolveShortcut(shortcutPath, out filePath, out fileArgs))
                     continue;
 
                 if (!Wizard.IsOnIgnoreList(shortcutPath) && !Wizard.IsOnIgnoreList(filePath))

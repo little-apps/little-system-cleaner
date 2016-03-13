@@ -164,7 +164,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         var strInprocServer = regKeyInprocSrvr.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer))
-                            if (!Utils.FileExists(strInprocServer) && !Wizard.IsOnIgnoreList(strInprocServer))
+                            if (!ScanFunctions.FileExists(strInprocServer) && !Wizard.IsOnIgnoreList(strInprocServer))
                                 Wizard.StoreInvalidKey(Strings.InvalidInprocServer, regKeyInprocSrvr.ToString());
 
                         regKeyInprocSrvr.Close();
@@ -188,7 +188,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         var strInprocServer32 = regKeyInprocSrvr32.GetValue("") as string;
 
                         if (!string.IsNullOrEmpty(strInprocServer32))
-                            if (!Utils.FileExists(strInprocServer32) && !Wizard.IsOnIgnoreList(strInprocServer32))
+                            if (!ScanFunctions.FileExists(strInprocServer32) && !Wizard.IsOnIgnoreList(strInprocServer32))
                                 Wizard.StoreInvalidKey(Strings.InvalidInprocServer32, regKeyInprocSrvr32.ToString());
 
                         regKeyInprocSrvr32.Close();
@@ -645,7 +645,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // See if files exist
                 var exec = regKey.GetValue("Exec") as string;
                 if (!string.IsNullOrEmpty(exec))
-                    if (!Utils.FileExists(exec) && !Wizard.IsOnIgnoreList(exec))
+                    if (!ScanFunctions.FileExists(exec) && !Wizard.IsOnIgnoreList(exec))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Exec");
             }
             catch (Exception ex)
@@ -657,7 +657,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             {
                 var script = regKey.GetValue("Script") as string;
                 if (!string.IsNullOrEmpty(script))
-                    if (!Utils.FileExists(script) && !Wizard.IsOnIgnoreList(script))
+                    if (!ScanFunctions.FileExists(script) && !Wizard.IsOnIgnoreList(script))
                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.ToString(), "Script");
             }
             catch (Exception ex)
@@ -712,7 +712,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 var inprocServer = regKeyInprocSrvr?.GetValue("") as string;
 
                 if (!string.IsNullOrEmpty(inprocServer))
-                    if (Utils.FileExists(inprocServer) || Wizard.IsOnIgnoreList(inprocServer))
+                    if (ScanFunctions.FileExists(inprocServer) || Wizard.IsOnIgnoreList(inprocServer))
                         return true;
             }
             catch (Exception ex)
@@ -732,7 +732,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 var inprocServer32 = regKeyInprocSrvr32?.GetValue("") as string;
 
                 if (!string.IsNullOrEmpty(inprocServer32))
-                    if (Utils.FileExists(inprocServer32) || Wizard.IsOnIgnoreList(inprocServer32))
+                    if (ScanFunctions.FileExists(inprocServer32) || Wizard.IsOnIgnoreList(inprocServer32))
                         return true;
             }
             catch (Exception ex)

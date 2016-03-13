@@ -21,6 +21,7 @@ using System.Linq;
 using System.Security;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -46,7 +47,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 // Validate Each DLL from the value names
                 foreach (var strFilePath in regKey.GetValueNames()
                     .Where(strFilePath => !string.IsNullOrWhiteSpace(strFilePath))
-                    .Where(strFilePath => !Utils.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
+                    .Where(strFilePath => !ScanFunctions.FileExists(strFilePath) && !Wizard.IsOnIgnoreList(strFilePath))
                     .TakeWhile(strFilePath => !CancellationToken.IsCancellationRequested))
                 {
                     Wizard.StoreInvalidKey(Strings.InvalidFile, regKey.Name, strFilePath);

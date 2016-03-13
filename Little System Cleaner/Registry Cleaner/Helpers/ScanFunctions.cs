@@ -7,6 +7,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
 using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Microsoft.Win32;
 
@@ -14,6 +15,65 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
     public class ScanFunctions
     {
+        internal enum VdtReturn
+        {
+            ValidDrive = 0,
+            InvalidDrive = 1,
+            SkipCheck = 3
+        }
+
+        /// <summary>
+        ///     Sees if path has valid drive type
+        /// </summary>
+        /// <param name="path">Path containing drive</param>
+        /// <returns>ValidDriveTypeReturn enum</returns>
+        internal static VdtReturn ValidDriveType(string path)
+        {
+            var sb = new StringBuilder(path);
+            if (!PInvoke.PathStripToRoot(sb))
+                return VdtReturn.ValidDrive;
+
+            var dt = PInvoke.GetDriveType(sb.ToString());
+
+            if (Settings.Default.registryCleanerOptionsRemMedia)
+            {
+                // Just return true if its on a removable media
+                if (dt == DriveType.Removable ||
+                    dt == DriveType.Network ||
+                    dt == DriveType.CDRom)
+                    return VdtReturn.SkipCheck;
+            }
+
+            // Return false for unkown and no root dir
+            if (dt == DriveType.NoRootDirectory ||
+                dt == DriveType.Unknown)
+                return VdtReturn.InvalidDrive;
+
+            return VdtReturn.ValidDrive;
+        }
+
+        internal static bool FileExists(string filePath)
+        {
+            var fileName = Utils.SanitizeFilePath(filePath);
+
+            if (string.IsNullOrEmpty(fileName))
+                return false;
+
+            // Check Drive Type
+            var ret = ValidDriveType(fileName);
+            switch (ret)
+            {
+                case VdtReturn.InvalidDrive:
+                    return false;
+                case VdtReturn.SkipCheck:
+                    return true;
+                case VdtReturn.ValidDrive:
+                    break;
+            }
+
+            return File.Exists(fileName) || PInvoke.PathFileExists(fileName) || Utils.SearchPath(fileName);
+        }
+
         /// <summary>
         ///     Gets the icon path and sees if it exists
         /// </summary>
@@ -40,7 +100,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 strFileName = strFileName.Substring(0, nSlash);
 
-                return Utils.FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName);
+                return FileExists(strFileName) || Wizard.IsOnIgnoreList(strFileName);
             }
 
             var sb = new StringBuilder(strFileName);
@@ -48,7 +108,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 return false;
 
             if (!string.IsNullOrEmpty(sb.ToString()))
-                return Utils.FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName);
+                return FileExists(sb.ToString()) || Wizard.IsOnIgnoreList(strFileName);
 
             return false;
         }
@@ -70,17 +130,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             strDirectory = Environment.ExpandEnvironmentVariables(strDirectory);
 
             // Check drive type
-            var ret = Utils.ValidDriveType(strDirectory);
+            var ret = ValidDriveType(strDirectory);
             switch (ret)
             {
-                case Utils.VdtReturn.InvalidDrive:
+                case VdtReturn.InvalidDrive:
                     return false;
-                case Utils.VdtReturn.SkipCheck:
+                case VdtReturn.SkipCheck:
                     return true;
-                case Utils.VdtReturn.ValidDrive:
+                case VdtReturn.ValidDrive:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
             // Check for illegal chars

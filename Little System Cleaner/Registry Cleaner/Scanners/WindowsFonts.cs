@@ -25,6 +25,7 @@ using System.Security;
 using System.Text;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -65,7 +66,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             // Skip if value is empty
                             .Where(o => !string.IsNullOrEmpty(o.Value))
                             // Check value by itself
-                            .Where(o => !Utils.FileExists(o.Value))
+                            .Where(o => !ScanFunctions.FileExists(o.Value))
                             .Where(o => !Wizard.IsOnIgnoreList(o.Value))
                             .Select(o => new {o.Name, o.Value, Path = $"{strPath.ToString()}\\{o.Value}"})
                             // Check for font in fonts folder

@@ -82,7 +82,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             // Check install location 
                             if (!string.IsNullOrEmpty(progInfo.InstallLocation))
                                 if (!ScanFunctions.DirExists(progInfo.InstallLocation) &&
-                                    !Utils.FileExists(progInfo.InstallLocation))
+                                    !ScanFunctions.FileExists(progInfo.InstallLocation))
                                     if (!Wizard.IsOnIgnoreList(progInfo.InstallLocation))
                                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(),
                                             "InstallLocation");
@@ -90,7 +90,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             // Check install source 
                             if (!string.IsNullOrEmpty(progInfo.InstallSource))
                                 if (!ScanFunctions.DirExists(progInfo.InstallSource) &&
-                                    !Utils.FileExists(progInfo.InstallSource))
+                                    !ScanFunctions.FileExists(progInfo.InstallSource))
                                     if (!Wizard.IsOnIgnoreList(progInfo.InstallSource))
                                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "InstallSource");
 
@@ -101,7 +101,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                             if (string.IsNullOrEmpty(progInfo.FileName))
                                 continue;
 
-                            if (!Utils.FileExists(progInfo.FileName) && !Wizard.IsOnIgnoreList(progInfo.FileName))
+                            if (!ScanFunctions.FileExists(progInfo.FileName) && !Wizard.IsOnIgnoreList(progInfo.FileName))
                                 Wizard.StoreInvalidKey(Strings.InvalidRegKey, progInfo.SlowInfoCacheRegKey);
                         }
                     }

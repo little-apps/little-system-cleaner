@@ -21,6 +21,7 @@ using System.Linq;
 using System.Security;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -139,7 +140,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     continue;
 
                 // Check run path by itself
-                if (Utils.FileExists(runPath) || Wizard.IsOnIgnoreList(runPath))
+                if (ScanFunctions.FileExists(runPath) || Wizard.IsOnIgnoreList(runPath))
                     continue;
 
                 // See if file exists (also checks if string is null)

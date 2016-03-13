@@ -21,6 +21,7 @@ using System.Linq;
 using System.Security;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -51,7 +52,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 .Select(
                                     driverName => new {Name = driverName, Value = regKey.GetValue(driverName) as string})
                                 .Where(o => !string.IsNullOrEmpty(o.Value))
-                                .Where(o => !Utils.FileExists(o.Value) && !Wizard.IsOnIgnoreList(o.Value))
+                                .Where(o => !ScanFunctions.FileExists(o.Value) && !Wizard.IsOnIgnoreList(o.Value))
                                 .Select(o => o.Name)
                                 .TakeWhile(driverName => !CancellationToken.IsCancellationRequested))
                     {

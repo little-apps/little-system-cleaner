@@ -108,37 +108,7 @@ namespace Little_System_Cleaner.Misc
                     return webProxy;
             }
         }
-
-        /// <summary>
-        ///     Sees if path has valid drive type
-        /// </summary>
-        /// <param name="path">Path containing drive</param>
-        /// <returns>ValidDriveTypeReturn enum</returns>
-        internal static VdtReturn ValidDriveType(string path)
-        {
-            var sb = new StringBuilder(path);
-            if (!PInvoke.PathStripToRoot(sb))
-                return VdtReturn.ValidDrive;
-
-            var dt = PInvoke.GetDriveType(sb.ToString());
-
-            if (Settings.Default.registryCleanerOptionsRemMedia)
-            {
-                // Just return true if its on a removable media
-                if (dt == DriveType.Removable ||
-                    dt == DriveType.Network ||
-                    dt == DriveType.CDRom)
-                    return VdtReturn.SkipCheck;
-            }
-
-            // Return false for unkown and no root dir
-            if (dt == DriveType.NoRootDirectory ||
-                dt == DriveType.Unknown)
-                return VdtReturn.InvalidDrive;
-
-            return VdtReturn.ValidDrive;
-        }
-
+        
 
         /// <summary>
         ///     Extracts the large or small icon
@@ -230,26 +200,9 @@ namespace Little_System_Cleaner.Misc
         internal static bool FileExists(string filePath)
         {
             var fileName = SanitizeFilePath(filePath);
-
-            // Check Drive Type
-            var ret = ValidDriveType(fileName);
-            switch (ret)
-            {
-                case VdtReturn.InvalidDrive:
-                    return false;
-                case VdtReturn.SkipCheck:
-                    return true;
-                case VdtReturn.ValidDrive:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
+            
             // Now see if file exists
-            if (File.Exists(fileName))
-                return true;
-
-            return PInvoke.PathFileExists(fileName) || SearchPath(fileName);
+            return File.Exists(fileName) || PInvoke.PathFileExists(fileName) || SearchPath(fileName);
         }
 
         /// <summary>
@@ -837,12 +790,7 @@ namespace Little_System_Cleaner.Misc
             return System.Windows.Application.Current.Dispatcher.BeginInvoke(showMsgBox);
         }
 
-        internal enum VdtReturn
-        {
-            ValidDrive = 0,
-            InvalidDrive = 1,
-            SkipCheck = 3
-        }
+        
 
         #region SecureString Functions
 

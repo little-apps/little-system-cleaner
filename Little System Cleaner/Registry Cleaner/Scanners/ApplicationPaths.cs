@@ -105,7 +105,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                 }
                 else
                 {
-                    if (Utils.FileExists(strAppPath) || Wizard.IsOnIgnoreList(strAppPath))
+                    if (ScanFunctions.FileExists(strAppPath) || Wizard.IsOnIgnoreList(strAppPath))
                         continue;
                 }
 

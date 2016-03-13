@@ -22,6 +22,7 @@ using System.Linq;
 using System.Security;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
@@ -78,15 +79,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             if (string.IsNullOrEmpty(helpFile) || string.IsNullOrEmpty(helpPath))
                 return true;
 
-            if (Utils.FileExists(helpPath) || Wizard.IsOnIgnoreList(helpPath))
+            if (ScanFunctions.FileExists(helpPath) || Wizard.IsOnIgnoreList(helpPath))
                 return true;
 
-            if (Utils.FileExists(helpFile) || Wizard.IsOnIgnoreList(helpFile))
+            if (ScanFunctions.FileExists(helpFile) || Wizard.IsOnIgnoreList(helpFile))
                 return true;
 
             var combinedPath = Path.Combine(helpPath, helpFile);
 
-            return Utils.FileExists(combinedPath) || Wizard.IsOnIgnoreList(combinedPath);
+            return ScanFunctions.FileExists(combinedPath) || Wizard.IsOnIgnoreList(combinedPath);
         }
     }
 }
