@@ -469,10 +469,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 if (!string.IsNullOrEmpty(DisplayName))
                     return DisplayName;
 
-                if (!string.IsNullOrEmpty(QuietDisplayName))
-                    return QuietDisplayName;
-
-                return Key;
+                return !string.IsNullOrEmpty(QuietDisplayName) ? QuietDisplayName : Key;
             }
         }
 
@@ -485,9 +482,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                 if (InstallSize > 0)
                     return (uint) InstallSize;
 
-                if (EstimatedSize.GetValueOrDefault(0) > 0)
-                    if (EstimatedSize != null)
-                        return EstimatedSize.Value*1024;
+                if (EstimatedSize.GetValueOrDefault(0) <= 0)
+                    return 0;
+
+                if (EstimatedSize != null)
+                    return EstimatedSize.Value*1024;
 
                 return 0;
             }
