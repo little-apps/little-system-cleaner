@@ -334,8 +334,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                                 if (!ret)
                                     return false;
-                            }
+
                                 break;
+                            }
+                                
                             case "ValueExist":
                             {
                                 var regKeyPath = xmlReader.GetAttribute("RegKey");
@@ -383,9 +385,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
                                 if (!ret)
                                     return false;
-                            }
+
                                 break;
+                            }
+                                
                             case "FileExist":
+                            {
                                 var filePath = xmlReader.ReadElementContentAsString();
 
                                 if (string.IsNullOrWhiteSpace(filePath))
@@ -399,7 +404,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 if (!ret)
                                     return false;
                                 break;
+                            }
+                                
                             case "FolderExist":
+                            {
                                 var folderPath = xmlReader.ReadElementContentAsString();
 
                                 if (string.IsNullOrWhiteSpace(folderPath))
@@ -413,6 +421,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                                 if (!ret)
                                     return false;
                                 break;
+                            }
+                            default:
+                            {
+                                continue;
+                            }
                         }
                     }
                 }
@@ -420,11 +433,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 // Ensure IsRunning commands are valid before being added
                 while (xmlReader.ReadToFollowing("IsRunning"))
                 {
-                    if (string.IsNullOrWhiteSpace(xmlReader.ReadElementContentAsString()))
-                    {
-                        ret = false;
-                        break;
-                    }
+                    if (!string.IsNullOrWhiteSpace(xmlReader.ReadElementContentAsString()))
+                        continue;
+
+                    ret = false;
+                    break;
                 }
 
                 // Ensure Action commands are valid before being added
@@ -526,12 +539,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             var hasChildren = false;
                             while (children.Read())
                             {
-                                if ((children.Name == "IfSubKey" || children.Name == "IfValueName") &&
-                                    !string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
-                                {
-                                    hasChildren = true;
-                                    break;
-                                }
+                                if ((children.Name != "IfSubKey" && children.Name != "IfValueName") ||
+                                    string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
+                                    continue;
+
+                                hasChildren = true;
+                                break;
                             }
 
                             if (!hasChildren)
@@ -565,12 +578,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                             var hasChildren = false;
                             while (children.Read())
                             {
-                                if ((children.Name == "IfFile" || children.Name == "IfFile") &&
-                                    !string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
-                                {
-                                    hasChildren = true;
-                                    break;
-                                }
+                                if ((children.Name != "IfFile" && children.Name != "IfFile") ||
+                                    string.IsNullOrWhiteSpace(xmlReader.GetAttribute("SearchText")))
+                                    continue;
+
+                                hasChildren = true;
+                                break;
                             }
 
                             if (!hasChildren)
@@ -612,11 +625,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         var filePath = xmlReader.GetAttribute("Path");
                         var xPath = xmlReader.GetAttribute("XPath");
 
-                        if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(xPath))
-                        {
-                            ret = false;
-                            break;
-                        }
+                        if (!string.IsNullOrWhiteSpace(filePath) && !string.IsNullOrWhiteSpace(xPath))
+                            continue;
+
+                        ret = false;
+                        break;
                     }
                 }
             }
@@ -629,13 +642,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// </summary>
         public void ScanPlugins()
         {
-            foreach (var n in Children)
+            foreach (
+                var n in
+                    Children.TakeWhile(n => !CancellationToken.IsCancellationRequested)
+                        .Where(n => !string.IsNullOrEmpty(n.Name) && !string.IsNullOrEmpty(n.PluginPath)))
             {
-                if (CancellationToken.IsCancellationRequested)
-                    break;
-
-                if (!string.IsNullOrEmpty(n.Name) && !string.IsNullOrEmpty(n.PluginPath))
-                    ScanPlugin(n.Name, n.PluginPath);
+                ScanPlugin(n.Name, n.PluginPath);
             }
         }
 
