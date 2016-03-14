@@ -123,14 +123,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 Debug.WriteLine("The following error occurred: {0}\nUnable to get list of files.", ex.Message);
             }
 
-            if (fileList != null)
-            {
-                foreach (var filePath in fileList)
-                {
-                    Wizard.CurrentFile = filePath;
+            if (fileList == null)
+                return;
 
-                    AddToFiles(filePath);
-                }
+            foreach (var filePath in fileList)
+            {
+                Wizard.CurrentFile = filePath;
+
+                AddToFiles(filePath);
             }
         }
 
@@ -155,14 +155,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 Debug.WriteLine("The following error occurred: {0}\nUnable to get list of directories.", ex.Message);
             }
 
-            if (dirList != null)
-            {
-                foreach (var folderPath in dirList)
-                {
-                    Wizard.CurrentFile = folderPath;
+            if (dirList == null)
+                return;
 
-                    AddToFolders(folderPath, false);
-                }
+            foreach (var folderPath in dirList)
+            {
+                Wizard.CurrentFile = folderPath;
+
+                AddToFolders(folderPath, false);
             }
         }
 
@@ -199,18 +199,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             var valueNames = RecurseRegKeyValueNames(regKey, regexValueNames, includeSubKeys);
             var subKeys = RecurseRegKeySubKeys(regKey, regexSubKeys, includeSubKeys);
+            
+            foreach (var kvp in valueNames)
+                RegistryValueNames.Add(kvp.Key, kvp.Value);
 
-            if (valueNames.Count > 0)
-            {
-                foreach (var kvp in valueNames)
-                    RegistryValueNames.Add(kvp.Key, kvp.Value);
-            }
-
-            if (subKeys.Count > 0)
-            {
-                foreach (var kvp in subKeys)
-                    RegistrySubKeys.Add(kvp.Key, kvp.Value);
-            }
+            foreach (var kvp in subKeys)
+                RegistrySubKeys.Add(kvp.Key, kvp.Value);
         }
 
         public void DeleteFoundPaths(string searchPath, string searchText, SearchOption includeSubFolders,
@@ -300,19 +294,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
                 if (fileList == null)
                     continue;
-
-                foreach (var filePath in fileList)
+                
+                foreach (
+                    var item in
+                        fileList.Where(filePath => !string.IsNullOrEmpty(filePath))
+                            .Select(filepath => new {filePath = filepath, fileName = Path.GetFileName(filepath)})
+                            .Where(item => regexFiles.Where(regex => !string.IsNullOrEmpty(regex))
+                                .Any(regex => Regex.IsMatch(item.fileName, regex))))
                 {
-                    if (string.IsNullOrEmpty(filePath))
-                        continue;
-
-                    // Get filename from file path
-                    var fileName = Path.GetFileName(filePath);
-
-                    if (
-                        regexFiles.Where(regex => !string.IsNullOrEmpty(regex))
-                            .Any(regex => Regex.IsMatch(fileName, regex)))
-                        AddToFiles(filePath);
+                    AddToFiles(item.filePath);
                 }
             }
         }
@@ -322,14 +312,12 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (!File.Exists(filePath))
                 return;
 
-            foreach (var sectionName in MiscFunctions.GetSections(filePath))
+            foreach (
+                var sectionName in
+                    MiscFunctions.GetSections(filePath)
+                        .Where(sectionName => !string.IsNullOrEmpty(sectionName))
+                        .Where(sectionName => Regex.IsMatch(sectionName, searchSectionText)))
             {
-                if (string.IsNullOrEmpty(sectionName))
-                    continue;
-
-                if (!Regex.IsMatch(sectionName, searchSectionText))
-                    continue;
-
                 IniList.AddRange(MiscFunctions.GetValues(filePath, sectionName)
                     .Cast<KeyValuePair<string, string>>()
                     .Where(kvp => Regex.IsMatch(kvp.Key, searchValueNameText))
@@ -358,7 +346,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         }
 
         private Dictionary<RegistryKey, string[]> RecurseRegKeyValueNames(RegistryKey regKey,
-            List<string> regexValueNames, bool recurse)
+            IReadOnlyCollection<string> regexValueNames, bool recurse)
         {
             var ret = new Dictionary<RegistryKey, string[]>();
             var valueNames = new List<string>();
