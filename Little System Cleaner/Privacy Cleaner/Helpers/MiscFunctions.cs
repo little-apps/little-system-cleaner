@@ -251,10 +251,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             Marshal.FreeCoTaskMem(pReturnedString);
 
-            foreach (var value in returnedString.Split('\0'))
+            foreach (var valueKey in returnedString.Split('\0').Select(value => value.Split('=')))
             {
-                var valueKey = value.Split('=');
-
                 ret.Add(valueKey[0], valueKey[1]);
             }
 
