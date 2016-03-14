@@ -76,7 +76,7 @@ Little Apps would like to thank the following for helping Little System Cleaner:
  * [Task Scheduler Managed Wrapper by David Hall](http://taskscheduler.codeplex.com/)
  * [WPF GIF Animation by Artem S. Dmitriev and Thomas Levesque](https://github.com/XamlAnimatedGif/WpfAnimatedGif)
  * [WPF Search Text Box by David Owens](http://davidowens.wordpress.com/2009/02/18/wpf-search-text-box/)
- * [TagLib by Scott Wheeler](http://taglib.github.io/)
+ * [TagLib# by The Mono Project](https://github.com/mono/taglib-sharp)
  
 ### To do ###
 
