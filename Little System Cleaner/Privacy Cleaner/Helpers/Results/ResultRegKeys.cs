@@ -88,76 +88,76 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         continue;
                     }
 
-                    if (reg != null)
-                    {
-                        try
-                        {
-                            if (recurse)
-                                reg.DeleteSubKeyTree(subkey);
-                            else
-                                reg.DeleteSubKey(subkey);
+                    if (reg == null)
+                        continue;
 
-                            report.WriteLine("Removed Registry Key: {0}", regKey.Name);
-                            Settings.Default.lastScanErrorsFixed++;
-                        }
-                        catch (Exception ex)
-                        {
-                            string message =
-                                $"The following registry key could not be removed: {rootKey + "\\" + subkey}\nError: {ex.Message}";
-                            Debug.WriteLine(message);
-                        }
-                        finally
-                        {
-                            reg.Flush();
-                            reg.Close();
-                            //regKey.Close();
-                        }
+                    try
+                    {
+                        if (recurse)
+                            reg.DeleteSubKeyTree(subkey);
+                        else
+                            reg.DeleteSubKey(subkey);
+
+                        report.WriteLine("Removed Registry Key: {0}", regKey.Name);
+                        Settings.Default.lastScanErrorsFixed++;
+                    }
+                    catch (Exception ex)
+                    {
+                        string message =
+                            $"The following registry key could not be removed: {rootKey + "\\" + subkey}\nError: {ex.Message}";
+                        Debug.WriteLine(message);
+                    }
+                    finally
+                    {
+                        reg.Flush();
+                        reg.Close();
+                        //regKey.Close();
                     }
                 }
             }
 
-            if (RegKeyValueNames != null)
+            if (RegKeyValueNames == null)
+                return;
+
+            foreach (var kvp in RegKeyValueNames)
             {
-                foreach (var kvp in RegKeyValueNames)
+                var regKey = kvp.Key;
+                var valueNames = kvp.Value;
+
+                if (regKey == null)
                 {
-                    var regKey = kvp.Key;
-                    var valueNames = kvp.Value;
-
-                    if (regKey == null)
-                    {
-                        // Registry key is closed
+                    // Registry key is closed
 #if (DEBUG)
-                        throw new ObjectDisposedException("regKey", "Registry Key is closed");
+                    throw new ObjectDisposedException("regKey", "Registry Key is closed");
 #else
-                        continue;
+                    continue;
 #endif
-                    }
-
-                    if ((valueNames == null) || valueNames.Length == 0)
-                        continue;
-
-                    foreach (var valueName in valueNames)
-                    {
-                        try
-                        {
-                            if (regKey.GetValue(valueName) != null)
-                            {
-                                regKey.DeleteValue(valueName);
-
-                                report.WriteLine("Removed Registry Key: {0} Value Name: {1}", regKey.Name, valueName);
-                                Settings.Default.lastScanErrorsFixed++;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(
-                                "The following exception occurred: {0}\nUnable to remove value name ({1}) from registry key ({2})",
-                                ex.Message, regKey.Name, valueName);
-                        }
-                    }
-
-                    regKey.Close();
                 }
+
+                if ((valueNames == null) || valueNames.Length == 0)
+                    continue;
+
+                foreach (var valueName in valueNames)
+                {
+                    try
+                    {
+                        if (regKey.GetValue(valueName) == null)
+                            continue;
+
+                        regKey.DeleteValue(valueName);
+
+                        report.WriteLine("Removed Registry Key: {0} Value Name: {1}", regKey.Name, valueName);
+                        Settings.Default.lastScanErrorsFixed++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(
+                            "The following exception occurred: {0}\nUnable to remove value name ({1}) from registry key ({2})",
+                            ex.Message, regKey.Name, valueName);
+                    }
+                }
+
+                regKey.Close();
             }
         }
     }
