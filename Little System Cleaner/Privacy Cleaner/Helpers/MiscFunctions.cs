@@ -341,10 +341,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 !Settings.Default.privacyCleanerIncReadOnlyFile)
                 return false;
 
-            if ((fileLength == 0) && !Settings.Default.privacyCleanerInc0ByteFile)
-                return false;
-
-            return true;
+            return (fileLength != 0) || Settings.Default.privacyCleanerInc0ByteFile;
         }
 
         /// <summary>
