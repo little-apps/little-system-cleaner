@@ -195,7 +195,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             var nodeRoot = new StartupEntry
             {
                 SectionName = regKey.Name,
-                bMapImg = bitmap.CreateBitmapSourceFromBitmap()
+                BitmapImg = bitmap.CreateBitmapSourceFromBitmap()
             };
 
             try
@@ -241,7 +241,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     };
 
                     var ico = Utils.ExtractIcon(file);
-                    node.bMapImg = ico != null
+                    node.BitmapImg = ico != null
                         ? (ico.ToBitmap().Clone() as Bitmap).CreateBitmapSourceFromBitmap()
                         : Resources.appinfo.ToBitmap().CreateBitmapSourceFromBitmap();
 
@@ -273,7 +273,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             var nodeRoot = new StartupEntry
             {
                 SectionName = folder,
-                bMapImg = bitmap.CreateBitmapSourceFromBitmap()
+                BitmapImg = bitmap.CreateBitmapSourceFromBitmap()
             };
 
 
@@ -310,7 +310,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                     };
 
                     var ico = Utils.ExtractIcon(filePath);
-                    node.bMapImg = ico != null
+                    node.BitmapImg = ico != null
                         ? (ico.ToBitmap().Clone() as Bitmap).CreateBitmapSourceFromBitmap()
                         : Resources.appinfo.ToBitmap().CreateBitmapSourceFromBitmap();
 

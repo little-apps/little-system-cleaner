@@ -54,17 +54,17 @@ namespace Little_System_Cleaner
         [STAThread]
         private static void Main()
         {
-            bool bMutexCreated;
+            bool mutexCreated;
 
             var parseArgs = new ParseArgs(Environment.GetCommandLineArgs());
 
-            var bWaitToExit = parseArgs.Arguments.ContainsKey("restart");
+            var waitToExit = parseArgs.Arguments.ContainsKey("restart");
 
-            using (var mutexMain = new Mutex(true, "Little System Cleaner", out bMutexCreated))
+            using (var mutexMain = new Mutex(true, "Little System Cleaner", out mutexCreated))
             {
-                if (!bMutexCreated)
+                if (!mutexCreated)
                 {
-                    if (bWaitToExit)
+                    if (waitToExit)
                     {
                         try
                         {

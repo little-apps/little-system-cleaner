@@ -51,6 +51,6 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
             }
         }
 
-        public Image bMapImg { get; set; }
+        public Image BitmapImg { get; set; }
     }
 }

@@ -187,19 +187,19 @@ namespace Little_System_Cleaner
         /// <summary>
         ///     Used to create menu items for context menu
         /// </summary>
-        /// <param name="bMapImg">Icon or null if theres none</param>
+        /// <param name="bitmapImg">Icon or null if theres none</param>
         /// <param name="header">Text to display</param>
         /// <returns>MenuItem</returns>
-        private MenuItem CreateMenuItem(Bitmap bMapImg, string header)
+        private MenuItem CreateMenuItem(Bitmap bitmapImg, string header)
         {
             var menuItem = new MenuItem();
 
             // Create icon
             var imgCtrl = new Image();
-            if (bMapImg != null)
+            if (bitmapImg != null)
             {
                 imgCtrl.Height = imgCtrl.Width = 16;
-                imgCtrl.Source = Imaging.CreateBitmapSourceFromHBitmap(bMapImg.GetHbitmap(), IntPtr.Zero,
+                imgCtrl.Source = Imaging.CreateBitmapSourceFromHBitmap(bitmapImg.GetHbitmap(), IntPtr.Zero,
                     Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             }
 

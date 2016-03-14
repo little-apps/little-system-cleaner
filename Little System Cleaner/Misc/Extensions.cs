@@ -82,14 +82,14 @@ namespace Little_System_Cleaner.Misc
 
             try
             {
-                var bMapImg = new Image
+                var bitmapImg = new Image
                 {
                     Source =
                         Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
                             BitmapSizeOptions.FromEmptyOptions())
                 };
 
-                return bMapImg;
+                return bitmapImg;
             }
             finally
             {

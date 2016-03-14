@@ -36,7 +36,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 
             foreach (var scanner in Scan.EnabledScanners)
             {
-                var rootBadRegKey = new BadRegistryKey(scanner.bMapImg, scanner.ScannerName);
+                var rootBadRegKey = new BadRegistryKey(scanner.BitmapImg, scanner.ScannerName);
 
                 rootBadRegKey.Children.AddRange(
                     Wizard.BadRegKeyArray.Cast<BadRegistryKey>()

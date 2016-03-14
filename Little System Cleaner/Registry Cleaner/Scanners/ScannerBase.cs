@@ -39,7 +39,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <summary>
         ///     Gets/Sets the icon for the section
         /// </summary>
-        public BitmapImage bMapImg { get; set; }
+        public BitmapImage BitmapImg { get; set; }
 
         /// <summary>
         ///     Gets/Sets if the scanner is enabled

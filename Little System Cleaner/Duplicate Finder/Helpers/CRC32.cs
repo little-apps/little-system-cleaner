@@ -43,9 +43,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             _crc = Seed;
         }
 
-        protected override void HashCore(byte[] array, int ibStart, int cbSize)
+        protected override void HashCore(byte[] array, int start, int size)
         {
-            _crc = CalculateHash(_crc, array, ibStart, cbSize);
+            _crc = CalculateHash(_crc, array, start, size);
         }
 
         protected override byte[] HashFinal()

@@ -267,12 +267,12 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             var stackPanel = new StackPanel {Orientation = Orientation.Horizontal};
 
-            var bMapImg = bitMap.CreateBitmapSourceFromBitmap();
+            var bitmapImg = bitMap.CreateBitmapSourceFromBitmap();
 
             // Resize image to 16x16
-            bMapImg.Width = bMapImg.Height = 16;
+            bitmapImg.Width = bitmapImg.Height = 16;
 
-            stackPanel.Children.Add(bMapImg);
+            stackPanel.Children.Add(bitmapImg);
 
             var textBlock = new TextBlock {Text = startupPath};
 

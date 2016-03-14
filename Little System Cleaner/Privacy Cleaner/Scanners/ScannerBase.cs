@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private string _animatedImage;
 
-        private bool? _bIsChecked = true;
+        private bool? _isChecked = true;
 
 
         private string _errors;
@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public bool? IsChecked
         {
-            get { return _bIsChecked; }
+            get { return _isChecked; }
             set { SetIsChecked(value, true, true); }
         }
 
@@ -88,7 +88,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             }
         }
 
-        public ImageSource bMapImg { get; private set; }
+        public ImageSource BitmapImg { get; private set; }
 
         public Bitmap Icon
         {
@@ -96,10 +96,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             {
                 var hBitmap = value.GetHbitmap();
 
-                bMapImg = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
+                BitmapImg = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
                     BitmapSizeOptions.FromEmptyOptions());
 
-                OnPropertyChanged(nameof(bMapImg));
+                OnPropertyChanged(nameof(BitmapImg));
             }
         }
 
@@ -246,15 +246,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         public void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
-            if (value == _bIsChecked)
+            if (value == _isChecked)
                 return;
 
-            _bIsChecked = value;
+            _isChecked = value;
 
-            if (updateChildren && _bIsChecked.HasValue)
+            if (updateChildren && _isChecked.HasValue)
             {
                 foreach (var c in Children)
-                    c.SetIsChecked(_bIsChecked, true, false);
+                    c.SetIsChecked(_isChecked, true, false);
             }
 
             if (updateParent)

@@ -70,7 +70,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         /// </summary>
         public BadRegistryKey(BitmapImage icon, string sectionName)
         {
-            bMapImg = new Image {Source = icon};
+            BitmapImg = new Image {Source = icon};
 
             Problem = sectionName;
 
@@ -166,19 +166,19 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         public ObservableCollection<BadRegistryKey> Children { get; } = new ObservableCollection<BadRegistryKey>();
 
         private BadRegistryKey _parent;
-        private bool? _bIsChecked = true;
+        private bool? _isChecked = true;
         private readonly int _nSeverity;
         public readonly string BaseRegKey;
         public readonly string SubRegKey;
 
-        public Image bMapImg { get; set; }
+        public Image BitmapImg { get; set; }
 
         /// <summary>
         ///     Gets/Sets whether the item is checked
         /// </summary>
         public bool? IsChecked
         {
-            get { return _bIsChecked; }
+            get { return _isChecked; }
             set { SetIsChecked(value, true, true); }
         }
 
@@ -261,13 +261,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
-            if (value == _bIsChecked)
+            if (value == _isChecked)
                 return;
 
-            _bIsChecked = value;
+            _isChecked = value;
 
-            if (updateChildren && _bIsChecked.HasValue)
-                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+            if (updateChildren && _isChecked.HasValue)
+                Children.ToList().ForEach(c => c.SetIsChecked(_isChecked, true, false));
 
             if (updateParent)
                 _parent?.VerifyCheckState();

@@ -56,7 +56,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         private static void ParseSoundKeys(RegistryKey rk)
         {
             foreach (
-                var subKey in rk.GetSubKeyNames().TakeWhile(strSubKey => !CancellationToken.IsCancellationRequested))
+                var subKey in rk.GetSubKeyNames().TakeWhile(subKey => !CancellationToken.IsCancellationRequested))
             {
                 // Ignores ".Default" Subkey
                 if ((string.Compare(subKey, ".Current", StringComparison.Ordinal) == 0) ||

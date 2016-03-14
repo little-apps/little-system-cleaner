@@ -456,7 +456,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         #region ListView Properties
 
-        public Image bMapImg
+        public Image BitmapImg
             =>
                 Uninstallable
                     ? Resources.uninstall.CreateBitmapSourceFromBitmap()

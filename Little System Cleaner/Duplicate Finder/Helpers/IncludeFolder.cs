@@ -7,7 +7,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
     public class IncludeFolder : INotifyPropertyChanged, IEquatable<IncludeFolder>
     {
-        private bool? _bIsChecked = true;
+        private bool? _isChecked = true;
 
         private string _name;
 
@@ -30,10 +30,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? IsChecked
         {
-            get { return _bIsChecked; }
+            get { return _isChecked; }
             set
             {
-                _bIsChecked = value;
+                _isChecked = value;
                 OnPropertyChanged(nameof(IsChecked));
             }
         }

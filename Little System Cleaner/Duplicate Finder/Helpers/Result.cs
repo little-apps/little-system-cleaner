@@ -149,7 +149,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         #endregion
 
-        private bool? _bIsChecked = false;
+        private bool? _isChecked = false;
 
         public Result(Result parent = null)
         {
@@ -168,7 +168,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? IsChecked
         {
-            get { return _bIsChecked; }
+            get { return _isChecked; }
             set { SetIsChecked(value, true, true); }
         }
 
@@ -294,13 +294,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
-            if (value == _bIsChecked)
+            if (value == _isChecked)
                 return;
 
-            _bIsChecked = value;
+            _isChecked = value;
 
-            if (updateChildren && _bIsChecked.HasValue)
-                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+            if (updateChildren && _isChecked.HasValue)
+                Children.ToList().ForEach(c => c.SetIsChecked(_isChecked, true, false));
 
             if (updateParent)
                 Parent?.VerifyCheckState();

@@ -38,7 +38,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
     public partial class Results : INotifyPropertyChanged
     {
         private readonly Wizard _scanWiz;
-        private BitmapSource _bMapSrcFinishedScanning;
+        private BitmapSource _bitmapSrcFinishedScanning;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private string _progressBarText;
         private int _progressBarValue;
@@ -125,12 +125,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         ///     The finished scanning bitmap is converted once to a BitmapSource and stored so it can be used again in order to
         ///     save resources
         /// </summary>
-        public BitmapSource bMapSrcFinishedScanning => _bMapSrcFinishedScanning ??
-                                                       (_bMapSrcFinishedScanning =
-                                                           Imaging.CreateBitmapSourceFromHBitmap(
-                                                               Properties.Resources.finished_scanning.GetHbitmap(),
-                                                               IntPtr.Zero, Int32Rect.Empty,
-                                                               BitmapSizeOptions.FromEmptyOptions()));
+        public BitmapSource BitmapSrcFinishedScanning => _bitmapSrcFinishedScanning ??
+                                                         (_bitmapSrcFinishedScanning =
+                                                             Imaging.CreateBitmapSourceFromHBitmap(
+                                                                 Properties.Resources.finished_scanning.GetHbitmap(),
+                                                                 IntPtr.Zero, Int32Rect.Empty,
+                                                                 BitmapSizeOptions.FromEmptyOptions()));
 
         private List<BadRegistryKey> GetSelectedRegKeys()
         {
@@ -335,7 +335,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     Dispatcher.Invoke(() =>
                     {
                         // Set icon to check mark
-                        brk.bMapImg = new Image {Source = bMapSrcFinishedScanning};
+                        brk.BitmapImg = new Image {Source = BitmapSrcFinishedScanning};
 
                         Tree.Items.Refresh();
 

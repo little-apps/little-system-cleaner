@@ -40,19 +40,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
         public ObservableCollection<ResultNode> Children { get; } = new ObservableCollection<ResultNode>();
 
-        private bool? _bIsChecked = true;
+        private bool? _isChecked = true;
 
         #region IsChecked Methods
 
         public void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
-            if (value == _bIsChecked)
+            if (value == _isChecked)
                 return;
 
-            _bIsChecked = value;
+            _isChecked = value;
 
-            if (updateChildren && _bIsChecked.HasValue)
-                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+            if (updateChildren && _isChecked.HasValue)
+                Children.ToList().ForEach(c => c.SetIsChecked(_isChecked, true, false));
 
             if (updateParent)
                 Parent?.VerifyCheckState();
@@ -83,7 +83,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 
         public bool? IsChecked
         {
-            get { return _bIsChecked; }
+            get { return _isChecked; }
             set { SetIsChecked(value, true, true); }
         }
 

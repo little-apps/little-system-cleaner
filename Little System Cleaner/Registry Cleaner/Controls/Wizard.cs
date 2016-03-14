@@ -158,7 +158,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 {
                     if (child.IsChecked.HasValue && child.IsChecked.Value)
                     {
-                        scanner.bMapImg = child.bMapImg;
+                        scanner.BitmapImg = child.BitmapImage;
                         scanner.IsEnabled = true;
                         Scan.EnabledScanners.Add(scanner);
                     }

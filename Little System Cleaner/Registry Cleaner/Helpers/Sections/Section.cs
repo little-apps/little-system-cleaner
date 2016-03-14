@@ -9,13 +9,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
     public class Section : INotifyPropertyChanged
     {
-        private bool? _bIsChecked = true;
+        private bool? _isChecked = true;
 
         public ObservableCollection<Section> Children { get; } = new ObservableCollection<Section>();
 
         public bool? IsChecked
         {
-            get { return _bIsChecked; }
+            get { return _isChecked; }
             set { SetIsChecked(value, true, true); }
         }
 
@@ -24,7 +24,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
         public string SectionName { get; set; }
         public string Description { get; set; }
 
-        public BitmapImage bMapImg { get; private set; }
+        public BitmapImage BitmapImage { get; private set; }
 
         public Icon Icon
         {
@@ -34,10 +34,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
                 {
                     value.Save(ms);
 
-                    bMapImg = new BitmapImage();
-                    bMapImg.BeginInit();
-                    bMapImg.StreamSource = new MemoryStream(ms.ToArray());
-                    bMapImg.EndInit();
+                    BitmapImage = new BitmapImage();
+                    BitmapImage.BeginInit();
+                    BitmapImage.StreamSource = new MemoryStream(ms.ToArray());
+                    BitmapImage.EndInit();
                 }
             }
         }
@@ -57,13 +57,13 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 
         private void SetIsChecked(bool? value, bool updateChildren, bool updateParent)
         {
-            if (value == _bIsChecked)
+            if (value == _isChecked)
                 return;
 
-            _bIsChecked = value;
+            _isChecked = value;
 
-            if (updateChildren && _bIsChecked.HasValue)
-                Children.ToList().ForEach(c => c.SetIsChecked(_bIsChecked, true, false));
+            if (updateChildren && _isChecked.HasValue)
+                Children.ToList().ForEach(c => c.SetIsChecked(_isChecked, true, false));
 
             if (updateParent)
                 Parent?.VerifyCheckState();

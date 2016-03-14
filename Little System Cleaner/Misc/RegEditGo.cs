@@ -347,9 +347,9 @@ namespace Little_System_Cleaner.Misc
             };
 
             // copy local lvItem to remote buffer
-            var bSuccess = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref lvItem,
+            var success = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref lvItem,
                 Marshal.SizeOf(typeof (Interop.LVITEM)), IntPtr.Zero);
-            if (!bSuccess)
+            if (!success)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
 
             // Send the message to the remote window with the address of the remote buffer
@@ -375,9 +375,9 @@ namespace Little_System_Cleaner.Misc
             };
 
             // copy local lvItem to remote buffer
-            var bSuccess = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref lvItem,
+            var success = Interop.WriteProcessMemory(_hProcess, _lpRemoteBuffer, ref lvItem,
                 Marshal.SizeOf(typeof (Interop.LVITEM)), IntPtr.Zero);
-            if (!bSuccess)
+            if (!success)
                 ShowErrorMessage(new SystemException("Failed to write to process memory"));
 
             // Send the message to the remote window with the address of the remote buffer
@@ -385,12 +385,12 @@ namespace Little_System_Cleaner.Misc
                 return null;
 
             // copy lvItem back into local buffer (copy whole buffer because we don't yet know how big the string is)
-            bSuccess = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, BufferSize, IntPtr.Zero);
-            if (!bSuccess)
+            success = Interop.ReadProcessMemory(_hProcess, _lpRemoteBuffer, _lpLocalBuffer, BufferSize, IntPtr.Zero);
+            if (!success)
                 ShowErrorMessage(new SystemException("Failed to read from process memory"));
 
-            var nLocalBufferPtr = _lpLocalBuffer.ToInt64() + Marshal.SizeOf(typeof (Interop.TVITEM));
-            return Marshal.PtrToStringAnsi((IntPtr) nLocalBufferPtr);
+            var localBufferPtr = _lpLocalBuffer.ToInt64() + Marshal.SizeOf(typeof (Interop.TVITEM));
+            return Marshal.PtrToStringAnsi((IntPtr) localBufferPtr);
         }
 
         private static void CheckAccess()

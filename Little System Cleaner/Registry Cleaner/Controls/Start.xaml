@@ -53,7 +53,7 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <tree:RowExpander />
                                                 <CheckBox IsChecked="{Binding IsChecked}" />
-                                                <Image Source="{Binding bMapImg}" Width="16" Height="16" />
+                                                <Image Source="{Binding BitmapImg}" Width="16" Height="16" />
                                                 <TextBlock Text="{Binding SectionName}" />
                                             </StackPanel>
                                         </DataTemplate>
