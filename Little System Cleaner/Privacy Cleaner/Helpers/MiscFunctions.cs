@@ -72,7 +72,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 }
             }
 
-            do
+            while (true)
             {
                 bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
 
@@ -124,7 +124,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         }
                     }
                 }
-            } while (true);
+            }
 
             // Wont reach here
         }
