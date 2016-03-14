@@ -183,7 +183,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         var searchText = xmlChildren.GetAttribute("SearchText");
                         var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
 
-                        regexSubKeys.Add(searchText, recurse);
+                        if (searchText != null)
+                            regexSubKeys.Add(searchText, recurse);
 
                         break;
                     }
