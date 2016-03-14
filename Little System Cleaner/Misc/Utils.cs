@@ -145,6 +145,9 @@ namespace Little_System_Cleaner.Misc
         /// <param name="filepath">Returns the file path</param>
         /// <param name="arguments">Returns the shortcuts arguments</param>
         /// <returns>Returns false if the filepath doesnt exist</returns>
+        /// <remarks>
+        ///     TODO: Read the .LNK file as documented at https://msdn.microsoft.com/en-us/library/dd871305.aspx
+        /// </remarks>
         internal static bool ResolveShortcut(string shortcut, out string filepath, out string arguments)
         {
             var link = new PInvoke.ShellLink();
