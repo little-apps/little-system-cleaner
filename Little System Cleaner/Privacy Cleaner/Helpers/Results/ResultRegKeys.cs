@@ -48,8 +48,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         // Registry key is closed
 #if (DEBUG)
                         throw new ObjectDisposedException("regKey", "Registry Key is closed");
-#endif
+#else
                         continue;
+#endif
                     }
 
                     if (!Utils.ParseRegKeyPath(regKey.Name, out rootKey, out subkey))
@@ -127,8 +128,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                         // Registry key is closed
 #if (DEBUG)
                         throw new ObjectDisposedException("regKey", "Registry Key is closed");
-#endif
+#else
                         continue;
+#endif
                     }
 
                     if ((valueNames == null) || valueNames.Length == 0)
