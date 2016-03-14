@@ -698,7 +698,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <param name="algo">System.Security.Cryptography.HashAlgorithm to use</param>
         /// <param name="stream">Stream to read from</param>
         /// <returns>Hash in string format</returns>
-        private static IEnumerable<byte> CalculateHashBytes(System.Security.Cryptography.HashAlgorithm algo, Stream stream)
+        private static IEnumerable<byte> CalculateHashBytes(System.Security.Cryptography.HashAlgorithm algo,
+            Stream stream)
         {
             return algo.ComputeHash(stream);
         }
