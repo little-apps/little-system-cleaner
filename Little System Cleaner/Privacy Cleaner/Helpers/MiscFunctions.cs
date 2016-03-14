@@ -193,7 +193,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         internal static string[] GetSections(string filePath)
         {
-            uint MAX_BUFFER = 32767;
+            const uint maxBuffer = 32767;
 
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -201,8 +201,8 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return new string[] {};
             }
 
-            var pReturnedString = Marshal.AllocCoTaskMem((int) MAX_BUFFER);
-            var bytesReturned = GetPrivateProfileSectionNames(pReturnedString, MAX_BUFFER, filePath);
+            var pReturnedString = Marshal.AllocCoTaskMem((int) maxBuffer);
+            var bytesReturned = GetPrivateProfileSectionNames(pReturnedString, maxBuffer, filePath);
             if (bytesReturned == 0)
             {
                 Marshal.FreeCoTaskMem(pReturnedString);
@@ -217,7 +217,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         internal static StringDictionary GetValues(string filePath, string sectionName)
         {
-            uint MAX_BUFFER = 32767;
+            const uint maxBuffer = 32767;
 
             var ret = new StringDictionary();
 
@@ -233,11 +233,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return ret;
             }
 
-            var pReturnedString = Marshal.AllocCoTaskMem((int) MAX_BUFFER);
+            var pReturnedString = Marshal.AllocCoTaskMem((int) maxBuffer);
 
-            var bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, MAX_BUFFER, filePath);
+            var bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, maxBuffer, filePath);
 
-            if ((bytesReturned == MAX_BUFFER - 2) || (bytesReturned == 0))
+            if ((bytesReturned == maxBuffer - 2) || (bytesReturned == 0))
             {
                 Marshal.FreeCoTaskMem(pReturnedString);
                 return ret;
