@@ -184,14 +184,16 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                         var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
 
                         regexSubKeys.Add(searchText, recurse);
-                    }
+
                         break;
+                    }
                     case "IfValueName":
                     {
                         var searchText = xmlChildren.GetAttribute("SearchText");
                         regexValueNames.Add(searchText);
-                    }
+
                         break;
+                    }
                 }
             }
 
@@ -219,19 +221,27 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             while (xmlChildren.Read())
             {
-                if (xmlChildren.Name == "IfFile")
+                switch (xmlChildren.Name)
                 {
-                    var fileName = xmlChildren.GetAttribute("SearchText");
-                    if (!string.IsNullOrEmpty(fileName))
-                        regexFiles.Add(fileName);
-                }
-                else if (xmlChildren.Name == "IfFolder")
-                {
-                    var folderName = xmlChildren.GetAttribute("SearchText");
-                    var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
+                    case "IfFile":
+                    {
+                        var fileName = xmlChildren.GetAttribute("SearchText");
+                        if (!string.IsNullOrEmpty(fileName))
+                            regexFiles.Add(fileName);
 
-                    if (!string.IsNullOrEmpty(folderName))
-                        regexFolders.Add(folderName, recurse);
+                        break;
+                    }
+
+                    case "IfFolder":
+                    {
+                        var folderName = xmlChildren.GetAttribute("SearchText");
+                        var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
+
+                        if (!string.IsNullOrEmpty(folderName))
+                            regexFolders.Add(folderName, recurse);
+
+                        break;
+                    }
                 }
             }
 
