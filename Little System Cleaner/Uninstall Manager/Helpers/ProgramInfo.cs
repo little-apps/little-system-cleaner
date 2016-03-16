@@ -50,24 +50,27 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             if (o == null)
                 return null;
 
-            int? ret;
+            int? ret = null;
 
             try
             {
                 ret = Convert.ToInt32(o);
             }
+            catch (OverflowException)
+            {
+                Debug.WriteLine("The {0} value {1} is outside the range of the Int32 type.", o.GetType().Name, o);
+            }
+            catch (FormatException)
+            {
+                Debug.WriteLine("The {0} value {1} is not in a recognizable format.", o.GetType().Name, o);
+            }
+            catch (InvalidCastException)
+            {
+                Debug.WriteLine("No conversion to an Int32 exists for the {0} value {1}.", o.GetType().Name, o);
+            }
             catch (Exception ex)
             {
-                ret = null;
-
-                if (ex is OverflowException)
-                    Debug.WriteLine("The {0} value {1} is outside the range of the Int32 type.", o.GetType().Name, o);
-                else if (ex is FormatException)
-                    Debug.WriteLine("The {0} value {1} is not in a recognizable format.", o.GetType().Name, o);
-                else if (ex is InvalidCastException)
-                    Debug.WriteLine("No conversion to an Int32 exists for the {0} value {1}.", o.GetType().Name, o);
-                else
-                    Debug.WriteLine("The following exception occurred trying to convert {0} with value {1}:\n{2}",
+                Debug.WriteLine("The following exception occurred trying to convert {0} with value {1}:\n{2}",
                         o.GetType().Name, o, ex.Message);
             }
 
