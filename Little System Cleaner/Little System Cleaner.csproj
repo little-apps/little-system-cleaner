@@ -387,7 +387,7 @@
     <Compile Include="Registry Cleaner\Helpers\Backup\RegistryEntry.cs" />
     <Compile Include="Registry Cleaner\Helpers\Backup\RegistryValue.cs" />
     <Compile Include="Registry Cleaner\Helpers\BadRegistryKeys\BadRegKeyArray.cs" />
-    <Compile Include="Registry Cleaner\Helpers\lviScanner.cs" />
+    <Compile Include="Registry Cleaner\Helpers\ScannerListViewItem.cs" />
     <Compile Include="Registry Cleaner\Helpers\RestoreFile.cs" />
     <Compile Include="Registry Cleaner\Helpers\ResultModel.cs" />
     <Compile Include="Registry Cleaner\Helpers\ScanFunctions.cs" />
