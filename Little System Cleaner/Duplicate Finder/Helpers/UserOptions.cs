@@ -40,6 +40,15 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         private bool? _skipTempFiles = false;
         private bool? _skipWindowsDir = false;
 
+        /// <summary>
+        /// Hidden constructor for <see cref="UserOptions"/>
+        /// </summary>
+        /// <remarks>UserOptions can only be initialized by calling <see cref="GetUserOptions"/></remarks>
+        private UserOptions()
+        {
+
+        }
+
         public static void StoreUserOptions(UserOptions userOptions)
         {
             using (var ms = new MemoryStream())
