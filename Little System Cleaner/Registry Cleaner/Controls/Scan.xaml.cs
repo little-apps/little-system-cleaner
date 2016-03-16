@@ -76,7 +76,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             ProgressBar.Value = 0;
 
             // Populate ListView
-            foreach (var lvi in EnabledScanners.Select(scanBase => new lviScanner(scanBase.ScannerName)))
+            foreach (var lvi in EnabledScanners.Select(scanBase => new ScannerListViewItem(scanBase.ScannerName)))
             {
                 SectionsCollection.Add(lvi);
             }
@@ -108,9 +108,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             }
         }
 
-        public lviScanner CurrentListViewItem => SectionsCollection[_currentListViewIndex];
+        public ScannerListViewItem CurrentListViewItem => SectionsCollection[_currentListViewIndex];
 
-        public ObservableCollection<lviScanner> SectionsCollection { get; } = new ObservableCollection<lviScanner>();
+        public ObservableCollection<ScannerListViewItem> SectionsCollection { get; } = new ObservableCollection<ScannerListViewItem>();
 
         public void AbortScanThread()
         {

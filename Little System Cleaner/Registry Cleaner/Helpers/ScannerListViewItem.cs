@@ -2,12 +2,12 @@
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
-    public class lviScanner : INotifyPropertyChanged
+    public class ScannerListViewItem : INotifyPropertyChanged
     {
         private string _animatedImage;
         private string _image;
 
-        public lviScanner(string section)
+        public ScannerListViewItem(string section)
         {
             Section = section;
             Status = "Queued";
