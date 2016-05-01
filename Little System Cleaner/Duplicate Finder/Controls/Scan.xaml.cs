@@ -789,11 +789,11 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 .GroupBy(fileEntry => fileEntry.FileName)
                 .Where(g => g.Count() > 1)
                 .Select(g => new {FileName = g.Key, Files = g})
-                .Where(@group => !string.IsNullOrEmpty(@group.FileName) && @group.Files.Any());
+                .Where(group => !string.IsNullOrEmpty(group.FileName) && group.Files.Any());
 
-            foreach (var @group in groupedByFilename.TakeWhile(@group => !_cancelTokenSource.IsCancellationRequested))
+            foreach (var group in groupedByFilename.TakeWhile(group => !_cancelTokenSource.IsCancellationRequested))
             {
-                ScanBase.FilesGroupedByFilename.Add(@group.FileName, @group.Files.ToList());
+                ScanBase.FilesGroupedByFilename.Add(group.FileName, group.Files.ToList());
             }
         }
 
@@ -841,9 +841,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (_cancelTokenSource.IsCancellationRequested)
                     return;
 
-                var filesGroup = @group.Files.ToList();
+                var filesGroup = group.Files.ToList();
 
-                filesGroupedBySize.Add(@group.FileSize, filesGroup);
+                filesGroupedBySize.Add(group.FileSize, filesGroup);
 
                 totalFiles += filesGroup.Count;
             }
@@ -902,22 +902,22 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     .GroupBy(fileEntry => fileEntry.Checksum)
                     .Where(g => g.Count() > 1)
                     .Select(g => new {Checksum = g.Key, Files = g.ToList()})
-                    .Where(group => !string.IsNullOrEmpty(@group.Checksum) && @group.Files.Any());
+                    .Where(group => !string.IsNullOrEmpty(group.Checksum) && group.Files.Any());
 
-                foreach (var @group in groupedByChecksum)
+                foreach (var group in groupedByChecksum)
                 {
                     if (_cancelTokenSource.IsCancellationRequested)
                         return;
 
-                    if (!ScanBase.FilesGroupedByHash.ContainsKey(@group.Checksum))
-                        ScanBase.FilesGroupedByHash.Add(@group.Checksum, @group.Files);
+                    if (!ScanBase.FilesGroupedByHash.ContainsKey(group.Checksum))
+                        ScanBase.FilesGroupedByHash.Add(group.Checksum, group.Files);
                     else
                     {
-                        var existingKey = ScanBase.FilesGroupedByHash[@group.Checksum];
+                        var existingKey = ScanBase.FilesGroupedByHash[group.Checksum];
 
-                        var mergedList = existingKey.Union(@group.Files).Distinct();
+                        var mergedList = existingKey.Union(group.Files).Distinct();
 
-                        ScanBase.FilesGroupedByHash[@group.Checksum] = mergedList.ToList();
+                        ScanBase.FilesGroupedByHash[group.Checksum] = mergedList.ToList();
                     }
                 }
             }
