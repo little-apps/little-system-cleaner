@@ -24,7 +24,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 {
     public class BadRegKeyArray : CollectionBase
     {
-        private static readonly object _lockObj = new object();
+        private static readonly object LockObj = new object();
 
         public BadRegistryKey this[int index]
         {
@@ -39,7 +39,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
             int index;
 
-            lock (_lockObj)
+            lock (LockObj)
             {
                 index = InnerList.Add(badRegKey);
             }
@@ -51,7 +51,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         {
             int index;
 
-            lock (_lockObj)
+            lock (LockObj)
             {
                 index = InnerList.IndexOf(badRegKey);
             }
@@ -64,7 +64,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             if (badRegKey == null)
                 throw new ArgumentNullException(nameof(badRegKey));
 
-            lock (_lockObj)
+            lock (LockObj)
             {
                 InnerList.Insert(index, badRegKey);
             }
@@ -75,7 +75,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             if (badRegKey == null)
                 throw new ArgumentNullException(nameof(badRegKey));
 
-            lock (_lockObj)
+            lock (LockObj)
             {
                 InnerList.Remove(badRegKey);
             }
@@ -89,7 +89,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         /// <returns>True if it exists</returns>
         public bool Contains(string regPath, string valueName)
         {
-            lock (_lockObj)
+            lock (LockObj)
             {
                 foreach (BadRegistryKey brk in InnerList)
                 {
@@ -113,7 +113,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         {
             var count = 0;
 
-            lock (_lockObj)
+            lock (LockObj)
             {
                 count +=
                     ((ArrayList) InnerList.Clone()).Cast<BadRegistryKey>()
