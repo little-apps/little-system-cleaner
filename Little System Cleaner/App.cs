@@ -43,10 +43,6 @@ namespace Little_System_Cleaner
             {
                 Source = new Uri("Themes/Generic.xaml", UriKind.Relative)
             });
-
-            Permissions.SetPrivileges(true);
-            Run();
-            Permissions.SetPrivileges(false);
         }
 
         /// <summary>
@@ -104,7 +100,11 @@ namespace Little_System_Cleaner
                     return;
                 }
 
-                new App();
+                var app = new App();
+
+                Permissions.SetPrivileges(true);
+                app.Run();
+                Permissions.SetPrivileges(false);
 
                 mutexMain.ReleaseMutex();
             }
