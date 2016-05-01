@@ -119,12 +119,12 @@ namespace Little_System_Cleaner
             base.OnStartup(e);
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             CrashReporter.ShowCrashReport(e.ExceptionObject as Exception);
         }
 
-        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private static void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             if (e.Handled)
                 return;
@@ -134,7 +134,7 @@ namespace Little_System_Cleaner
             e.Handled = true;
         }
 
-        private void App_Exit(object sender, ExitEventArgs e)
+        private static void App_Exit(object sender, ExitEventArgs e)
         {
             Settings.Default.Save();
         }
