@@ -63,7 +63,11 @@ namespace Little_System_Cleaner
 
         internal static TaskbarItemProgressState TaskbarProgressState
         {
-            get { return (Application.Current.MainWindow as Main).TaskBarItemInfo.ProgressState; }
+            get
+            {
+                var main = Application.Current.MainWindow as Main;
+                return main?.TaskBarItemInfo.ProgressState ?? TaskbarItemProgressState.None;
+            }
             set
             {
                 if (Application.Current == null)
