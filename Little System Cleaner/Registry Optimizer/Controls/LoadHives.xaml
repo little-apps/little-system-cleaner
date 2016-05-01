@@ -30,7 +30,7 @@
         </Border>
         <Image x:Name="LoadingImg" Margin="3,10,3,0" Grid.Row="1"
                gif:AnimationBehavior.SourceUri="/Little_System_Cleaner;component/Resources/ajax-loader-big.gif" />
-        <TextBlock x:Name="Message" TextAlignment="Center" Grid.Row="3" Height="28" HorizontalAlignment="Center"
+        <TextBlock x:Name="Message" TextAlignment="Center" Grid.Row="2" Height="28" HorizontalAlignment="Center"
                    VerticalAlignment="Center" Width="294" FontWeight="Bold" FontSize="14">
             Loading...
         </TextBlock>

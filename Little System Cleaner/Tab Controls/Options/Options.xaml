@@ -184,12 +184,11 @@
                         </Frame> -->
                     </Grid>
                     <Button HorizontalAlignment="Right" Margin="0,0,11,8" Padding="8,0,8,0" VerticalAlignment="Bottom"
-                            Height="27" Name="ButtonWebsite" Click="buttonWebsite_Click" Grid.Column="1">
+                            Height="27" Name="ButtonWebsite" Click="buttonWebsite_Click">
                         Visit Website
                     </Button>
                     <Button HorizontalAlignment="Left" Margin="11,0,0,8" Padding="8,0,8,0" VerticalAlignment="Bottom"
-                            Height="27" Name="ButtonSupportThisProject" Click="buttonSupportThisProject_Click"
-                            Grid.ColumnSpan="2">
+                            Height="27" Name="ButtonSupportThisProject" Click="buttonSupportThisProject_Click">
                         Support This Project
                     </Button>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,6,0"

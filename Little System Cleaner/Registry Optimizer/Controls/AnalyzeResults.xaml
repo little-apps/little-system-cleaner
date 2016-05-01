@@ -49,7 +49,7 @@
                                DependentValueBinding="{Binding Path=Value}" />
             </dvc:Chart.Series>
         </dvc:Chart>
-        <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,5,0,0">
             <Button x:Name="ButtonCompact" Click="buttonCompact_Click" Margin="0,0,6,0" Padding="8,0,8,0"
                     IsDefault="True" FontSize="15">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

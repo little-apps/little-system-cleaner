@@ -68,7 +68,7 @@
             </ListView.View>
         </ListView>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Margin="60,6,32,0" HorizontalAlignment="Center">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
+        <TextBlock Grid.Row="1" Margin="60,6,32,0" HorizontalAlignment="Center">Please wait until the scan finishes so that you can remove the problems from your computer</TextBlock>
 
     </Grid>
 </UserControl>
