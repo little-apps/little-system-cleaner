@@ -7,13 +7,13 @@ namespace Little_System_Cleaner.Misc
     public class DynamicUserControl : UserControl
     {
         public static readonly DependencyProperty TypeProperty = DependencyProperty.RegisterAttached("Type",
-            typeof (Type), typeof (DynamicUserControl), new FrameworkPropertyMetadata(null));
+            typeof(Type), typeof(DynamicUserControl), new FrameworkPropertyMetadata(null));
 
         public static Type GetType(UIElement element)
         {
             if (element == null)
                 throw new ArgumentNullException(nameof(element));
-            return (Type) element.GetValue(TypeProperty);
+            return (Type)element.GetValue(TypeProperty);
         }
 
         public static void SetType(UIElement element, Type value)
@@ -30,10 +30,10 @@ namespace Little_System_Cleaner.Misc
             if (!controlType.IsClass)
                 return null;
 
-            if (!controlType.IsSubclassOf(typeof (UserControl)))
+            if (!controlType.IsSubclassOf(typeof(UserControl)))
                 return null;
 
-            var control = (UserControl) Activator.CreateInstance(controlType);
+            var control = (UserControl)Activator.CreateInstance(controlType);
 
             Content = control;
 

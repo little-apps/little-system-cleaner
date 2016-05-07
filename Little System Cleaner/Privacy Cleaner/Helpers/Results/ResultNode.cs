@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using Little_System_Cleaner.Misc;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
@@ -34,7 +34,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             return MemberwiseClone();
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged & ICloneable Members
 
         #region Properties
 
@@ -79,7 +79,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             SetIsChecked(state, false, true);
         }
 
-        #endregion
+        #endregion IsChecked Methods
 
         public bool? IsChecked
         {
@@ -156,6 +156,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
             }
         }
 
-        #endregion
+        #endregion Properties
     }
 }

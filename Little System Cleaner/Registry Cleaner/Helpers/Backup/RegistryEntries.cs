@@ -23,13 +23,12 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
         {
             get
             {
-                // This indexer is very simple, and just returns or sets 
-                // the corresponding element from the internal array. 
+                // This indexer is very simple, and just returns or sets
+                // the corresponding element from the internal array.
                 return RegEntries[i];
             }
             set { RegEntries[i] = value; }
         }
-
 
         public DateTime CreatedDateTime { get; private set; } = DateTime.Now;
 

@@ -28,7 +28,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
 
         public BadRegistryKey this[int index]
         {
-            get { return (BadRegistryKey) InnerList[index]; }
+            get { return (BadRegistryKey)InnerList[index]; }
             set { InnerList[index] = value; }
         }
 
@@ -116,7 +116,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             lock (LockObj)
             {
                 count +=
-                    ((ArrayList) InnerList.Clone()).Cast<BadRegistryKey>()
+                    ((ArrayList)InnerList.Clone()).Cast<BadRegistryKey>()
                         .Count(badRegKey => badRegKey.SectionName == sectionName);
             }
 

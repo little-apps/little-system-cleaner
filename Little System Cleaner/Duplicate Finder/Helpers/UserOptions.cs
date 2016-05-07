@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Little_System_Cleaner.Properties;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -46,14 +46,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         /// <remarks>UserOptions can only be initialized by calling <see cref="GetUserOptions"/></remarks>
         private UserOptions()
         {
-
         }
 
         public static void StoreUserOptions(UserOptions userOptions)
         {
             using (var ms = new MemoryStream())
             {
-                var serializer = new XmlSerializer(typeof (UserOptions));
+                var serializer = new XmlSerializer(typeof(UserOptions));
                 serializer.Serialize(ms, userOptions);
 
                 var xml = Convert.ToBase64String(ms.ToArray());
@@ -70,8 +69,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {
                 using (var ms = new MemoryStream(Convert.FromBase64String(Settings.Default.duplicateFinderOptions)))
                 {
-                    var serializer = new XmlSerializer(typeof (UserOptions));
-                    userOptions = (UserOptions) serializer.Deserialize(ms);
+                    var serializer = new XmlSerializer(typeof(UserOptions));
+                    userOptions = (UserOptions)serializer.Deserialize(ms);
                 }
             }
             catch
@@ -91,7 +90,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
 
         #region Drives/Folders Properties
 
@@ -153,7 +152,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool SelectedFoldersEnabled => OnlySelectedFolders.GetValueOrDefault();
 
-        #endregion
+        #endregion Drives/Folders Properties
 
         #region Files Properties
 
@@ -356,7 +355,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        public string[] SkipFilesGreaterUnits => new[] {"B", "KB", "MB", "GB"};
+        public string[] SkipFilesGreaterUnits => new[] { "B", "KB", "MB", "GB" };
 
         public string SkipFilesGreaterUnit
         {
@@ -392,7 +391,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        #endregion
+        #endregion Files Properties
 
         #region Music Tags Properties
 
@@ -414,13 +413,14 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public bool? MusicTagBitRate { get; set; } = false;
 
-        #endregion
+        #endregion Music Tags Properties
 
         #region Compare Images Pixels by Pixels Options
+
         public bool CompareImagesOptionsEnabled => CompareImages.GetValueOrDefault();
         public decimal CompareImagesMinPercent { get; set; } = 0.95M;
 
-        #endregion
+        #endregion Compare Images Pixels by Pixels Options
 
         #region Exclude Folders Properties
 
@@ -436,6 +436,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
         }
 
-        #endregion
+        #endregion Exclude Folders Properties
     }
 }

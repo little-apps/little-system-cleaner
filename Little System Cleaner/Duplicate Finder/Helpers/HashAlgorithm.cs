@@ -21,30 +21,30 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             switch (algorithm)
             {
                 case Algorithms.CRC32:
-                {
-                    Name = "CRC32 (Fastest)";
-                    break;
-                }
+                    {
+                        Name = "CRC32 (Fastest)";
+                        break;
+                    }
                 case Algorithms.MD5:
-                {
-                    Name = "MD5";
-                    break;
-                }
+                    {
+                        Name = "MD5";
+                        break;
+                    }
                 case Algorithms.SHA1:
-                {
-                    Name = "SHA-1";
-                    break;
-                }
+                    {
+                        Name = "SHA-1";
+                        break;
+                    }
                 case Algorithms.SHA256:
-                {
-                    Name = "SHA-256";
-                    break;
-                }
+                    {
+                        Name = "SHA-256";
+                        break;
+                    }
                 case Algorithms.SHA512:
-                {
-                    Name = "SHA-512 (Slowest)";
-                    break;
-                }
+                    {
+                        Name = "SHA-512 (Slowest)";
+                        break;
+                    }
             }
 
             Algorithm = algorithm;
@@ -85,6 +85,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

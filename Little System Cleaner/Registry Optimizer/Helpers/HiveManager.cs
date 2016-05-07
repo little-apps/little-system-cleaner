@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Registry_Optimizer.Controls;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Little_System_Cleaner.Registry_Optimizer.Controls;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -6,7 +7,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 {
@@ -73,7 +73,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
             var type = reader.GetAttribute("Type");
             if (type != null)
-                Type = (RegistryValueKind) Enum.Parse(typeof (RegistryValueKind), type);
+                Type = (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), type);
 
             var valByte = new byte[1];
             var buffer = new byte[50];
@@ -98,80 +98,80 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             switch (Type)
             {
                 case RegistryValueKind.Binary:
-                {
-                    Value = valByte;
-
-                    break;
-                }
-                case RegistryValueKind.DWord:
-                {
-                    var valStr = Encoding.UTF8.GetString(valByte);
-
-                    var val = Convert.ToUInt32(valStr);
-
-                    Value = val;
-
-                    break;
-                }
-                case RegistryValueKind.QWord:
-                {
-                    var valStr = Encoding.UTF8.GetString(valByte);
-
-                    var val = Convert.ToUInt64(valStr);
-
-                    Value = val;
-
-                    break;
-                }
-                case RegistryValueKind.MultiString:
-                {
-                    var strings = new List<string>();
-
-                    if (reader.IsEmptyElement)
                     {
-                        Value = strings.ToArray();
+                        Value = valByte;
+
                         break;
                     }
-
-                    var children = reader.ReadSubtree();
-
-                    while (children.Read())
+                case RegistryValueKind.DWord:
                     {
-                        if (children.Name != "string" || children.IsEmptyElement)
-                            continue;
+                        var valStr = Encoding.UTF8.GetString(valByte);
 
-                        var s = children.ReadString();
+                        var val = Convert.ToUInt32(valStr);
 
-                        if (string.IsNullOrWhiteSpace(s))
-                        {
-                            strings.Add(string.Empty);
-                        }
-                        else
-                        {
-                            var base64Bytes = Convert.FromBase64String(s.Trim());
-                            var base64Str = Encoding.UTF8.GetString(base64Bytes);
+                        Value = val;
 
-                            strings.Add(base64Str);
-                        }
+                        break;
                     }
+                case RegistryValueKind.QWord:
+                    {
+                        var valStr = Encoding.UTF8.GetString(valByte);
 
-                    Value = strings.ToArray();
+                        var val = Convert.ToUInt64(valStr);
 
-                    break;
-                }
+                        Value = val;
+
+                        break;
+                    }
+                case RegistryValueKind.MultiString:
+                    {
+                        var strings = new List<string>();
+
+                        if (reader.IsEmptyElement)
+                        {
+                            Value = strings.ToArray();
+                            break;
+                        }
+
+                        var children = reader.ReadSubtree();
+
+                        while (children.Read())
+                        {
+                            if (children.Name != "string" || children.IsEmptyElement)
+                                continue;
+
+                            var s = children.ReadString();
+
+                            if (string.IsNullOrWhiteSpace(s))
+                            {
+                                strings.Add(string.Empty);
+                            }
+                            else
+                            {
+                                var base64Bytes = Convert.FromBase64String(s.Trim());
+                                var base64Str = Encoding.UTF8.GetString(base64Bytes);
+
+                                strings.Add(base64Str);
+                            }
+                        }
+
+                        Value = strings.ToArray();
+
+                        break;
+                    }
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
-                {
-                    Value = Encoding.UTF8.GetString(valByte);
+                    {
+                        Value = Encoding.UTF8.GetString(valByte);
 
-                    break;
-                }
+                        break;
+                    }
                 default:
-                {
-                    Value = valByte;
+                    {
+                        Value = valByte;
 
-                    break;
-                }
+                        break;
+                    }
             }
 
             if (Value == null)
@@ -189,82 +189,82 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             switch (Type)
             {
                 case RegistryValueKind.Binary:
-                {
-                    var rawBuffer = (byte[]) Value;
-                    var bufLen = rawBuffer.Length;
-
-                    writer.WriteBase64(rawBuffer, 0, bufLen);
-
-                    break;
-                }
-                case RegistryValueKind.DWord: // == REG_DWORD_LITTLE_ENDIAN
-                {
-                    var val = Convert.ToUInt32(Value);
-
-                    valStr = Convert.ToString(val);
-
-                    WriteBase64(writer, valStr);
-
-                    break;
-                }
-                case RegistryValueKind.QWord: // QWORD, QWORD_LITTLE_ENDIAN (64-bit integer)
-                {
-                    var val = Convert.ToUInt64(Value);
-
-                    valStr = Convert.ToString(val);
-
-                    WriteBase64(writer, valStr);
-
-                    break;
-                }
-                case RegistryValueKind.MultiString:
-                {
-                    var val = (string[]) Value;
-
-                    foreach (var s in val)
                     {
-                        writer.WriteStartElement("string");
+                        var rawBuffer = (byte[])Value;
+                        var bufLen = rawBuffer.Length;
 
-                        WriteBase64(writer, s);
+                        writer.WriteBase64(rawBuffer, 0, bufLen);
 
-                        writer.WriteEndElement();
+                        break;
                     }
+                case RegistryValueKind.DWord: // == REG_DWORD_LITTLE_ENDIAN
+                    {
+                        var val = Convert.ToUInt32(Value);
 
-                    break;
-                }
+                        valStr = Convert.ToString(val);
+
+                        WriteBase64(writer, valStr);
+
+                        break;
+                    }
+                case RegistryValueKind.QWord: // QWORD, QWORD_LITTLE_ENDIAN (64-bit integer)
+                    {
+                        var val = Convert.ToUInt64(Value);
+
+                        valStr = Convert.ToString(val);
+
+                        WriteBase64(writer, valStr);
+
+                        break;
+                    }
+                case RegistryValueKind.MultiString:
+                    {
+                        var val = (string[])Value;
+
+                        foreach (var s in val)
+                        {
+                            writer.WriteStartElement("string");
+
+                            WriteBase64(writer, s);
+
+                            writer.WriteEndElement();
+                        }
+
+                        break;
+                    }
 
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
-                {
-                    valStr = (string) Value;
-
-                    WriteBase64(writer, valStr);
-
-                    break;
-                }
-                default:
-                {
-                    byte[] rawBuffer;
-                    int nLen;
-
-                    var bf = new BinaryFormatter();
-                    using (var ms = new MemoryStream())
                     {
-                        bf.Serialize(ms, Value);
-                        nLen = (int) ms.Length;
-                        rawBuffer = ms.ToArray();
+                        valStr = (string)Value;
+
+                        WriteBase64(writer, valStr);
+
+                        break;
                     }
+                default:
+                    {
+                        byte[] rawBuffer;
+                        int nLen;
 
-                    // Convert the new byte[] into a char[] and then into a string.
-                    var asciiChars = new char[Encoding.ASCII.GetCharCount(rawBuffer, 0, nLen)];
-                    Encoding.ASCII.GetChars(rawBuffer, 0, nLen, asciiChars, 0);
+                        var bf = new BinaryFormatter();
+                        using (var ms = new MemoryStream())
+                        {
+                            bf.Serialize(ms, Value);
+                            nLen = (int)ms.Length;
+                            rawBuffer = ms.ToArray();
+                        }
 
-                    valStr = new string(asciiChars);
+                        // Convert the new byte[] into a char[] and then into a string.
+                        var asciiChars = new char[Encoding.ASCII.GetCharCount(rawBuffer, 0, nLen)];
+                        Encoding.ASCII.GetChars(rawBuffer, 0, nLen, asciiChars, 0);
 
-                    WriteBase64(writer, valStr);
+                        valStr = new string(asciiChars);
 
-                    break;
-                }
+                        WriteBase64(writer, valStr);
+
+                        break;
+                    }
             }
         }
 
@@ -280,7 +280,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             return null;
         }
 
-        #endregion
+        #endregion IXmlSerializable Members
 
         #region IEquatable Members
 
@@ -302,7 +302,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
         public static bool operator ==(RegistryValue regValue1, RegistryValue regValue2)
         {
-            if ((object) regValue1 == null || (object) regValue2 == null)
+            if ((object)regValue1 == null || (object)regValue2 == null)
                 return Equals(regValue1, regValue2);
 
             return regValue1.Equals(regValue2);
@@ -316,6 +316,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             return !regValue1.Equals(regValue2);
         }
 
-        #endregion
+        #endregion IEquatable Members
     }
 }

@@ -105,6 +105,5 @@
                 <TextBlock>Go Back</TextBlock>
             </StackPanel>
         </Button>
-
     </Grid>
 </UserControl>

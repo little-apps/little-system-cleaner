@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Net;
 using System.Net.Cache;
 using System.Threading;
 using System.Windows;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
@@ -84,7 +84,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 return;
             }
 
-            var processStartInfoDownloadedFile = new ProcessStartInfo {FileName = _tempPath, UseShellExecute = true};
+            var processStartInfoDownloadedFile = new ProcessStartInfo { FileName = _tempPath, UseShellExecute = true };
 
             Process.Start(processStartInfoDownloadedFile);
 
@@ -102,7 +102,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             var fileName = string.Empty;
 
-            var httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
             httpWebRequest.Method = "HEAD";
             httpWebRequest.AllowAutoRedirect = false;
@@ -111,7 +111,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-                httpWebResponse = (HttpWebResponse) httpWebRequest.GetResponse();
+                httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             }
             catch (WebException ex)
             {

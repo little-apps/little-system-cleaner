@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Helpers
@@ -100,11 +100,11 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                         null)
                         return;
 
-                var b = (byte[]) regKey.GetValue("SlowInfoCache");
+                var b = (byte[])regKey.GetValue("SlowInfoCache");
 
                 var gcHandle = GCHandle.Alloc(b, GCHandleType.Pinned);
                 var ptr = gcHandle.AddrOfPinnedObject();
-                var slowInfoCache = (SlowInfoCache) Marshal.PtrToStructure(ptr, typeof (SlowInfoCache));
+                var slowInfoCache = (SlowInfoCache)Marshal.PtrToStructure(ptr, typeof(SlowInfoCache));
 
                 SlowCache = true;
                 SlowInfoCacheRegKey = regKey.ToString();
@@ -207,7 +207,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     else if (ex is Win32Exception)
                     {
                         var hr = Marshal.GetHRForException(ex);
-                        if (hr == unchecked((int) 0x80004002))
+                        if (hr == unchecked((int)0x80004002))
                         {
                             MessageBox.Show(Application.Current.MainWindow,
                                 "The following error occurred: " + ex.Message +
@@ -264,7 +264,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                     else if (ex is Win32Exception)
                     {
                         var hr = Marshal.GetHRForException(ex);
-                        if (hr == unchecked((int) 0x80004002))
+                        if (hr == unchecked((int)0x80004002))
                         {
                             MessageBox.Show(Application.Current.MainWindow,
                                 "The following error occurred: " + ex.Message +
@@ -295,7 +295,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
                         "The Add/Remove Programs (ARP) cache registry key could not be removed", Utils.ProductName,
                         MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
 
             MessageBox.Show("Successfully uninstalled the program", Utils.ProductName, MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -342,7 +341,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         private static DateTime FileTime2DateTime(FILETIME ft)
         {
             DateTime dt;
-            var hFT2 = ((long) ft.dwHighDateTime << 32) + ft.dwLowDateTime;
+            var hFT2 = ((long)ft.dwHighDateTime << 32) + ft.dwLowDateTime;
 
             try
             {
@@ -392,8 +391,10 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             public FILETIME LastUsed; // last time program was used
             public uint Frequency; // 0-2 = rarely; 3-9 = occassionaly; 10+ = frequently
 
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 262)] public string Name;
-                //remaining 524 bytes (max path of 260 + null) in unicode
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 262)]
+            public string Name;
+
+            //remaining 524 bytes (max path of 260 + null) in unicode
         }
 
         public bool SlowCache;
@@ -403,7 +404,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         public string FileName;
         public string SlowInfoCacheRegKey;
 
-        #endregion
+        #endregion Slow Info Cache properties
 
         #region Program Info
 
@@ -455,7 +456,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
         public bool Uninstallable
             => !string.IsNullOrEmpty(UninstallString) || !string.IsNullOrEmpty(QuietUninstallString);
 
-        #endregion
+        #endregion Program Info
 
         #region ListView Properties
 
@@ -483,19 +484,19 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             get
             {
                 if (InstallSize > 0)
-                    return (uint) InstallSize;
+                    return (uint)InstallSize;
 
                 if (EstimatedSize.GetValueOrDefault(0) <= 0)
                     return 0;
 
                 if (EstimatedSize != null)
-                    return EstimatedSize.Value*1024;
+                    return EstimatedSize.Value * 1024;
 
                 return 0;
             }
         }
 
-        #endregion
+        #endregion ListView Properties
 
         #region IComparable members
 
@@ -509,6 +510,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             return other.Key == Key;
         }
 
-        #endregion
+        #endregion IComparable members
     }
 }

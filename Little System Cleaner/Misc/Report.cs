@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Properties;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Misc
 {

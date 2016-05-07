@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 using Little_System_Cleaner.Registry_Cleaner.Helpers.Sections;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
@@ -33,12 +33,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
     {
         private SectionModel _model;
 
-
         public Wizard()
         {
-            Controls.Add(typeof (Start));
-            Controls.Add(typeof (Scan));
-            Controls.Add(typeof (Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Scan));
+            Controls.Add(typeof(Results));
 
             Scanners.Add(new ApplicationInfo());
             Scanners.Add(new ApplicationPaths());
@@ -110,7 +109,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             if (results == null)
                 return true;
 
-            if (!forceExit && ((Results) CurrentControl).FixProblemsRunning)
+            if (!forceExit && ((Results)CurrentControl).FixProblemsRunning)
                 return false;
 
             exit = forceExit ||
@@ -121,7 +120,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return false;
 
             // Forced to exit -> abort fix task
-            ((Results) CurrentControl).CancelFixIfRunning();
+            ((Results)CurrentControl).CancelFixIfRunning();
 
             BadRegKeyArray.Clear();
             Scan.EnabledScanners.Clear();

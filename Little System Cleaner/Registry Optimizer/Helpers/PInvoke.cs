@@ -20,6 +20,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
         // Shutdown reason codes
         public const uint MajorOperatingSystem = 0x00020000;
+
         public const uint MinorReconfig = 0x00000004;
         public const uint FlagPlanned = 0x80000000;
 

@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using System;
 using System.Windows;
 using System.Windows.Forms;
-using Little_System_Cleaner.Misc;
 using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -50,7 +50,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 
             if (AddExcludeFolderDelegate != null)
             {
-                var eventArgs = new AddExcludeFolderEventArgs {FolderPath = TextBox.Text.Trim()};
+                var eventArgs = new AddExcludeFolderEventArgs { FolderPath = TextBox.Text.Trim() };
                 AddExcludeFolderDelegate(this, eventArgs);
             }
 

@@ -54,7 +54,6 @@
                                             Width="100" />
                         </GridView>
                     </ListView.View>
-
                 </ListView>
             </TabItem>
             <TabItem Header="Removal">
@@ -155,7 +154,6 @@
                                                          Margin="0,0,5,0" Value="{Binding FindFilesBeforeDateTime}" />
                                 </StackPanel>
                             </DockPanel>
-
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Size">

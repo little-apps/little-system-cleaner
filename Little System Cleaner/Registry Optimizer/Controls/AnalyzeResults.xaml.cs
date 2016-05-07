@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.DataVisualization.Charting;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
@@ -43,10 +43,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             double oldRegistrySize = HiveManager.GetOldRegistrySize(),
                 newRegistrySize = HiveManager.GetNewRegistrySize();
 
-            var oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize)/1024/1024, 2);
-            var diffRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize - newRegistrySize)/1024/1024, 2);
+            var oldRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize) / 1024 / 1024, 2);
+            var diffRegistrySizeMb = decimal.Round(Convert.ToDecimal(oldRegistrySize - newRegistrySize) / 1024 / 1024, 2);
 
-            ((PieSeries) McChart.Series[0]).ItemsSource =
+            ((PieSeries)McChart.Series[0]).ItemsSource =
                 new[]
                 {
                     new KeyValuePair<string, decimal>($"Registry Size ({oldRegistrySizeMb}MB)",
@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     new KeyValuePair<string, decimal>($"Saving ({diffRegistrySizeMb}MB)", diffRegistrySizeMb)
                 };
 
-            if (100 - newRegistrySize/oldRegistrySize*100 >= 5)
+            if (100 - newRegistrySize / oldRegistrySize * 100 >= 5)
             {
                 // Set errors to number of registry hives
                 Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;

@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
-using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {

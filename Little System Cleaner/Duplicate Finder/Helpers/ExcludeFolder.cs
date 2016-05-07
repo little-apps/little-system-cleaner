@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -89,6 +89,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

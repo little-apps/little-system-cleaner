@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.ObjectModel;
-using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -29,9 +29,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         public Wizard()
         {
-            Controls.Add(typeof (LoadHives));
-            Controls.Add(typeof (Main));
-            Controls.Add(typeof (AnalyzeResults));
+            Controls.Add(typeof(LoadHives));
+            Controls.Add(typeof(Main));
+            Controls.Add(typeof(AnalyzeResults));
 
             IsBusy = false;
         }
@@ -81,7 +81,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             return true;
         }
-
 
         public override void MoveFirst(bool autoMove = true)
         {

@@ -10,7 +10,7 @@ namespace Little_System_Cleaner.Misc
     {
         public List<Type> Controls { get; } = new List<Type>();
 
-        public UserControl CurrentControl => (UserControl) Content;
+        public UserControl CurrentControl => (UserControl)Content;
 
         /// <summary>
         ///     This value is readonly and can only be manipulated with SetCurrentControl()

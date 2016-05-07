@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,10 +29,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
@@ -181,7 +181,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 var ts = DateTime.Now.Subtract(_dateTimeStart);
 
                 // Report to Little Software Stats
-                Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int) ts.TotalSeconds, true);
+                Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int)ts.TotalSeconds, true);
 
                 // Set last scan elapsed time (in ticks)
                 Settings.Default.lastScanElapsed = ts.Ticks;
@@ -276,7 +276,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
+                Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
         }
     }
 }

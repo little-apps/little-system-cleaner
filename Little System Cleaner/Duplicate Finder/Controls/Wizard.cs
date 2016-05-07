@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -16,9 +16,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             Options = UserOptions.GetUserOptions();
 
-            Controls.Add(typeof (Start));
-            Controls.Add(typeof (Scan));
-            Controls.Add(typeof (Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Scan));
+            Controls.Add(typeof(Results));
         }
 
         public UserOptions Options { get; }

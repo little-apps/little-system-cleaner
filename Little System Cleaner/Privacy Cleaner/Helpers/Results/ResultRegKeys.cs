@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Little_System_Cleaner.Misc;
+﻿using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
 using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
@@ -79,6 +79,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
                             case "HKEY_CURRENT_CONFIG":
                                 reg = Registry.CurrentConfig;
                                 break;
+
                             default:
                                 continue; // break here
                         }

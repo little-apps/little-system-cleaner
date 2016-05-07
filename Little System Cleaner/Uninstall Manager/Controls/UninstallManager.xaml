@@ -22,7 +22,6 @@
                 <Path x:Name="arrow" StrokeThickness="1" Fill="Gray" Data="M 5,5 L 10,10 L 15,5 L 5,5" />
             </DockPanel>
         </DataTemplate>
-
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">

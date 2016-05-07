@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Properties
 {
@@ -22,10 +22,10 @@ namespace Little_System_Cleaner.Properties
         {
             get
             {
-                if ((ObservableCollection<ExcludeItem>) this["ArrayExcludeList"] == null)
+                if ((ObservableCollection<ExcludeItem>)this["ArrayExcludeList"] == null)
                     this["ArrayExcludeList"] = new ObservableCollection<ExcludeItem>();
 
-                return (ObservableCollection<ExcludeItem>) this["ArrayExcludeList"];
+                return (ObservableCollection<ExcludeItem>)this["ArrayExcludeList"];
             }
             set { this["ArrayExcludeList"] = value; }
         }
@@ -40,10 +40,10 @@ namespace Little_System_Cleaner.Properties
                     this["ProgramSettingsDir"] =
                         $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)}\\Little System Cleaner";
 
-                if (!Directory.Exists((string) this["ProgramSettingsDir"]))
-                    Directory.CreateDirectory((string) this["ProgramSettingsDir"]);
+                if (!Directory.Exists((string)this["ProgramSettingsDir"]))
+                    Directory.CreateDirectory((string)this["ProgramSettingsDir"]);
 
-                return (string) this["ProgramSettingsDir"];
+                return (string)this["ProgramSettingsDir"];
             }
             set { this["ProgramSettingsDir"] = value; }
         }
@@ -57,10 +57,10 @@ namespace Little_System_Cleaner.Properties
                 if (string.IsNullOrEmpty(this["OptionsBackupDir"] as string))
                     this["OptionsBackupDir"] = $"{ProgramSettingsDir}\\Backups";
 
-                if (!Directory.Exists((string) this["OptionsBackupDir"]))
-                    Directory.CreateDirectory((string) this["OptionsBackupDir"]);
+                if (!Directory.Exists((string)this["OptionsBackupDir"]))
+                    Directory.CreateDirectory((string)this["OptionsBackupDir"]);
 
-                return (string) this["OptionsBackupDir"];
+                return (string)this["OptionsBackupDir"];
             }
             set { this["OptionsBackupDir"] = value; }
         }
@@ -74,10 +74,10 @@ namespace Little_System_Cleaner.Properties
                 if (string.IsNullOrEmpty(this["OptionsLogDir"] as string))
                     this["OptionsLogDir"] = $"{ProgramSettingsDir}\\Logs";
 
-                if (!Directory.Exists((string) this["OptionsLogDir"]))
-                    Directory.CreateDirectory((string) this["OptionsLogDir"]);
+                if (!Directory.Exists((string)this["OptionsLogDir"]))
+                    Directory.CreateDirectory((string)this["OptionsLogDir"]);
 
-                return (string) this["OptionsLogDir"];
+                return (string)this["OptionsLogDir"];
             }
             set { this["OptionsLogDir"] = value; }
         }

@@ -167,7 +167,7 @@ namespace Little_System_Cleaner.Annotations
     ///    public event PropertyChangedEventHandler PropertyChanged;
     ///    [NotifyPropertyChangedInvocator]
     ///    protected virtual void NotifyChanged(string propertyName) { ... }
-    /// 
+    ///
     ///    private string _name;
     ///    public string Name {
     ///      get { return _name; }
@@ -250,7 +250,7 @@ namespace Little_System_Cleaner.Annotations
     /// // A method that returns null if the parameter is null,
     /// // and not null if the parameter is not null
     /// [ContractAnnotation("null => null; notnull => notnull")]
-    /// public object Transform(object data) 
+    /// public object Transform(object data)
     /// </code>
     ///         </item>
     ///         <item>
@@ -344,7 +344,7 @@ namespace Little_System_Cleaner.Annotations
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    [BaseTypeRequired(typeof (Attribute))]
+    [BaseTypeRequired(typeof(Attribute))]
     public sealed class BaseTypeRequiredAttribute : Attribute
     {
         public BaseTypeRequiredAttribute([NotNull] Type baseType)

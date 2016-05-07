@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Tab_Controls
 {
@@ -77,7 +77,7 @@ namespace Little_System_Cleaner.Tab_Controls
             {
                 regKey?.Close();
             }
-            
+
             try
             {
                 if (!PInvoke.GlobalMemoryStatusEx(memStatus))
@@ -89,11 +89,8 @@ namespace Little_System_Cleaner.Tab_Controls
             {
                 TotalRam.Text = "Unknown";
             }
-            
 
             OsVersion.Text = Misc.OsVersion.GetOsVersion();
         }
-
-        
     }
 }

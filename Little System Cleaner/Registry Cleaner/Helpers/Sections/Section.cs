@@ -51,7 +51,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
 
         #region IsChecked Methods
 
@@ -90,6 +90,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
             SetIsChecked(state, false, true);
         }
 
-        #endregion
+        #endregion IsChecked Methods
     }
 }

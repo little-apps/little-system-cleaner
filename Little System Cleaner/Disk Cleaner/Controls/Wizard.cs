@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -30,9 +30,9 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
     {
         public Wizard()
         {
-            Controls.Add(typeof (Start));
-            Controls.Add(typeof (Analyze));
-            Controls.Add(typeof (Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Analyze));
+            Controls.Add(typeof(Results));
         }
 
         public List<DriveInfo> SelectedDrives { get; } = new List<DriveInfo>();

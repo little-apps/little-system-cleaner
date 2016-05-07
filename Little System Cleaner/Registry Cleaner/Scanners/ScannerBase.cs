@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 using System.Threading;
 using System.Windows.Media.Imaging;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -51,14 +51,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// </summary>
         public override string ToString()
         {
-            return (string) ScannerName.Clone();
+            return (string)ScannerName.Clone();
         }
 
         public abstract void Scan();
+
         //}
         //    return;
         //{
-
         //public virtual void Scan()
     }
 }

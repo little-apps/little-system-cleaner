@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Little_System_Cleaner.Annotations;
+using Little_System_Cleaner.Misc;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,8 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
-using Little_System_Cleaner.Annotations;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.ProcessInfo
 {
@@ -362,6 +362,6 @@ namespace Little_System_Cleaner.ProcessInfo
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

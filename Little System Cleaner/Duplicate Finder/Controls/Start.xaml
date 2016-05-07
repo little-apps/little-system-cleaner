@@ -92,11 +92,9 @@
                                            Source="/Little_System_Cleaner;component/Resources/startup manager/delete.png" />
                                     <TextBlock>Remove Folder</TextBlock>
                                 </StackPanel>
-
                             </Button>
                         </StackPanel>
                     </StackPanel>
-
                 </StackPanel>
             </TabItem>
             <TabItem Header="Files">
@@ -193,7 +191,7 @@
                     </GroupBox>
                     <GroupBox Header="Hashing Algorithm">
                         <StackPanel Margin="5,5,5,5" Orientation="Horizontal" Height="25">
-                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center">Use the following algorithm to generate checksums: </TextBlock>
+                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center">Use the following algorithm to generate checksums:</TextBlock>
                             <ComboBox SelectedItem="{Binding HashAlgorithm}" ItemsSource="{Binding HashAlgorithms}"
                                       DisplayMemberPath="Name" VerticalContentAlignment="Center"
                                       VerticalAlignment="Center" />
@@ -254,13 +252,12 @@
                                 </CheckBox>
                             </DockPanel>
                         </StackPanel>
-
                     </GroupBox>
                     <GroupBox Header="Compare Images Pixels by Pixels">
                         <StackPanel Orientation="Vertical">
                             <DockPanel Margin="0,0,0,5">
                                 <StackPanel Orientation="Horizontal">
-                                    <Label>Find images that are similar by at least </Label>
+                                    <Label>Find images that are similar by at least</Label>
                                     <xctk:DecimalUpDown IsEnabled="{Binding Path=CompareImagesOptionsEnabled}" Maximum="1" Minimum="0.01" Value="{Binding Path=CompareImagesMinPercent}" Increment="0.01" FormatString="P0" />
                                 </StackPanel>
                             </DockPanel>

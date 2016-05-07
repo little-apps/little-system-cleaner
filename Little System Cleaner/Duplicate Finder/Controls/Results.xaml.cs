@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,9 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -145,7 +145,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 var filePath = fileEntry.FilePath;
 
-                var percent = Dispatcher.Invoke(() => ProgressBar.Value/ProgressBar.Maximum*100);
+                var percent = Dispatcher.Invoke(() => ProgressBar.Value / ProgressBar.Maximum * 100);
                 ProgressBarText = Dispatcher.Invoke(() => $"{ProgressBar.Value}/{ProgressBar.Maximum} ({percent:0.##}%)");
 
                 try
@@ -227,7 +227,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
             {
-                Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
+                Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
             }
         }
 
@@ -240,7 +240,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
 
         #region Context Menu Events
 
@@ -280,6 +280,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
         }
 
-        #endregion
+        #endregion Context Menu Events
     }
 }

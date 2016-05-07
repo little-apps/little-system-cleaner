@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -24,10 +28,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -52,7 +52,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             Parent = parent;
             Name = header;
         }
-
 
         public override string ProcessName => "firefox";
 
@@ -135,15 +134,19 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 case "Internet History":
                     ScanInternetHistory();
                     break;
+
                 case "Cookies":
                     ScanCookies();
                     break;
+
                 case "Internet Cache":
                     ScanCache();
                     break;
+
                 case "Saved Form History":
                     ScanFormHistory();
                     break;
+
                 case "Download History":
                     ScanDownloadHistory();
                     break;
@@ -292,7 +295,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     nTotalSize += MiscFunctions.GetFileSize(fileCache);
                 }
             }
-
 
             Wizard.StoreBadFileList("Internet Cache Files", fileList.ToArray(), nTotalSize);
         }

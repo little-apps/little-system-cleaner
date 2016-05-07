@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -53,9 +53,9 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 
             Wizard.Report.WriteLine("Checking for missing help files in " + regKey.Name);
 
-            foreach (var helpFile in 
+            foreach (var helpFile in
                 regKey.GetValueNames()
-                    .Select(helpFile => new {Name = helpFile, Value = regKey.GetValue(helpFile) as string})
+                    .Select(helpFile => new { Name = helpFile, Value = regKey.GetValue(helpFile) as string })
                     .Where(o => !HelpFileExists(o.Name, o.Value))
                     .Select(o => o.Name)
                     .TakeWhile(helpFile => !CancellationToken.IsCancellationRequested)

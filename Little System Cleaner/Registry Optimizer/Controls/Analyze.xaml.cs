@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Properties;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -80,7 +80,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             var timeSpan = DateTime.Now.Subtract(dtStart);
 
-            Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int) timeSpan.TotalSeconds,
+            Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds,
                 true);
 
             Settings.Default.lastScanElapsed = timeSpan.Ticks;
@@ -98,7 +98,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
+                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
         }
     }
 }

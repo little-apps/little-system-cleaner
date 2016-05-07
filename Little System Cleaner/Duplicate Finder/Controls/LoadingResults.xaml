@@ -7,6 +7,5 @@
     <StackPanel Margin="5,0">
         <Label Height="31" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Please wait while the results are being prepared...</Label>
         <ProgressBar Height="30" IsIndeterminate="True" />
-
     </StackPanel>
 </Window>

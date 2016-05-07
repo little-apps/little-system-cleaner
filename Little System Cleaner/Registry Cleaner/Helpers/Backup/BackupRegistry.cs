@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 {
@@ -46,7 +46,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
                     if (Stream.Length > 0)
                     {
-                        var fileStream = (FileStream) Stream;
+                        var fileStream = (FileStream)Stream;
                         fileStream?.SetLength(0);
                     }
                 }
@@ -99,7 +99,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
                 {
                     if (serializer.CanDeserialize(reader))
                     {
-                        RegistryEntries = (RegistryEntries) serializer.Deserialize(reader);
+                        RegistryEntries = (RegistryEntries)serializer.Deserialize(reader);
                     }
                     else
                     {
@@ -113,7 +113,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
                 return false;
             }
-
 
             errorMsg = "";
             return true;
@@ -244,6 +243,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             GC.SuppressFinalize(this);
         }
 
-        #endregion
+        #endregion IDisposable Members
     }
 }

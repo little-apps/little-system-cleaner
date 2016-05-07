@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {
@@ -158,9 +158,9 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
             // Open Handle to registry key
             if (_rootKey.StartsWith(@"\registry\machine"))
-                ret = PInvoke.RegOpenKeyA((uint) PInvoke.HKEY.HKEY_LOCAL_MACHINE, _keyName, ref _hKey);
+                ret = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_LOCAL_MACHINE, _keyName, ref _hKey);
             if (_rootKey.StartsWith(@"\registry\user"))
-                ret = PInvoke.RegOpenKeyA((uint) PInvoke.HKEY.HKEY_USERS, _keyName, ref _hKey);
+                ret = PInvoke.RegOpenKeyA((uint)PInvoke.HKEY.HKEY_USERS, _keyName, ref _hKey);
 
             if (ret != 0)
                 throw new Win32Exception(ret);
@@ -256,7 +256,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             if (retCode != 0)
                 throw new Win32Exception(retCode);
 
-            _newHiveSize = (uint) GetFileSize(NewHivePath);
+            _newHiveSize = (uint)GetFileSize(NewHivePath);
 
             if (File.Exists(NewHivePath))
                 Anaylzed = true;
@@ -391,7 +391,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
         /// <returns>Hive filename</returns>
         public override string ToString()
         {
-            return (string) HiveFileInfo.Name.Clone();
+            return (string)HiveFileInfo.Name.Clone();
         }
 
         #region ListView Properties
@@ -408,6 +408,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
         public string CompactSize => Utils.ConvertSizeToString(_newHiveSize);
 
-        #endregion
+        #endregion ListView Properties
     }
 }

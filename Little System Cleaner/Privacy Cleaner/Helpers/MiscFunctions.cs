@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Little_System_Cleaner.Privacy_Cleaner.Scanners;
+using Little_System_Cleaner.Properties;
+using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Little_System_Cleaner.Privacy_Cleaner.Scanners;
-using Little_System_Cleaner.Properties;
-using Microsoft.VisualBasic.FileIO;
 using SearchOption = System.IO.SearchOption;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
@@ -29,47 +29,46 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 // ERROR_SUCCESS
                 case 0:
-                {
-                    if (cacheEnumHandle.ToInt32() > 0)
                     {
-                        // Store entry
-                        if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
-                            cacheEntryList.Add(cacheEntry.Value);
-                    }
-
-                    break;
-                }
-
-
-                // ERROR_INSUFFICIENT_BUFFER
-                case 122:
-                {
-                    // Repeat call to API with size returned by first call
-                    bufferPtr = Marshal.AllocHGlobal(structSize);
-                    cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
-
-                    if (cacheEnumHandle.ToInt32() > 0)
-                    {
-                        // Store entry
-                        if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
-                            cacheEntryList.Add(cacheEntry.Value);
+                        if (cacheEnumHandle.ToInt32() > 0)
+                        {
+                            // Store entry
+                            if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                cacheEntryList.Add(cacheEntry.Value);
+                        }
 
                         break;
                     }
-                    // Failed to get handle, return...
-                    Marshal.FreeHGlobal(bufferPtr);
-                    FindCloseUrlCache(cacheEnumHandle);
 
-                    return cacheEntryList;
-                }
+                // ERROR_INSUFFICIENT_BUFFER
+                case 122:
+                    {
+                        // Repeat call to API with size returned by first call
+                        bufferPtr = Marshal.AllocHGlobal(structSize);
+                        cacheEnumHandle = FindFirstUrlCacheEntry(urlPattern, bufferPtr, ref structSize);
+
+                        if (cacheEnumHandle.ToInt32() > 0)
+                        {
+                            // Store entry
+                            if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                cacheEntryList.Add(cacheEntry.Value);
+
+                            break;
+                        }
+                        // Failed to get handle, return...
+                        Marshal.FreeHGlobal(bufferPtr);
+                        FindCloseUrlCache(cacheEnumHandle);
+
+                        return cacheEntryList;
+                    }
 
                 default:
-                {
-                    Marshal.FreeHGlobal(bufferPtr);
-                    FindCloseUrlCache(cacheEnumHandle);
+                    {
+                        Marshal.FreeHGlobal(bufferPtr);
+                        FindCloseUrlCache(cacheEnumHandle);
 
-                    return cacheEntryList;
-                }
+                        return cacheEntryList;
+                    }
             }
 
             while (true)
@@ -88,40 +87,40 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                     {
                         // ERROR_INSUFFICIENT_BUFFER
                         case 122:
-                        {
-                            // Repeat call to API with size returned by first call
-                            bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
-
-                            if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
                             {
-                                // Store entry
-                                if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
-                                    cacheEntryList.Add(cacheEntry.Value);
+                                // Repeat call to API with size returned by first call
+                                bufferPtr = Marshal.ReAllocHGlobal(bufferPtr, new IntPtr(structSize));
 
-                                break;
+                                if (FindNextUrlCacheEntry(cacheEnumHandle, bufferPtr, ref structSize))
+                                {
+                                    // Store entry
+                                    if ((cacheEntry = GetCacheEntry(bufferPtr)).HasValue)
+                                        cacheEntryList.Add(cacheEntry.Value);
+
+                                    break;
+                                }
+                                Marshal.FreeHGlobal(bufferPtr);
+                                FindCloseUrlCache(cacheEnumHandle);
+
+                                return cacheEntryList;
                             }
-                            Marshal.FreeHGlobal(bufferPtr);
-                            FindCloseUrlCache(cacheEnumHandle);
-
-                            return cacheEntryList;
-                        }
 
                         // ERROR_NO_MORE_ITEMS
                         case 259:
-                        {
-                            Marshal.FreeHGlobal(bufferPtr);
-                            FindCloseUrlCache(cacheEnumHandle);
+                            {
+                                Marshal.FreeHGlobal(bufferPtr);
+                                FindCloseUrlCache(cacheEnumHandle);
 
-                            return cacheEntryList;
-                        }
+                                return cacheEntryList;
+                            }
 
                         default:
-                        {
-                            Marshal.FreeHGlobal(bufferPtr);
-                            FindCloseUrlCache(cacheEnumHandle);
+                            {
+                                Marshal.FreeHGlobal(bufferPtr);
+                                FindCloseUrlCache(cacheEnumHandle);
 
-                            return cacheEntryList;
-                        }
+                                return cacheEntryList;
+                            }
                     }
                 }
             }
@@ -142,7 +141,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             {
                 cacheEntry =
                     (InternetExplorer.INTERNET_CACHE_ENTRY_INFO)
-                        Marshal.PtrToStructure(bufferPtr, typeof (InternetExplorer.INTERNET_CACHE_ENTRY_INFO));
+                        Marshal.PtrToStructure(bufferPtr, typeof(InternetExplorer.INTERNET_CACHE_ENTRY_INFO));
             }
             catch (Exception)
             {
@@ -164,7 +163,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
         internal static string ExpandVars(string p)
         {
-            var str = (string) p.Clone();
+            var str = (string)p.Clone();
 
             if (string.IsNullOrEmpty(str))
                 throw new ArgumentNullException(str);
@@ -198,18 +197,18 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 Debug.WriteLine("Path to INI file cannot be empty or null. Unable to get sections.");
-                return new string[] {};
+                return new string[] { };
             }
 
-            var pReturnedString = Marshal.AllocCoTaskMem((int) maxBuffer);
+            var pReturnedString = Marshal.AllocCoTaskMem((int)maxBuffer);
             var bytesReturned = GetPrivateProfileSectionNames(pReturnedString, maxBuffer, filePath);
             if (bytesReturned == 0)
             {
                 Marshal.FreeCoTaskMem(pReturnedString);
-                return new string[] {};
+                return new string[] { };
             }
 
-            var local = Marshal.PtrToStringAnsi(pReturnedString, (int) bytesReturned);
+            var local = Marshal.PtrToStringAnsi(pReturnedString, (int)bytesReturned);
             Marshal.FreeCoTaskMem(pReturnedString);
 
             return local.Substring(0, local.Length - 1).Split('\0');
@@ -233,7 +232,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return ret;
             }
 
-            var pReturnedString = Marshal.AllocCoTaskMem((int) maxBuffer);
+            var pReturnedString = Marshal.AllocCoTaskMem((int)maxBuffer);
 
             var bytesReturned = GetPrivateProfileSection(sectionName, pReturnedString, maxBuffer, filePath);
 
@@ -247,7 +246,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             // NOTE: Calling Marshal.PtrToStringAuto(pReturnedString) will
             //       result in only the first pair being returned
-            var returnedString = Marshal.PtrToStringAuto(pReturnedString, (int) bytesReturned - 1);
+            var returnedString = Marshal.PtrToStringAuto(pReturnedString, (int)bytesReturned - 1);
 
             Marshal.FreeCoTaskMem(pReturnedString);
 
@@ -370,7 +369,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 return ret;
             }
 
-
             return ret;
         }
 
@@ -460,6 +458,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         internal static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString,
             string lpFileName);
 
-        #endregion
+        #endregion Functions
     }
 }

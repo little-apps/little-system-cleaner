@@ -1,12 +1,11 @@
-﻿using System.ComponentModel;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {
-
     #region INI Info Struct
 
     public struct IniInfo
@@ -27,7 +26,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
         public string ValueName;
     }
 
-    #endregion
+    #endregion INI Info Struct
 
     public class ResultIni : ResultNode
     {

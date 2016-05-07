@@ -40,7 +40,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             }
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void LoadGif()

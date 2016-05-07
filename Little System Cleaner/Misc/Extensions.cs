@@ -33,7 +33,7 @@ namespace Little_System_Cleaner.Misc
             if (addClosingHook)
             {
                 // Cancel Closing event (if it occurs)
-                window.Closing += delegate(object sender, CancelEventArgs args) { args.Cancel = true; };
+                window.Closing += delegate (object sender, CancelEventArgs args) { args.Cancel = true; };
             }
         }
 
@@ -48,7 +48,7 @@ namespace Little_System_Cleaner.Misc
         {
             if (window.IsInitialized)
             {
-                window.Icon = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[] {0, 0, 0, 0}, 4);
+                window.Icon = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[] { 0, 0, 0, 0 }, 4);
             }
             else
             {
@@ -107,21 +107,24 @@ namespace Little_System_Cleaner.Misc
             if (number <= 0)
                 return number.ToString();
 
-            var n = number%100;
+            var n = number % 100;
 
             // Skip the switch for as many numbers as possible.
             if (n > 3 && n < 21)
                 return n + "th";
 
             // Determine the suffix for numbers ending in 1, 2 or 3, otherwise add a 'th'
-            switch (n%10)
+            switch (n % 10)
             {
                 case 1:
                     return n + "st";
+
                 case 2:
                     return n + "nd";
+
                 case 3:
                     return n + "rd";
+
                 default:
                     return n + "th";
             }

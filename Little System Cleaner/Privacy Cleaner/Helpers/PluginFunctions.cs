@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,9 +9,6 @@ using System.Linq;
 using System.Security;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 {
@@ -179,28 +179,28 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 switch (xmlChildren.Name)
                 {
                     case "IfSubKey":
-                    {
-                        var searchText = xmlChildren.GetAttribute("SearchText");
-                        var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
+                        {
+                            var searchText = xmlChildren.GetAttribute("SearchText");
+                            var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
 
-                        if (searchText != null)
-                            regexSubKeys.Add(searchText, recurse);
+                            if (searchText != null)
+                                regexSubKeys.Add(searchText, recurse);
 
-                        break;
-                    }
+                            break;
+                        }
                     case "IfValueName":
-                    {
-                        var searchText = xmlChildren.GetAttribute("SearchText");
-                        regexValueNames.Add(searchText);
+                        {
+                            var searchText = xmlChildren.GetAttribute("SearchText");
+                            regexValueNames.Add(searchText);
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
 
             var valueNames = RecurseRegKeyValueNames(regKey, regexValueNames, includeSubKeys);
             var subKeys = RecurseRegKeySubKeys(regKey, regexSubKeys, includeSubKeys);
-            
+
             foreach (var kvp in valueNames)
                 RegistryValueNames.Add(kvp.Key, kvp.Value);
 
@@ -219,24 +219,24 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 switch (xmlChildren.Name)
                 {
                     case "IfFile":
-                    {
-                        var fileName = xmlChildren.GetAttribute("SearchText");
-                        if (!string.IsNullOrEmpty(fileName))
-                            regexFiles.Add(fileName);
+                        {
+                            var fileName = xmlChildren.GetAttribute("SearchText");
+                            if (!string.IsNullOrEmpty(fileName))
+                                regexFiles.Add(fileName);
 
-                        break;
-                    }
+                            break;
+                        }
 
                     case "IfFolder":
-                    {
-                        var folderName = xmlChildren.GetAttribute("SearchText");
-                        var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
+                        {
+                            var folderName = xmlChildren.GetAttribute("SearchText");
+                            var recurse = xmlChildren.GetAttribute("Recursive") == "Y";
 
-                        if (!string.IsNullOrEmpty(folderName))
-                            regexFolders.Add(folderName, recurse);
+                            if (!string.IsNullOrEmpty(folderName))
+                                regexFolders.Add(folderName, recurse);
 
-                        break;
-                    }
+                            break;
+                        }
                 }
             }
 
@@ -295,11 +295,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
                 if (fileList == null)
                     continue;
-                
+
                 foreach (
                     var item in
                         fileList.Where(filePath => !string.IsNullOrEmpty(filePath))
-                            .Select(filepath => new {filePath = filepath, fileName = Path.GetFileName(filepath)})
+                            .Select(filepath => new { filePath = filepath, fileName = Path.GetFileName(filepath) })
                             .Where(item => regexFiles.Where(regex => !string.IsNullOrEmpty(regex))
                                 .Any(regex => Regex.IsMatch(item.fileName, regex))))
                 {
@@ -322,7 +322,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 IniList.AddRange(MiscFunctions.GetValues(filePath, sectionName)
                     .Cast<KeyValuePair<string, string>>()
                     .Where(kvp => Regex.IsMatch(kvp.Key, searchValueNameText))
-                    .Select(kvp => new IniInfo {FilePath = filePath, SectionName = sectionName, ValueName = kvp.Key}));
+                    .Select(kvp => new IniInfo { FilePath = filePath, SectionName = sectionName, ValueName = kvp.Key }));
             }
         }
 
@@ -335,7 +335,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
                 MiscFunctions.GetSections(filePath)
                     .Where(sectionName => !string.IsNullOrEmpty(sectionName))
                     .Where(sectionName => Regex.IsMatch(sectionName, searchSectionText))
-                    .Select(sectionName => new IniInfo {FilePath = filePath, SectionName = sectionName}));
+                    .Select(sectionName => new IniInfo { FilePath = filePath, SectionName = sectionName }));
         }
 
         public void DeleteXml(string filePath, string xPath)
@@ -602,7 +602,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
 
             if (!XmlPaths.ContainsKey(filePath))
             {
-                XmlPaths.Add(filePath, new List<string>(new[] {xPath}));
+                XmlPaths.Add(filePath, new List<string>(new[] { xPath }));
             }
             else
             {

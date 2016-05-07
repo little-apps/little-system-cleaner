@@ -18,15 +18,15 @@ namespace Little_System_Cleaner.Misc
         /// <remarks>This can be things like a file or IP address</remarks>
         public List<string> Items { get; } = new List<string>();
 
-        // 
+        //
         /// <summary>
         /// Parses arguments and converts them into the relative arrays
         /// </summary>
         /// <remarks>
         /// Valid parameters forms:
         /// {-,/,--}param{ ,=,:}((",')value(",'))
-        /// Examples: 
-        /// -param1 value1 --param2 /param3:"Test-:-work" 
+        /// Examples:
+        /// -param1 value1 --param2 /param3:"Test-:-work"
         ///   /param4=happy -param5 '--=nice=--'
         /// </remarks>
         /// <param name="args">Parameters specified, split into an array by a space</param>
@@ -76,7 +76,7 @@ namespace Little_System_Cleaner.Misc
                             Arguments.Add(currentParam, "true");
 
                         // Store our value-less param and grab the next arg to see if it has our value
-                        // parts[0] only contains the opening delimiter -, --, or /, 
+                        // parts[0] only contains the opening delimiter -, --, or /,
                         // so we go after parts[1] for the actual param name
                         currentParam = parts[1];
                         break;

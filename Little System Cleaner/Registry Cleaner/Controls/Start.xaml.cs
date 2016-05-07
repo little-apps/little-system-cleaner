@@ -16,6 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Sections;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,11 +30,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.Sections;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -195,7 +195,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 else if (ex is Win32Exception)
                 {
                     var hr = Marshal.GetHRForException(ex);
-                    if (hr == unchecked((int) 0x80004002))
+                    if (hr == unchecked((int)0x80004002))
                     {
                         MessageBox.Show(Application.Current.MainWindow,
                             "The following error occurred: " + ex.Message +
@@ -483,6 +483,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

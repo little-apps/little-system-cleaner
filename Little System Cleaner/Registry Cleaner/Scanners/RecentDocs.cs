@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -144,14 +144,14 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
         /// <param name="keyObj">Value from registry key</param>
         private static string ExtractUnicodeStringFromBinary(object keyObj)
         {
-            var value = keyObj.ToString(); //get object value 
+            var value = keyObj.ToString(); //get object value
             var type = keyObj.GetType().Name; //get object type
 
             if (type != "Byte[]")
                 return value;
 
             value = "";
-            var bytes = (byte[]) keyObj;
+            var bytes = (byte[])keyObj;
             //this seems crude but cannot find a way to 'cast' a Unicode string to byte[]
             //even in case where we know the beginning format is Unicode
             //so do it the hard way

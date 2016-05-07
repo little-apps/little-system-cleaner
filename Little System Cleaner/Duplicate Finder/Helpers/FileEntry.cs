@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CommonTools.TagLib;
+using CommonTools.TagLib.Mpeg;
+using Little_System_Cleaner.Duplicate_Finder.Controls;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,9 +14,6 @@ using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
-using CommonTools.TagLib;
-using CommonTools.TagLib.Mpeg;
-using Little_System_Cleaner.Duplicate_Finder.Controls;
 using File = CommonTools.TagLib.File;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
@@ -83,6 +83,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                         Bitrate <= 0)
                         HasAudioTags = false;
                     break;
+
                 case UserOptions.ScanMethods.Images:
                     IsImage();
                     break;
@@ -104,10 +105,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         }
 
         public Size ThumbnailSize { get; } = new Size(16, 16);
-        
+
         public bool HasAudioTags { get; private set; }
-
-
 
         public bool IsDeleteable
         {
@@ -126,7 +125,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                     return false;
                 }
 
-                var accessRules = accessControlList?.GetAccessRules(true, true, typeof (SecurityIdentifier));
+                var accessRules = accessControlList?.GetAccessRules(true, true, typeof(SecurityIdentifier));
                 if (accessRules == null)
                     return false;
 
@@ -141,6 +140,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                         case AccessControlType.Allow:
                             deleteAllow = true;
                             break;
+
                         case AccessControlType.Deny:
                             deleteDeny = true;
                             break;
@@ -220,18 +220,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             if (!Scan.ValidImageFiles.Contains(ext))
                 return null;
-            
+
             Image img = null;
 
             try
             {
-                img = (Image) Image.FromFile(FilePath).Clone();
+                img = (Image)Image.FromFile(FilePath).Clone();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("The following exception occurred: " + ex.Message);
             }
-            
+
             // Image is valid if img is not null
 
             return img != null ? ResizeImage(img, ThumbnailSize.Width, ThumbnailSize.Height) : null;
@@ -292,7 +292,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             Pixels.AddRange(GetPixels(image));
         }
-        
+
         /// <summary>
         ///     Compares current file entry with other file entry image
         /// </summary>
@@ -306,7 +306,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             if (Pixels.Count == 0 || otherFileEntry.Pixels.Count == 0)
                 // No pixels, images are not similar at all
                 return decimal.Zero;
-            
+
             if (Pixels.Count != otherFileEntry.Pixels.Count)
                 return 0;
 
@@ -314,14 +314,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 Pixels.Zip(otherFileEntry.Pixels, (colorFirst, colorSecond) => colorFirst == colorSecond)
                     .Count(x => x);
 
-            return sameColor/(decimal) Pixels.Count;
+            return sameColor / (decimal)Pixels.Count;
         }
 
         public List<Color> Pixels { get; } = new List<Color>();
 
         private static IEnumerable<Color> GetPixels(Bitmap bitmap)
         {
-
             var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadOnly, bitmap.PixelFormat);
             var pixelCount = bitmap.Width * bitmap.Height;
@@ -367,6 +366,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                                 color = Color.FromArgb(r, g, b);
                             }
                             break;
+
                         case 8:
                             {
                                 var c = pixelsFirst[i];
@@ -380,7 +380,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             }
 
             bitmap.UnlockBits(bitmapData);
-        } 
+        }
 
         /// <summary>
         ///     Gets audio tags
@@ -411,78 +411,78 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 switch (ext)
                 {
                     case "aac":
-                    {
-                        file = new CommonTools.TagLib.Aac.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Aac.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "aif":
-                    {
-                        file = new CommonTools.TagLib.Aiff.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Aiff.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "ape":
-                    {
-                        file = new CommonTools.TagLib.Ape.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Ape.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "wma":
-                    {
-                        file = new CommonTools.TagLib.Asf.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Asf.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "aa":
                     case "aax":
-                    {
-                        file = new CommonTools.TagLib.Audible.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Audible.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "flac":
-                    {
-                        file = new CommonTools.TagLib.Flac.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Flac.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "mka":
-                    {
-                        file = new CommonTools.TagLib.Matroska.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Matroska.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "mpc":
                     case "mp+":
                     case "mpp":
-                    {
-                        file = new CommonTools.TagLib.MusePack.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.MusePack.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "mp4":
                     case "m4a":
-                    {
-                        file = new CommonTools.TagLib.Mpeg4.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Mpeg4.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "ogg":
                     case "oga":
-                    {
-                        file = new CommonTools.TagLib.Ogg.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Ogg.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "wav":
-                    {
-                        file = new CommonTools.TagLib.Riff.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.Riff.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "wv":
-                    {
-                        file = new CommonTools.TagLib.WavPack.File(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new CommonTools.TagLib.WavPack.File(abstraction, propertiesStyle);
+                            break;
+                        }
                     case "mp3":
                     case "m2a":
                     case "mp2":
                     case "mp1":
-                    {
-                        file = new AudioFile(abstraction, propertiesStyle);
-                        break;
-                    }
+                        {
+                            file = new AudioFile(abstraction, propertiesStyle);
+                            break;
+                        }
                 }
 
                 if (file != null)
@@ -583,18 +583,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
                 case HashAlgorithm.Algorithms.CRC32:
                     hashAlgorithm = new CRC32();
                     break;
+
                 case HashAlgorithm.Algorithms.MD5:
                     hashAlgorithm = MD5.Create();
                     break;
+
                 case HashAlgorithm.Algorithms.SHA1:
                     hashAlgorithm = SHA1.Create();
                     break;
+
                 case HashAlgorithm.Algorithms.SHA256:
                     hashAlgorithm = SHA256.Create();
                     break;
+
                 case HashAlgorithm.Algorithms.SHA512:
                     hashAlgorithm = SHA512.Create();
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null);
             }

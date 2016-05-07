@@ -16,6 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.AutoUpdaterWPF;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Tab_Controls.Options;
+using LittleSoftwareStats;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -30,11 +35,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using LittleSoftwareStats;
-using Little_System_Cleaner.AutoUpdaterWPF;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Tab_Controls.Options;
 using Application = System.Windows.Application;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using Cursors = System.Windows.Input.Cursors;
@@ -216,45 +216,45 @@ namespace Little_System_Cleaner
 
         private void menuItem_Click(object sender, RoutedEventArgs e)
         {
-            switch ((string) (sender as MenuItem)?.Header)
+            switch ((string)(sender as MenuItem)?.Header)
             {
                 case "Help":
-                {
-                    if (!File.Exists("Little System Cleaner.chm"))
                     {
-                        MessageBox.Show(this, "No help file could be found", Utils.ProductName, MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-                        return;
-                    }
+                        if (!File.Exists("Little System Cleaner.chm"))
+                        {
+                            MessageBox.Show(this, "No help file could be found", Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
+                        }
 
-                    Help.ShowHelp(null, "Little System Cleaner.chm");
-                    break;
-                }
+                        Help.ShowHelp(null, "Little System Cleaner.chm");
+                        break;
+                    }
                 case "Visit Website":
-                {
-                    if (!Utils.LaunchUri(@"http://www.little-apps.com/little-system-cleaner/"))
-                        MessageBox.Show(this, "Unable to detect web browser to open link", Utils.ProductName,
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    break;
-                }
-                case "Check for updates":
-                {
-                    AutoUpdater.MainDispatcher = Dispatcher;
-                    AutoUpdater.Start(true);
-                    break;
-                }
-                case "About...":
-                {
-                    if (IsTabsEnabled)
                     {
-                        TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemOptions);
+                        if (!Utils.LaunchUri(@"http://www.little-apps.com/little-system-cleaner/"))
+                            MessageBox.Show(this, "Unable to detect web browser to open link", Utils.ProductName,
+                                MessageBoxButton.OK, MessageBoxImage.Error);
 
-                        var options = TabItemOptions.Content as Options;
-                        options?.ShowAboutTab();
+                        break;
                     }
-                    break;
-                }
+                case "Check for updates":
+                    {
+                        AutoUpdater.MainDispatcher = Dispatcher;
+                        AutoUpdater.Start(true);
+                        break;
+                    }
+                case "About...":
+                    {
+                        if (IsTabsEnabled)
+                        {
+                            TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemOptions);
+
+                            var options = TabItemOptions.Content as Options;
+                            options?.ShowAboutTab();
+                        }
+                        break;
+                    }
             }
         }
 
@@ -306,7 +306,7 @@ namespace Little_System_Cleaner
                     : TabControl.SelectedContent as UserControl;
 
                 var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
-                methodLoad?.Invoke(nextCtrl, new object[] {});
+                methodLoad?.Invoke(nextCtrl, new object[] { });
             }
             else
             {
@@ -321,7 +321,7 @@ namespace Little_System_Cleaner
             var lastCtrl = TabControl.SelectedContent as UserControl;
 
             if (lastCtrl is DynamicUserControl)
-                lastCtrl = (UserControl) (lastCtrl as DynamicUserControl).Content;
+                lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
 
             return lastCtrl;
         }
@@ -332,7 +332,7 @@ namespace Little_System_Cleaner
 
             var methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
-                canExit = (bool?) methodUnload.Invoke(lastCtrl, new object[] {forceExit});
+                canExit = (bool?)methodUnload.Invoke(lastCtrl, new object[] { forceExit });
 
             return canExit;
         }

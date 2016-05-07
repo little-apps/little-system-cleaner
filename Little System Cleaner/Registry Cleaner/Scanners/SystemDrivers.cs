@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
-using System.Linq;
-using System.Security;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
+using System.Diagnostics;
+using System.Linq;
+using System.Security;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -49,7 +49,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                         var driverName in
                             regKey.GetValueNames()
                                 .Select(
-                                    driverName => new {Name = driverName, Value = regKey.GetValue(driverName) as string})
+                                    driverName => new { Name = driverName, Value = regKey.GetValue(driverName) as string })
                                 .Where(o => !string.IsNullOrEmpty(o.Value))
                                 .Where(o => !ScanFunctions.FileExists(o.Value) && !Wizard.IsOnIgnoreList(o.Value))
                                 .Select(o => o.Name)

@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -539,7 +539,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             }
         }
 
-        #endregion
+        #endregion Scan functions
 
         #region Scan Sub-Functions
 
@@ -1018,6 +1018,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
             return false;
         }
 
-        #endregion
+        #endregion Scan Sub-Functions
     }
 }

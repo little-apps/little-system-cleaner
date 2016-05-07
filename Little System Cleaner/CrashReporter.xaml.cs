@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -26,8 +28,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner
 {
@@ -37,7 +37,6 @@ namespace Little_System_Cleaner
     public partial class CrashReporter
     {
         private readonly Exception _exception;
-
 
         public CrashReporter(Exception e)
         {
@@ -97,7 +96,7 @@ namespace Little_System_Cleaner
             sb.AppendLine($"Language: {System.Windows.Forms.Application.CurrentCulture}");
             // uptime stats
             sb.AppendLine(
-                $"System Uptime: {Math.Round((decimal) Environment.TickCount/86400000)} Days {Math.Round((decimal) Environment.TickCount/3600000%24)} Hours {Math.Round((decimal) Environment.TickCount/120000%60)} Mins {Math.Round((decimal) Environment.TickCount/1000%60)} Secs");
+                $"System Uptime: {Math.Round((decimal)Environment.TickCount / 86400000)} Days {Math.Round((decimal)Environment.TickCount / 3600000 % 24)} Hours {Math.Round((decimal)Environment.TickCount / 120000 % 60)} Mins {Math.Round((decimal)Environment.TickCount / 1000 % 60)} Secs");
             sb.AppendLine($"Program Uptime: {proc.TotalProcessorTime}");
             // process id
             sb.AppendLine($"PID: {proc.Id}");
@@ -114,7 +113,6 @@ namespace Little_System_Cleaner
             // versions
             sb.AppendLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
             sb.AppendLine($"CLR Version: {Environment.Version}");
-
 
             var ex = _exception;
             for (var i = 0; ex != null; ex = ex.InnerException, i++)

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
@@ -275,7 +275,6 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                 SectionName = folder,
                 BitmapImg = bitmap.CreateBitmapSourceFromBitmap()
             };
-
 
             try
             {

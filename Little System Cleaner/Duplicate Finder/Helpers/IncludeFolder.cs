@@ -27,7 +27,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             DirInfo = new DirectoryInfo(folderPath);
         }
 
-
         public bool? IsChecked
         {
             get { return _isChecked; }
@@ -80,6 +79,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

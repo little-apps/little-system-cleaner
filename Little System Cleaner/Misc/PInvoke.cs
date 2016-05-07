@@ -51,7 +51,7 @@ namespace Little_System_Cleaner.Misc
 
         [DllImport("kernel32.dll")]
         internal static extern bool GetVersionEx(ref OsVersionInfoEx osVersionInfo);
-        
+
         [DllImport("shell32.dll")]
         internal static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder lpszPath, int nFolder,
             bool fCreate);
@@ -106,7 +106,7 @@ namespace Little_System_Cleaner.Misc
         [DllImport("gdi32.dll")]
         internal static extern bool DeleteObject(IntPtr hObject);
 
-        #endregion
+        #endregion Functions
 
         #region Structures
 
@@ -118,8 +118,10 @@ namespace Little_System_Cleaner.Misc
             public uint dwMinorVersion;
             public uint dwBuildNumber;
             public uint dwPlatformId;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
             public string szCSDVersion;
+
             public ushort wServicePackMajor;
             public ushort wServicePackMinor;
             public ushort wSuiteMask;
@@ -181,24 +183,34 @@ namespace Little_System_Cleaner.Misc
             public uint nFileSizeLow;
             public uint dwReserved0;
             public uint dwReserved1;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string cFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string cAlternateFileName;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string cFileName;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+            public string cAlternateFileName;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 1)]
         public struct ShFileOpStruct
         {
             public IntPtr hwnd;
-            [MarshalAs(UnmanagedType.U4)] public int wFunc;
+
+            [MarshalAs(UnmanagedType.U4)]
+            public int wFunc;
+
             public string pFrom;
             public string pTo;
             public short fFlags;
-            [MarshalAs(UnmanagedType.Bool)] public bool fAnyOperationsAborted;
+
+            [MarshalAs(UnmanagedType.Bool)]
+            public bool fAnyOperationsAborted;
+
             public IntPtr hNameMappings;
             public string lpszProgressTitle;
         }
 
-        #endregion
+        #endregion Structures
 
         #region Enumerations
 
@@ -263,11 +275,13 @@ namespace Little_System_Cleaner.Misc
             SlrInvokeMsi = 0x80
         }
 
-        #endregion
+        #endregion Enumerations
 
         #region Definitions
+
         // GetVersionEx
         internal const byte VER_NT_WORKSTATION = 1;
+
         internal const byte VER_NT_DOMAIN_CONTROLLER = 2;
         internal const byte VER_NT_SERVER = 3;
 
@@ -332,12 +346,14 @@ namespace Little_System_Cleaner.Misc
 
         // AdjustTokenPrivileges
         internal const int SePrivilegeEnabled = 0x00000002;
+
         internal const int SePrivilegeRemoved = 0x00000004;
         internal const int TokenQuery = 0x00000008;
         internal const int TokenAdjustPrivileges = 0x00000020;
 
         // SHGetSpecialFolderPath
         internal const int CsidlStartup = 0x0007; // All Users\Startup
+
         internal const int CsidlCommonStartup = 0x0018; // Common Users\Startup
         internal const int CsidlPrograms = 0x0002; // All Users\Start Menu\Programs
         internal const int CsidlCommonPrograms = 0x0017; // Start Menu\Programs
@@ -347,22 +363,25 @@ namespace Little_System_Cleaner.Misc
 
         // SHFileOperation
         internal const int FoDelete = 3;
+
         internal const int FofAllowundo = 0x40;
         internal const int FofNoconfirmation = 0x10;
 
         // GetWindowLong + SetWindowLong
         internal const int GwlStyle = -16;
+
         internal const int WsSysmenu = 0x80000;
         internal const int GwlExstyle = -20;
         internal const int WsExDlgmodalframe = 0x0001;
 
         // SetWindowPos
         internal const int SwpNosize = 0x0001;
+
         internal const int SwpNomove = 0x0002;
         internal const int SwpNozorder = 0x0004;
         internal const int SwpFramechanged = 0x0020;
 
-        #endregion
+        #endregion Definitions
 
         #region Classes/Interfaces
 
@@ -434,7 +453,6 @@ namespace Little_System_Cleaner.Misc
             void GetClassID(out Guid pClassId);
         }
 
-
         [ComImport, Guid("0000010b-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IPersistFile : IPersist
         {
@@ -457,12 +475,12 @@ namespace Little_System_Cleaner.Misc
             void GetCurFile([In, MarshalAs(UnmanagedType.LPWStr)] string ppszFileName);
         }
 
-        // CLSID_ShellLink from ShlGuid.h 
+        // CLSID_ShellLink from ShlGuid.h
         [ComImport, Guid("00021401-0000-0000-C000-000000000046")]
         public class ShellLink
         {
         }
 
-        #endregion
+        #endregion Classes/Interfaces
     }
 }

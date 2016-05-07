@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using System;
 using System.Windows;
-using Little_System_Cleaner.Misc;
 using Application = System.Windows.Forms.Application;
 
 //using System.Windows.Forms;
@@ -49,7 +49,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
             }
             if (AddFileType != null)
             {
-                var eventArgs = new AddFileTypeEventArgs {FileType = TextBox.Text.Trim()};
+                var eventArgs = new AddFileTypeEventArgs { FileType = TextBox.Text.Trim() };
                 AddFileType(this, eventArgs);
             }
 

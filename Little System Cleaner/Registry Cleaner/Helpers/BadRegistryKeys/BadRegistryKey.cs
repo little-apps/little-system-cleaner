@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,9 +28,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 using Image = System.Windows.Controls.Image;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
@@ -70,7 +70,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
         /// </summary>
         public BadRegistryKey(BitmapImage icon, string sectionName)
         {
-            BitmapImg = new Image {Source = icon};
+            BitmapImg = new Image { Source = icon };
 
             Problem = sectionName;
 
@@ -159,7 +159,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             return MemberwiseClone();
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged & ICloneable Members
 
         #region Properties
 
@@ -230,18 +230,23 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
                     case 1:
                         bmp = Resources._1;
                         break;
+
                     case 2:
                         bmp = Resources._2;
                         break;
+
                     case 3:
                         bmp = Resources._3;
                         break;
+
                     case 4:
                         bmp = Resources._4;
                         break;
+
                     case 5:
                         bmp = Resources._5;
                         break;
+
                     default:
                         return img;
                 }
@@ -294,8 +299,8 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys
             SetIsChecked(state, false, true);
         }
 
-        #endregion
+        #endregion IsChecked Methods
 
-        #endregion
+        #endregion Properties
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -10,9 +13,6 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
@@ -111,8 +111,8 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             var mainAssembly = Assembly.GetEntryAssembly();
             var companyAttribute =
-                (AssemblyCompanyAttribute) GetAttribute(mainAssembly, typeof (AssemblyCompanyAttribute));
-            var titleAttribute = (AssemblyTitleAttribute) GetAttribute(mainAssembly, typeof (AssemblyTitleAttribute));
+                (AssemblyCompanyAttribute)GetAttribute(mainAssembly, typeof(AssemblyCompanyAttribute));
+            var titleAttribute = (AssemblyTitleAttribute)GetAttribute(mainAssembly, typeof(AssemblyTitleAttribute));
             AppTitle = titleAttribute != null ? titleAttribute.Title : mainAssembly.GetName().Name;
             var appCompany = companyAttribute != null ? companyAttribute.Company : "";
 
@@ -145,7 +145,6 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 updateKey?.Close();
             }
 
-
             if (ForceCheck == false && remindLaterTime != null)
             {
                 var remindLater = Convert.ToDateTime(remindLaterTime.ToString(),
@@ -162,7 +161,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
 
             var fileVersionAttribute =
-                (AssemblyFileVersionAttribute) GetAttribute(mainAssembly, typeof (AssemblyFileVersionAttribute));
+                (AssemblyFileVersionAttribute)GetAttribute(mainAssembly, typeof(AssemblyFileVersionAttribute));
             InstalledVersion = new Version(fileVersionAttribute.Version);
 
             var webRequest = WebRequest.Create(AppCastUrl);
@@ -208,12 +207,12 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 if (appCastStream == null)
                     throw new Exception("Response stream from update server was null.");
 
-                var serializer = new XmlSerializer(typeof (UpdateXml));
+                var serializer = new XmlSerializer(typeof(UpdateXml));
 
                 reader = new XmlTextReader(appCastStream);
 
                 if (serializer.CanDeserialize(reader))
-                    updateXml = (UpdateXml) serializer.Deserialize(reader);
+                    updateXml = (UpdateXml)serializer.Deserialize(reader);
                 else
                     throw new Exception("Update file is in the wrong format.");
             }
@@ -321,7 +320,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             {
                 return null;
             }
-            return (Attribute) attributes[0];
+            return (Attribute)attributes[0];
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Windows;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
+﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
 using Little_System_Cleaner.Misc;
+using System;
+using System.Windows;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -33,7 +33,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         public string Size => Utils.ConvertSizeToString(_fileEntry.FileSize);
         public string FilePath => _fileEntry.FilePath;
 
-        #endregion
+        #endregion File information
 
         #region Audio information
 
@@ -119,6 +119,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             }
         }
 
-        #endregion
+        #endregion Audio information
     }
 }

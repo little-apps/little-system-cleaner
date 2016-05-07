@@ -26,8 +26,8 @@
         <!-- <LinearGradientBrush x:Key="LightBrush" StartPoint="0,0" EndPoint="0,1">
             <LinearGradientBrush.GradientStops>
                 <GradientStopCollection>
-                    <GradientStop Color="#FFF" Offset="0.0"/>
-                    <GradientStop Color="#EEE" Offset="1.0"/>
+                    <GradientStop Color="#FFF" Offset="0.0" />
+                    <GradientStop Color="#EEE" Offset="1.0" />
                 </GradientStopCollection>
             </LinearGradientBrush.GradientStops>
         </LinearGradientBrush> -->
@@ -317,7 +317,6 @@
                    Width="48" Source="/Little_System_Cleaner;component/Resources/Help.png"
                    MouseEnter="imageHelp_MouseEnter" MouseLeave="imageHelp_MouseLeave"
                    MouseLeftButtonDown="imageHelp_MouseLeftButtonDown" Grid.Column="1" />
-
         </Grid>
         <TabControl IsSynchronizedWithCurrentItem="True" Style="{StaticResource WindowTabCtrl}" x:Name="TabControl"
                     Grid.Row="1" Margin="0">
@@ -352,6 +351,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-
-
 </Window>

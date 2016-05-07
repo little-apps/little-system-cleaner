@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Linq;
-using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Properties;
+using System;
+using System.Linq;
+using System.Windows;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {

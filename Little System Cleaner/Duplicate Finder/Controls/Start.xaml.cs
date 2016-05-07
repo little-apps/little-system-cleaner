@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -24,7 +24,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             InitializeComponent();
 
             _scanBase = sb;
-            
 
             DataContext = _scanBase.Options;
 
@@ -41,7 +40,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     .Select(di => new IncludeDrive(di))
                     // Iterate through drives and check drive if checked in previous list
                     .Select(
-                        includeDriveToAdd => new IncludeDrive {IsChecked = drivesChecked.Contains(includeDriveToAdd), Name = includeDriveToAdd.Name}));
+                        includeDriveToAdd => new IncludeDrive { IsChecked = drivesChecked.Contains(includeDriveToAdd), Name = includeDriveToAdd.Name }));
             }
             catch (UnauthorizedAccessException ex)
             {

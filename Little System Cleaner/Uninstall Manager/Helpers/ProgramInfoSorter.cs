@@ -27,14 +27,16 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             {
                 var priority = 0;
 
-                switch ((string) _column.Header)
+                switch ((string)_column.Header)
                 {
                     case "Program":
                         priority = string.CompareOrdinal(x.Program, y.Program);
                         break;
+
                     case "Publisher":
                         priority = string.CompareOrdinal(x.Publisher, y.Publisher);
                         break;
+
                     case "Size":
                         priority = x.SizeBytes.CompareTo(y.SizeBytes);
                         break;

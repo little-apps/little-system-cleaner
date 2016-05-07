@@ -24,7 +24,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
             for (var i = 0; i < 256; i++)
             {
-                var entry = (uint) i;
+                var entry = (uint)i;
 
                 for (var j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
@@ -82,7 +82,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             var crc = seed;
             for (var i = start; i < size - start; i++)
             {
-                var b = buffer[i]; 
+                var b = buffer[i];
                 crc = (crc >> 8) ^ table[b ^ crc & 0xff];
             }
 

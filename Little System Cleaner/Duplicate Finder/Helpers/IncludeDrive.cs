@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
+﻿using Little_System_Cleaner.Annotations;
+using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
-using Little_System_Cleaner.Annotations;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
-    [XmlInclude(typeof (IncludeDrive))]
+    [XmlInclude(typeof(IncludeDrive))]
     public class IncludeDrive : INotifyPropertyChanged
     {
         public IncludeDrive()
@@ -42,7 +42,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 
         public override bool Equals(object obj)
         {
-            return obj is IncludeDrive ? Equals((IncludeDrive) obj) : base.Equals(obj);
+            return obj is IncludeDrive ? Equals((IncludeDrive)obj) : base.Equals(obj);
         }
 
         public bool Equals(IncludeDrive other)

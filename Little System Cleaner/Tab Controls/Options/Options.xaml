@@ -195,8 +195,6 @@
                                 VerticalAlignment="Top" Grid.Column="1" />
                 </Grid>
             </TabItem>
-
         </TabControl>
-
     </Grid>
 </UserControl>

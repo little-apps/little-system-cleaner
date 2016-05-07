@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Timers;
 using System.Windows;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {
@@ -110,6 +110,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         AutoUpdater.RemindLaterTimeSpan = remindLaterForm.RemindLaterFormat;
                         AutoUpdater.RemindLaterAt = remindLaterForm.RemindLaterAt;
                         break;
+
                     case false:
                         var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
 
@@ -122,6 +123,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                             return;
                         }
                         return;
+
                     default:
                         DialogResult = null;
                         return;
@@ -141,9 +143,11 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                 case RemindLaterFormat.Days:
                     remindLaterDateTime = DateTime.Now + TimeSpan.FromDays(AutoUpdater.RemindLaterAt);
                     break;
+
                 case RemindLaterFormat.Hours:
                     remindLaterDateTime = DateTime.Now + TimeSpan.FromHours(AutoUpdater.RemindLaterAt);
                     break;
+
                 case RemindLaterFormat.Minutes:
                     remindLaterDateTime = DateTime.Now + TimeSpan.FromMinutes(AutoUpdater.RemindLaterAt);
                     break;
@@ -170,7 +174,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             var timeSpan = remindLater - DateTime.Now;
             _timer = new Timer
             {
-                Interval = (int) timeSpan.TotalMilliseconds
+                Interval = (int)timeSpan.TotalMilliseconds
             };
             _timer.Elapsed += TimerElapsed;
             _timer.Start();

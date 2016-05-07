@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -33,8 +35,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 using Application = System.Windows.Forms.Application;
 
 namespace Little_System_Cleaner.Misc
@@ -86,8 +86,10 @@ namespace Little_System_Cleaner.Misc
             {
                 case 0:
                     return webProxy;
+
                 case 1:
                     return WebRequest.DefaultWebProxy;
+
                 default:
                     if (string.IsNullOrEmpty(Settings.Default.optionsProxyHost) ||
                         Settings.Default.optionsProxyPort <= 0 || Settings.Default.optionsProxyPort >= 65535)
@@ -108,7 +110,6 @@ namespace Little_System_Cleaner.Misc
                     return webProxy;
             }
         }
-        
 
         /// <summary>
         ///     Extracts the large or small icon
@@ -127,9 +128,9 @@ namespace Little_System_Cleaner.Misc
             //Transform the bits into the icon image
             Icon returnIcon = null;
             if (smallIcon != IntPtr.Zero)
-                returnIcon = (Icon) Icon.FromHandle(smallIcon).Clone();
+                returnIcon = (Icon)Icon.FromHandle(smallIcon).Clone();
             else if (largeIcon != IntPtr.Zero)
-                returnIcon = (Icon) Icon.FromHandle(largeIcon).Clone();
+                returnIcon = (Icon)Icon.FromHandle(largeIcon).Clone();
 
             //clean up
             PInvoke.DestroyIcon(smallIcon);
@@ -151,15 +152,15 @@ namespace Little_System_Cleaner.Misc
         internal static bool ResolveShortcut(string shortcut, out string filepath, out string arguments)
         {
             var link = new PInvoke.ShellLink();
-            ((PInvoke.IPersistFile) link).Load(shortcut, PInvoke.StgmRead);
-            // TODO: if I can get hold of the hwnd call resolve first. This handles moved and renamed files.  
-            // ((IShellLinkW)link).Resolve(hwnd, 0) 
+            ((PInvoke.IPersistFile)link).Load(shortcut, PInvoke.StgmRead);
+            // TODO: if I can get hold of the hwnd call resolve first. This handles moved and renamed files.
+            // ((IShellLinkW)link).Resolve(hwnd, 0)
             var path = new StringBuilder(PInvoke.MaxPath);
             PInvoke.Win32FindDataWide data;
-            ((PInvoke.IShellLinkW) link).GetPath(path, path.Capacity, out data, 0);
+            ((PInvoke.IShellLinkW)link).GetPath(path, path.Capacity, out data, 0);
 
             var args = new StringBuilder(PInvoke.MaxPath);
-            ((PInvoke.IShellLinkW) link).GetArguments(args, args.Capacity);
+            ((PInvoke.IShellLinkW)link).GetArguments(args, args.Capacity);
 
             filepath = path.ToString();
             arguments = args.ToString();
@@ -203,7 +204,7 @@ namespace Little_System_Cleaner.Misc
         internal static bool FileExists(string filePath)
         {
             var fileName = SanitizeFilePath(filePath);
-            
+
             // Now see if file exists
             return File.Exists(fileName) || PInvoke.PathFileExists(fileName) || SearchPath(fileName);
         }
@@ -321,17 +322,17 @@ namespace Little_System_Cleaner.Misc
             }
             else if (length < 1000000) // 1MB
             {
-                size = length/(decimal) 0x400;
+                size = length / (decimal)0x400;
                 unit = shortFormat ? " KB" : " Kilobytes";
             }
             else if (length < 1000000000) // 1GB
             {
-                size = length/(decimal) 0x100000;
+                size = length / (decimal)0x100000;
                 unit = shortFormat ? " MB" : " Megabytes";
             }
             else
             {
-                size = length/(decimal) 0x40000000;
+                size = length / (decimal)0x40000000;
                 unit = shortFormat ? " GB" : " Gigabytes";
             }
 
@@ -416,7 +417,6 @@ namespace Little_System_Cleaner.Misc
 
             return string.Copy(sb.ToString());
         }
-
 
         /// <summary>
         ///     Parses the path and checks for any illegal characters
@@ -793,8 +793,6 @@ namespace Little_System_Cleaner.Misc
             return System.Windows.Application.Current.Dispatcher.BeginInvoke(showMsgBox);
         }
 
-        
-
         #region SecureString Functions
 
         private static byte[] GetMachineHash
@@ -823,7 +821,7 @@ namespace Little_System_Cleaner.Misc
                     // ignored
                 }
 
-                string[] hardDriveSerialNo = {""};
+                string[] hardDriveSerialNo = { "" };
                 var mc = new ManagementClass("Win32_DiskDrive");
                 foreach (
                     var o in
@@ -834,7 +832,7 @@ namespace Little_System_Cleaner.Misc
                     // Only get the first one
                     try
                     {
-                        var mo = (ManagementObject) o;
+                        var mo = (ManagementObject)o;
 
                         hardDriveSerialNo[0] = mo["SerialNumber"].ToString();
                     }
@@ -909,7 +907,7 @@ namespace Little_System_Cleaner.Misc
             return returnValue;
         }
 
-        #endregion
+        #endregion SecureString Functions
 
         #region Registry Functions
 
@@ -971,37 +969,37 @@ namespace Little_System_Cleaner.Misc
                 switch (mainKey.ToUpper())
                 {
                     case "HKEY_CLASSES_ROOT":
-                    {
-                        reg = Registry.ClassesRoot;
-                        break;
-                    }
+                        {
+                            reg = Registry.ClassesRoot;
+                            break;
+                        }
                     case "HKEY_CURRENT_USER":
-                    {
-                        reg = Registry.CurrentUser;
-                        break;
-                    }
+                        {
+                            reg = Registry.CurrentUser;
+                            break;
+                        }
                     case "HKEY_LOCAL_MACHINE":
-                    {
-                        reg = Registry.LocalMachine;
-                        break;
-                    }
+                        {
+                            reg = Registry.LocalMachine;
+                            break;
+                        }
                     case "HKEY_USERS":
-                    {
-                        reg = Registry.Users;
-                        break;
-                    }
+                        {
+                            reg = Registry.Users;
+                            break;
+                        }
                     case "HKEY_CURRENT_CONFIG":
-                    {
-                        reg = Registry.CurrentConfig;
-                        break;
-                    }
+                        {
+                            reg = Registry.CurrentConfig;
+                            break;
+                        }
                     default:
-                    {
-                        if (!throwOnError)
-                            return null;
+                        {
+                            if (!throwOnError)
+                                return null;
 
-                        throw new Exception($"Unable to parse registry key.\nMain key: {mainKey}\nSub Key: {subKey}"); // break here
-                    }
+                            throw new Exception($"Unable to parse registry key.\nMain key: {mainKey}\nSub Key: {subKey}"); // break here
+                        }
                 }
 
                 if (!string.IsNullOrWhiteSpace(subKey))
@@ -1070,6 +1068,6 @@ namespace Little_System_Cleaner.Misc
             return true;
         }
 
-        #endregion
+        #endregion Registry Functions
     }
 }

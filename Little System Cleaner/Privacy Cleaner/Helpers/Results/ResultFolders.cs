@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers.Results
 {

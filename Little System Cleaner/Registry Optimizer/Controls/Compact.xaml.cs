@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -23,7 +24,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Misc;
 using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
@@ -126,7 +126,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             // The shutdown block will only succeed if it is called from the main thread
             if (Dispatcher.Thread != Thread.CurrentThread)
             {
-                return (bool) Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
+                return (bool)Dispatcher.Invoke(new Func<bool, bool>(SetShutdownBlockReason), enable);
             }
 
             var hWnd = Process.GetCurrentProcess().MainWindowHandle;
@@ -141,7 +141,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
+                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
         }
     }
 }

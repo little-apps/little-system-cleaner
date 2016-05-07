@@ -10,7 +10,6 @@
         Closing="LoadProgram_OnClosing"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" ResizeMode="NoResize">
 
-
     <StackPanel Orientation="Vertical" Margin="5">
         <StackPanel x:Name="StackPanelTop" Orientation="Vertical">
             <Border BorderBrush="{x:Null}" Width="Auto" Height="32">
@@ -157,7 +156,6 @@
                         <GridViewColumn Header="File Path" DisplayMemberBinding="{Binding FilePath}" Width="100" />
                     </GridView>
                 </ListView.View>
-
             </ListView>
         </Expander>
         <Expander x:Name="ExpanderThreads" Header="Threads" IsExpanded="{Binding ThreadsExpanded}">
@@ -172,7 +170,6 @@
                         <GridViewColumn Header="Start Time" DisplayMemberBinding="{Binding StartTime}" Width="100" />
                     </GridView>
                 </ListView.View>
-
             </ListView>
         </Expander>
         <DockPanel x:Name="DockPanelBottom">
@@ -185,13 +182,11 @@
                     <Label VerticalContentAlignment="Center" DockPanel.Dock="Left">End Time:</Label>
                     <TextBox Text="{Binding EndTime}" VerticalAlignment="Center" DockPanel.Dock="Right" Width="Auto" />
                 </DockPanel>
-
             </DockPanel>
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Right" DockPanel.Dock="Right">
                 <Button x:Name="KillProcess" Padding="7" Margin="0,0,5,0" Click="KillProcess_Click">Kill Process</Button>
                 <Button x:Name="Close" Padding="7" HorizontalAlignment="Right" Click="Close_Click">Close</Button>
             </StackPanel>
         </DockPanel>
-
     </StackPanel>
 </Window>

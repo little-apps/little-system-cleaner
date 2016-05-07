@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,9 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -332,7 +332,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives",
-                    (int) DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+                    (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
             else if (ScanBase.Options.AllExceptDrives.GetValueOrDefault())
             {
@@ -372,7 +372,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except",
-                    (int) DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+                    (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
             else if (ScanBase.Options.OnlySelectedDrives.GetValueOrDefault())
             {
@@ -412,7 +412,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives",
-                    (int) DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+                    (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
             else // Only selected folders
             {
@@ -437,7 +437,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders",
-                    (int) DateTime.Now.Subtract(dtStart).TotalSeconds, true);
+                    (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
 
             if (_fileList.Count != 0)
@@ -501,24 +501,23 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         if (ex is PathTooLongException)
                         {
                             // Just in case
-                            Debug.WriteLine("Path ({0}) is too long", (object) file);
+                            Debug.WriteLine("Path ({0}) is too long", (object)file);
                         }
                     }
                 }
             }
             catch (IOException ex)
             {
-                Debug.WriteLine("The following I/O error occurred reading files: {0}", (object) ex.Message);
+                Debug.WriteLine("The following I/O error occurred reading files: {0}", (object)ex.Message);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following unknown exception occurred reading files: {0}", (object) ex.Message);
+                Debug.WriteLine("The following unknown exception occurred reading files: {0}", (object)ex.Message);
 
 #if (DEBUG)
                 throw;
 #endif
             }
-
 
             if (!ScanBase.Options.ScanSubDirs.GetValueOrDefault())
                 return;
@@ -547,30 +546,30 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        Debug.WriteLine("Could not access directories: {0}", (object) ex.Message);
+                        Debug.WriteLine("Could not access directories: {0}", (object)ex.Message);
                     }
                     catch (SecurityException ex)
                     {
                         Debug.WriteLine("A security exception error occurred reading directories: {0}",
-                            (object) ex.Message);
+                            (object)ex.Message);
                     }
                     catch (IOException ex)
                     {
                         if (ex is PathTooLongException)
                         {
                             // Just in case
-                            Debug.WriteLine("Path ({0}) is too long", (object) dir);
+                            Debug.WriteLine("Path ({0}) is too long", (object)dir);
                         }
                     }
                 }
             }
             catch (IOException ex)
             {
-                Debug.WriteLine("The following I/O error occurred reading directories: {0}", (object) ex.Message);
+                Debug.WriteLine("The following I/O error occurred reading directories: {0}", (object)ex.Message);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("The following unknown exception occurred reading directories: {0}", (object) ex.Message);
+                Debug.WriteLine("The following unknown exception occurred reading directories: {0}", (object)ex.Message);
 
 #if (DEBUG)
                 throw;
@@ -602,7 +601,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     break;
             }
 
-            var maxSizeBytes = maxSize*(long) multiplier;
+            var maxSizeBytes = maxSize * (long)multiplier;
 
             return size > maxSizeBytes;
         }
@@ -654,10 +653,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 while (bytesToRead > 0)
                 {
-                    // Read may return anything from 0 to numBytesToRead. 
+                    // Read may return anything from 0 to numBytesToRead.
                     var n = fileStream.Read(actualSignature, bytesRead, bytesToRead);
 
-                    // Break when the end of the file is reached. 
+                    // Break when the end of the file is reached.
                     if (n == 0)
                         break;
 
@@ -681,7 +680,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         private void GroupByImage()
         {
             StatusText = "Determing if files are images";
-            
+
             var countFileEntries = _fileList.Count(fileEntry => fileEntry.IsImage());
 
             if (countFileEntries == 0)
@@ -695,7 +694,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
                 if (ProgressBar.IsIndeterminate)
                     ProgressBar.IsIndeterminate = false;
-                
+
                 ProgressBar.Maximum = countFileEntries;
             }));
 
@@ -725,7 +724,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return;
 
             i = 0;
-            
+
             StatusText = "Grouping files by pixels";
 
             Main.Watcher.Event("Duplicate Finder", "Group by pixels");
@@ -788,7 +787,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 .Where(fileEntry => fileEntry.IsDeleteable)
                 .GroupBy(fileEntry => fileEntry.FileName)
                 .Where(g => g.Count() > 1)
-                .Select(g => new {FileName = g.Key, Files = g})
+                .Select(g => new { FileName = g.Key, Files = g })
                 .Where(group => !string.IsNullOrEmpty(group.FileName) && group.Files.Any());
 
             foreach (var group in groupedByFilename.TakeWhile(group => !_cancelTokenSource.IsCancellationRequested))
@@ -830,7 +829,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 .Where(fileEntry => fileEntry.IsDeleteable)
                 .GroupBy(fileEntry => fileEntry.FileSize)
                 .Where(g => g.Count() > 1)
-                .Select(g => new {FileSize = g.Key, Files = g})
+                .Select(g => new { FileSize = g.Key, Files = g })
                 .Where(g => g.Files.Any());
 
             foreach (var group in groupedByFileSize)
@@ -889,7 +888,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         ProgressBar.Value += 1;
-                        Main.TaskbarProgressValue = ProgressBar.Value/ProgressBar.Maximum;
+                        Main.TaskbarProgressValue = ProgressBar.Value / ProgressBar.Maximum;
                     }));
                 }
 
@@ -901,7 +900,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 var groupedByChecksum = files
                     .GroupBy(fileEntry => fileEntry.Checksum)
                     .Where(g => g.Count() > 1)
-                    .Select(g => new {Checksum = g.Key, Files = g.ToList()})
+                    .Select(g => new { Checksum = g.Key, Files = g.ToList() })
                     .Where(group => !string.IsNullOrEmpty(group.Checksum) && group.Files.Any());
 
                 foreach (var group in groupedByChecksum)
@@ -955,7 +954,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ProgressBar.Value += 1;
-                    Main.TaskbarProgressValue = ProgressBar.Value/ProgressBar.Maximum;
+                    Main.TaskbarProgressValue = ProgressBar.Value / ProgressBar.Maximum;
                 }));
             }
 
@@ -972,7 +971,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 .Where(fileEntry => fileEntry.HasAudioTags)
                 .GroupBy(fileEntry => fileEntry.TagsChecksum)
                 .Where(group => group.Count() > 1)
-                .Select(group => new {Checksum = group.Key, Files = group.ToList()});
+                .Select(group => new { Checksum = group.Key, Files = group.ToList() });
 
             foreach (var group in groupedByTagsChecksum)
             {
@@ -1014,6 +1013,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

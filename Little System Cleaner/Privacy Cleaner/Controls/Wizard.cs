@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 {
@@ -39,9 +39,9 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
 
         public Wizard()
         {
-            Controls.Add(typeof (Start));
-            Controls.Add(typeof (Analyze));
-            Controls.Add(typeof (Results));
+            Controls.Add(typeof(Start));
+            Controls.Add(typeof(Analyze));
+            Controls.Add(typeof(Results));
         }
 
         /// <summary>

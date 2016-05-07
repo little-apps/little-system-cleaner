@@ -14,7 +14,6 @@
             </StackPanel>
             <Label Content="Registry Path:" />
             <TextBox Height="23" VerticalAlignment="Top" Text="{Binding SubKeyPath}" />
-
         </StackPanel>
         <StackPanel Visibility="{Binding FileVisible}">
             <Label Content="File Path:" />
@@ -37,5 +36,4 @@
             <Button x:Name="ButtonAdd" Padding="8,0,8,0" Click="buttonAdd_Click" Content="{Binding AddEditText}" />
         </StackPanel>
     </StackPanel>
-
 </Window>

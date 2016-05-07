@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -65,7 +65,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
         private void ScanRecycleBin()
         {
-            var sqrbi = new SHQUERYRBINFO {cbSize = Marshal.SizeOf(typeof (SHQUERYRBINFO))};
+            var sqrbi = new SHQUERYRBINFO { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
             SHQueryRecycleBin(string.Empty, ref sqrbi);
             if (sqrbi.i64NumItems > 0)
                 Wizard.StoreCleanDelegate(CleanRecycleBin, "Empty Recycle Bin", sqrbi.i64Size);
@@ -153,18 +153,20 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             public long i64NumItems;
         }
 
-        #endregion
+        #endregion Structures
 
         #region Constants
 
         // No dialog box confirming the deletion of the objects will be displayed.
         internal const int SHERB_NOCONFIRMATION = 0x00000001;
+
         // No dialog box indicating the progress will be displayed.
         internal const int SHERB_NOPROGRESSUI = 0x00000002;
+
         // No sound will be played when the operation is complete.
         internal const int SHERB_NOSOUND = 0x00000004;
 
-        #endregion
+        #endregion Constants
 
         #region Functions
 
@@ -174,6 +176,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         [DllImport("shell32.dll", SetLastError = true)]
         internal static extern int SHEmptyRecycleBin(IntPtr hWnd, string pszRootPath, uint dwFlags);
 
-        #endregion
+        #endregion Functions
     }
 }

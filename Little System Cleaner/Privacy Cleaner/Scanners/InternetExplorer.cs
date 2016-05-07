@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -77,18 +77,21 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 case "History":
                     ScanHistory();
                     break;
+
                 case "Cookies":
                     ScanCookies();
                     break;
+
                 case "Auto Complete":
                     ScanAutoComplete();
                     break;
+
                 case "Temporary Internet Files":
                     ScanTemporaryFiles();
                     break;
-                //case "Index.dat Files":
-                //    ScanIndexFiles();
-                //    break;
+                    //case "Index.dat Files":
+                    //    ScanIndexFiles();
+                    //    break;
             }
         }
 
@@ -102,7 +105,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             try
             {
                 var url = new UrlHistoryClass();
-                var obj = (IUrlHistoryStg2) url;
+                var obj = (IUrlHistoryStg2)url;
 
                 obj.ClearHistory();
             }
@@ -248,7 +251,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             STATURL_QUERYFLAG_TOPLEVEL = 0x00080000
         }
 
-        #endregion
+        #endregion Internet Explorer Enums
 
         #region Internet Explorer Structures
 
@@ -275,12 +278,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             /// <summary>
             ///     URL
             /// </summary>
-            [MarshalAs(UnmanagedType.LPWStr)] public string pwcsUrl;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pwcsUrl;
 
             /// <summary>
             ///     Page title
             /// </summary>
-            [MarshalAs(UnmanagedType.LPWStr)] public string pwcsTitle;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pwcsTitle;
 
             /// <summary>
             ///     Last visited date (UTC)
@@ -352,11 +357,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         [StructLayout(LayoutKind.Explicit)]
         internal struct ExemptDeltaOrReserverd
         {
-            [FieldOffset(0)] public uint dwReserved;
-            [FieldOffset(0)] public uint dwExemptDelta;
+            [FieldOffset(0)]
+            public uint dwReserved;
+
+            [FieldOffset(0)]
+            public uint dwExemptDelta;
         }
 
-        #endregion
+        #endregion Internet Explorer Structures
 
         #region Internet Explorer Interfaces
 
@@ -373,12 +381,14 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         internal interface IUrlHistoryStg2
         {
             uint AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags);
+
             uint DeleteUrl(string pocsUrl, int dwFlags);
 
             uint QueryUrl([MarshalAs(UnmanagedType.LPWStr)] string pocsUrl, STATURL_QUERYFLAGS dwFlags,
                 ref STATURL lpSTATURL);
 
             uint BindToObject([In] string pocsUrl, [In] Uuid riid, IntPtr ppvOut);
+
             uint EnumUrls([Out] IntPtr ppEnum);
 
             [PreserveSig]
@@ -388,7 +398,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             uint ClearHistory();
         }
 
-        #endregion
+        #endregion Internet Explorer Interfaces
 
         #region Internet Explorer Functions
 
@@ -401,12 +411,11 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         internal static extern bool UnlockUrlCacheEntryFile([MarshalAs(UnmanagedType.LPStr)] string lpszUrlName,
             uint dwReserved);
 
-        #endregion
+        #endregion Internet Explorer Functions
 
         //            fileList.Add(file);
         //        if (File.Exists(file) && Utils.IsFileValid(file))
         //    {
-
         //    foreach (string file in fileListTemp)
         //    };
         //        Environment.ExpandEnvironmentVariables("%userprofile%\\Local Settings\\Temporary Internet Files\\Content.IE5\\index.dat"),

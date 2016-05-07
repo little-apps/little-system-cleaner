@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Startup_Manager.Helpers;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Startup_Manager.Helpers;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {

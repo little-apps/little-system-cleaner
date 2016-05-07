@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using Little_System_Cleaner.Misc;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {
@@ -147,7 +147,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             {"zip", "Compressed File"}
         };
 
-        #endregion
+        #endregion File Types
 
         private bool? _isChecked = false;
 
@@ -288,7 +288,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
 
         #region IsChecked Methods
 
@@ -327,6 +327,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
             SetIsChecked(state, false, true);
         }
 
-        #endregion
+        #endregion IsChecked Methods
     }
 }

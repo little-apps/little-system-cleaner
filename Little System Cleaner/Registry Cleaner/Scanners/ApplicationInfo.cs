@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
-using System.Linq;
-using System.Security;
 using Little_System_Cleaner.Registry_Cleaner.Controls;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Uninstall_Manager.Helpers;
 using Microsoft.Win32;
+using System.Diagnostics;
+using System.Linq;
+using System.Security;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
@@ -78,7 +78,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                 if (!ScanFunctions.IconExists(progInfo.DisplayIcon))
                                     Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(), "DisplayIcon");
 
-                            // Check install location 
+                            // Check install location
                             if (!string.IsNullOrEmpty(progInfo.InstallLocation))
                                 if (!ScanFunctions.DirExists(progInfo.InstallLocation) &&
                                     !ScanFunctions.FileExists(progInfo.InstallLocation))
@@ -86,7 +86,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                                         Wizard.StoreInvalidKey(Strings.InvalidFile, regKey2.ToString(),
                                             "InstallLocation");
 
-                            // Check install source 
+                            // Check install source
                             if (!string.IsNullOrEmpty(progInfo.InstallSource))
                                 if (!ScanFunctions.DirExists(progInfo.InstallSource) &&
                                     !ScanFunctions.FileExists(progInfo.InstallSource))

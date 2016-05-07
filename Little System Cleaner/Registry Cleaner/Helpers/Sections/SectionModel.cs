@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections;
 using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
+using System.Collections;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 {
@@ -47,7 +47,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Sections
 
         internal static SectionModel CreateSectionModel()
         {
-            var myComp = new Section {Icon = Resources.mycomputer, SectionName = "My Computer"};
+            var myComp = new Section { Icon = Resources.mycomputer, SectionName = "My Computer" };
             var model = new SectionModel();
 
             myComp.Children.Add(new Section

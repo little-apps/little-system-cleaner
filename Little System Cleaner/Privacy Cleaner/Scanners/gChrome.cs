@@ -16,6 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Properties;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -23,11 +28,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -112,12 +112,15 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 case "Cookies":
                     ScanCookies();
                     break;
+
                 case "Download History":
                     ScanDownloadHistory();
                     break;
+
                 case "Internet Cache":
                     ScanCache();
                     break;
+
                 case "Internet History":
                     ScanInternetHistory();
                     break;
@@ -166,7 +169,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             try
             {
                 // Make sure all the needed files + dirs are there
-                string[] neededFilesDirs = {"Cookies", "History", "Cache"};
+                string[] neededFilesDirs = { "Cookies", "History", "Cache" };
                 var fileSysEntries = new List<string>(Directory.EnumerateFileSystemEntries(path));
 
                 if (neededFilesDirs.Any(neededFileDir => !fileSysEntries.Contains(path + "\\" + neededFileDir)))
@@ -191,7 +194,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 
             if (MiscFunctions.IsFileValid(cookiesFile))
             {
-                Wizard.StoreBadFileList("Clear Cookies", new[] {cookiesFile}, MiscFunctions.GetFileSize(cookiesFile));
+                Wizard.StoreBadFileList("Clear Cookies", new[] { cookiesFile }, MiscFunctions.GetFileSize(cookiesFile));
             }
         }
 
@@ -326,7 +329,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             {
                 // ignored
             }
-
 
             try
             {

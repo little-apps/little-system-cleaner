@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
-using CommonTools.TreeListView.Tree;
+﻿using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Duplicate_Finder.Helpers;
 using Little_System_Cleaner.Misc;
+using System;
+using System.ComponentModel;
+using System.Windows;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -40,7 +40,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (!e.Cancelled && e.Error == null && (bool) e.Result)
+            if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
                 DialogResult = true;
             }
@@ -54,7 +54,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            Model = ResultModel.CreateResultModel((Wizard) e.Argument);
+            Model = ResultModel.CreateResultModel((Wizard)e.Argument);
 
             Dispatcher.Invoke(new Action(() => _tree.Model = Model));
 

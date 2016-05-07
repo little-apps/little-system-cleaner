@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,9 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -241,7 +241,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }
         }
 
-
         public bool? FindFilesCreated
         {
             get { return Settings.Default.diskCleanerFindFilesMode == 0; }
@@ -422,19 +421,19 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             // Excluded Dirs
             ExcFoldersCollection.AddRange(
                 Settings.Default.diskCleanerExcludedDirs.Cast<string>()
-                    .Select(excludeDir => new LviFolder {Folder = excludeDir}));
+                    .Select(excludeDir => new LviFolder { Folder = excludeDir }));
             //this.listViewExcludeFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Excluded Files
             ExcFilesCollection.AddRange(
                 Settings.Default.diskCleanerExcludedFileTypes.Cast<string>()
-                    .Select(excludeFile => new LviFile {File = excludeFile}));
+                    .Select(excludeFile => new LviFile { File = excludeFile }));
             //this.listViewFiles.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
             // Included Folders
             IncFoldersCollection.AddRange(
                 Settings.Default.diskCleanerIncludedFolders.Cast<string>()
-                    .Select(includedFolder => new LviFolder {Folder = includedFolder}));
+                    .Select(includedFolder => new LviFolder { Folder = includedFolder }));
             //this.listViewIncFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
@@ -465,7 +464,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void addIncFolder_AddIncFolder(object sender, AddIncFolderEventArgs e)
         {
-            IncFoldersCollection.Add(new LviFolder {Folder = e.FolderPath});
+            IncFoldersCollection.Add(new LviFolder { Folder = e.FolderPath });
         }
 
         private void buttonAddExcludeFolder_Click(object sender, RoutedEventArgs e)
@@ -477,7 +476,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void addFolder_AddExcludeFolder(object sender, AddExcludeFolderEventArgs e)
         {
-            ExcFoldersCollection.Add(new LviFolder {Folder = e.FolderPath});
+            ExcFoldersCollection.Add(new LviFolder { Folder = e.FolderPath });
         }
 
         private void buttonFilesAdd_Click(object sender, RoutedEventArgs e)
@@ -489,7 +488,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void addFileType_AddFileType(object sender, AddFileTypeEventArgs e)
         {
-            ExcFilesCollection.Add(new LviFile {File = e.FileType});
+            ExcFilesCollection.Add(new LviFile { File = e.FileType });
         }
 
         private void buttonRemExcludeFile_Click(object sender, RoutedEventArgs e)
@@ -556,10 +555,10 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 "chklist.*", "mscreate.dir", "*.wbk", "*log.txt", "*.err", "*.log", "*.sik", "*.bak", "*.ilk", "*.aps",
                 "*.ncb", "*.pch", "*.?$?", "*.?~?", "*.^", "*._dd", "*._detmp", "0*.nch", "*.*_previous", "*_previous"
             };
-            string[] filters = {};
+            string[] filters = { };
 
             if (SearchFilterSafe.GetValueOrDefault())
-                filters = new[] {"*.tmp", "*.temp", "*.gid", "*.chk", "*.~*"};
+                filters = new[] { "*.tmp", "*.temp", "*.gid", "*.chk", "*.~*" };
             else if (SearchFilterMedium.GetValueOrDefault())
                 filters = new[]
                 {
@@ -613,6 +612,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

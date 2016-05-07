@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Serialization;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 {
     public class RegistryEntry : IEquatable<RegistryEntry>
     {
-        [NonSerialized] private RegistryKey _regKey;
+        [NonSerialized]
+        private RegistryKey _regKey;
 
         private string _rootKey;
 
@@ -267,7 +268,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
 
         public static bool operator ==(RegistryEntry regEntry1, RegistryEntry regEntry2)
         {
-            if ((object) regEntry1 == null || (object) regEntry2 == null)
+            if ((object)regEntry1 == null || (object)regEntry2 == null)
                 return Equals(regEntry1, regEntry2);
 
             return regEntry1.Equals(regEntry2);
@@ -281,6 +282,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers.Backup
             return !regEntry1.Equals(regEntry2);
         }
 
-        #endregion
+        #endregion IEquatable Methods
     }
 }

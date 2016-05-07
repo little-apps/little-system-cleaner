@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Controls;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -31,10 +35,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Controls;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers.Results;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -45,7 +45,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         private string _animatedImage;
 
         private bool? _isChecked = true;
-
 
         private string _errors;
 
@@ -240,7 +239,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
 
         #region IsChecked Methods
 
@@ -282,7 +281,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
             SetIsChecked(state, false, true);
         }
 
-        #endregion
+        #endregion IsChecked Methods
 
         #region Plugin Scanner
 
@@ -327,105 +326,105 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         switch (xmlReader.Name)
                         {
                             case "KeyExist":
-                            {
-                                var regKeyPath = xmlReader.ReadElementContentAsString();
-
-                                ret = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
-
-                                if (!ret)
-                                    return false;
-
-                                break;
-                            }
-                                
-                            case "ValueExist":
-                            {
-                                var regKeyPath = xmlReader.GetAttribute("RegKey");
-                                var valueNameRegEx = xmlReader.GetAttribute("ValueName");
-
-                                if (string.IsNullOrWhiteSpace(regKeyPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
-                                    ret = false;
-                                else
                                 {
-                                    using (var rk = Utils.RegOpenKey(regKeyPath))
+                                    var regKeyPath = xmlReader.ReadElementContentAsString();
+
+                                    ret = !string.IsNullOrWhiteSpace(regKeyPath) && Utils.RegKeyExists(regKeyPath);
+
+                                    if (!ret)
+                                        return false;
+
+                                    break;
+                                }
+
+                            case "ValueExist":
+                                {
+                                    var regKeyPath = xmlReader.GetAttribute("RegKey");
+                                    var valueNameRegEx = xmlReader.GetAttribute("ValueName");
+
+                                    if (string.IsNullOrWhiteSpace(regKeyPath) || string.IsNullOrWhiteSpace(valueNameRegEx))
+                                        ret = false;
+                                    else
                                     {
-                                        if (rk == null)
-                                            continue;
+                                        using (var rk = Utils.RegOpenKey(regKeyPath))
+                                        {
+                                            if (rk == null)
+                                                continue;
 
-                                        string[] valueNames = null;
+                                            string[] valueNames = null;
 
-                                        try
-                                        {
-                                            valueNames = rk.GetValueNames();
-                                        }
-                                        catch (SecurityException ex)
-                                        {
-                                            Debug.WriteLine("The following exception occurred: " + ex.Message +
-                                                            "\nUnable to get registry key (" + regKeyPath +
-                                                            ") value names.");
-                                            ret = false;
-                                        }
-                                        catch (UnauthorizedAccessException ex)
-                                        {
-                                            Debug.WriteLine("The following exception occurred: " + ex.Message +
-                                                            "\nUnable to get registry key (" + regKeyPath +
-                                                            ") value names.");
-                                            ret = false;
-                                        }
+                                            try
+                                            {
+                                                valueNames = rk.GetValueNames();
+                                            }
+                                            catch (SecurityException ex)
+                                            {
+                                                Debug.WriteLine("The following exception occurred: " + ex.Message +
+                                                                "\nUnable to get registry key (" + regKeyPath +
+                                                                ") value names.");
+                                                ret = false;
+                                            }
+                                            catch (UnauthorizedAccessException ex)
+                                            {
+                                                Debug.WriteLine("The following exception occurred: " + ex.Message +
+                                                                "\nUnable to get registry key (" + regKeyPath +
+                                                                ") value names.");
+                                                ret = false;
+                                            }
 
-                                        if (valueNames != null)
-                                        {
-                                            if (
-                                                valueNames.Where(valueName => !string.IsNullOrWhiteSpace(valueName))
-                                                    .Any(valueName => Regex.IsMatch(valueName, valueNameRegEx)))
-                                                ret = true;
+                                            if (valueNames != null)
+                                            {
+                                                if (
+                                                    valueNames.Where(valueName => !string.IsNullOrWhiteSpace(valueName))
+                                                        .Any(valueName => Regex.IsMatch(valueName, valueNameRegEx)))
+                                                    ret = true;
+                                            }
                                         }
                                     }
+
+                                    if (!ret)
+                                        return false;
+
+                                    break;
                                 }
 
-                                if (!ret)
-                                    return false;
-
-                                break;
-                            }
-                                
                             case "FileExist":
-                            {
-                                var filePath = xmlReader.ReadElementContentAsString();
-
-                                if (string.IsNullOrWhiteSpace(filePath))
-                                    ret = false;
-                                else
                                 {
-                                    filePath = MiscFunctions.ExpandVars(filePath);
-                                    ret = File.Exists(filePath);
+                                    var filePath = xmlReader.ReadElementContentAsString();
+
+                                    if (string.IsNullOrWhiteSpace(filePath))
+                                        ret = false;
+                                    else
+                                    {
+                                        filePath = MiscFunctions.ExpandVars(filePath);
+                                        ret = File.Exists(filePath);
+                                    }
+
+                                    if (!ret)
+                                        return false;
+                                    break;
                                 }
 
-                                if (!ret)
-                                    return false;
-                                break;
-                            }
-                                
                             case "FolderExist":
-                            {
-                                var folderPath = xmlReader.ReadElementContentAsString();
-
-                                if (string.IsNullOrWhiteSpace(folderPath))
-                                    ret = false;
-                                else
                                 {
-                                    folderPath = MiscFunctions.ExpandVars(folderPath);
-                                    ret = Directory.Exists(folderPath);
-                                }
+                                    var folderPath = xmlReader.ReadElementContentAsString();
 
-                                if (!ret)
-                                    return false;
-                                break;
-                            }
+                                    if (string.IsNullOrWhiteSpace(folderPath))
+                                        ret = false;
+                                    else
+                                    {
+                                        folderPath = MiscFunctions.ExpandVars(folderPath);
+                                        ret = Directory.Exists(folderPath);
+                                    }
+
+                                    if (!ret)
+                                        return false;
+                                    break;
+                                }
                             default:
-                            {
-                                continue;
-                            }
+                                {
+                                    continue;
+                                }
                         }
                     }
                 }
@@ -810,7 +809,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                     pluginFile);
             }
 
-
             if (pluginFunctions.RegistrySubKeys.Count > 0)
                 Wizard.StoreBadRegKeySubKeys(name, pluginFunctions.RegistrySubKeys);
 
@@ -830,6 +828,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 Wizard.StoreXml(name, pluginFunctions.XmlPaths);
         }
 
-        #endregion
+        #endregion Plugin Scanner
     }
 }

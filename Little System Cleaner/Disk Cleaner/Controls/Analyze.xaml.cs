@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -26,9 +29,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
@@ -109,7 +109,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 }
 
                 Main.Watcher.EventPeriod("Disk Cleaner", "Analyze",
-                    (int) DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
+                    (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
                 if (Wizard.FileList.Count > 0)
                     completedSuccessfully = true;
@@ -143,7 +143,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             }));
 
             CurrentFile = "";
-
 
             if (success)
             {
@@ -181,7 +180,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                                 continue;
                             }
                         }
-
 
                         // Check if file matches types
                         if (!CompareWildcards(fileInfo.Name, Settings.Default.diskCleanerSearchFilters))
@@ -262,7 +260,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             try
             {
-                var fileSize = fileInfo.Length/1024;
+                var fileSize = fileInfo.Length / 1024;
 
                 if (Settings.Default.diskCleanerCheckFileSizeLeast > 0)
                     if (fileSize <= Settings.Default.diskCleanerCheckFileSizeLeast)
@@ -297,9 +295,11 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     case 0:
                         dateTimeFile = fileInfo.CreationTime;
                         break;
+
                     case 1:
                         dateTimeFile = fileInfo.LastWriteTime;
                         break;
+
                     case 2:
                         dateTimeFile = fileInfo.LastAccessTime;
                         break;
@@ -363,7 +363,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             return true;
         }
-
 
         /// <summary>
         ///     Checks if file is in use

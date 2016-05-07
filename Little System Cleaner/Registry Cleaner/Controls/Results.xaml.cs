@@ -16,6 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
+using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,11 +32,6 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.Backup;
-using Little_System_Cleaner.Registry_Cleaner.Helpers.BadRegistryKeys;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Controls
 {
@@ -97,7 +97,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 _progressBarValue = val;
 
                 if (Math.Abs(ProgressBar.Maximum) > 0)
-                    Main.TaskbarProgressValue = val/ProgressBar.Maximum;
+                    Main.TaskbarProgressValue = val / ProgressBar.Maximum;
 
                 OnPropertyChanged(nameof(ProgressBarValue));
             }
@@ -335,7 +335,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     Dispatcher.Invoke(() =>
                     {
                         // Set icon to check mark
-                        brk.BitmapImg = new Image {Source = BitmapSrcFinishedScanning};
+                        brk.BitmapImg = new Image { Source = BitmapSrcFinishedScanning };
 
                         Tree.Items.Refresh();
 
@@ -407,75 +407,75 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void contextMenuResults_Clicked(object sender, RoutedEventArgs e)
         {
-            switch ((string) (sender as MenuItem)?.Header)
+            switch ((string)(sender as MenuItem)?.Header)
             {
                 case "Select All":
-                {
-                    SetCheckedItems(true);
-                    break;
-                }
+                    {
+                        SetCheckedItems(true);
+                        break;
+                    }
                 case "Select None":
-                {
-                    SetCheckedItems(false);
-                    break;
-                }
+                    {
+                        SetCheckedItems(false);
+                        break;
+                    }
                 case "Invert Selection":
-                {
-                    SetCheckedItems(null);
-                    break;
-                }
+                    {
+                        SetCheckedItems(null);
+                        break;
+                    }
                 case "Exclude Selection":
-                {
-                    if (Tree.SelectedNode == null)
                     {
-                        MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName,
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
+                        if (Tree.SelectedNode == null)
+                        {
+                            MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName,
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
 
-                    var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
-
-                    var excludeItem = new ExcludeItem {RegistryPath = regKeyPath};
-                    if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
-                    {
-                        Settings.Default.ArrayExcludeList.Add(excludeItem);
-                        MessageBox.Show(Application.Current.MainWindow,
-                            $"Added registry key ({regKeyPath}) to the exclude list", Utils.ProductName,
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                        Tree.RemoveNode(Tree.SelectedNode);
-                    }
-                    else
-                        MessageBox.Show(Application.Current.MainWindow, $"Registry key ({regKeyPath}) already exists",
-                            Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
-                    break;
-                }
-                case "View In RegEdit":
-                {
-                    if (Tree.SelectedNode == null)
-                    {
-                        MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName,
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-
-                    try
-                    {
                         var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
-                        var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
 
-                        RegEditGo.GoTo(regKeyPath, regKeyValueName);
+                        var excludeItem = new ExcludeItem { RegistryPath = regKeyPath };
+                        if (!Settings.Default.ArrayExcludeList.Contains(excludeItem))
+                        {
+                            Settings.Default.ArrayExcludeList.Add(excludeItem);
+                            MessageBox.Show(Application.Current.MainWindow,
+                                $"Added registry key ({regKeyPath}) to the exclude list", Utils.ProductName,
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            Tree.RemoveNode(Tree.SelectedNode);
+                        }
+                        else
+                            MessageBox.Show(Application.Current.MainWindow, $"Registry key ({regKeyPath}) already exists",
+                                Utils.ProductName, MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
                     }
-                    catch (Exception ex)
+                case "View In RegEdit":
                     {
-                        string message =
-                            $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
+                        if (Tree.SelectedNode == null)
+                        {
+                            MessageBox.Show(Application.Current.MainWindow, "No registry key is selected", Utils.ProductName,
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
 
-                        MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                        try
+                        {
+                            var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
+                            var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
+
+                            RegEditGo.GoTo(regKeyPath, regKeyValueName);
+                        }
+                        catch (Exception ex)
+                        {
+                            string message =
+                                $"Unable to open registry key in RegEdit.\nThe following error occurred: {ex.Message}";
+
+                            MessageBox.Show(Application.Current.MainWindow, message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                        }
+
+                        break;
                     }
-
-                    break;
-                }
             }
         }
 
@@ -488,6 +488,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

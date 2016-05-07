@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Microsoft.Win32;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Little_System_Cleaner.Misc;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {
@@ -265,7 +265,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         {
             var comboItem = new ComboBoxItem();
 
-            var stackPanel = new StackPanel {Orientation = Orientation.Horizontal};
+            var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
             var bitmapImg = bitMap.CreateBitmapSourceFromBitmap();
 
@@ -274,7 +274,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
             stackPanel.Children.Add(bitmapImg);
 
-            var textBlock = new TextBlock {Text = startupPath};
+            var textBlock = new TextBlock { Text = startupPath };
 
             stackPanel.Children.Add(textBlock);
 
@@ -410,25 +410,30 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
+
                     case 3:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
+
                     case 4:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
+
                     case 5:
                         regKey =
                             Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
+
                     case 6:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
+
                     case 7:
                         regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
@@ -438,26 +443,31 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
+
                     case 9:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
+
                     case 10:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
+
                     case 11:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
+
                     case 12:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
+
                     case 13:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
@@ -469,25 +479,30 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
+
                     case 15:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
+
                     case 16:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
+
                     case 17:
                         regKey =
                             Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
+
                     case 18:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
+
                     case 19:
                         regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
@@ -497,26 +512,31 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
+
                     case 21:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
+
                     case 22:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
+
                     case 23:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
+
                     case 24:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
+
                     case 25:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
@@ -533,25 +553,30 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
+
                     case 3:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
+
                     case 4:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
+
                     case 5:
                         regKey =
                             Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
+
                     case 6:
                         regKey =
                             Registry.LocalMachine.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
+
                     case 7:
                         regKey = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
@@ -561,25 +586,30 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run");
                         break;
+
                     case 9:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServices");
                         break;
+
                     case 10:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunServicesOnce");
                         break;
+
                     case 11:
                         regKey =
                             Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
                         break;
+
                     case 12:
                         regKey =
                             Registry.CurrentUser.CreateSubKey(
                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\Setup");
                         break;
+
                     case 13:
                         regKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                         break;
@@ -608,7 +638,7 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
 
         private void BrowseFile()
         {
-            var openFileDlg = new OpenFileDialog {Multiselect = false};
+            var openFileDlg = new OpenFileDialog { Multiselect = false };
 
             if (!string.IsNullOrEmpty(TextBoxPath.Text))
             {
@@ -632,10 +662,10 @@ namespace Little_System_Cleaner.Startup_Manager.Helpers
         private static bool CreateShortcut(string filename, string path, string arguments)
         {
             var link = new PInvoke.ShellLink();
-            ((PInvoke.IShellLinkW) link).SetPath(path);
+            ((PInvoke.IShellLinkW)link).SetPath(path);
             if (!string.IsNullOrEmpty(arguments))
-                ((PInvoke.IShellLinkW) link).SetArguments(arguments);
-            ((PInvoke.IPersistFile) link).Save(filename, false);
+                ((PInvoke.IShellLinkW)link).SetArguments(arguments);
+            ((PInvoke.IPersistFile)link).Save(filename, false);
 
             return File.Exists(filename);
         }

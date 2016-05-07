@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -47,10 +47,13 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                 {
                     case 3:
                         return 0;
+
                     case 5:
                         return 1;
+
                     case 7:
                         return 2;
+
                     default:
                         return 3;
                 }
@@ -64,12 +67,15 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                     case 0:
                         Settings.Default.optionsUpdateDelay = 3;
                         break;
+
                     case 1:
                         Settings.Default.optionsUpdateDelay = 5;
                         break;
+
                     case 2:
                         Settings.Default.optionsUpdateDelay = 7;
                         break;
+
                     default:
                         Settings.Default.optionsUpdateDelay = 14;
                         break;
@@ -287,6 +293,6 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged implementation
     }
 }

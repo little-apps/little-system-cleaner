@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Little_System_Cleaner.Registry_Optimizer.Helpers;
+using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {

@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -24,7 +25,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
-using Little_System_Cleaner.Misc;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -176,12 +176,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                     case ExcludeTypes.Registry:
                         text += "registry";
                         break;
+
                     case ExcludeTypes.Folder:
                         text += "folder";
                         break;
+
                     case ExcludeTypes.File:
                         text += "file";
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -313,7 +316,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 }
             }
 
-
             DialogResult = true;
             Close();
         }
@@ -366,6 +368,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

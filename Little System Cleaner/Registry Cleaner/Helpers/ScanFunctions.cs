@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,10 +10,6 @@ using System.Security;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Helpers
 {
@@ -65,8 +65,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 case VdtReturn.InvalidDrive:
                     return false;
+
                 case VdtReturn.SkipCheck:
                     return true;
+
                 case VdtReturn.ValidDrive:
                     break;
             }
@@ -135,8 +137,10 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             {
                 case VdtReturn.InvalidDrive:
                     return false;
+
                 case VdtReturn.SkipCheck:
                     return true;
+
                 case VdtReturn.ValidDrive:
                     break;
             }
@@ -243,50 +247,50 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 switch (regKey.GetValueKind(valueName))
                 {
                     case RegistryValueKind.MultiString:
-                    {
-                        var value = "";
-                        var values = (string[]) regKey.GetValue(valueName);
-
-                        for (var i = 0; i < values.Length; i++)
                         {
-                            if (i != 0)
-                                value = string.Concat(value, ",");
+                            var value = "";
+                            var values = (string[])regKey.GetValue(valueName);
 
-                            value = $"{value} {values[i]}";
+                            for (var i = 0; i < values.Length; i++)
+                            {
+                                if (i != 0)
+                                    value = string.Concat(value, ",");
+
+                                value = $"{value} {values[i]}";
+                            }
+
+                            retVal = string.Copy(value);
+
+                            break;
                         }
-
-                        retVal = string.Copy(value);
-
-                        break;
-                    }
                     case RegistryValueKind.Binary:
-                    {
-                        var value = ((byte[]) regKey.GetValue(valueName)).Aggregate("",
-                            (current, b) => $"{current} {b:X2}");
+                        {
+                            var value = ((byte[])regKey.GetValue(valueName)).Aggregate("",
+                                (current, b) => $"{current} {b:X2}");
 
-                        retVal = string.Copy(value);
+                            retVal = string.Copy(value);
 
-                        break;
-                    }
+                            break;
+                        }
                     case RegistryValueKind.DWord:
                     case RegistryValueKind.QWord:
-                    {
-                        retVal = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
-                        break;
-                    }
+                        {
+                            retVal = string.Format("0x{0:X} ({0:D})", regKey.GetValue(valueName));
+                            break;
+                        }
                     case RegistryValueKind.String:
                     case RegistryValueKind.ExpandString:
                     case RegistryValueKind.Unknown:
                     case RegistryValueKind.None:
-                    {
-                        retVal = $"{regKey.GetValue(valueName)}";
-                        break;
-                    }
+                        {
+                            retVal = $"{regKey.GetValue(valueName)}";
+                            break;
+                        }
 
                     default:
-                    {
-                        throw new ArgumentOutOfRangeException();
-                    }
+                        {
+                            throw new ArgumentOutOfRangeException();
+                        }
                 }
             }
             catch
@@ -324,11 +328,11 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
                 var regSecurity = key.GetAccessControl();
 
                 return
-                    regSecurity.GetAccessRules(true, false, typeof (NTAccount))
+                    regSecurity.GetAccessRules(true, false, typeof(NTAccount))
                         .Cast<AuthorizationRule>()
                         .All(
                             rule =>
-                                (RegistryRights.Delete & ((RegistryAccessRule) rule).RegistryRights) ==
+                                (RegistryRights.Delete & ((RegistryAccessRule)rule).RegistryRights) ==
                                 RegistryRights.Delete);
             }
             catch (SecurityException ex)

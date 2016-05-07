@@ -16,20 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Properties;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Misc
 {
     public class SysRestore
     {
         // Constants
-        internal const short BeginSystemChange = 100; // Start of operation 
+        internal const short BeginSystemChange = 100; // Start of operation
+
         internal const short EndSystemChange = 101; // End of operation
+
         // Windows XP only - used to prevent the restore points intertwined
         internal const short BeginNestedSystemChange = 102;
+
         internal const short EndNestedSystemChange = 103;
 
         internal const short DesktopSetting = 2; /* not implemented */
@@ -113,7 +116,7 @@ namespace Little_System_Cleaner.Misc
                 // Prepare Restore Point
                 rpInfo.dwEventType = BeginSystemChange;
                 // By default we create a verification system
-                rpInfo.dwRestorePtType = (int) RestoreType.Restore;
+                rpInfo.dwRestorePtType = (int)RestoreType.Restore;
                 rpInfo.llSequenceNumber = 0;
                 rpInfo.szDescription = description;
 
@@ -184,7 +187,7 @@ namespace Little_System_Cleaner.Misc
             try
             {
                 rpInfo.dwEventType = EndSystemChange;
-                rpInfo.dwRestorePtType = (int) RestoreType.CancelledOperation;
+                rpInfo.dwRestorePtType = (int)RestoreType.CancelledOperation;
                 rpInfo.llSequenceNumber = lSeqNum;
 
                 SRSetRestorePointW(ref rpInfo, out rpStatus);
@@ -208,8 +211,10 @@ namespace Little_System_Cleaner.Misc
             public int dwRestorePtType; // The type of restore point
             public long llSequenceNumber; // The sequence number of the restore point
 
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxDescW + 1)] public string szDescription;
-                // The description to be displayed so the user can easily identify a restore point
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxDescW + 1)]
+            public string szDescription;
+
+            // The description to be displayed so the user can easily identify a restore point
         }
 
         /// <summary>
@@ -232,7 +237,7 @@ namespace Little_System_Cleaner.Misc
             Restore = 6, // System Restore
             Checkpoint = 7, // Checkpoint
             DeviceDriverInstall = 10, // Device driver has been installed
-            FirstRun = 11, // Program used for 1st time 
+            FirstRun = 11, // Program used for 1st time
             BackupRecovery = 14 // Restoring a backup
         }
     }

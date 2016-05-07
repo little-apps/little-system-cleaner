@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Disk_Cleaner.Helpers;
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -27,9 +30,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -184,10 +184,12 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                             // Remove permanately
                             fileInfo.Delete();
                             break;
+
                         case 1:
                             // Recycle file
                             SendFileToRecycleBin(fileInfo.FullName);
                             break;
+
                         default:
                             // Move file to specified directory
                             if (!Directory.Exists(Settings.Default.diskCleanerMoveFolder))

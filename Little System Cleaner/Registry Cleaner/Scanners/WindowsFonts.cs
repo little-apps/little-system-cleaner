@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Registry_Cleaner.Controls;
+using Little_System_Cleaner.Registry_Cleaner.Helpers;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -23,15 +26,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using Little_System_Cleaner.Registry_Cleaner.Controls;
-using Little_System_Cleaner.Registry_Cleaner.Helpers;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Registry_Cleaner.Scanners
 {
     public class WindowsFonts : ScannerBase
     {
-        private const int CSIDL_FONTS = 0x0014; // windows\fonts 
+        private const int CSIDL_FONTS = 0x0014; // windows\fonts
         public override string ScannerName => Strings.WindowsFonts;
 
         [DllImport("shell32.dll")]
@@ -59,15 +59,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Scanners
                     if (!SHGetSpecialFolderPath(IntPtr.Zero, path, CSIDL_FONTS, false))
                         return;
 
-                    foreach (var fontName in 
+                    foreach (var fontName in
                         regKey.GetValueNames()
-                            .Select(valueName => new {Name = valueName, Value = regKey.GetValue(valueName) as string})
+                            .Select(valueName => new { Name = valueName, Value = regKey.GetValue(valueName) as string })
                             // Skip if value is empty
                             .Where(o => !string.IsNullOrEmpty(o.Value))
                             // Check value by itself
                             .Where(o => !ScanFunctions.FileExists(o.Value))
                             .Where(o => !Wizard.IsOnIgnoreList(o.Value))
-                            .Select(o => new {o.Name, o.Value, Path = $"{path.ToString()}\\{o.Value}"})
+                            .Select(o => new { o.Name, o.Value, Path = $"{path.ToString()}\\{o.Value}" })
                             // Check for font in fonts folder
                             .Where(o => !File.Exists(o.Path) && !Wizard.IsOnIgnoreList(o.Path))
                             .Select(o => o.Name)

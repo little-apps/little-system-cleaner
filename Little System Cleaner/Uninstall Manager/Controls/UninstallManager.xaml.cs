@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,9 +30,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Uninstall_Manager.Helpers;
-using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Controls
 {
@@ -170,7 +170,6 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 }
             }
 
-
             // Populate list view
             ProgramInfos.AddRange(
                 listProgInfo.Where(
@@ -219,7 +218,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             dataView.SortDescriptions.Add(sd);
             dataView.Refresh();*/
 
-            var dataView = (ListCollectionView) CollectionViewSource.GetDefaultView(ListViewProgs.ItemsSource);
+            var dataView = (ListCollectionView)CollectionViewSource.GetDefaultView(ListViewProgs.ItemsSource);
             dataView.CustomSort = new ProgramInfoSorter(column, direction);
             dataView.Refresh();
 

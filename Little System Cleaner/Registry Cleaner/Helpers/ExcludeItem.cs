@@ -72,7 +72,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             return MemberwiseClone();
         }
 
-        #endregion
+        #endregion ICloneable Members
 
         /// <summary>
         ///     Returns the assigned path (registry/file/folder)
@@ -118,7 +118,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             return ToString().GetHashCode();
         }
 
-        #endregion
+        #endregion IEquatable Members
 
         #region INotifyPropertyChanged Members
 
@@ -130,6 +130,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Helpers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Little_System_Cleaner.Misc;
+using Little_System_Cleaner.Privacy_Cleaner.Helpers;
+using Little_System_Cleaner.Privacy_Cleaner.Scanners;
+using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -24,10 +28,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Privacy_Cleaner.Helpers;
-using Little_System_Cleaner.Privacy_Cleaner.Scanners;
-using Little_System_Cleaner.Properties;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Controls
@@ -170,7 +170,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                         }
                     }
 
-                    // Update info before going to next section (or exiting) 
+                    // Update info before going to next section (or exiting)
                     Dispatcher.Invoke(() =>
                     {
                         n.Errors = $"{CurrentSectionProblems} Errors";
@@ -184,7 +184,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 // End critical region
                 Thread.EndCriticalRegion();
 
-                Main.Watcher.EventPeriod("Privacy Cleaner", "Analyze", (int) DateTime.Now.Subtract(dtStart).TotalSeconds,
+                Main.Watcher.EventPeriod("Privacy Cleaner", "Analyze", (int)DateTime.Now.Subtract(dtStart).TotalSeconds,
                     true);
 
                 Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
@@ -306,7 +306,6 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
                 return;
             }
 
-
             if (_currentListViewIndex == -1)
                 return;
 
@@ -338,7 +337,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Controls
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
             {
-                Main.TaskbarProgressValue = e.NewValue/ProgressBar.Maximum;
+                Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
             }
         }
     }
