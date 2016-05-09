@@ -60,7 +60,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         ///     Checks if Google Chrome is installed
         /// </summary>
         /// <returns>True if its installed</returns>
-        internal static bool IsInstalled()
+        public static bool IsInstalled()
         {
             RegistryKey regKey = null;
             var installed = false;

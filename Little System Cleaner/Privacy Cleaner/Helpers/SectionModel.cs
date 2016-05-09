@@ -16,11 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Privacy_Cleaner.Scanners;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
@@ -49,24 +52,31 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Helpers
         {
             var sectionModel = new SectionModel();
 
-            if (InternetExplorer.IsInstalled())
+            var scannerList = new List<Type>(new[]
             {
-                sectionModel.RootChildren.Add(new InternetExplorer());
-            }
+                typeof(InternetExplorer),
+                typeof(Firefox),
+                typeof(GChrome),
+                typeof(Scanners.Misc),   
+            });
 
-            if (Firefox.IsInstalled())
+            foreach (var scannerType in scannerList)
             {
-                sectionModel.RootChildren.Add(new Firefox());
-            }
+                if (!scannerType.IsSubclassOf(typeof(ScannerBase)))
+                    continue;
 
-            // Check for chrome.exe in install directory
-            if (GChrome.IsInstalled())
-            {
-                sectionModel.RootChildren.Add(new GChrome());
-            }
+                var isInstalledMethod = scannerType.GetMethod("IsInstalled", BindingFlags.Static | BindingFlags.Public);
 
-            // Misc scanners
-            sectionModel.RootChildren.Add(new Scanners.Misc());
+                bool? includeScanner = null;
+
+                if (isInstalledMethod != null)
+                    includeScanner = (bool?) isInstalledMethod.Invoke(null, null);
+
+                if (includeScanner.HasValue && !includeScanner.Value)
+                    continue;
+                
+                sectionModel.RootChildren.Add((ScannerBase)Activator.CreateInstance(scannerType));
+            }
 
             // If plugins exist -> Recurse through the plugins directory
             string pluginDir = $@"{Application.StartupPath}\Privacy Cleaner Plugins";

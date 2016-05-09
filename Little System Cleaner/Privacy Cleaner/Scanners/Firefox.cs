@@ -99,7 +99,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         ///     Checks if Mozilla Firefox is installed
         /// </summary>
         /// <returns>True if its installed</returns>
-        internal static bool IsInstalled()
+        public static bool IsInstalled()
         {
             // Get install dir
             string firefoxExe =
