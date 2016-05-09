@@ -28,6 +28,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
 {
@@ -101,6 +102,10 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         /// <returns>True if its installed</returns>
         public static bool IsInstalled()
         {
+            // Check if registry key exists with file path and it file exists
+            if (LocateFirefoxExe() != null)
+                return true;
+            
             // Get install dir
             string firefoxExe =
                 $@"{
@@ -108,6 +113,75 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                         ? Environment.GetEnvironmentVariable("ProgramFiles(x86)")
                         : Environment.GetEnvironmentVariable("ProgramFiles"))}\Mozilla Firefox\firefox.exe";
             return File.Exists(firefoxExe);
+        }
+
+        /// <summary>
+        /// Searches registry keys for path to "firefox.exe"
+        /// </summary>
+        /// <returns>Path to Firefox executable, or, null</returns>
+        private static string LocateFirefoxExe()
+        {
+            var baseRegKeys = new[] { Registry.LocalMachine, Registry.CurrentUser };
+            var mozillaSubKeys = new[] { "Software\\Mozilla", "Software\\Wow6432Node\\Mozilla" };
+            RegistryKey regKey = null;
+
+            foreach (var baseRegKey in baseRegKeys)
+            {
+                foreach (var mozillaSubKey in mozillaSubKeys)
+                {
+                    try
+                    {
+                        regKey = baseRegKey.OpenSubKey(mozillaSubKey);
+
+                        if (regKey == null)
+                            continue;
+
+                        var firefoxExe = regKey.GetSubKeyNames()
+                            .Where(subKey => subKey.ToLower().Contains("firefox"))
+                            .Select(subKey => RecurseFirefoxRegKey(regKey.OpenSubKey(subKey)))
+                            .Where(File.Exists)
+                            .FirstOrDefault();
+
+                        if (!string.IsNullOrEmpty(firefoxExe))
+                            return firefoxExe;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    finally
+                    {
+                        regKey?.Close();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Recurses through registry keys until it reaches key with value name "PathToExe"
+        /// </summary>
+        /// <param name="regKey">Registry key to recurse</param>
+        /// <returns>Value of PathToExe (or null if it wasn't found)</returns>
+        private static string RecurseFirefoxRegKey(RegistryKey regKey)
+        {
+            try
+            {
+                foreach (var subKey in regKey.GetSubKeyNames())
+                {
+                    var firefoxPath = RecurseFirefoxRegKey(regKey.OpenSubKey(subKey));
+
+                    if (!string.IsNullOrEmpty(firefoxPath))
+                        return firefoxPath;
+                }
+
+                return (string)regKey.GetValue("PathToExe");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public override void Scan(ScannerBase child)
