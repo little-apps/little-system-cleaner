@@ -1,13 +1,13 @@
-﻿<UserControl
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
-    mc:Ignorable="d"
-    x:Class="Little_System_Cleaner.Startup_Manager.Controls.StartupManager"
-    x:Name="UserControl"
-    MinWidth="579" MinHeight="384">
+﻿<UserControl x:Class="Little_System_Cleaner.Startup_Manager.Controls.StartupManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
+             x:Name="UserControl"
+             MinWidth="579"
+             MinHeight="384"
+             mc:Ignorable="d">
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -16,92 +16,135 @@
             <RowDefinition Height="286*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <Border CornerRadius="5" VerticalAlignment="Top" Grid.Row="0">
+        <Border Grid.Row="0"
+                VerticalAlignment="Top"
+                CornerRadius="5">
             <Border.Effect>
                 <DropShadowEffect Color="#FF474747" />
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0" />
-                    <GradientStop Color="Gray" Offset="1" />
+                    <GradientStop Offset="0" Color="White" />
+                    <GradientStop Offset="1" Color="Gray" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Startup Manager" Margin="8,0,0,0" Foreground="White"
-                       HorizontalAlignment="Left" />
+                <Label Margin="8,0,0,0"
+                       HorizontalAlignment="Left"
+                       Content="Startup Manager"
+                       FontSize="14"
+                       Foreground="White" />
             </Grid>
         </Border>
-        <Label Height="27" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">The startup manager allows you to add, edit, and remove items that startup with your computer</Label>
+        <Label Grid.Row="1"
+               Height="27"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center">
+            The startup manager allows you to add, edit, and remove items that startup with your computer
+        </Label>
         <tree:TreeList x:Name="Tree" Grid.Row="2">
             <tree:TreeList.View>
                 <GridView AllowsColumnReorder="False">
                     <GridView.Columns>
-                        <GridViewColumn Header="Section" Width="100">
+                        <GridViewColumn Width="100" Header="Section">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <tree:RowExpander />
-                                        <ContentPresenter Margin="0,0,5,0" Content="{Binding BitmapImage}" Width="16"
-                                                          Height="16" />
+                                        <ContentPresenter Width="16"
+                                                          Height="16"
+                                                          Margin="0,0,5,0"
+                                                          Content="{Binding BitmapImage}" />
                                         <TextBlock Text="{Binding SectionName}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Path" Width="100" DisplayMemberBinding="{Binding Path}" />
-                        <GridViewColumn Header="Arguments" Width="100" DisplayMemberBinding="{Binding Args}" />
+                        <GridViewColumn Width="100"
+                                        DisplayMemberBinding="{Binding Path}"
+                                        Header="Path" />
+                        <GridViewColumn Width="100"
+                                        DisplayMemberBinding="{Binding Args}"
+                                        Header="Arguments" />
                     </GridView.Columns>
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"
-                    Height="30">
-            <Button  Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonAdd" Click="buttonAdd_Click">
+        <StackPanel Grid.Row="3"
+                    Height="30"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <Button Name="ButtonAdd"
+                    Margin="0,0,5,0"
+                    Click="buttonAdd_Click"
+                    Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Margin="0,0,5,0"
-                           Source="/Resources/startup manager/add.png" Width="16"
-                           Height="16" />
+                    <Image Width="16"
+                           Height="16"
+                           Margin="0,0,5,0"
+                           Source="/Resources/startup manager/add.png" />
                     <TextBlock VerticalAlignment="Center">Add</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonEdit" Click="buttonEdit_Click">
+            <Button Name="ButtonEdit"
+                    Margin="0,0,5,0"
+                    Click="buttonEdit_Click"
+                    Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Margin="0,0,5,0"
-                           Source="/Resources/startup manager/edit.png" Width="16"
-                           Height="16" />
+                    <Image Width="16"
+                           Height="16"
+                           Margin="0,0,5,0"
+                           Source="/Resources/startup manager/edit.png" />
                     <TextBlock VerticalAlignment="Center">Edit</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonDelete" Click="buttonDelete_Click">
+            <Button Name="ButtonDelete"
+                    Margin="0,0,5,0"
+                    Click="buttonDelete_Click"
+                    Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Margin="0,0,5,0"
-                           Source="/Resources/startup manager/delete.png" Width="16"
-                           Height="16" />
+                    <Image Width="16"
+                           Height="16"
+                           Margin="0,0,5,0"
+                           Source="/Resources/startup manager/delete.png" />
                     <TextBlock VerticalAlignment="Center">Delete</TextBlock>
                 </StackPanel>
             </Button>
 
-            <Button Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonView" Click="buttonView_Click">
+            <Button Name="ButtonView"
+                    Margin="0,0,5,0"
+                    Click="buttonView_Click"
+                    Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Margin="0,0,5,0"
-                           Source="/Resources/startup manager/view.png" Width="16"
-                           Height="16" />
+                    <Image Width="16"
+                           Height="16"
+                           Margin="0,0,5,0"
+                           Source="/Resources/startup manager/view.png" />
                     <TextBlock VerticalAlignment="Center">View</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Margin="0,0,5,0" Padding="8,0,8,0" Name="ButtonRun" Click="buttonRun_Click">
+            <Button Name="ButtonRun"
+                    Margin="0,0,5,0"
+                    Click="buttonRun_Click"
+                    Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Margin="0,0,5,0"
-                           Source="/Resources/startup manager/run.png" Width="16"
-                           Height="16" />
+                    <Image Width="16"
+                           Height="16"
+                           Margin="0,0,5,0"
+                           Source="/Resources/startup manager/run.png" />
                     <TextBlock VerticalAlignment="Center">Run</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Margin="0" Padding="8,0,8,0" Name="ButtonRefresh" Click="buttonRefresh_Click">
+            <Button Name="ButtonRefresh"
+                    Margin="0"
+                    Click="buttonRefresh_Click"
+                    Padding="8,0,8,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Margin="0,0,5,0"
-                           Source="/Resources/startup manager/refresh.png" Width="16"
-                           Height="16" />
+                    <Image Width="16"
+                           Height="16"
+                           Margin="0,0,5,0"
+                           Source="/Resources/startup manager/refresh.png" />
                     <TextBlock VerticalAlignment="Center">Refresh</TextBlock>
                 </StackPanel>
             </Button>

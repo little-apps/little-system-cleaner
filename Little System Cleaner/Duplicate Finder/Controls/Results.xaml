@@ -1,12 +1,13 @@
 ﻿<UserControl x:Class="Little_System_Cleaner.Duplicate_Finder.Controls.Results"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
-             mc:Ignorable="d"
-             d:DesignHeight="384" d:DesignWidth="579"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             d:DesignHeight="384"
+             d:DesignWidth="579"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             mc:Ignorable="d">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="33" />
@@ -15,59 +16,66 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <Border CornerRadius="5" Margin="0,0,3,1">
+        <Border Margin="0,0,3,1" CornerRadius="5">
             <Border.Effect>
                 <DropShadowEffect Color="#FF474747" />
             </Border.Effect>
             <Border.Background>
                 <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0" />
-                    <GradientStop Color="Gray" Offset="1" />
+                    <GradientStop Offset="0" Color="White" />
+                    <GradientStop Offset="1" Color="Gray" />
                 </RadialGradientBrush>
             </Border.Background>
             <Grid>
-                <Label FontSize="14" Content="Duplicate Finder" Margin="8,0" Foreground="White" Height="28"
-                       HorizontalAlignment="Left" />
-                <Label FontSize="14" Foreground="White" HorizontalAlignment="Right" Width="78">Step 3 of 3</Label>
+                <Label Height="28"
+                       Margin="8,0"
+                       HorizontalAlignment="Left"
+                       Content="Duplicate Finder"
+                       FontSize="14"
+                       Foreground="White" />
+                <Label Width="78"
+                       HorizontalAlignment="Right"
+                       FontSize="14"
+                       Foreground="White">
+                    Step 3 of 3
+                </Label>
             </Grid>
         </Border>
-        <TextBlock Grid.Row="1" Margin="93,5,65,5" Name="TextBlock1" HorizontalAlignment="Center"
+        <TextBlock Name="TextBlock1"
+                   Grid.Row="1"
+                   Margin="93,5,65,5"
+                   HorizontalAlignment="Center"
                    VerticalAlignment="Center">
             Below is a list of duplicate files found. Double click an item to view more info.
         </TextBlock>
-        <Button Name="ButtonFix" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Right" Margin="0,5,0,5"
-                Click="buttonFix_Click">
-            <StackPanel Orientation="Horizontal">
-                <Image Margin="0,0,5,0"
-                       Source="/Little_System_Cleaner;component/Resources/registry cleaner/fix-problems.png" Width="16"
-                       Height="16" />
-                <TextBlock>Remove Selected</TextBlock>
-            </StackPanel>
-        </Button>
-        <Button Name="ButtonCancel" Grid.Row="4" Padding="8,0,8,0" HorizontalAlignment="Left" Margin="0,5,0,5"
-                Click="buttonCancel_Click">
-            <StackPanel Orientation="Horizontal">
-                <Image Margin="0,0,5,0" Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png"
-                       Width="16" Height="16" />
-                <TextBlock>Cancel</TextBlock>
-            </StackPanel>
-        </Button>
-        <tree:TreeList x:Name="Tree" Grid.Row="2" MinHeight="258" Margin="0,0,0,1"
-                       MouseDoubleClick="_tree_MouseDoubleClick" SelectionMode="Single">
+        <tree:TreeList x:Name="Tree"
+                       Grid.Row="2"
+                       MinHeight="258"
+                       Margin="0,0,0,1"
+                       MouseDoubleClick="_tree_MouseDoubleClick"
+                       SelectionMode="Single">
             <tree:TreeList.ContextMenu>
                 <ContextMenu x:Name="ContextMenuResults">
-                    <MenuItem x:Name="SelectAll" Header="Select All" Click="selectAll_Click" />
-                    <MenuItem x:Name="SelectNone" Header="Select None" Click="selectNone_Click" />
-                    <MenuItem x:Name="SelectInvert" Header="Invert Selection" Click="selectInvert_Click" />
+                    <MenuItem x:Name="SelectAll"
+                              Click="selectAll_Click"
+                              Header="Select All" />
+                    <MenuItem x:Name="SelectNone"
+                              Click="selectNone_Click"
+                              Header="Select None" />
+                    <MenuItem x:Name="SelectInvert"
+                              Click="selectInvert_Click"
+                              Header="Invert Selection" />
                     <Separator />
-                    <MenuItem x:Name="ViewFileInfo" Header="View File Information" Click="viewFileInfo_Click" />
+                    <MenuItem x:Name="ViewFileInfo"
+                              Click="viewFileInfo_Click"
+                              Header="View File Information" />
                 </ContextMenu>
             </tree:TreeList.ContextMenu>
             <tree:TreeList.View>
                 <GridView AllowsColumnReorder="False">
                     <GridView.Columns>
 
-                        <GridViewColumn Header="File" x:Name="File">
+                        <GridViewColumn x:Name="File" Header="File">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -79,16 +87,60 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" x:Name="FileSize" />
-                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding FileFormat}" x:Name="FileFormat" />
-                        <GridViewColumn Header="Path" DisplayMemberBinding="{Binding FilePath}" x:Name="FilePath" />
+                        <GridViewColumn x:Name="FileSize"
+                                        DisplayMemberBinding="{Binding FileSize}"
+                                        Header="Size" />
+                        <GridViewColumn x:Name="FileFormat"
+                                        DisplayMemberBinding="{Binding FileFormat}"
+                                        Header="Type" />
+                        <GridViewColumn x:Name="FilePath"
+                                        DisplayMemberBinding="{Binding FilePath}"
+                                        Header="Path" />
                     </GridView.Columns>
                 </GridView>
             </tree:TreeList.View>
         </tree:TreeList>
-        <ProgressBar Grid.Row="3" Height="30" Name="ProgressBar" VerticalAlignment="Top" MinWidth="567"
-                     Margin="0,5,0,5" ValueChanged="progressBar_ValueChanged" />
-        <Label Grid.Row="3" Height="30" MinWidth="567" Margin="0,5,0,5" Content="{Binding ProgressBarText}"
-               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <ProgressBar Name="ProgressBar"
+                     Grid.Row="3"
+                     Height="30"
+                     MinWidth="567"
+                     Margin="0,5,0,5"
+                     VerticalAlignment="Top"
+                     ValueChanged="progressBar_ValueChanged" />
+        <Label Grid.Row="3"
+               Height="30"
+               MinWidth="567"
+               Margin="0,5,0,5"
+               HorizontalContentAlignment="Center"
+               VerticalContentAlignment="Center"
+               Content="{Binding ProgressBarText}" />
+        <Button Name="ButtonFix"
+                Grid.Row="4"
+                Margin="0,5,0,5"
+                HorizontalAlignment="Right"
+                Click="buttonFix_Click"
+                Padding="8,0,8,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16"
+                       Height="16"
+                       Margin="0,0,5,0"
+                       Source="/Little_System_Cleaner;component/Resources/registry cleaner/fix-problems.png" />
+                <TextBlock>Remove Selected</TextBlock>
+            </StackPanel>
+        </Button>
+        <Button Name="ButtonCancel"
+                Grid.Row="4"
+                Margin="0,5,0,5"
+                HorizontalAlignment="Left"
+                Click="buttonCancel_Click"
+                Padding="8,0,8,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16"
+                       Height="16"
+                       Margin="0,0,5,0"
+                       Source="/Little_System_Cleaner;component/Resources/registry cleaner/cancel.png" />
+                <TextBlock>Cancel</TextBlock>
+            </StackPanel>
+        </Button>
     </Grid>
 </UserControl>
