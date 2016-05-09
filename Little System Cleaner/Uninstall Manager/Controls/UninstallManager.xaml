@@ -106,7 +106,6 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
             <Button Name="ButtonUninstall"
-                    Grid.Row="3"
                     Margin="0,0,5,0"
                     Click="buttonUninstall_Click"
                     Padding="8,0,8,0">
@@ -119,7 +118,6 @@
                 </StackPanel>
             </Button>
             <Button Name="ButtonRemove"
-                    Grid.Row="3"
                     Margin="0,0,5,0"
                     Click="buttonRemove_Click"
                     Padding="8,0,8,0">
@@ -132,7 +130,6 @@
                 </StackPanel>
             </Button>
             <Button Name="ButtonRefresh"
-                    Grid.Row="3"
                     Margin="0"
                     Click="buttonRefresh_Click"
                     Padding="8,0,8,0">
