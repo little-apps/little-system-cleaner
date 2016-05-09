@@ -59,33 +59,33 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
         {
             get
             {
-                if (_firefoxProfilePaths == null)
+                if (_firefoxProfilePaths != null)
+                    return _firefoxProfilePaths;
+
+                string firefoxProfilesFile =
+                    $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                        }\Mozilla\Firefox\profiles.ini";
+                var profilePaths = new List<string>();
+
+                var i = 0;
+                while (true)
                 {
-                    string firefoxProfilesFile =
-                        $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                            }\Mozilla\Firefox\profiles.ini";
-                    var profilePaths = new List<string>();
+                    string sectionName = $"Profile{i}";
+                    var retVal = new StringBuilder(65536);
 
-                    var i = 0;
-                    while (true)
-                    {
-                        string sectionName = $"Profile{i}";
-                        var retVal = new StringBuilder(65536);
+                    GetPrivateProfileString(sectionName, "Path", null, retVal, retVal.Capacity, firefoxProfilesFile);
 
-                        GetPrivateProfileString(sectionName, "Path", null, retVal, retVal.Capacity, firefoxProfilesFile);
+                    if (retVal.Length <= 0)
+                        break;
 
-                        if (retVal.Length <= 0)
-                            break;
+                    profilePaths.Add(
+                        $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Mozilla\Firefox\{
+                            retVal}");
 
-                        profilePaths.Add(
-                            $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Mozilla\Firefox\{
-                                retVal}");
-
-                        i++;
-                    }
-
-                    _firefoxProfilePaths = profilePaths.ToArray();
+                    i++;
                 }
+
+                _firefoxProfilePaths = profilePaths.ToArray();
 
                 return _firefoxProfilePaths;
             }
