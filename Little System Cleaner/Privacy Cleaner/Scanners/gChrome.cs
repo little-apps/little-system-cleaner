@@ -213,7 +213,7 @@ namespace Little_System_Cleaner.Privacy_Cleaner.Scanners
                 using (
                     var sqliteConn =
                         new SQLiteConnection(
-                            $"Data Source={$@"{ChromeDefaultDir}\History"};Version=3;FailIfMissing=True"))
+                            $"Data Source={ChromeDefaultDir}\\History;Version=3;FailIfMissing=True"))
                 {
                     sqliteConn.Open();
 
