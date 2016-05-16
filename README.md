@@ -1,5 +1,7 @@
 ﻿![Little System Cleaner](https://www.little-system-cleaner.com/img/logo-black.png)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/u3tl1h4939wj8k1p?svg=true)](https://ci.appveyor.com/project/little-apps/little-system-cleaner)
+
 Little System Cleaner is an all in one system cleaner for Windows computers. Little System Cleaner combines the following tools:
  
  * Registry Cleaner
