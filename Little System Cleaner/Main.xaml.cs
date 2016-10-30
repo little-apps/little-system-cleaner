@@ -49,12 +49,16 @@ namespace Little_System_Cleaner
 {
     public partial class Main
     {
+        public static Main Instance { get; private set; }
+
         private readonly Timer _timerCheck = new Timer(500);
         private bool _ignoreSetTabControl;
 
         public Main()
         {
             InitializeComponent();
+
+            Instance = this;
 
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
         }

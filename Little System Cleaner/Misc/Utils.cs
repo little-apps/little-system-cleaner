@@ -74,7 +74,7 @@ namespace Little_System_Cleaner.Misc
             {
                 return System.Windows.Application.Current.Dispatcher.Thread != Thread.CurrentThread
                     ? System.Windows.Application.Current.Dispatcher.Invoke(() => MainWindowThreadSafe)
-                    : System.Windows.Application.Current.MainWindow;
+                    : Main.Instance;
             }
         }
 
