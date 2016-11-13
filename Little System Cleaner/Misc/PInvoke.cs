@@ -108,7 +108,7 @@ namespace Little_System_Cleaner.Misc
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+        internal static extern bool ExitWindowsEx(ShutdownFlags uFlags, ShutdownReasons dwReason);
 
         #endregion Functions
 
@@ -277,6 +277,245 @@ namespace Little_System_Cleaner.Misc
 
             /// <summary>Call the Microsoft Windows Installer</summary>
             SlrInvokeMsi = 0x80
+        }
+
+        [Flags]
+        public enum ShutdownFlags : uint
+        {
+            /// <summary>
+            /// Beginning with Windows 8:  You can prepare the system for a faster startup by combining the HybridShutdown flag with the Shutdown flag. 
+            /// </summary>
+            HybridShutdown = 0x00400000,
+
+            /// <summary>
+            /// Shuts down all processes running in the logon session of the process that called the ExitWindowsEx function. Then it logs the user off.
+            /// This flag can be used only by processes running in an interactive user's logon session.
+            /// </summary>
+            Logoff = 0,
+
+            /// <summary>
+            /// Shuts down the system and turns off the power. The system must support the power-off feature.
+            /// The calling process must have the SE_SHUTDOWN_NAME privilege. For more information, see the following Remarks section.
+            /// </summary>
+            Poweroff = 0x00000008,
+
+            /// <summary>
+            /// Shuts down the system and then restarts the system.
+            /// The calling process must have the SE_SHUTDOWN_NAME privilege. For more information, see the following Remarks section.
+            /// </summary>
+            Reboot = 0x00000002,
+
+            /// <summary>
+            /// Shuts down the system and then restarts it, as well as any applications that have been registered for restart using the RegisterApplicationRestart function. These application receive the WM_QUERYENDSESSION message with lParam set to the ENDSESSION_CLOSEAPP value.
+            /// </summary>
+            RestartApps = 0x00000040,
+
+            /// <summary>
+            /// Shuts down the system to a point at which it is safe to turn off the power. All file buffers have been flushed to disk, and all running processes have stopped.
+            /// The calling process must have the SE_SHUTDOWN_NAME privilege. For more information, see the following Remarks section.
+            /// Specifying this flag will not turn off the power even if the system supports the power-off feature. You must specify EWX_POWEROFF to do this.
+            /// </summary>
+            Shutdown = 0x00000001,
+
+            /// <summary>
+            /// This flag has no effect if terminal services is enabled. Otherwise, the system does not send the WM_QUERYENDSESSION message. This can cause applications to lose data. Therefore, you should only use this flag in an emergency.
+            /// </summary>
+            Force = 0x00000004,
+
+            /// <summary>
+            /// Forces processes to terminate if they do not respond to the WM_QUERYENDSESSION or WM_ENDSESSION message within the timeout interval.
+            /// </summary>
+            ForceIfHung = 0x00000010,
+        }
+
+        [Flags]
+        public enum ShutdownReasons : uint
+        {
+            /// <summary>
+			/// Application issue
+			/// </summary>
+            MajorApplication = 0x00040000,
+
+            /// <summary>
+			/// Hardware issue
+			/// </summary>
+            MajorHardware = 0x00010000,
+
+            /// <summary>
+			/// The InitiateSystemShutdown function was used instead of InitiateSystemShutdownEx
+			/// </summary>
+            MajorLegacyApi = 0x00070000,
+
+            /// <summary>
+			/// Operating system issue
+			/// </summary>
+            MajorOperatingsystem = 0x00020000,
+
+            /// <summary>
+			/// Other issue
+			/// </summary>
+            MajorOther = 0x00000000,
+
+            /// <summary>
+			/// Power failure
+			/// </summary>
+            MajorPower = 0x00060000,
+
+            /// <summary>
+			/// Software issue
+			/// </summary>
+            MajorSoftware = 0x00030000,
+
+            /// <summary>
+			/// System failure
+			/// </summary>
+            MajorSystem = 0x00050000,
+
+            /// <summary>
+			/// Blue screen crash event
+			/// </summary>
+            MinorBluescreen = 0x0000000F,
+
+            /// <summary>
+			/// Unplugged
+			/// </summary>
+            MinorCordUnplugged = 0x0000000b,
+
+            /// <summary>
+			/// Disk
+			/// </summary>
+            MinorDisk = 0x00000007,
+
+            /// <summary>
+			/// Environment
+			/// </summary>
+            MinorEnvironment = 0x0000000c,
+
+            /// <summary>
+			/// Driver
+			/// </summary>
+            MinorHardwareDriver = 0x0000000d,
+
+            /// <summary>
+			/// Hot fix
+			/// </summary>
+            MinorHotfix = 0x00000011,
+
+            /// <summary>
+			/// Hot fix uninstallation
+			/// </summary>
+            MinorHotfixUninstall = 0x00000017,
+
+            /// <summary>
+			/// Unresponsive
+			/// </summary>
+            MinorHung = 0x00000005,
+
+            /// <summary>
+			/// Installation
+			/// </summary>
+            MinorInstallation = 0x00000002,
+
+            /// <summary>
+			/// Maintenance
+			/// </summary>
+            MinorMaintenance = 0x00000001,
+
+            /// <summary>
+			/// MMC issue
+			/// </summary>
+            MinorMMC = 0x00000019,
+
+            /// <summary>
+			/// Network connectivity
+			/// </summary>
+            MinorNetworkConnectivity = 0x00000014,
+
+            /// <summary>
+			/// Network card
+			/// </summary>
+            MinorNetworkCard = 0x00000009,
+
+            /// <summary>
+			/// Other issue
+			/// </summary>
+            MinorOther = 0x00000000,
+
+            /// <summary>
+			/// Other driver event
+			/// </summary>
+            MinorOtherDriver = 0x0000000e,
+
+            /// <summary>
+			/// Power supply
+			/// </summary>
+            MinorPowerSupply = 0x0000000a,
+
+            /// <summary>
+			/// Processor
+			/// </summary>
+            MinorProcessor = 0x00000008,
+
+            /// <summary>
+			/// Reconfigure
+			/// </summary>
+            MinorReconfig = 0x00000004,
+
+            /// <summary>
+			/// Security issue
+			/// </summary>
+            MinorSecurity = 0x00000013,
+
+            /// <summary>
+			/// Security patch
+			/// </summary>
+            MinorSecurityFix = 0x00000012,
+
+            /// <summary>
+			/// Security patch uninstallation
+			/// </summary>
+            MinorSecurityFixUninstall = 0x00000018,
+
+            /// <summary>
+			/// Service pack
+			/// </summary>
+            MinorServicePack = 0x00000010,
+
+            /// <summary>
+			/// Service pack uninstallation
+			/// </summary>
+            MinorServicePackUninstall = 0x00000016,
+
+            /// <summary>
+			/// Terminal Services
+			/// </summary>
+            MinorTermsrv = 0x00000020,
+
+            /// <summary>
+			/// Unstable
+			/// </summary>
+            MinorUnstable = 0x00000006,
+
+            /// <summary>
+			/// Upgrade
+			/// </summary>
+            MinorUpgrade = 0x00000003,
+
+            /// <summary>
+			/// WMI issue
+			/// </summary>
+            MinorWmi = 0x00000015,
+
+            /// <summary>
+            /// The reason code is defined by the user. For more information, see Defining a Custom Reason Code.
+            /// If this flag is not present, the reason code is defined by the system.
+            /// </summary>
+            FlagsUserDefined = 0x40000000,
+
+            /// <summary>
+            /// The shutdown was planned. The system generates a System State Data (SSD) file. This file contains system state information such as the processes, threads, memory usage, and configuration. 
+            /// </summary>
+            FlagsPlanned = 0x80000000,
         }
 
         #endregion Enumerations

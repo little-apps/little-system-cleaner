@@ -18,12 +18,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
             HKEY_CURRENT_CONFIG = 0x80000005
         }
 
-        // Shutdown reason codes
-        public const uint MajorOperatingSystem = 0x00020000;
-
-        public const uint MinorReconfig = 0x00000004;
-        public const uint FlagPlanned = 0x80000000;
-
         [DllImport("advapi32.dll", EntryPoint = "RegOpenKey", SetLastError = true)]
         internal static extern int RegOpenKeyA(uint hKey, string lpSubKey, ref int phkResult);
 
