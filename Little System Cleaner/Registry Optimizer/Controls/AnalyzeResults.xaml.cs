@@ -98,7 +98,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?",
                     Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 // Restart computer
-                PInvoke.ExitWindowsEx(0x02, PInvoke.MajorOperatingSystem | PInvoke.MinorReconfig | PInvoke.FlagPlanned);
+                Misc.PInvoke.ExitWindowsEx(0x02, PInvoke.MajorOperatingSystem | PInvoke.MinorReconfig | PInvoke.FlagPlanned);
 
             _scanBase.MoveFirst();
         }

@@ -44,10 +44,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ShutdownBlockReasonCreate(IntPtr hWnd,
             [MarshalAs(UnmanagedType.LPWStr)] string reason);
 

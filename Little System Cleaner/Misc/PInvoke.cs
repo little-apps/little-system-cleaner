@@ -106,6 +106,10 @@ namespace Little_System_Cleaner.Misc
         [DllImport("gdi32.dll")]
         internal static extern bool DeleteObject(IntPtr hObject);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
         #endregion Functions
 
         #region Structures
