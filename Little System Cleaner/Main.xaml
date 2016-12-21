@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:Little_System_Cleaner.Misc"
     xmlns:options="clr-namespace:Little_System_Cleaner.Tab_Controls.Options"
-    xmlns:privacyCleanCntrls="clr-namespace:Little_System_Cleaner.Privacy_Cleaner.Controls"
     xmlns:regCleanCntrls="clr-namespace:Little_System_Cleaner.Registry_Cleaner.Controls"
     xmlns:regOptimizeCntrls="clr-namespace:Little_System_Cleaner.Registry_Optimizer.Controls"
     xmlns:startupMgr="clr-namespace:Little_System_Cleaner.Startup_Manager.Controls"
@@ -430,26 +429,6 @@
                             Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Source="Resources/privacy cleaner/icon.png" />
-                        <Label
-                            Width="261"
-                            Height="47"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Content="Privacy Cleaner"
-                            FontSize="24"
-                            FontWeight="Bold"
-                            Foreground="White" />
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Width="52"
-                            Margin="0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
                             Source="Resources/duplicate finder/icon.png" />
                         <Label
                             Width="261"
@@ -522,9 +501,6 @@
             </TabItem>
             <TabItem Name="TabItemDiskCleaner" Style="{DynamicResource WindowTabItem}">
                 <misc:DynamicUserControl Type="{x:Type diskCleanCntrls:Wizard}" />
-            </TabItem>
-            <TabItem Name="TabItemPrivacyCleaner" Style="{DynamicResource WindowTabItem}">
-                <misc:DynamicUserControl Type="{x:Type privacyCleanCntrls:Wizard}" />
             </TabItem>
             <TabItem Name="TabItemDuplicateFinder" Style="{DynamicResource WindowTabItem}">
                 <misc:DynamicUserControl Type="{x:Type duplicateFinderCntrls:Wizard}" />

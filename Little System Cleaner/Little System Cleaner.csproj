@@ -152,26 +152,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Privacy Cleaner\Controls\Details.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Privacy Cleaner\Controls\Results.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Privacy Cleaner\Controls\Analyze.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Privacy Cleaner\Controls\Start.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Privacy Cleaner\Helpers\RunningMsg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -340,43 +320,6 @@
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Misc\WindowWrapper.cs" />
     <Compile Include="Misc\WizardBase.cs" />
-    <Compile Include="Privacy Cleaner\Controls\Details.xaml.cs">
-      <DependentUpon>Details.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Privacy Cleaner\Controls\Results.xaml.cs">
-      <DependentUpon>Results.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Privacy Cleaner\Controls\Analyze.xaml.cs">
-      <DependentUpon>Analyze.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Privacy Cleaner\Controls\Start.xaml.cs">
-      <DependentUpon>Start.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Privacy Cleaner\Controls\Wizard.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\DetailItem.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\MiscFunctions.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\PluginFunctions.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultDelegate.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultFiles.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultFolders.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultINI.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultModel.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultNode.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultRegKeys.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\ResultXML.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\Results\RootNode.cs" />
-    <Compile Include="Privacy Cleaner\Helpers\RunningMsg.xaml.cs">
-      <DependentUpon>RunningMsg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Privacy Cleaner\Helpers\SectionModel.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\Applications.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\Firefox.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\GChrome.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\InternetExplorer.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\Misc.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\Multimedia.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\Plugins.cs" />
-    <Compile Include="Privacy Cleaner\Scanners\ScannerBase.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -729,15 +672,6 @@
     <Resource Include="Resources\ajax-loader-big.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Firefox.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\gChrome.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\InternetExplorer.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\update.png" />
   </ItemGroup>
   <ItemGroup>
@@ -837,10 +771,24 @@
   <ItemGroup>
     <Resource Include="Resources\duplicate finder\icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\InternetExplorer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Firefox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gChrome.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Windows Explorer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\system.png" />
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>mkdir "$(TargetDir)Privacy Cleaner Plugins\"
-del /Q "$(TargetDir)Privacy Cleaner Plugins\*"
-copy /Y "$(ProjectDir)Privacy Cleaner\Plugins\*.xml" "$(TargetDir)Privacy Cleaner Plugins\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
