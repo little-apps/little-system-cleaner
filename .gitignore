@@ -99,7 +99,8 @@ ClientBin
 [Ss]tyle[Cc]op.*
 ~$*
 *.dbmdl
-Generated_Code #added for RIA/Silverlight projects
+#added for RIA/Silverlight projects
+Generated_Code
 Thumbs.db
 
 # Backup & report files from converting an old project file to a newer
