@@ -6,7 +6,7 @@ Little System Cleaner is an all in one system cleaner for Windows computers. Lit
  
  * Registry Cleaner
  * Registry Optimizer
- * Privacy Cleaner
+ * ~~Privacy Cleaner~~
  * Disk Cleaner
  * Duplicate Finder
  * Startup Manager
