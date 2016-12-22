@@ -11,7 +11,7 @@
     <ProjectGuid>{6EDCB204-95DF-46BE-866F-D1BDC42AB289}</ProjectGuid>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <OutputType>WinExe</OutputType>
-    <ApplicationIcon>Resources\little system cleaner.ico</ApplicationIcon>
+    <ApplicationIcon>little system cleaner.ico</ApplicationIcon>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ApplicationManifest>Properties/app.manifest</ApplicationManifest>
@@ -751,9 +751,6 @@
     <Resource Include="Resources\privacy cleaner\icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\little system cleaner.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\little system cleaner.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -776,6 +773,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\system.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="little system cleaner.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\little system cleaner.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

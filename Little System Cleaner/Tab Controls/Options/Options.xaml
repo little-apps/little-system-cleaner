@@ -155,26 +155,29 @@
                     </TextBlock>
                 </TabItem.Header>
                 <Grid>
-                    <Image Width="65"
-                           Height="65"
-                           Margin="11,5,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Source="/Little_System_Cleaner;component/Resources/little system cleaner.png" />
-                    <Label Width="218"
-                           Height="75"
-                           Margin="83,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           VerticalContentAlignment="Center"
-                           Content="Little System Cleaner"
-                           FontSize="20"
-                           FontWeight="Bold" />
-                    <Separator Grid.ColumnSpan="2"
-                               Height="2"
-                               Margin="11,75,11,0"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Top" />
+                    <Image
+                        Width="65"
+                        Height="65"
+                        Margin="11,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Resources/little system cleaner.png" />
+                    <Label
+                        Width="218"
+                        Height="75"
+                        Margin="83,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        VerticalContentAlignment="Center"
+                        Content="Little System Cleaner"
+                        FontSize="20"
+                        FontWeight="Bold" />
+                    <Separator
+                        Grid.ColumnSpan="2"
+                        Height="2"
+                        Margin="11,75,11,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top" />
 
                     <Grid Grid.ColumnSpan="2" Margin="11,81,11,35">
                         <RichTextBox MinWidth="547"
