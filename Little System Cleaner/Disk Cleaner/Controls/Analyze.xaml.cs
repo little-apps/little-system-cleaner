@@ -57,17 +57,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             // Set scan start time
             Wizard.ScanStartTime = DateTime.Now;
 
-            // Increase total number of scans
-            Settings.Default.totalScans++;
-
-            // Zero last scan errors found + fixed and elapsed
-            Settings.Default.lastScanErrors = 0;
-            Settings.Default.lastScanErrorsFixed = 0;
-            Settings.Default.lastScanElapsed = 0;
-
-            // Set last scan date
-            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
-
             // Start timer
             TimerUpdate.Elapsed += timerUpdate_Elapsed;
             TimerUpdate.Start();
@@ -467,9 +456,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
-            // Set last scan errors found
-            Settings.Default.lastScanErrors = Wizard.FileList.Count;
-
             ScanBase.MoveNext();
         }
     }

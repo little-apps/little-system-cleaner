@@ -98,17 +98,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             ScanBase.FilesGroupedByFilename.Clear();
             ScanBase.FilesGroupedByHash.Clear();
 
-            // Increase total number of scans
-            Settings.Default.totalScans++;
-
-            // Zero last scan errors found + fixed and elapsed
-            Settings.Default.lastScanErrors = 0;
-            Settings.Default.lastScanErrorsFixed = 0;
-            Settings.Default.lastScanElapsed = 0;
-
-            // Set last scan date
-            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
-
             _taskScan = new Task(ScanDisk, _cancelTokenSource.Token);
             _taskScan.Start();
 
@@ -165,7 +154,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 if (!BuildFileList(dtStart))
                 {
                     ResetInfo(false);
-                    SetLastScanElapsed(dtStart);
                 }
 
                 if (ScanBase.Options.CompareFilename.GetValueOrDefault())
@@ -178,12 +166,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName,
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         ResetInfo(false);
-                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
-
-                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByFilename.Count;
                 }
 
                 if (ScanBase.Options.CompareChecksum.GetValueOrDefault() ||
@@ -197,12 +182,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName,
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         ResetInfo(false);
-                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
-
-                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
                 if (ScanBase.Options.CompareMusicTags.GetValueOrDefault())
@@ -215,12 +197,9 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName,
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         ResetInfo(false);
-                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
-
-                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
                 if (ScanBase.Options.CompareImages.GetValueOrDefault())
@@ -233,17 +212,13 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                         Utils.MessageBoxThreadSafe("No duplicate files could be found.", Utils.ProductName,
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         ResetInfo(false);
-                        SetLastScanElapsed(dtStart);
 
                         return;
                     }
-
-                    Settings.Default.lastScanErrors = ScanBase.FilesGroupedByHash.Count;
                 }
 
                 _cancelTokenSource.Token.ThrowIfCancellationRequested();
-
-                SetLastScanElapsed(dtStart);
+                
                 completedSucessfully = true;
             }
             catch (OperationCanceledException)
@@ -288,11 +263,6 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 StatusText = "Click \"Cancel\" to go back to the previous screen.";
             }
-        }
-
-        private static void SetLastScanElapsed(DateTime dtStart)
-        {
-            Settings.Default.lastScanElapsed = DateTime.Now.Subtract(dtStart).Ticks;
         }
 
         /// <summary>
@@ -742,7 +712,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     ProgressBar.Value = currentIndex;
                     Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
                 }), i++);
-
+                
                 var likeImages =
                     _fileList.Where(
                         fileEntry2 =>

@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Properties;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,17 +36,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Increase total number of scans
-            Settings.Default.totalScans++;
-
-            // Zero last scan errors found + fixed and elapsed
-            Settings.Default.lastScanErrors = 0;
-            Settings.Default.lastScanErrorsFixed = 0;
-            Settings.Default.lastScanElapsed = 0;
-
-            // Set last scan date
-            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
-
             // Set taskbar progress bar
             Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
             Little_System_Cleaner.Main.TaskbarProgressValue = 0;
@@ -82,8 +70,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds,
                 true);
-
-            Settings.Default.lastScanElapsed = timeSpan.Ticks;
 
             Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
             Close();

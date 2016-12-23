@@ -35,27 +35,6 @@
     <Setting Name="updateURL" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://updates.little-apps.com/little-system-cleaner.xml</Value>
     </Setting>
-    <Setting Name="lastScanDate" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="lastScanErrors" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="lastScanErrorsFixed" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="lastScanElapsed" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="totalScans" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="totalErrorsFound" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="totalErrorsFixed" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
     <Setting Name="totalRuns" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>

@@ -65,17 +65,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 Wizard.Report.DisplayLogFile(Settings.Default.registryCleanerOptionsShowLog &&
                                              !Settings.Default.registryCleanerOptionsAutoRepair);
 
-                // Set last scan errors found
-                var model = Tree.Model as ResultModel;
-                if (model != null)
-                    Settings.Default.lastScanErrors =
-                        model.Root.Children
-                            .SelectMany(badRegKeyRoot => badRegKeyRoot.Children)
-                            .Count();
-
-                // Set total errors found
-                Settings.Default.totalErrorsFound += Settings.Default.lastScanErrors;
-
                 if (Settings.Default.registryCleanerOptionsAutoRepair)
                     FixProblems();
             }
@@ -285,8 +274,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                     return false;
                 }
 
-                Settings.Default.lastScanErrorsFixed = 0;
-
                 foreach (var brk in badRegKeys)
                 {
                     var skip = false;
@@ -325,11 +312,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                                     MessageBoxImage.Error);
                             }
                         }
-                        else
-                        {
-                            // Set last scan erors fixed
-                            Settings.Default.lastScanErrorsFixed++;
-                        }
                     }
 
                     Dispatcher.Invoke(() =>
@@ -348,9 +330,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 if (!_cancellationTokenSource.IsCancellationRequested)
                     // Store data as file
                     backupReg.Serialize();
-
-                // Set total errors fixed
-                Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
                 if (SysRestore.SysRestoreAvailable())
                 {

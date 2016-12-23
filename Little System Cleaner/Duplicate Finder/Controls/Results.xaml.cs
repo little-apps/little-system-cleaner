@@ -160,10 +160,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 }
 
                 Dispatcher.Invoke(() => ProgressBar.Value++);
-                Settings.Default.lastScanErrorsFixed++;
             }
-
-            Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
             if (!sysRestoreAvailable)
                 return;

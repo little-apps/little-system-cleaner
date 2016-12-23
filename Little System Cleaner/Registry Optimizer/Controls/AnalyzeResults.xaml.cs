@@ -56,9 +56,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             if (100 - newRegistrySize / oldRegistrySize * 100 >= 5)
             {
-                // Set errors to number of registry hives
-                Settings.Default.lastScanErrors = Wizard.RegistryHives.Count;
-
                 McChart.Title = "The Windows Registry Needs To Be Compacted";
             }
             else
@@ -86,10 +83,6 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
             compactWnd.ShowDialog();
 
             secureDesktop.Close();
-
-            // Set errors fixed to number of registry hives
-            Settings.Default.lastScanErrorsFixed = Wizard.RegistryHives.Count;
-            Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
             Wizard.IsBusy = false;
 

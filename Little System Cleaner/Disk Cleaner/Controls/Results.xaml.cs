@@ -53,8 +53,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             // Update last scan stats
             var elapsedTime = DateTime.Now.Subtract(Wizard.ScanStartTime).Ticks;
 
-            Settings.Default.lastScanElapsed = elapsedTime;
-
             ResetInfo();
 
             ListViewFiles.AutoResizeColumns();
@@ -171,9 +169,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 {
                     var fileInfo = lvi.FileInfo;
 
-                    // Set last scan erors fixed
-                    Settings.Default.lastScanErrorsFixed++;
-
                     // Make sure file exists
                     if (!fileInfo.Exists)
                         continue;
@@ -204,8 +199,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     //this.m_watcher.Exception(ex);
                 }
             }
-
-            Settings.Default.totalErrorsFixed += Settings.Default.lastScanErrorsFixed;
 
             if (lSeqNum != 0)
             {

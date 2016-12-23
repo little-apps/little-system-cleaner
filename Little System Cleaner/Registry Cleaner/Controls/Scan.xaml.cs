@@ -53,14 +53,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             _scanBase = sb;
 
-            // Zero last scan errors found + fixed and elapsed
-            Settings.Default.lastScanErrors = 0;
-            Settings.Default.lastScanErrorsFixed = 0;
-            Settings.Default.lastScanElapsed = 0;
-
-            // Set last scan date
-            Settings.Default.lastScanDate = DateTime.Now.ToBinary();
-
             // Start timer
             _timerUpdate.Interval = 250;
             _timerUpdate.Elapsed += timerUpdate_Elapsed;
@@ -182,12 +174,6 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
                 // Report to Little Software Stats
                 Main.Watcher.EventPeriod("Registry Cleaner", "Scan", (int)ts.TotalSeconds, true);
-
-                // Set last scan elapsed time (in ticks)
-                Settings.Default.lastScanElapsed = ts.Ticks;
-
-                // Increase total number of scans
-                Settings.Default.totalScans++;
 
                 // Stop timer
                 _timerUpdate.Stop();
