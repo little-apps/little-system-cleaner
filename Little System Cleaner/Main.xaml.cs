@@ -50,8 +50,7 @@ namespace Little_System_Cleaner
     public partial class Main
     {
         public static Main Instance { get; private set; }
-
-        private readonly Timer _timerCheck = new Timer(500);
+        
         private bool _ignoreSetTabControl;
 
         public Main()
@@ -61,8 +60,6 @@ namespace Little_System_Cleaner
             Instance = this;
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
         }
-
-        internal static bool IsTabsEnabled { get; set; }
 
         /// <summary>
         /// Gets the progress state of the window icon in the task bar
@@ -116,22 +113,6 @@ namespace Little_System_Cleaner
         internal static Watcher Watcher { get; private set; }
 
         /// <summary>
-        /// Timer that checks if IsTabsEnabled was changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void timerCheck_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (Dispatcher.Thread != Thread.CurrentThread)
-            {
-                Dispatcher.BeginInvoke(new EventHandler<ElapsedEventArgs>(timerCheck_Elapsed), sender, e);
-                return;
-            }
-
-            TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
-        }
-
-        /// <summary>
         /// Hack that allows user to drag window when left click is held on window
         /// </summary>
         /// <param name="e"></param>
@@ -158,11 +139,6 @@ namespace Little_System_Cleaner
             var appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             Watcher.Start("922492147b2e47744961de5b9a5d0886", appVer);
-
-            IsTabsEnabled = true;
-
-            _timerCheck.Elapsed += timerCheck_Elapsed;
-            _timerCheck.Start();
 
             // See if we have the current version
             if (Settings.Default.updateAuto)
@@ -288,13 +264,15 @@ namespace Little_System_Cleaner
                     }
                 case "About...":
                     {
-                        if (IsTabsEnabled)
+                        if (CallOnUnloaded(null, false).GetValueOrDefault())
                         {
-                            TabControl.SelectedIndex = TabControl.Items.IndexOf(TabItemOptions);
+                            ComboBoxTab.SelectedItem = ComboBoxItemOptions;
+                            TabControl.SelectedItem = TabItemOptions;
 
                             var options = TabItemOptions.Content as Options;
                             options?.ShowAboutTab();
                         }
+                        
                         break;
                     }
             }
@@ -403,18 +381,21 @@ namespace Little_System_Cleaner
         /// <summary>
         /// Invokes OnUnloaded method with forceExit value on specified UserControl
         /// </summary>
-        /// <param name="cntrl">UserControl instance</param>
+        /// <param name="cntrl">UserControl instance. If null, current control is used.</param>
         /// <param name="forceExit">If true, a force exit is in progress</param>
-        /// <returns></returns>
-        private static bool? CallOnUnloaded(UserControl cntrl, bool forceExit)
+        /// <returns>True if control can be unloaded</returns>
+        private bool? CallOnUnloaded(UserControl cntrl, bool forceExit)
         {
-            bool? canExit = null;
+            if (cntrl == null)
+                cntrl = GetCurrentControl();
+
+            bool? canUnload = null;
 
             var methodUnload = cntrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
-                canExit = (bool?)methodUnload.Invoke(cntrl, new object[] { forceExit });
+                canUnload = (bool?)methodUnload.Invoke(cntrl, new object[] { forceExit });
 
-            return canExit;
+            return canUnload;
         }
 
         /// <summary>

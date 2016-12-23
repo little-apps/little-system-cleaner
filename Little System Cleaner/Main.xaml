@@ -422,7 +422,7 @@
                             Foreground="White" />
                     </StackPanel>
                 </ComboBoxItem>
-                <ComboBoxItem>
+                <ComboBoxItem x:Name="ComboBoxItemOptions">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="52"
