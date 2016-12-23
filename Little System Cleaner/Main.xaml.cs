@@ -59,7 +59,6 @@ namespace Little_System_Cleaner
             InitializeComponent();
 
             Instance = this;
-
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
         }
 
@@ -115,8 +114,7 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            TabItemWelcome.IsEnabled =
-                TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
+            TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -128,6 +126,8 @@ namespace Little_System_Cleaner
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            ChangeTabIndex(0);
+
             // Send usage data to Little Software Stats
             Watcher = new Watcher();
             Config.Enabled = Settings.Default.optionsUsageStats;
@@ -281,10 +281,10 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            SetTabControl(ComboBoxTab.SelectedIndex);
+            MoveToTabIndex(ComboBoxTab.SelectedIndex);
         }
 
-        private void SetTabControl(int index)
+        private void MoveToTabIndex(int index)
         {
             if (TabControl == null)
                 return;
@@ -300,17 +300,7 @@ namespace Little_System_Cleaner
                 // If DynamicUserControl -> clear Content
                 (lastCtrl as DynamicUserControl)?.ClearUserControl();
 
-                TabControl.SelectedIndex = index;
-
-                var selectedContent = TabControl.SelectedContent;
-
-                var control = selectedContent as DynamicUserControl;
-                var nextCtrl = control != null
-                    ? control.InitUserControl()
-                    : TabControl.SelectedContent as UserControl;
-
-                var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
-                methodLoad?.Invoke(nextCtrl, new object[] { });
+                ChangeTabIndex(index);
             }
             else
             {
@@ -318,6 +308,21 @@ namespace Little_System_Cleaner
                 _ignoreSetTabControl = true;
                 ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
             }
+        }
+
+        private void ChangeTabIndex(int index)
+        {
+            TabControl.SelectedIndex = index;
+
+            var selectedContent = TabControl.SelectedContent;
+
+            var control = selectedContent as DynamicUserControl;
+            var nextCtrl = control != null
+                ? control.InitUserControl()
+                : TabControl.SelectedContent as UserControl;
+
+            var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
+            methodLoad?.Invoke(nextCtrl, new object[] { });
         }
 
         private UserControl GetLastControl()

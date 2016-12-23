@@ -309,26 +309,6 @@
                             Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Source="Resources/info.png" />
-                        <Label
-                            Width="261"
-                            Height="47"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Content="Information"
-                            FontSize="24"
-                            FontWeight="Bold"
-                            Foreground="White" />
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Width="52"
-                            Margin="0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
                             Source="Resources/icon.png" />
                         <Label
                             Width="261"
@@ -482,11 +462,7 @@
             Margin="0"
             IsSynchronizedWithCurrentItem="True"
             Style="{StaticResource WindowTabCtrl}">
-            <TabItem Name="TabItemWelcome" Style="{DynamicResource WindowTabItem}">
-                <tabControls:Welcome />
-            </TabItem>
             <TabItem Name="TabItemScanWiz" Style="{DynamicResource WindowTabItem}">
-                <!--<regCleanCntrls:Wizard />-->
                 <misc:DynamicUserControl Type="{x:Type regCleanCntrls:Wizard}" />
             </TabItem>
 
