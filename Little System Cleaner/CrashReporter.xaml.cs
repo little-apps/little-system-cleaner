@@ -154,8 +154,11 @@ namespace Little_System_Cleaner
         private void buttonSend_Click(object sender, RoutedEventArgs e)
         {
             if (Main.Watcher != null)
+            {
                 Main.Watcher.Exception(_exception);
-
+                Main.Watcher.Stop();
+            }
+                
             Close();
         }
 
@@ -164,8 +167,9 @@ namespace Little_System_Cleaner
             if (CheckBoxRestart.IsChecked.GetValueOrDefault())
             {
                 Process.Start(Application.ResourceAssembly.Location, "/restart");
-                Application.Current.Shutdown();
             }
+
+            Environment.Exit(1);
         }
     }
 }
