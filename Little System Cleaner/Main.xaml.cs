@@ -64,6 +64,9 @@ namespace Little_System_Cleaner
 
         internal static bool IsTabsEnabled { get; set; }
 
+        /// <summary>
+        /// Gets the progress state of the window icon in the task bar
+        /// </summary>
         internal static TaskbarItemProgressState TaskbarProgressState
         {
             get
@@ -84,6 +87,9 @@ namespace Little_System_Cleaner
             }
         }
 
+        /// <summary>
+        /// Gets the progress value of the window icon in the task bar
+        /// </summary>
         internal static double TaskbarProgressValue
         {
             get
@@ -104,8 +110,16 @@ namespace Little_System_Cleaner
             }
         }
 
+        /// <summary>
+        /// Watcher object used by Little Software Stats
+        /// </summary>
         internal static Watcher Watcher { get; private set; }
 
+        /// <summary>
+        /// Timer that checks if IsTabsEnabled was changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timerCheck_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (Dispatcher.Thread != Thread.CurrentThread)
@@ -117,6 +131,10 @@ namespace Little_System_Cleaner
             TabItemOptions.IsEnabled = TabItemStartupMgr.IsEnabled = TabItemUninstallMgr.IsEnabled = IsTabsEnabled;
         }
 
+        /// <summary>
+        /// Hack that allows user to drag window when left click is held on window
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             DragMove();
@@ -124,6 +142,11 @@ namespace Little_System_Cleaner
             base.OnMouseLeftButtonDown(e);
         }
 
+        /// <summary>
+        /// Performs operations when window is loaded
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             ChangeTabIndex(0);
@@ -151,13 +174,18 @@ namespace Little_System_Cleaner
             TaskBarItemInfo.Description = Utils.ProductName;
         }
 
+        /// <summary>
+        /// Prompts user to exit and exits cleanly if they choose yes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnClose(object sender, CancelEventArgs e)
         {
             if (
                 MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                var lastCtrl = GetLastControl();
+                var lastCtrl = GetCurrentControl();
                 var canExit = CallOnUnloaded(lastCtrl, true);
 
                 if (canExit.HasValue && canExit.Value == false)
@@ -178,6 +206,11 @@ namespace Little_System_Cleaner
             }
         }
 
+        /// <summary>
+        /// Displays context menu when Help button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void imageHelp_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var contextMenu = new ContextMenu();
@@ -218,6 +251,11 @@ namespace Little_System_Cleaner
             return menuItem;
         }
 
+        /// <summary>
+        /// Handles the item that user clicked in context menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuItem_Click(object sender, RoutedEventArgs e)
         {
             switch ((string)(sender as MenuItem)?.Header)
@@ -262,16 +300,31 @@ namespace Little_System_Cleaner
             }
         }
 
+        /// <summary>
+        /// Changes cursor to hand when user enters help button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void imageHelp_MouseEnter(object sender, MouseEventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
+        /// <summary>
+        /// Changes cursor to default arrow when mouse leaves help button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void imageHelp_MouseLeave(object sender, MouseEventArgs e)
         {
             Cursor = Cursors.Arrow;
         }
 
+        /// <summary>
+        /// Changes tab control when user selects new item in combo box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void comboBoxTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_ignoreSetTabControl)
@@ -284,12 +337,16 @@ namespace Little_System_Cleaner
             MoveToTabIndex(ComboBoxTab.SelectedIndex);
         }
 
+        /// <summary>
+        /// Unloads current tab control and then loads new tab control
+        /// </summary>
+        /// <param name="index"></param>
         private void MoveToTabIndex(int index)
         {
             if (TabControl == null)
                 return;
 
-            var lastCtrl = GetLastControl();
+            var lastCtrl = GetCurrentControl();
 
             var canExit = CallOnUnloaded(lastCtrl, false);
 
@@ -310,6 +367,10 @@ namespace Little_System_Cleaner
             }
         }
 
+        /// <summary>
+        /// Sets tab to index and loads control
+        /// </summary>
+        /// <param name="index"></param>
         private void ChangeTabIndex(int index)
         {
             TabControl.SelectedIndex = index;
@@ -325,7 +386,11 @@ namespace Little_System_Cleaner
             methodLoad?.Invoke(nextCtrl, new object[] { });
         }
 
-        private UserControl GetLastControl()
+        /// <summary>
+        /// Gets current UserControl if it is DynamicUserControl
+        /// </summary>
+        /// <returns>UserControl instance</returns>
+        private UserControl GetCurrentControl()
         {
             var lastCtrl = TabControl.SelectedContent as UserControl;
 
@@ -335,13 +400,19 @@ namespace Little_System_Cleaner
             return lastCtrl;
         }
 
-        private static bool? CallOnUnloaded(UserControl lastCtrl, bool forceExit)
+        /// <summary>
+        /// Invokes OnUnloaded method with forceExit value on specified UserControl
+        /// </summary>
+        /// <param name="cntrl">UserControl instance</param>
+        /// <param name="forceExit">If true, a force exit is in progress</param>
+        /// <returns></returns>
+        private static bool? CallOnUnloaded(UserControl cntrl, bool forceExit)
         {
             bool? canExit = null;
 
-            var methodUnload = lastCtrl?.GetType().GetMethod("OnUnloaded");
+            var methodUnload = cntrl?.GetType().GetMethod("OnUnloaded");
             if (methodUnload != null)
-                canExit = (bool?)methodUnload.Invoke(lastCtrl, new object[] { forceExit });
+                canExit = (bool?)methodUnload.Invoke(cntrl, new object[] { forceExit });
 
             return canExit;
         }
