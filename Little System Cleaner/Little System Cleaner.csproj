@@ -82,6 +82,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Duplicate Finder\Helpers\CRC32.cs" />
+    <Compile Include="Misc\DynamicTabControl.cs" />
     <Compile Include="Misc\Extensions.cs" />
     <Compile Include="Misc\ParseArgs.cs" />
     <Compile Include="ProcessInfo\ModuleInfo.cs" />

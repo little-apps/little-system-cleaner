@@ -130,7 +130,7 @@ namespace Little_System_Cleaner
         /// <param name="e"></param>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ChangeTabIndex(0);
+            MoveToTabIndex(0);
 
             // Send usage data to Little Software Stats
             Watcher = new Watcher();
@@ -161,13 +161,15 @@ namespace Little_System_Cleaner
                 MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                var lastCtrl = GetCurrentControl();
-                var canExit = CallOnUnloaded(lastCtrl, true);
+                TabControl.ForceExit = true;
+                
+                var canExit = TabControl.CanUnload(TabControl.SelectedContent as ContentControl);
 
-                if (canExit.HasValue && canExit.Value == false)
+                if (!canExit)
                 {
                     // NOTE: Invoked function is responsible for displaying message on why it can't exit
                     e.Cancel = true;
+                    TabControl.ForceExit = false;
                 }
             }
             else
@@ -263,18 +265,22 @@ namespace Little_System_Cleaner
                         break;
                     }
                 case "About...":
+                {
+                    try
                     {
-                        if (CallOnUnloaded(null, false).GetValueOrDefault())
-                        {
-                            ComboBoxTab.SelectedItem = ComboBoxItemOptions;
-                            TabControl.SelectedItem = TabItemOptions;
-
-                            var options = TabItemOptions.Content as Options;
-                            options?.ShowAboutTab();
-                        }
+                        TabControl.SelectedItem = TabItemOptions;
+                        ComboBoxTab.SelectedItem = ComboBoxItemOptions;
                         
-                        break;
+                        var options = TabItemOptions.Content as Options;
+                        options?.ShowAboutTab();
                     }
+                    catch (DynamicTabControl.UnloadBlockedException )
+                    {
+
+                    }
+
+                    break;
+                }
             }
         }
 
@@ -324,78 +330,15 @@ namespace Little_System_Cleaner
             if (TabControl == null)
                 return;
 
-            var lastCtrl = GetCurrentControl();
-
-            var canExit = CallOnUnloaded(lastCtrl, false);
-
-            GarbageCollectAndFinalize();
-
-            if (canExit == true || !canExit.HasValue)
+            try
             {
-                // If DynamicUserControl -> clear Content
-                (lastCtrl as DynamicUserControl)?.ClearUserControl();
-
-                ChangeTabIndex(index);
+                TabControl.SelectedIndex = index;
             }
-            else
+            catch (DynamicTabControl.UnloadBlockedException)
             {
-                // Change combobox back
-                _ignoreSetTabControl = true;
-                ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
+                // Cannot change tabs
             }
-        }
 
-        /// <summary>
-        /// Sets tab to index and loads control
-        /// </summary>
-        /// <param name="index"></param>
-        private void ChangeTabIndex(int index)
-        {
-            TabControl.SelectedIndex = index;
-
-            var selectedContent = TabControl.SelectedContent;
-
-            var control = selectedContent as DynamicUserControl;
-            var nextCtrl = control != null
-                ? control.InitUserControl()
-                : TabControl.SelectedContent as UserControl;
-
-            var methodLoad = nextCtrl?.GetType().GetMethod("OnLoaded");
-            methodLoad?.Invoke(nextCtrl, new object[] { });
-        }
-
-        /// <summary>
-        /// Gets current UserControl if it is DynamicUserControl
-        /// </summary>
-        /// <returns>UserControl instance</returns>
-        private UserControl GetCurrentControl()
-        {
-            var lastCtrl = TabControl.SelectedContent as UserControl;
-
-            if (lastCtrl is DynamicUserControl)
-                lastCtrl = (UserControl)(lastCtrl as DynamicUserControl).Content;
-
-            return lastCtrl;
-        }
-
-        /// <summary>
-        /// Invokes OnUnloaded method with forceExit value on specified UserControl
-        /// </summary>
-        /// <param name="cntrl">UserControl instance. If null, current control is used.</param>
-        /// <param name="forceExit">If true, a force exit is in progress</param>
-        /// <returns>True if control can be unloaded</returns>
-        private bool? CallOnUnloaded(UserControl cntrl, bool forceExit)
-        {
-            if (cntrl == null)
-                cntrl = GetCurrentControl();
-
-            bool? canUnload = null;
-
-            var methodUnload = cntrl?.GetType().GetMethod("OnUnloaded");
-            if (methodUnload != null)
-                canUnload = (bool?)methodUnload.Invoke(cntrl, new object[] { forceExit });
-
-            return canUnload;
         }
 
         /// <summary>

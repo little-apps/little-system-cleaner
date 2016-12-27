@@ -456,7 +456,7 @@
                 MouseLeftButtonDown="imageHelp_MouseLeftButtonDown"
                 Source="/Little_System_Cleaner;component/Resources/Help.png" />
         </Grid>
-        <TabControl
+        <misc:DynamicTabControl
             x:Name="TabControl"
             Grid.Row="1"
             Margin="0"
@@ -484,6 +484,6 @@
             <TabItem Name="TabItemOptions" Style="{DynamicResource WindowTabItem}">
                 <options:Options />
             </TabItem>
-        </TabControl>
+        </misc:DynamicTabControl>
     </Grid>
 </Window>
