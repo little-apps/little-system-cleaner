@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Little_System_Cleaner.Misc
 {
@@ -11,39 +13,58 @@ namespace Little_System_Cleaner.Misc
         public bool ForceExit { get; set; }
 
         /// <summary>
-        /// Changes the selected index by checking if it can be changed first
+        /// Stores the previous index to go back to
         /// </summary>
-        /// <exception cref="UnloadBlockedException">Thrown if tab cannot be changed</exception>
-        public new int SelectedIndex
-        {
-            get { return base.SelectedIndex; }
-            set
-            {
-                var oldItem = Items[base.SelectedIndex] as TabItem;
-                var newItem = Items[value] as TabItem;
+        private int PrevIndex { get; set; }
 
-                CheckTabChange(oldItem, newItem);
-
-                base.SelectedIndex = value;
-            }
-        }
+        private bool IsFirstChange { get; set; } = true;
 
         /// <summary>
-        /// Changes the selected item by checking if it can be changed first
+        /// Action to perform when blocked
         /// </summary>
-        /// <exception cref="UnloadBlockedException">Thrown if tab cannot be changed</exception>
-        public new object SelectedItem
-        {
-            get { return base.SelectedItem; }
-            set
-            {
-                var oldItem = base.SelectedItem as TabItem;
-                var newItem = value as TabItem;
+        public Action<DynamicTabControl> DoOnBlocked { get; set; }
 
+        /// <summary>
+        /// Goes to previous tab when blocked if true (default is true)
+        /// </summary>
+        public bool GoBackOnBlocked { get; set; } = true;
+
+        public DynamicTabControl()
+        {
+            IsSynchronizedWithCurrentItem = true;
+
+            PrevIndex = SelectedIndex >= 0 ? SelectedIndex : 0;
+            
+            SelectionChanged += OnSelectionChanged;
+        }
+
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            if (!IsFirstChange && PrevIndex == SelectedIndex)
+                return;
+
+            var oldItem = Items[PrevIndex] as ContentControl;
+            var newItem = Items[SelectedIndex] as ContentControl;
+
+            try
+            {
                 CheckTabChange(oldItem, newItem);
 
-                base.SelectedItem = value;
+                PrevIndex = SelectedIndex;
             }
+            catch (UnloadBlockedException)
+            {
+                if (IsFirstChange)
+                    // Shouldn't reach here but just in case
+                    throw;
+
+                DoOnBlocked?.Invoke(this);
+
+                if (GoBackOnBlocked)
+                    SelectedIndex = PrevIndex;
+            }
+
+            IsFirstChange = false;
         }
 
         /// <summary>
@@ -106,7 +127,6 @@ namespace Little_System_Cleaner.Misc
             
             return userCtrl;
         }
-        
 
         public class UnloadBlockedException : Exception
         {

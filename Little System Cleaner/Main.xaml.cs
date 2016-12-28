@@ -266,18 +266,10 @@ namespace Little_System_Cleaner
                     }
                 case "About...":
                 {
-                    try
-                    {
-                        TabControl.SelectedItem = TabItemOptions;
-                        ComboBoxTab.SelectedItem = ComboBoxItemOptions;
-                        
-                        var options = TabItemOptions.Content as Options;
-                        options?.ShowAboutTab();
-                    }
-                    catch (DynamicTabControl.UnloadBlockedException )
-                    {
+                    ComboBoxTab.SelectedItem = ComboBoxItemOptions;
 
-                    }
+                    var options = TabItemOptions.Content as Options;
+                    options?.ShowAboutTab();
 
                     break;
                 }
@@ -311,6 +303,9 @@ namespace Little_System_Cleaner
         /// <param name="e"></param>
         private void comboBoxTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (TabControl == null)
+                return;
+
             if (_ignoreSetTabControl)
             {
                 _ignoreSetTabControl = false;
@@ -318,27 +313,24 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            MoveToTabIndex(ComboBoxTab.SelectedIndex);
+            if (MoveToTabIndex(ComboBoxTab.SelectedIndex))
+                return;
+
+            // If tab index not changed -> reset combobox index
+            _ignoreSetTabControl = true;
+            ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
         }
 
         /// <summary>
         /// Unloads current tab control and then loads new tab control
         /// </summary>
-        /// <param name="index"></param>
-        private void MoveToTabIndex(int index)
+        /// <param name="index">Index to change to</param>
+        /// <returns>False if the tab could not be unloaded</returns>
+        private bool MoveToTabIndex(int index)
         {
-            if (TabControl == null)
-                return;
-
-            try
-            {
-                TabControl.SelectedIndex = index;
-            }
-            catch (DynamicTabControl.UnloadBlockedException)
-            {
-                // Cannot change tabs
-            }
-
+            TabControl.SelectedIndex = index;
+            
+            return TabControl.SelectedIndex == ComboBoxTab.SelectedIndex;
         }
 
         /// <summary>
