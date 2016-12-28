@@ -12,6 +12,7 @@
     xmlns:regOptimizeCntrls="clr-namespace:Little_System_Cleaner.Registry_Optimizer.Controls"
     xmlns:startupMgr="clr-namespace:Little_System_Cleaner.Startup_Manager.Controls"
     xmlns:tabControls="clr-namespace:Little_System_Cleaner.Tab_Controls"
+    xmlns:tools="clr-namespace:Little_System_Cleaner.Tab_Controls.Tools"
     xmlns:uninstallMgr="clr-namespace:Little_System_Cleaner.Uninstall_Manager.Controls"
     x:Name="Window"
     Title="Little System Cleaner"
@@ -329,46 +330,6 @@
                             Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Source="Resources/startup manager/icon.png" />
-                        <Label
-                            Width="261"
-                            Height="47"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Content="Startup Manager"
-                            FontSize="24"
-                            FontWeight="Bold"
-                            Foreground="White" />
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Width="52"
-                            Margin="0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Source="Resources/uninstall manager/icon.png" />
-                        <Label
-                            Width="261"
-                            Height="47"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Content="Uninstall Manager"
-                            FontSize="24"
-                            FontWeight="Bold"
-                            Foreground="White" />
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Width="52"
-                            Margin="0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
                             Source="Resources/optimizer.png" />
                         <Label
                             Width="261"
@@ -422,6 +383,26 @@
                             Foreground="White" />
                     </StackPanel>
                 </ComboBoxItem>
+                <ComboBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="52"
+                            Margin="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Source="Resources/Tools.png" />
+                        <Label
+                            Width="261"
+                            Height="47"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="Tools"
+                            FontSize="24"
+                            FontWeight="Bold"
+                            Foreground="White" />
+                    </StackPanel>
+                </ComboBoxItem>
                 <ComboBoxItem x:Name="ComboBoxItemOptions">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -465,13 +446,6 @@
             <TabItem Name="TabItemScanWiz" Style="{DynamicResource WindowTabItem}">
                 <misc:DynamicUserControl Type="{x:Type regCleanCntrls:Wizard}" />
             </TabItem>
-
-            <TabItem Name="TabItemStartupMgr" Style="{DynamicResource WindowTabItem}">
-                <misc:DynamicUserControl Type="{x:Type startupMgr:StartupManager}" />
-            </TabItem>
-            <TabItem Name="TabItemUninstallMgr" Style="{DynamicResource WindowTabItem}">
-                <misc:DynamicUserControl Type="{x:Type uninstallMgr:UninstallManager}" />
-            </TabItem>
             <TabItem Name="TabItemRegOptimizer" Style="{DynamicResource WindowTabItem}">
                 <misc:DynamicUserControl Type="{x:Type regOptimizeCntrls:Wizard}" />
             </TabItem>
@@ -480,6 +454,9 @@
             </TabItem>
             <TabItem Name="TabItemDuplicateFinder" Style="{DynamicResource WindowTabItem}">
                 <misc:DynamicUserControl Type="{x:Type duplicateFinderCntrls:Wizard}" />
+            </TabItem>
+            <TabItem Name="TabItemTools" Style="{DynamicResource WindowTabItem}">
+                <misc:DynamicUserControl Type="{x:Type tools:Tools}" />
             </TabItem>
             <TabItem Name="TabItemOptions" Style="{DynamicResource WindowTabItem}">
                 <options:Options />

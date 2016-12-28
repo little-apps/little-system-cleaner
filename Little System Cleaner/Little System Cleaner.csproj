@@ -92,6 +92,9 @@
       <DependentUpon>ProcessInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Tab Controls\Tools\Tools.xaml.cs">
+      <DependentUpon>Tools.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Uninstall Manager\Helpers\ProgramInfoSorter.cs" />
     <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
       <SubType>Designer</SubType>
@@ -434,6 +437,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Tab Controls\Tools\Tools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Uninstall Manager\Controls\UninstallManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -490,7 +497,7 @@
     </Reference>
     <Resource Include="Resources\Analyze.png" />
     <Resource Include="Resources\Help.png" />
-    <Resource Include="Resources\Options.png" />
+    <Resource Include="Resources\Tools.png" />
     <Resource Include="Resources\Repair.png" />
     <Resource Include="Resources\Restore.png" />
     <Resource Include="Resources\startup manager.png" />
@@ -773,6 +780,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\little system cleaner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Options.png" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
