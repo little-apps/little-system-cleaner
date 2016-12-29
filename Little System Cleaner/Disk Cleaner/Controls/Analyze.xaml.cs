@@ -21,14 +21,18 @@ using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
+using Little_System_Cleaner.Annotations;
 using Timer = System.Timers.Timer;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
@@ -36,12 +40,28 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
     /// <summary>
     ///     Interaction logic for Analyze.xaml
     /// </summary>
-    public partial class Analyze
+    public partial class Analyze : INotifyPropertyChanged
     {
         private readonly Task _taskMain;
         private CancellationTokenSource _cancellationTokenSource;
+        private string _currentFile;
+
         public Wizard ScanBase;
-        internal Timer TimerUpdate = new Timer(100);
+
+        public string CurrentFile
+        {
+            get
+            {
+                return _currentFile;
+            }
+            set
+            {
+                _currentFile = value;
+                OnPropertyChanged(nameof(CurrentFile));
+            }
+        }
+
+        public string FilesFound => $"Files Found: {Wizard.FileList?.Count}";
 
         public Analyze(Wizard sb)
         {
@@ -51,33 +71,28 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
 
             if (Wizard.FileList == null)
                 Wizard.FileList = new ObservableCollection<ProblemFile>();
-            else
-                Wizard.FileList.Clear();
+
+            Wizard.FileList.CollectionChanged += FileListOnCollectionChanged;
+
+            Wizard.FileList.Clear();
 
             // Set scan start time
             Wizard.ScanStartTime = DateTime.Now;
-
-            // Start timer
-            TimerUpdate.Elapsed += timerUpdate_Elapsed;
-            TimerUpdate.Start();
 
             _cancellationTokenSource = new CancellationTokenSource();
             _taskMain = new Task(AnalyzeDisk, _cancellationTokenSource.Token);
             _taskMain.Start();
         }
 
-        internal static string CurrentFile { get; set; }
-
-        private void timerUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        private void FileListOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (Dispatcher.Thread != Thread.CurrentThread)
+            if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.BeginInvoke(new ElapsedEventHandler(timerUpdate_Elapsed), sender, e);
+                Dispatcher.Invoke(() => FileListOnCollectionChanged(sender, e));
                 return;
             }
 
-            currentFile.Text = CurrentFile;
-            FilesFound.Text = $"Files Found: {Wizard.FileList.Count}";
+            OnPropertyChanged(nameof(FilesFound));
         }
 
         private void AnalyzeDisk()
@@ -131,6 +146,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                 TextBlockPleaseWait.Visibility = Visibility.Hidden;
             }));
 
+            CancelAnalyze();
             CurrentFile = "";
 
             if (success)
@@ -195,7 +211,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                             if (!FileCheckSize(fileInfo))
                                 continue;
 
-                        Wizard.FileList.Add(new ProblemFile(fileInfo));
+                        AddToFileList(new ProblemFile(fileInfo));
                     }
                     catch (Exception ex)
                     {
@@ -223,7 +239,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                         {
                             foreach (var fileInfo in childInfo.GetFiles())
                             {
-                                Wizard.FileList.Add(new ProblemFile(fileInfo));
+                                AddToFileList(new ProblemFile(fileInfo));
                             }
 
                             continue;
@@ -243,6 +259,17 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 Debug.WriteLine("The following error occurred: " + ex.Message + "\nUnable to scan directories.");
             }
+        }
+
+        private void AddToFileList(ProblemFile problemFile)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => AddToFileList(problemFile));
+                return;
+            }
+
+            Wizard.FileList.Add(problemFile);
         }
 
         private static bool FileCheckSize(FileInfo fileInfo)
@@ -432,8 +459,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         /// </summary>
         public void CancelAnalyze()
         {
-            TimerUpdate.Stop();
-
+            Wizard.FileList.CollectionChanged -= FileListOnCollectionChanged;
             _cancellationTokenSource?.Cancel();
         }
 
@@ -457,6 +483,14 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
             ScanBase.MoveNext();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
