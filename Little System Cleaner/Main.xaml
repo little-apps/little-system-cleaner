@@ -207,6 +207,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <EventSetter Event="SelectionChanged" Handler="comboBoxTab_SelectionChanged" />
         </Style>
         <Style x:Key="WindowTabCtrl" TargetType="{x:Type TabControl}">
             <Setter Property="Template">
@@ -295,7 +296,6 @@
                 Width="330"
                 Margin="10,10,5,5"
                 HorizontalAlignment="Left"
-                SelectionChanged="comboBoxTab_SelectionChanged"
                 Style="{StaticResource CustomDropDown}">
                 <ComboBox.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Transparent" />
