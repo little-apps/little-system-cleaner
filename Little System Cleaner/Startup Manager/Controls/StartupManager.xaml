@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:Little_System_Cleaner.Startup_Manager.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
     x:Name="UserControl"
@@ -23,6 +24,9 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
+                                        <d:StackPanel.DataContext>
+                                            <helpers:StartupEntry />
+                                        </d:StackPanel.DataContext>
                                         <tree:RowExpander />
                                         <ContentPresenter
                                             Width="16"
