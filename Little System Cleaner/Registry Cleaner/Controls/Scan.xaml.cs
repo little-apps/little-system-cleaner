@@ -17,7 +17,6 @@
 */
 
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Cleaner.Helpers;
 using Little_System_Cleaner.Registry_Cleaner.Scanners;
 using System;
@@ -36,7 +35,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
     public partial class Scan
     {
         private static string _currentItemScanned;
-        internal static int TotalItemsScanned = -1;
+        private static int _totalItemsScanned = -1;
 
         private readonly Task _mainTaskScan;
         private readonly Wizard _scanBase;
@@ -85,7 +84,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         /// <summary>
         ///     Gets the total problems
         /// </summary>
-        internal static int TotalProblems => Wizard.BadRegKeyArray.Count;
+        private static int TotalProblems => Wizard.BadRegKeyArray.Count;
 
         /// <summary>
         ///     Sets the currently scanned item and increments the total
@@ -95,14 +94,15 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
             get { return _currentItemScanned; }
             set
             {
-                TotalItemsScanned++;
+                _totalItemsScanned++;
                 _currentItemScanned = string.Copy(value);
             }
         }
 
-        public ScannerListViewItem CurrentListViewItem => SectionsCollection[_currentListViewIndex];
+        private ScannerListViewItem CurrentListViewItem => SectionsCollection[_currentListViewIndex];
 
-        public ObservableCollection<ScannerListViewItem> SectionsCollection { get; } = new ObservableCollection<ScannerListViewItem>();
+        private ObservableCollection<ScannerListViewItem> SectionsCollection { get; } =
+            new ObservableCollection<ScannerListViewItem>();
 
         public void AbortScanThread()
         {
@@ -181,7 +181,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 // Write scan stats to log file
                 Wizard.Report.WriteLine("Total time elapsed: {0} minutes {1} seconds", ts.Minutes, ts.Seconds);
                 Wizard.Report.WriteLine("Total problems found: {0}", TotalProblems);
-                Wizard.Report.WriteLine("Total objects scanned: {0}", TotalItemsScanned);
+                Wizard.Report.WriteLine("Total objects scanned: {0}", _totalItemsScanned);
                 Wizard.Report.WriteLine();
                 Wizard.Report.WriteLine("Finished scan at " + DateTime.Now);
 

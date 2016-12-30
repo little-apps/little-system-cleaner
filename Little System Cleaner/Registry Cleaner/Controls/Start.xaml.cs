@@ -43,7 +43,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
         private ObservableCollection<ExcludeItem> _excludeArray;
         private ObservableCollection<RestoreFile> _restoreFiles;
 
-        public Wizard ScanBase;
+        private readonly Wizard _scanBase;
 
         public Start(Wizard sb)
         {
@@ -51,7 +51,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
             Tree.Model = SectionModel.CreateSectionModel();
 
-            ScanBase = sb;
+            _scanBase = sb;
 
             TextBoxBackups.Text = Settings.Default.OptionsBackupDir;
 
@@ -146,7 +146,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 ListViewFiles.AutoResizeColumns();
         }
 
-        public void UpdateSettings()
+        private void UpdateSettings()
         {
             Settings.Default.registryCleanerOptionsLog = CheckBoxLog.IsChecked.GetValueOrDefault();
             Settings.Default.registryCleanerOptionsAutoRescan = CheckBoxAutoRescan.IsChecked.GetValueOrDefault();
@@ -443,7 +443,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
 
         private void buttonScan_Click(object sender, RoutedEventArgs e)
         {
-            ScanBase.Model = Tree.Model as SectionModel;
+            _scanBase.Model = Tree.Model as SectionModel;
 
             if (Scan.EnabledScanners.Count == 0)
             {
@@ -454,7 +454,7 @@ namespace Little_System_Cleaner.Registry_Cleaner.Controls
                 return;
             }
 
-            ScanBase.MoveNext();
+            _scanBase.MoveNext();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
