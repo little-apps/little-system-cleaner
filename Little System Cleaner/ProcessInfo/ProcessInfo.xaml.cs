@@ -149,62 +149,62 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
-        public string ProcName => TryCatch(() => _process?.ProcessName, nameof(ProcName));
-        public string ProcMachineName => TryCatch(() => _process?.MachineName, nameof(ProcMachineName));
-        public string ProcId => TryCatch(() => _process?.Id.ToString(), nameof(ProcId));
-        public string ProcHandle => TryCatch(() => _process?.Handle.ToString(), nameof(ProcHandle));
-        public string ProcMainModuleName => TryCatch(() => _process.MainModule.ModuleName, nameof(ProcMainModuleName));
+        public string ProcName => TryGetProperty(() => _process?.ProcessName, nameof(ProcName));
+        public string ProcMachineName => TryGetProperty(() => _process?.MachineName, nameof(ProcMachineName));
+        public string ProcId => TryGetProperty(() => _process?.Id.ToString(), nameof(ProcId));
+        public string ProcHandle => TryGetProperty(() => _process?.Handle.ToString(), nameof(ProcHandle));
+        public string ProcMainModuleName => TryGetProperty(() => _process.MainModule.ModuleName, nameof(ProcMainModuleName));
 
         public string ProcBaseAddress
-            => TryCatch(() => _process?.MainModule.BaseAddress.ToString("X8"), nameof(ProcBaseAddress), true);
+            => TryGetProperty(() => _process?.MainModule.BaseAddress.ToString("X8"), nameof(ProcBaseAddress), true);
 
         public string ProcWindowHandle
-            => TryCatch(() => _process?.MainWindowHandle.ToString(), nameof(ProcWindowHandle), true);
+            => TryGetProperty(() => _process?.MainWindowHandle.ToString(), nameof(ProcWindowHandle), true);
 
-        public string ProcWindowTitle => TryCatch(() => _process?.MainWindowTitle, nameof(ProcWindowTitle), true);
+        public string ProcWindowTitle => TryGetProperty(() => _process?.MainWindowTitle, nameof(ProcWindowTitle), true);
 
         public string ProcNonPagedSysMemory
             =>
-                TryCatch(() => Utils.ConvertSizeToString(_process.NonpagedSystemMemorySize64),
+                TryGetProperty(() => Utils.ConvertSizeToString(_process.NonpagedSystemMemorySize64),
                     nameof(ProcNonPagedSysMemory), true);
 
         public string ProcPrivateMemory
-            => TryCatch(() => Utils.ConvertSizeToString(_process.PrivateMemorySize64), nameof(ProcPrivateMemory), true);
+            => TryGetProperty(() => Utils.ConvertSizeToString(_process.PrivateMemorySize64), nameof(ProcPrivateMemory), true);
 
         public string ProcPagedMemory
-            => TryCatch(() => Utils.ConvertSizeToString(_process.PagedMemorySize64), nameof(ProcPagedMemory), true);
+            => TryGetProperty(() => Utils.ConvertSizeToString(_process.PagedMemorySize64), nameof(ProcPagedMemory), true);
 
         public string ProcPagedSysMemory
             =>
-                TryCatch(() => Utils.ConvertSizeToString(_process.PagedSystemMemorySize64), nameof(ProcPagedSysMemory),
+                TryGetProperty(() => Utils.ConvertSizeToString(_process.PagedSystemMemorySize64), nameof(ProcPagedSysMemory),
                     true);
 
         public string ProcPagedPeakMemory
             =>
-                TryCatch(() => Utils.ConvertSizeToString(_process.PeakPagedMemorySize64), nameof(ProcPagedPeakMemory),
+                TryGetProperty(() => Utils.ConvertSizeToString(_process.PeakPagedMemorySize64), nameof(ProcPagedPeakMemory),
                     true);
 
         public string ProcPagedVirtualMemory
             =>
-                TryCatch(() => Utils.ConvertSizeToString(_process.PeakVirtualMemorySize64),
+                TryGetProperty(() => Utils.ConvertSizeToString(_process.PeakVirtualMemorySize64),
                     nameof(ProcPagedVirtualMemory), true);
 
         public string ProcVirtMemory
-            => TryCatch(() => Utils.ConvertSizeToString(_process.VirtualMemorySize64), nameof(ProcVirtMemory), true);
+            => TryGetProperty(() => Utils.ConvertSizeToString(_process.VirtualMemorySize64), nameof(ProcVirtMemory), true);
 
         public string ProcWorkingSetPeak
-            => TryCatch(() => Utils.ConvertSizeToString(_process.PeakWorkingSet64), nameof(ProcWorkingSetPeak), true);
+            => TryGetProperty(() => Utils.ConvertSizeToString(_process.PeakWorkingSet64), nameof(ProcWorkingSetPeak), true);
 
-        public string ProcPriority => TryCatch(() => _process?.PriorityClass.ToString(), nameof(ProcPriority), true);
+        public string ProcPriority => TryGetProperty(() => _process?.PriorityClass.ToString(), nameof(ProcPriority), true);
 
         public string ProcPriorityBoostEnabled
-            => TryCatch(() => _process?.PriorityBoostEnabled.ToString(), nameof(ProcPriorityBoostEnabled), true);
+            => TryGetProperty(() => _process?.PriorityBoostEnabled.ToString(), nameof(ProcPriorityBoostEnabled), true);
 
         public string ProcHandlesCount
-            => TryCatch(() => _process?.HandleCount.ToString(), nameof(ProcHandlesCount), true);
+            => TryGetProperty(() => _process?.HandleCount.ToString(), nameof(ProcHandlesCount), true);
 
         public string ProcIsResponding
-            => TryCatch(() => _process?.Responding.ToString(), nameof(ProcIsResponding), true);
+            => TryGetProperty(() => _process?.Responding.ToString(), nameof(ProcIsResponding), true);
 
         public bool MoreDetailsExpanded
         {
@@ -330,7 +330,16 @@ namespace Little_System_Cleaner.ProcessInfo
             _timer.Stop();
         }
 
-        public static string TryCatch(Func<string> action, string propName, bool valueChanges = false,
+        /// <summary>
+        /// Tries to get property value by calling function
+        /// </summary>
+        /// <param name="action">Function to encapsulate with try-catch block</param>
+        /// <param name="propName">Name of property</param>
+        /// <param name="valueChanges">Whether the property value changes after (default is false)</param>
+        /// <param name="returnErrorMessage">If true, the property value will be exception message if one occurs (default is false)</param>
+        /// <param name="defaultValue">Default value for property (default is empty string)</param>
+        /// <returns></returns>
+        public static string TryGetProperty(Func<string> action, string propName, bool valueChanges = false,
             bool returnErrorMessage = false, string defaultValue = "")
         {
             try
