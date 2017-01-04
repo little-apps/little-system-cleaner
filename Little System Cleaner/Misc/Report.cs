@@ -71,7 +71,7 @@ namespace Little_System_Cleaner.Misc
         }
 
         /// <summary>
-        ///     Gets/Sets whether logging is enabled
+        ///     Gets whether logging is enabled
         /// </summary>
         public bool IsEnabled { get; }
 
