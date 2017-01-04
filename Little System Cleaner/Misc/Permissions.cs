@@ -38,11 +38,8 @@ namespace Little_System_Cleaner.Misc
                 {
                     //get the currently logged in user
                     var user = WindowsIdentity.GetCurrent();
-                    if (user != null)
-                    {
-                        var principal = new WindowsPrincipal(user);
-                        isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
-                    }
+                    var principal = new WindowsPrincipal(user);
+                    isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
                 }
                 catch (UnauthorizedAccessException ex)
                 {
