@@ -16,9 +16,10 @@ namespace Little_System_Cleaner.Misc
         /// Anything specified at the end of the parameters
         /// </summary>
         /// <remarks>This can be things like a file or IP address</remarks>
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once CollectionNeverQueried.Global
         public List<string> Items { get; } = new List<string>();
 
-        //
         /// <summary>
         /// Parses arguments and converts them into the relative arrays
         /// </summary>
