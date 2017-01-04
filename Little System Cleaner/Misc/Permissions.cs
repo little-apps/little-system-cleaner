@@ -63,7 +63,7 @@ namespace Little_System_Cleaner.Misc
             SetPrivilege("SeDebugPrivilege", enabled);
         }
 
-        internal static bool SetPrivilege(string privilege, bool enabled)
+        private static bool SetPrivilege(string privilege, bool enabled)
         {
             try
             {
