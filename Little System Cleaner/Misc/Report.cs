@@ -32,7 +32,7 @@ namespace Little_System_Cleaner.Misc
     {
         private readonly object _lockObject = new object();
 
-        public Report(Stream stream, bool isEnabled)
+        private Report(Stream stream, bool isEnabled)
             : base(stream)
         {
             IsEnabled = isEnabled;
