@@ -6,10 +6,19 @@ using System.Windows.Controls;
 
 namespace Little_System_Cleaner.Misc
 {
+    /// <summary>
+    /// Base class for wizard controls
+    /// </summary>
     public abstract class WizardBase : UserControl
     {
+        /// <summary>
+        /// List of controls for wizard as types in order
+        /// </summary>
         public List<Type> Controls { get; } = new List<Type>();
 
+        /// <summary>
+        /// Gets the current control that is displayed
+        /// </summary>
         public UserControl CurrentControl => (UserControl)Content;
 
         /// <summary>
