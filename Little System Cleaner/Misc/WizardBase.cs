@@ -14,17 +14,17 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         /// List of controls for wizard as types in order
         /// </summary>
-        public List<Type> Controls { get; } = new List<Type>();
+        protected List<Type> Controls { get; } = new List<Type>();
 
         /// <summary>
         /// Gets the current control that is displayed
         /// </summary>
-        public UserControl CurrentControl => (UserControl)Content;
+        protected UserControl CurrentControl => (UserControl)Content;
 
         /// <summary>
         ///     This value is readonly and can only be manipulated with SetCurrentControl()
         /// </summary>
-        public int CurrentControlIndex { get; private set; }
+        private int CurrentControlIndex { get; set; }
 
         /// <summary>
         ///     This function is called when the wizard is loaded
@@ -110,7 +110,7 @@ namespace Little_System_Cleaner.Misc
         ///     Changes the current control
         /// </summary>
         /// <remarks>This function can only be called from within the class that inherits this one</remarks>
-        protected void ChangeCurrentControl()
+        private void ChangeCurrentControl()
         {
             if (Dispatcher.Thread != Thread.CurrentThread)
             {
