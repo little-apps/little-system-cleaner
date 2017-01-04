@@ -73,6 +73,7 @@ namespace Little_System_Cleaner.Misc
         /// <summary>
         ///     Gets whether logging is enabled
         /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
         public bool IsEnabled { get; }
 
         public override Encoding Encoding => Encoding.ASCII;
