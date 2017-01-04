@@ -28,19 +28,34 @@ namespace Little_System_Cleaner.Misc
     /// </summary>
     public class WindowWrapper : IWin32Window
     {
+        /// <summary>
+        /// Constructor that takes in handle to window
+        /// </summary>
+        /// <param name="handle">Window handle</param>
         public WindowWrapper(IntPtr handle)
         {
             Handle = handle;
         }
 
+        /// <summary>
+        /// Constructor that takes in WPF Window
+        /// </summary>
+        /// <param name="window">Window instance</param>
         public WindowWrapper(Window window)
         {
             var wih = new WindowInteropHelper(window);
             Handle = wih.Handle;
         }
 
+        /// <summary>
+        /// Gets the handle to the window
+        /// </summary>
         public IntPtr Handle { get; }
 
+        /// <summary>
+        /// Gets WindowWrapper for main window
+        /// </summary>
+        /// <returns>WindowWrapper for main window</returns>
         internal static WindowWrapper GetCurrentWindowHandle()
         {
             var winWrapper = new WindowWrapper(Application.Current.MainWindow);
