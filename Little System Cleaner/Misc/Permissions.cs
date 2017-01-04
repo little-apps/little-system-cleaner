@@ -55,6 +55,10 @@ namespace Little_System_Cleaner.Misc
             }
         }
 
+        /// <summary>
+        /// Enables or disables needed privileges
+        /// </summary>
+        /// <param name="enabled">If true, privileges are enabled. Otherwise, they are disabled.</param>
         internal static void SetPrivileges(bool enabled)
         {
             SetPrivilege("SeShutdownPrivilege", enabled);
@@ -63,6 +67,13 @@ namespace Little_System_Cleaner.Misc
             SetPrivilege("SeDebugPrivilege", enabled);
         }
 
+        /// <summary>
+        /// Enables or disables specified privilege
+        /// </summary>
+        /// <param name="privilege">Privilege name</param>
+        /// <param name="enabled">If true, privilege is enabled. Otherwise, it is disabled.</param>
+        /// <remarks>See https://msdn.microsoft.com/en-us/library/windows/desktop/bb530716(v=vs.85).aspx for a list of privilege strings</remarks>
+        /// <returns>True if it was enabled or disabled</returns>
         private static bool SetPrivilege(string privilege, bool enabled)
         {
             try
