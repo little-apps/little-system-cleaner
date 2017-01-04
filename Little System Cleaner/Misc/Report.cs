@@ -32,6 +32,11 @@ namespace Little_System_Cleaner.Misc
     {
         private readonly object _lockObject = new object();
 
+        /// <summary>
+        /// Constructor for Report
+        /// </summary>
+        /// <param name="stream">Stream to write to</param>
+        /// <param name="isEnabled">Whether reporting is enabled</param>
         private Report(Stream stream, bool isEnabled)
             : base(stream)
         {
