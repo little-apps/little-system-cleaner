@@ -78,6 +78,10 @@ namespace Little_System_Cleaner.Misc
             }
         }
 
+        /// <summary>
+        /// Gets proxy settings
+        /// </summary>
+        /// <returns>IWebProxy with proxy settings</returns>
         internal static IWebProxy GetProxySettings()
         {
             var webProxy = new WebProxy();
@@ -360,6 +364,11 @@ namespace Little_System_Cleaner.Misc
             return PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, csidl, false) ? string.Copy(path.ToString()) : "";
         }
 
+        /// <summary>
+        /// Checks for filename in %PATH% variable
+        /// </summary>
+        /// <param name="fileName">Filename</param>
+        /// <returns>True if it was found</returns>
         internal static bool SearchPath(string fileName)
         {
             string retPath;
@@ -367,11 +376,24 @@ namespace Little_System_Cleaner.Misc
             return SearchPath(fileName, null, out retPath);
         }
 
+        /// <summary>
+        /// Locates filename in %PATH% variable
+        /// </summary>
+        /// <param name="fileName">Filename</param>
+        /// <param name="retPath">Full path of filename</param>
+        /// <returns>True if it was found</returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         internal static bool SearchPath(string fileName, out string retPath)
         {
             return SearchPath(fileName, null, out retPath);
         }
 
+        /// <summary>
+        /// Checks for filename in specified path
+        /// </summary>
+        /// <param name="fileName">Filename</param>
+        /// <param name="path">Path to search</param>
+        /// <returns>True if it was found</returns>
         internal static bool SearchPath(string fileName, string path)
         {
             string retPath;
@@ -386,6 +408,7 @@ namespace Little_System_Cleaner.Misc
         /// <param name="path">The path to be searched for the file (searches %path% variable if null)</param>
         /// <param name="retPath">The path containing the file</param>
         /// <returns>True if it was found</returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         internal static bool SearchPath(string fileName, string path, out string retPath)
         {
             var buffer = new StringBuilder(260);
@@ -794,7 +817,9 @@ namespace Little_System_Cleaner.Misc
         }
 
         #region SecureString Functions
-
+        /// <summary>
+        /// Gets hash specific to machine to encrypt strings
+        /// </summary>
         private static byte[] GetMachineHash
         {
             get
@@ -847,6 +872,11 @@ namespace Little_System_Cleaner.Misc
             }
         }
 
+        /// <summary>
+        /// Encrypts SecureString
+        /// </summary>
+        /// <param name="input">SecureString</param>
+        /// <returns>String encrypted with hash encoded in base64 or empty string if it couldnt be encrypted</returns>
         internal static string EncryptString(SecureString input)
         {
             if (input.Length == 0)
@@ -859,6 +889,11 @@ namespace Little_System_Cleaner.Misc
             return Convert.ToBase64String(encryptedData);
         }
 
+        /// <summary>
+        /// Decrypts string into SecureString
+        /// </summary>
+        /// <param name="encryptedData">String encrypted with hash encoded in base64</param>
+        /// <returns>SecureString or empty if it couldnt be decrypted</returns>
         internal static SecureString DecryptString(string encryptedData)
         {
             if (string.IsNullOrWhiteSpace(encryptedData))
@@ -878,7 +913,13 @@ namespace Little_System_Cleaner.Misc
             }
         }
 
-        internal static SecureString ToSecureString(string input)
+        /// <summary>
+        /// Converts string to SecureString
+        /// </summary>
+        /// <param name="input">string</param>
+        /// <returns>SecureString</returns>
+        /// <remarks>The input string should be destroyed after calling this in order for it be secured</remarks>
+        private static SecureString ToSecureString(string input)
         {
             var secure = new SecureString();
             foreach (var c in input)
@@ -889,6 +930,11 @@ namespace Little_System_Cleaner.Misc
             return secure;
         }
 
+        /// <summary>
+        /// Converts SecureString to string
+        /// </summary>
+        /// <param name="input">SecureString</param>
+        /// <returns>string</returns>
         internal static string ToInsecureString(SecureString input)
         {
             string returnValue;
@@ -923,6 +969,13 @@ namespace Little_System_Cleaner.Misc
             return ParseRegKeyPath(inPath, out baseKey, out subKey) && RegKeyExists(baseKey, subKey);
         }
 
+        /// <summary>
+        /// Checks if registry root and sub key exists 
+        /// </summary>
+        /// <param name="mainKey">Root key (HKEY_LOCAL_MACHINE, etc)</param>
+        /// <param name="subKey">Sub key path</param>
+        /// <returns>True if it exists</returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         internal static bool RegKeyExists(string mainKey, string subKey)
         {
             var reg = RegOpenKey(mainKey, subKey);
