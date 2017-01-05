@@ -14,7 +14,7 @@ namespace Little_System_Cleaner.ProcessInfo
     /// <summary>
     ///     Interaction logic for LoadProgram.xaml
     /// </summary>
-    public partial class ProcessInfo : INotifyPropertyChanged
+    public sealed partial class ProcessInfo : INotifyPropertyChanged
     {
         #region Fields
         private static readonly Dictionary<string, string> Props = new Dictionary<string, string>();
@@ -504,7 +504,7 @@ namespace Little_System_Cleaner.ProcessInfo
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
