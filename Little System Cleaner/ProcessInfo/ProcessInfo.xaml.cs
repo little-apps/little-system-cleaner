@@ -28,6 +28,11 @@ namespace Little_System_Cleaner.ProcessInfo
         private string _status;
         private bool _threadsExpanded;
 
+        /// <summary>
+        /// Constructor that takes in file and arguments to start process
+        /// </summary>
+        /// <param name="fileName">Filename</param>
+        /// <param name="args">Arguments (default is empty string)</param>
         public ProcessInfo(string fileName, string args = "")
         {
             var procStartInfo = new ProcessStartInfo
@@ -38,11 +43,18 @@ namespace Little_System_Cleaner.ProcessInfo
             Init(procStartInfo);
         }
 
+        /// <summary>
+        /// Constructor that takes in ProcessStartInfo to start process
+        /// </summary>
+        /// <param name="procStartInfo">ProcessStartInfo instance</param>
         public ProcessInfo(ProcessStartInfo procStartInfo)
         {
             Init(procStartInfo);
         }
 
+        /// <summary>
+        /// Status of process
+        /// </summary>
         public string Status
         {
             get { return _status; }
@@ -53,6 +65,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// Time process was started
+        /// </summary>
         public string StartTime
         {
             get { return _startDateTime; }
@@ -63,6 +78,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// Time process was ended (if it has)
+        /// </summary>
         public string EndTime
         {
             get { return _endDateTime; }
@@ -73,6 +91,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// Data from error stream
+        /// </summary>
         public string ErrorStream
         {
             get
@@ -93,6 +114,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// Data from output stream
+        /// </summary>
         public string OutputStream
         {
             get
@@ -113,6 +137,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// List of <see cref="ModuleInfo"/> for process
+        /// </summary>
         public ObservableCollection<ModuleInfo> ProcModules
         {
             get
@@ -131,6 +158,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// List of <see cref="ThreadInfo"/> for process
+        /// </summary>
         public ObservableCollection<ThreadInfo> ProcThreads
         {
             get
@@ -149,63 +179,130 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// Name of process
+        /// </summary>
         public string ProcName => TryGetProperty(() => _process?.ProcessName, nameof(ProcName));
+        
+        /// <summary>
+        /// Machine name that process is on
+        /// </summary>
         public string ProcMachineName => TryGetProperty(() => _process?.MachineName, nameof(ProcMachineName));
+        
+        /// <summary>
+        /// Process ID
+        /// </summary>
         public string ProcId => TryGetProperty(() => _process?.Id.ToString(), nameof(ProcId));
+        
+        /// <summary>
+        /// Process handle
+        /// </summary>
         public string ProcHandle => TryGetProperty(() => _process?.Handle.ToString(), nameof(ProcHandle));
+       
+        /// <summary>
+        /// Main module name of process
+        /// </summary>
         public string ProcMainModuleName => TryGetProperty(() => _process.MainModule.ModuleName, nameof(ProcMainModuleName));
 
+        /// <summary>
+        /// Base address (in hex format) of main module
+        /// </summary>
         public string ProcBaseAddress
             => TryGetProperty(() => _process?.MainModule.BaseAddress.ToString("X8"), nameof(ProcBaseAddress), true);
 
+        /// <summary>
+        /// Handle of main window for process
+        /// </summary>
         public string ProcWindowHandle
             => TryGetProperty(() => _process?.MainWindowHandle.ToString(), nameof(ProcWindowHandle), true);
 
+        /// <summary>
+        /// Title of main window for processs
+        /// </summary>
         public string ProcWindowTitle => TryGetProperty(() => _process?.MainWindowTitle, nameof(ProcWindowTitle), true);
 
+        /// <summary>
+        /// Size of non paged system memory for process
+        /// </summary>
         public string ProcNonPagedSysMemory
             =>
                 TryGetProperty(() => Utils.ConvertSizeToString(_process.NonpagedSystemMemorySize64),
                     nameof(ProcNonPagedSysMemory), true);
 
+        /// <summary>
+        /// Size of private memory for process
+        /// </summary>
         public string ProcPrivateMemory
             => TryGetProperty(() => Utils.ConvertSizeToString(_process.PrivateMemorySize64), nameof(ProcPrivateMemory), true);
 
+        /// <summary>
+        /// Size of paged memory for process
+        /// </summary>
         public string ProcPagedMemory
             => TryGetProperty(() => Utils.ConvertSizeToString(_process.PagedMemorySize64), nameof(ProcPagedMemory), true);
 
+        /// <summary>
+        /// Size of paged system memory for process
+        /// </summary>
         public string ProcPagedSysMemory
             =>
                 TryGetProperty(() => Utils.ConvertSizeToString(_process.PagedSystemMemorySize64), nameof(ProcPagedSysMemory),
                     true);
 
+        /// <summary>
+        /// Size of paged peak memory for process
+        /// </summary>
         public string ProcPagedPeakMemory
             =>
                 TryGetProperty(() => Utils.ConvertSizeToString(_process.PeakPagedMemorySize64), nameof(ProcPagedPeakMemory),
                     true);
 
+        /// <summary>
+        /// Size of paged virtual memory for process
+        /// </summary>
         public string ProcPagedVirtualMemory
             =>
                 TryGetProperty(() => Utils.ConvertSizeToString(_process.PeakVirtualMemorySize64),
                     nameof(ProcPagedVirtualMemory), true);
 
+        /// <summary>
+        /// Size of virtual memory for process
+        /// </summary>
         public string ProcVirtMemory
             => TryGetProperty(() => Utils.ConvertSizeToString(_process.VirtualMemorySize64), nameof(ProcVirtMemory), true);
 
+        /// <summary>
+        /// Size of working set peak memory for process
+        /// </summary>
         public string ProcWorkingSetPeak
             => TryGetProperty(() => Utils.ConvertSizeToString(_process.PeakWorkingSet64), nameof(ProcWorkingSetPeak), true);
 
+        /// <summary>
+        /// Priority of process
+        /// </summary>
         public string ProcPriority => TryGetProperty(() => _process?.PriorityClass.ToString(), nameof(ProcPriority), true);
 
+        /// <summary>
+        /// Whether priority boost is enabled for process
+        /// </summary>
         public string ProcPriorityBoostEnabled
             => TryGetProperty(() => _process?.PriorityBoostEnabled.ToString(), nameof(ProcPriorityBoostEnabled), true);
 
+        /// <summary>
+        /// Number of handles open with process
+        /// </summary>
         public string ProcHandlesCount
             => TryGetProperty(() => _process?.HandleCount.ToString(), nameof(ProcHandlesCount), true);
 
+        /// <summary>
+        /// Whether process is responding
+        /// </summary>
         public string ProcIsResponding
             => TryGetProperty(() => _process?.Responding.ToString(), nameof(ProcIsResponding), true);
 
+        /// <summary>
+        /// If more details accordion is expanded
+        /// </summary>
         public bool MoreDetailsExpanded
         {
             get { return _moreDetailsExpanded; }
@@ -222,6 +319,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// If modules accordion is expanded
+        /// </summary>
         public bool ModulesExpanded
         {
             get { return _modulesExpanded; }
@@ -238,6 +338,9 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// If threads accordion is expanded
+        /// </summary>
         public bool ThreadsExpanded
         {
             get { return _threadsExpanded; }
@@ -254,8 +357,15 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// True if process exited without any further information
+        /// </summary>
         public bool ProcessExitedWithoutInfo => string.IsNullOrEmpty(ProcName) && _process.HasExited;
 
+        /// <summary>
+        /// Starts process and timer and then fills window with process information
+        /// </summary>
+        /// <param name="processStartInfo"><see cref="ProcessStartInfo"/> instance</param>
         private void Init(ProcessStartInfo processStartInfo)
         {
             _process.StartInfo = processStartInfo;
@@ -284,6 +394,11 @@ namespace Little_System_Cleaner.ProcessInfo
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Updates all properties when timer is fired
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="elapsedEventArgs"></param>
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             if (_process.HasExited)
@@ -294,6 +409,11 @@ namespace Little_System_Cleaner.ProcessInfo
             OnPropertyChanged(string.Empty);
         }
 
+        /// <summary>
+        /// Kills process
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void KillProcess_Click(object sender, RoutedEventArgs e)
         {
             if (
@@ -312,11 +432,21 @@ namespace Little_System_Cleaner.ProcessInfo
             }
         }
 
+        /// <summary>
+        /// Closes window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Prompts user if they want to close window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LoadProgram_OnClosing(object sender, CancelEventArgs e)
         {
             if (
