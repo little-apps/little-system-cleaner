@@ -16,6 +16,7 @@ namespace Little_System_Cleaner.ProcessInfo
     /// </summary>
     public partial class ProcessInfo : INotifyPropertyChanged
     {
+        #region Fields
         private static readonly Dictionary<string, string> Props = new Dictionary<string, string>();
         private readonly Timer _timer = new Timer();
         private string _endDateTime;
@@ -27,31 +28,9 @@ namespace Little_System_Cleaner.ProcessInfo
 
         private string _status;
         private bool _threadsExpanded;
-
-        /// <summary>
-        /// Constructor that takes in file and arguments to start process
-        /// </summary>
-        /// <param name="fileName">Filename</param>
-        /// <param name="args">Arguments (default is empty string)</param>
-        public ProcessInfo(string fileName, string args = "")
-        {
-            var procStartInfo = new ProcessStartInfo
-            {
-                FileName = fileName,
-                Arguments = args
-            };
-            Init(procStartInfo);
-        }
-
-        /// <summary>
-        /// Constructor that takes in ProcessStartInfo to start process
-        /// </summary>
-        /// <param name="procStartInfo">ProcessStartInfo instance</param>
-        public ProcessInfo(ProcessStartInfo procStartInfo)
-        {
-            Init(procStartInfo);
-        }
-
+        #endregion
+        
+        #region Properties
         /// <summary>
         /// Status of process
         /// </summary>
@@ -361,7 +340,35 @@ namespace Little_System_Cleaner.ProcessInfo
         /// True if process exited without any further information
         /// </summary>
         public bool ProcessExitedWithoutInfo => string.IsNullOrEmpty(ProcName) && _process.HasExited;
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Constructor that takes in file and arguments to start process
+        /// </summary>
+        /// <param name="fileName">Filename</param>
+        /// <param name="args">Arguments (default is empty string)</param>
+        public ProcessInfo(string fileName, string args = "")
+        {
+            var procStartInfo = new ProcessStartInfo
+            {
+                FileName = fileName,
+                Arguments = args
+            };
+            Init(procStartInfo);
+        }
+
+        /// <summary>
+        /// Constructor that takes in ProcessStartInfo to start process
+        /// </summary>
+        /// <param name="procStartInfo">ProcessStartInfo instance</param>
+        public ProcessInfo(ProcessStartInfo procStartInfo)
+        {
+            Init(procStartInfo);
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Starts process and timer and then fills window with process information
         /// </summary>
@@ -490,6 +497,7 @@ namespace Little_System_Cleaner.ProcessInfo
                 return returnErrorMessage ? e.Message : origValue;
             }
         }
+        #endregion
 
         #region INotifyPropertyChanged Members
 
