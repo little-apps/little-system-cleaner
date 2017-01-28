@@ -101,10 +101,9 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             AppCastUrl = appCast;
             ForceCheck = forceUpdate;
-
-            CheckForUpdate();
-
             Running = true;
+
+            CheckForUpdate().ContinueWith((task => Running = false));
         }
 
         private static async Task CheckForUpdate()
