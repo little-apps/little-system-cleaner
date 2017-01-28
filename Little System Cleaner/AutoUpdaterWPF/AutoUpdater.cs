@@ -103,7 +103,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             ForceCheck = forceUpdate;
             Running = true;
 
-            CheckForUpdate().ContinueWith((task => Running = false));
+            CheckForUpdate().ContinueWith(task => Running = false);
         }
 
         private static async Task CheckForUpdate()
