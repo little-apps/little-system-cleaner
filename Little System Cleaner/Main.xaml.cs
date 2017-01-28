@@ -236,7 +236,9 @@ namespace Little_System_Cleaner
         /// <param name="e"></param>
         private void menuItem_Click(object sender, RoutedEventArgs e)
         {
-            switch ((string)(sender as MenuItem)?.Header)
+            var header = ((MenuItem) sender).Header as string;
+
+            switch (header)
             {
                 case "Help":
                     {
@@ -265,14 +267,18 @@ namespace Little_System_Cleaner
                         break;
                     }
                 case "About...":
-                {
-                    ComboBoxTab.SelectedItem = ComboBoxItemOptions;
+                    {
+                        ComboBoxTab.SelectedItem = ComboBoxItemOptions;
 
-                    var options = TabItemOptions.Content as Options;
-                    options?.ShowAboutTab();
+                        var options = TabItemOptions.Content as Options;
+                        options?.ShowAboutTab();
 
-                    break;
-                }
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
             }
         }
 
