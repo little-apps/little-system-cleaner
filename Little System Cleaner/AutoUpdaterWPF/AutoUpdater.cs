@@ -107,7 +107,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             Running = true;
         }
 
-        private static async void CheckForUpdate()
+        private static async Task CheckForUpdate()
         {
             var mainAssembly = Assembly.GetEntryAssembly();
             var companyAttribute =
