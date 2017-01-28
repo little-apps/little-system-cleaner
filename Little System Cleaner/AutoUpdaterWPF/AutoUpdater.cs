@@ -172,7 +172,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-                webResponse = await Task.Run(() => webRequest.GetResponse());
+                webResponse = await webRequest.GetResponseAsync();
             }
             catch (Exception ex)
             {
@@ -202,7 +202,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
 
             try
             {
-                appCastStream = await Task.Run(() => webResponse.GetResponseStream());
+                appCastStream = webResponse.GetResponseStream();
 
                 if (appCastStream == null)
                     throw new Exception("Response stream from update server was null.");
