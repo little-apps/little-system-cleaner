@@ -25,21 +25,29 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using Little_System_Cleaner.Tab_Controls.Tools;
 using Application = System.Windows.Application;
+using Brushes = System.Windows.Media.Brushes;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using Cursors = System.Windows.Input.Cursors;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Image = System.Windows.Controls.Image;
+using Label = System.Windows.Controls.Label;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Orientation = System.Windows.Controls.Orientation;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Little_System_Cleaner
 {
@@ -49,9 +57,13 @@ namespace Little_System_Cleaner
         
         private bool _ignoreSetTabControl;
 
+        internal DynamicTabControl TabControl { get; private set; }
+
         public Main()
         {
             InitializeComponent();
+
+            BuildControls();
 
             Instance = this;
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
@@ -109,6 +121,154 @@ namespace Little_System_Cleaner
         internal static Watcher Watcher { get; private set; }
 
         /// <summary>
+        /// Builds the ComboBox and TabControl
+        /// </summary>
+        private void BuildControls()
+        {
+            TabControl = new DynamicTabControl {Name = "TabControl"};
+
+            TabControl.SetValue(Grid.RowProperty, 1);
+            TabControl.SetValue(MarginProperty, new Thickness(0));
+            TabControl.SetValue(Selector.IsSynchronizedWithCurrentItemProperty, true);
+            TabControl.SetValue(StyleProperty, FindResource("WindowTabCtrl") as Style);
+
+            var style = FindResource("WindowTabItem") as Style;
+
+            AddComboTabItem(CreateComboBoxItem("Resources/icon.png", "Registry Cleaner"),
+                CreateDynamicTabItem("TabItemRegCleaner", typeof(Registry_Cleaner.Controls.Wizard), style));
+
+            AddComboTabItem(CreateComboBoxItem("Resources/optimizer.png", "Registry Optimizer"),
+                CreateDynamicTabItem("TabItemRegOptimizer", typeof(Registry_Optimizer.Controls.Wizard), style));
+
+            AddComboTabItem(CreateComboBoxItem("Resources/disk cleaner/icon.png", "Disk Cleaner"),
+                CreateDynamicTabItem("TabItemDiskCleaner", typeof(Disk_Cleaner.Controls.Wizard), style));
+
+            AddComboTabItem(CreateComboBoxItem("Resources/duplicate finder/icon.png", "Duplicate Cleaner"),
+                CreateDynamicTabItem("TabItemDuplicateFinder", typeof(Duplicate_Finder.Controls.Wizard), style));
+
+            AddComboTabItem(CreateComboBoxItem("Resources/Tools.png", "Tools"),
+                CreateDynamicTabItem("TabItemTools", typeof(Tools), style));
+
+            AddComboTabItem(CreateComboBoxItem("Resources/Options.png", "Options"),
+                 CreateTabItem("TabItemOptions", new Options(), style));
+
+            (Content as Grid)?.Children.Add(TabControl);
+        }
+
+        /// <summary>
+        /// Adds <see cref="ComboBoxItem"/> and <see cref="TabItem"/> to window
+        /// </summary>
+        /// <remarks>The ComboBoxItem.Tag is set to the TabItem and the TabItem.Tag is set to the ComboBoxItem</remarks>
+        /// <param name="comboBoxItem">ComboBoxItem</param>
+        /// <param name="tabItem">TabItem</param>
+        /// <exception cref="ArgumentNullException">Thrown if ComboBoxItem or TabItem is null</exception>
+        private void AddComboTabItem(FrameworkElement comboBoxItem, FrameworkElement tabItem)
+        {
+            if (comboBoxItem == null)
+                throw new ArgumentNullException(nameof(comboBoxItem));
+
+            if (tabItem == null)
+                throw new ArgumentNullException(nameof(tabItem));
+
+            comboBoxItem.Tag = tabItem;
+            tabItem.Tag = comboBoxItem;
+
+            ComboBoxTab.Items.Add(comboBoxItem);
+            TabControl.Items.Add(tabItem);
+        }
+
+        /// <summary>
+        /// Creates tab item with <see cref="DynamicUserControl"/>
+        /// </summary>
+        /// <param name="name">Name of tab item</param>
+        /// <param name="type">Type of user control</param>
+        /// <param name="style">Style to use for tab item</param>
+        /// <returns>TabItem</returns>
+        private static TabItem CreateDynamicTabItem(string name, Type type, Style style)
+        {
+            var userCntrl = new DynamicUserControl();
+            DynamicUserControl.SetType(userCntrl, type);
+
+            var tabItem = new TabItem
+            {
+                Name = name,
+                Style = style,
+                Content = userCntrl
+            };
+
+            return tabItem;
+        }
+
+        /// <summary>
+        /// Creates a tab item with user control
+        /// </summary>
+        /// <param name="name">Name of tab item</param>
+        /// <param name="userControl">User control inside tab item</param>
+        /// <param name="style">Style to use for tab item</param>
+        /// <returns>TabItem</returns>
+        private static TabItem CreateTabItem(string name, UserControl userControl, Style style)
+        {
+            var tabItem = new TabItem
+            {
+                Name = name,
+                Style = style,
+                Content = userControl
+            };
+
+            return tabItem;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ComboBoxItem"/> for a tab item
+        /// </summary>
+        /// <param name="iconSrc">Source of icon</param>
+        /// <param name="text">Text for combo box item</param>
+        /// <param name="isSelected">True if combo box item is selected</param>
+        /// <returns>Combo box item</returns>
+        private static ComboBoxItem CreateComboBoxItem(string iconSrc, string text, bool isSelected = false)
+        {
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            var icon = new Image
+            {
+                Source = new BitmapImage(new Uri(iconSrc, UriKind.RelativeOrAbsolute)),
+                Width = 52,
+                Margin = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            stackPanel.Children.Add(icon);
+
+            var label = new Label
+            {
+                Width = 261,
+                Height = 47,
+                Margin = new Thickness(0),
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 24,
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.White,
+                Content = text
+            };
+
+            stackPanel.Children.Add(label);
+
+            var comboBoxItem = new ComboBoxItem
+            {
+                Content = stackPanel,
+                IsSelected = isSelected
+            };
+
+            return comboBoxItem;
+        }
+        
+
+        /// <summary>
         /// Hack that allows user to drag window when left click is held on window
         /// </summary>
         /// <param name="e"></param>
@@ -126,7 +286,8 @@ namespace Little_System_Cleaner
         /// <param name="e"></param>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            MoveToTabIndex(0);
+            ComboBoxTab.SelectedIndex = 0;
+            MoveToTabControl(TabControl.Items[0] as TabItem);
 
             // Send usage data to Little Software Stats
             Watcher = new Watcher();
@@ -264,9 +425,12 @@ namespace Little_System_Cleaner
                     }
                 case "About...":
                     {
-                        ComboBoxTab.SelectedItem = ComboBoxItemOptions;
+                        var tabItem = TabControl.GetTabItem("TabItemOptions");
+                        var comboBoxItem = tabItem.Tag as ComboBoxItem;
+                        
+                        ComboBoxTab.SelectedItem = comboBoxItem;
 
-                        var options = TabItemOptions.Content as Options;
+                        var options = tabItem.Content as Options;
                         options?.ShowAboutTab();
 
                         break;
@@ -315,24 +479,40 @@ namespace Little_System_Cleaner
                 return;
             }
 
-            if (MoveToTabIndex(ComboBoxTab.SelectedIndex))
-                return;
+            try
+            {
+                var comboBoxItem = e.AddedItems.Cast<ComboBoxItem>().First();
 
-            // If tab index not changed -> reset combobox index
-            _ignoreSetTabControl = true;
-            ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
+                if (comboBoxItem.Tag == null)
+                    throw new NullReferenceException("ComboBoxItem.Tag is null");
+
+                var tabItem = comboBoxItem.Tag as TabItem;
+
+                if (tabItem == null)
+                    throw new InvalidCastException("Cannot cast ComboBoxItem.Tag to TabItem");
+
+                MoveToTabControl(tabItem);
+            }
+            catch
+            {
+                // If tab index not changed -> reset combobox index
+                _ignoreSetTabControl = true;
+                ComboBoxTab.SelectedIndex = TabControl.SelectedIndex;
+            }
         }
 
         /// <summary>
-        /// Unloads current tab control and then loads new tab control
+        /// Changes the tab control
         /// </summary>
-        /// <param name="index">Index to change to</param>
-        /// <returns>False if the tab could not be unloaded</returns>
-        private bool MoveToTabIndex(int index)
+        /// <param name="tabControl">TabControl to change to</param>
+        /// <exception cref="Exception">Thrown if TabControl.SelectedItem does not match current combobox item</exception>
+        private void MoveToTabControl(TabItem tabControl)
         {
-            TabControl.SelectedIndex = index;
-            
-            return TabControl.SelectedIndex == ComboBoxTab.SelectedIndex;
+            TabControl.SelectedItem = tabControl;
+
+            if (!ComboBoxTab.Items.Cast<ComboBoxItem>()
+                .Any(comboItem => ReferenceEquals(comboItem.Tag, TabControl.SelectedItem)))
+                throw new Exception("Tab was not changed");
         }
 
         /// <summary>

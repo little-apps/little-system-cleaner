@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Linq;
 
 namespace Little_System_Cleaner.Misc
 {
-    class DynamicTabControl : TabControl
+    internal class DynamicTabControl : TabControl
     {
         /// <summary>
         /// A force exit is being done if set to true
@@ -126,6 +128,19 @@ namespace Little_System_Cleaner.Misc
                 userCtrl = (userCtrl as DynamicUserControl).InitUserControl();
             
             return userCtrl;
+        }
+        
+        public TabItem GetTabItem(string name)
+        {
+            try
+            {
+                return Items.Cast<TabItem>().First(ti => string.CompareOrdinal(ti.Name, name) == 0);
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+            
         }
 
         public class UnloadBlockedException : Exception

@@ -29,9 +29,13 @@ namespace Little_System_Cleaner.Tab_Controls.Options
 {
     public partial class Options : INotifyPropertyChanged
     {
+        public static Options Instance { get; private set; }
+
         public Options()
         {
             InitializeComponent();
+
+            Instance = this;
 
             using (var secureStr = Utils.DecryptString(Settings.Default.optionsProxyPassword))
             {
