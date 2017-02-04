@@ -26,8 +26,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -42,8 +40,6 @@ using Image = System.Windows.Controls.Image;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using Timer = System.Timers.Timer;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace Little_System_Cleaner
 {
