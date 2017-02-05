@@ -710,6 +710,68 @@ namespace Shared
         }
 
         /// <summary>
+        ///     Checks if assembly is loaded or not
+        /// </summary>
+        /// <param name="assembly">
+        ///     The name of the assembly (ie: System.Data.XYZ). This sometimes is (but not always) also the
+        ///     namespace of the assembly.
+        /// </param>
+        /// <param name="ver">What the version of the assembly should be. Set to null for any version (default is null)</param>
+        /// <param name="versionCanBeGreater">
+        ///     If true, the version of the assembly can be the same or greater than the specified
+        ///     version. Otherwise, the version must be the exact same as the assembly.
+        /// </param>
+        /// <param name="publicKeyToken">
+        ///     What the public key token of the assembly should be. Set to null for any public key token
+        ///     (default is null). This needs to be 8 bytes.
+        /// </param>
+        /// <returns>True if the assembly is loaded</returns>
+        /// <remarks>
+        ///     Please note that if versionCanBeGreater is set to true and publicKeyToken is not null, this function can
+        ///     return false even though the the version of the assembly is greater. This is due to the fact that the public key
+        ///     token is derived from the certificate used to sign the file and this certificate can change over time.
+        /// </remarks>
+        public static bool IsAssemblyLoaded(string assembly, Version ver = null, bool versionCanBeGreater = false,
+            byte[] publicKeyToken = null)
+        {
+            if (String.IsNullOrWhiteSpace(assembly))
+                throw new ArgumentNullException(nameof(assembly), "The assembly name cannot be null or empty");
+
+            if ((publicKeyToken != null) && publicKeyToken.Length != 8)
+                throw new ArgumentException("The public key token must be 8 bytes long", nameof(publicKeyToken));
+
+            // Do not get Assembly from App because this function is called before App is initialized
+            var asm = Assembly.GetCallingAssembly();
+
+            foreach (var asmLoaded in asm.GetReferencedAssemblies())
+            {
+                if (asmLoaded.Name == assembly)
+                {
+                    if (ver != null)
+                    {
+                        var n = asmLoaded.Version.CompareTo(ver);
+
+                        if (n < 0)
+                            // version cannot be less
+                            continue;
+
+                        if (!versionCanBeGreater && n > 0)
+                            // version cannot be greater
+                            continue;
+                    }
+
+                    var asmPublicKeyToken = asmLoaded.GetPublicKeyToken();
+                    if ((publicKeyToken != null) && !publicKeyToken.SequenceEqual(asmPublicKeyToken))
+                        continue;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         ///     Compares wildcard to string
         /// </summary>
         /// <param name="wildString">String to compare</param>
