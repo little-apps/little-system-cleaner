@@ -1,5 +1,5 @@
-﻿using Little_System_Cleaner.Misc;
-using System.IO;
+﻿using System.IO;
+using Shared;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Helpers
 {

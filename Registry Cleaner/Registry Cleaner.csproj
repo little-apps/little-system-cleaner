@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E9835B86-0FB1-4D81-A2D7-05AD52D9A002}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Registry_Cleaner</RootNamespace>
+    <AssemblyName>Registry Cleaner</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="XamlAnimatedGif, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XamlAnimatedGif.1.1.6\lib\net45\XamlAnimatedGif.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\Results.xaml.cs">
+      <DependentUpon>Results.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Scan.xaml.cs">
+      <DependentUpon>Scan.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Start.xaml.cs">
+      <DependentUpon>Start.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Wizard.cs" />
+    <Compile Include="Helpers\AddEditExcludeItem.xaml.cs">
+      <DependentUpon>AddEditExcludeItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Backup\BackupRegistry.cs" />
+    <Compile Include="Helpers\Backup\RegistryEntries.cs" />
+    <Compile Include="Helpers\Backup\RegistryEntry.cs" />
+    <Compile Include="Helpers\Backup\RegistryValue.cs" />
+    <Compile Include="Helpers\BadRegistryKeys\BadRegistryKey.cs" />
+    <Compile Include="Helpers\BadRegistryKeys\BadRegKeyArray.cs" />
+    <Compile Include="Helpers\ExcludeItem.cs" />
+    <Compile Include="Helpers\OSVersion.cs" />
+    <Compile Include="Helpers\PInvoke.cs" />
+    <Compile Include="Helpers\Report.cs" />
+    <Compile Include="Helpers\RestoreFile.cs" />
+    <Compile Include="Helpers\ResultModel.cs" />
+    <Compile Include="Helpers\ScanFunctions.cs" />
+    <Compile Include="Helpers\ScannerListViewItem.cs" />
+    <Compile Include="Helpers\Sections\Section.cs" />
+    <Compile Include="Helpers\Sections\SectionModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scanners\ActivexComObjects.cs" />
+    <Compile Include="Scanners\ApplicationInfo.cs" />
+    <Compile Include="Scanners\ApplicationPaths.cs" />
+    <Compile Include="Scanners\ApplicationSettings.cs" />
+    <Compile Include="Scanners\RecentDocs.cs" />
+    <Compile Include="Scanners\ScannerBase.cs" />
+    <Compile Include="Scanners\SharedDLLs.cs" />
+    <Compile Include="Scanners\StartupFiles.cs" />
+    <Compile Include="Scanners\Strings1.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Scanners\SystemDrivers.cs" />
+    <Compile Include="Scanners\WindowsFonts.cs" />
+    <Compile Include="Scanners\WindowsHelpFiles.cs" />
+    <Compile Include="Scanners\WindowsSounds.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\Results.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Scan.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Start.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Helpers\AddEditExcludeItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scanners\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common Library\Shared.csproj">
+      <Project>{C9701140-D874-4A42-A67E-38F918C34E81}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common Tools\Common Tools.csproj">
+      <Project>{e059be5f-fcef-4977-90ae-3335efbc248a}</Project>
+      <Name>Common Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resources\activexcom.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\appinfo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\drivers.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fonts.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\helpfiles.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\historylist.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\little system cleaner.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mycomputer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\programlocations.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shareddlls.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\softwaresettings.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\soundevents.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\startup.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\finished-scanning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\fix-problems.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\restore\browse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\restore\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\restore\restore.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\scan-registry.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

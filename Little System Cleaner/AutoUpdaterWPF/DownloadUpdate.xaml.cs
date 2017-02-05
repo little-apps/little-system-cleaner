@@ -1,5 +1,4 @@
-﻿using Little_System_Cleaner.Misc;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +6,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Threading;
 using System.Windows;
+using Shared;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {

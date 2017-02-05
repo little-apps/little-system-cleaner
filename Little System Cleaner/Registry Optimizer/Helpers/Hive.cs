@@ -1,10 +1,10 @@
-﻿using Little_System_Cleaner.Misc;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using Shared;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Helpers
 {

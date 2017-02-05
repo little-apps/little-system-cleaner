@@ -1,8 +1,8 @@
 ﻿using CommonTools.TreeListView.Tree;
 using Little_System_Cleaner.Duplicate_Finder.Controls;
-using Little_System_Cleaner.Misc;
 using System.Collections;
 using System.Linq;
+using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {

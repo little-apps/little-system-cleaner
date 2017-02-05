@@ -169,13 +169,13 @@
                                 Template="{StaticResource ComboBoxTextBox}"
                                 Text="{TemplateBinding Text}"
                                 Visibility="Hidden" />
-                            <VisualStateManager.VisualStateGroups>
+                            <!--<VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="MouseOver" />
                                     <VisualState x:Name="Disabled" />
                                 </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
+                            </VisualStateManager.VisualStateGroups>-->
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="HasItems" Value="false">
@@ -260,11 +260,11 @@
                                 <Setter TargetName="Border" Property="Background" Value="{StaticResource TabSelectedBush}" />
                                 <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
                             </Trigger>
-                            <!-- <Trigger Property="IsEnabled" Value="False">
+                            <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="Border" Property="Background" Value="{StaticResource DisabledBackgroundBrush}" />
                                 <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource DisabledBorderBrush}" />
                                 <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}" />
-                            </Trigger>-->
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

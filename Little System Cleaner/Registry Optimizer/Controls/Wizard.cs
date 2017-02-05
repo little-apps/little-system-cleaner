@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Shared;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {

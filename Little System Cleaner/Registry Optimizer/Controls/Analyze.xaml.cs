@@ -21,6 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
+using Shared;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -37,8 +38,8 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Set taskbar progress bar
-            Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
-            Little_System_Cleaner.Main.TaskbarProgressValue = 0;
+            Utils.TaskbarProgressState = TaskbarItemProgressState.Normal;
+            Utils.TaskbarProgressValue = 0;
 
             // Set progress bar
             ProgressBar.Minimum = 0;
@@ -68,10 +69,10 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
             var timeSpan = DateTime.Now.Subtract(dtStart);
 
-            Little_System_Cleaner.Main.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds,
+            Utils.Watcher.EventPeriod("Registry Optimizer", "Analyze", (int)timeSpan.TotalSeconds,
                 true);
 
-            Little_System_Cleaner.Main.TaskbarProgressState = TaskbarItemProgressState.None;
+            Utils.TaskbarProgressState = TaskbarItemProgressState.None;
             Close();
         }
 
@@ -84,7 +85,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
         private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
-                Little_System_Cleaner.Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
+                Utils.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
         }
     }
 }

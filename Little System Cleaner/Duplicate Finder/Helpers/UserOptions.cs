@@ -1,9 +1,9 @@
-﻿using Little_System_Cleaner.Properties;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
+using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {

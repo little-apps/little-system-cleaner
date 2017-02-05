@@ -1,6 +1,4 @@
 ﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
+using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -148,7 +147,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             {
                 var dtStart = DateTime.Now;
                 Dispatcher.BeginInvoke(
-                    new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+                    new Action(() => Utils.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
                 StatusText = "Building list of all files";
 
                 if (!BuildFileList(dtStart))
@@ -248,7 +247,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                Utils.TaskbarProgressState = TaskbarItemProgressState.None;
                 ProgressBar.IsIndeterminate = false;
                 TextBlockPleaseWait.Visibility = Visibility.Hidden;
             }));
@@ -301,7 +300,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return false;
                 }
 
-                Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives",
+                Utils.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives",
                     (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
             else if (ScanBase.Options.AllExceptDrives.GetValueOrDefault())
@@ -341,7 +340,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return false;
                 }
 
-                Main.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except",
+                Utils.Watcher.EventPeriod("Duplicate Finder", "Scan All Drives Except",
                     (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
             else if (ScanBase.Options.OnlySelectedDrives.GetValueOrDefault())
@@ -381,7 +380,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return false;
                 }
 
-                Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives",
+                Utils.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Drives",
                     (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
             else // Only selected folders
@@ -406,7 +405,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     return false;
                 }
 
-                Main.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders",
+                Utils.Watcher.EventPeriod("Duplicate Finder", "Scan Selected Folders",
                     (int)DateTime.Now.Subtract(dtStart).TotalSeconds, true);
             }
 
@@ -659,8 +658,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState == TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
+                if (Utils.TaskbarProgressState == TaskbarItemProgressState.Indeterminate)
+                    Utils.TaskbarProgressState = TaskbarItemProgressState.Normal;
 
                 if (ProgressBar.IsIndeterminate)
                     ProgressBar.IsIndeterminate = false;
@@ -684,7 +683,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     CurrentFile = fileEntry.FilePath;
 
                     ProgressBar.Value = currentIndex;
-                    Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
+                    Utils.TaskbarProgressValue = currentIndex / (double)countFileEntries;
                 }), i++);
 
                 fileEntry.AnalyzeImage();
@@ -697,7 +696,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             StatusText = "Grouping files by pixels";
 
-            Main.Watcher.Event("Duplicate Finder", "Group by pixels");
+            Utils.Watcher.Event("Duplicate Finder", "Group by pixels");
 
             // TODO: Improve memory usage
             foreach (
@@ -710,7 +709,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     CurrentFile = fileEntry1.FilePath;
 
                     ProgressBar.Value = currentIndex;
-                    Main.TaskbarProgressValue = currentIndex / (double)countFileEntries;
+                    Utils.TaskbarProgressValue = currentIndex / (double)countFileEntries;
                 }), i++);
                 
                 var likeImages =
@@ -733,8 +732,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
+                if (Utils.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Utils.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
                 if (!ProgressBar.IsIndeterminate)
                     ProgressBar.IsIndeterminate = true;
@@ -742,7 +741,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             StatusText = "Grouping files by filename";
 
-            Main.Watcher.Event("Duplicate Finder", "Group by filename");
+            Utils.Watcher.Event("Duplicate Finder", "Group by filename");
 
             /*var query = from p in _fileList
                         where p.IsDeleteable
@@ -774,8 +773,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
+                if (Utils.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Utils.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
                 if (!ProgressBar.IsIndeterminate)
                     ProgressBar.IsIndeterminate = true;
@@ -787,7 +786,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             StatusText = "Grouping files by size";
             CurrentFile = "Please wait...";
 
-            Main.Watcher.Event("Duplicate Finder", "Group by checksum");
+            Utils.Watcher.Event("Duplicate Finder", "Group by checksum");
 
             /*var query2 = from p in _fileList
                             where p.IsDeleteable
@@ -835,8 +834,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
-                Main.TaskbarProgressValue = 0D;
+                Utils.TaskbarProgressState = TaskbarItemProgressState.Normal;
+                Utils.TaskbarProgressValue = 0D;
 
                 ProgressBar.IsIndeterminate = false;
                 ProgressBar.Value = 0;
@@ -858,7 +857,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         ProgressBar.Value += 1;
-                        Main.TaskbarProgressValue = ProgressBar.Value / ProgressBar.Maximum;
+                        Utils.TaskbarProgressValue = ProgressBar.Value / ProgressBar.Maximum;
                     }));
                 }
 
@@ -899,12 +898,12 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             StatusText = "Getting checksums from audio files";
             CurrentFile = "Please wait...";
 
-            Main.Watcher.Event("Duplicate Finder", "Group by audio tags");
+            Utils.Watcher.Event("Duplicate Finder", "Group by audio tags");
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (Main.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
-                    Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
+                if (Utils.TaskbarProgressState != TaskbarItemProgressState.Indeterminate)
+                    Utils.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
 
                 if (!ProgressBar.IsIndeterminate)
                     ProgressBar.IsIndeterminate = true;
@@ -924,7 +923,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ProgressBar.Value += 1;
-                    Main.TaskbarProgressValue = ProgressBar.Value / ProgressBar.Maximum;
+                    Utils.TaskbarProgressValue = ProgressBar.Value / ProgressBar.Maximum;
                 }));
             }
 

@@ -1,6 +1,4 @@
 ﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
+using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {
@@ -96,10 +95,10 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                     Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            Main.Watcher.Event("Duplicate Finder", "Remove Duplicates");
+            Utils.Watcher.Event("Duplicate Finder", "Remove Duplicates");
 
-            Main.TaskbarProgressState = TaskbarItemProgressState.Normal;
-            Main.TaskbarProgressValue = 0;
+            Utils.TaskbarProgressState = TaskbarItemProgressState.Normal;
+            Utils.TaskbarProgressValue = 0;
 
             ProgressBar.Value = 0;
             ProgressBar.Minimum = 0;
@@ -112,8 +111,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             MessageBox.Show(Application.Current.MainWindow, "Removed duplicate files from computer", Utils.ProductName,
                 MessageBoxButton.OK, MessageBoxImage.Information);
 
-            Main.TaskbarProgressState = TaskbarItemProgressState.None;
-            Main.TaskbarProgressValue = 0;
+            Utils.TaskbarProgressState = TaskbarItemProgressState.None;
+            Utils.TaskbarProgressValue = 0;
 
             _scanBase.MoveFirst();
         }
@@ -224,7 +223,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
         {
             if (Math.Abs(ProgressBar.Maximum) > 0)
             {
-                Main.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
+                Utils.TaskbarProgressValue = e.NewValue / ProgressBar.Maximum;
             }
         }
 

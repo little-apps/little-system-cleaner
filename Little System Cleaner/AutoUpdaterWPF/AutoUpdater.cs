@@ -1,5 +1,4 @@
-﻿using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
+﻿using Little_System_Cleaner.Properties;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
@@ -13,6 +12,7 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Shared;
 
 namespace Little_System_Cleaner.AutoUpdaterWPF
 {

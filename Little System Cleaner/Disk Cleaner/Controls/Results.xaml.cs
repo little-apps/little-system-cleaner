@@ -17,8 +17,6 @@
 */
 
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -30,6 +28,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Shared;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -137,7 +136,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                         Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
 
-            Main.Watcher.Event("Disk Cleaner", "Remove Files");
+            Utils.Watcher.Event("Disk Cleaner", "Remove Files");
 
             _fixTask.Start();
             await _fixTask;

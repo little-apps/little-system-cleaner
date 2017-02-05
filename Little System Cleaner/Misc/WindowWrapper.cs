@@ -56,7 +56,7 @@ namespace Little_System_Cleaner.Misc
         /// Gets WindowWrapper for main window
         /// </summary>
         /// <returns>WindowWrapper for main window</returns>
-        internal static WindowWrapper GetCurrentWindowHandle()
+        public static WindowWrapper GetCurrentWindowHandle()
         {
             var winWrapper = new WindowWrapper(Application.Current.MainWindow);
 

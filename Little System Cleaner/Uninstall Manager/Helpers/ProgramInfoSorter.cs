@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Controls;
+using Shared.Uninstall_Manager;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 {
-    public class ProgramInfoSorter : IComparer<ProgramInfo>, IComparer
+    public class ProgramInfoSorter : IComparer<ProgramInfoListViewItem>, IComparer
     {
         private readonly GridViewColumn _column;
         private readonly ListSortDirection _direction;
@@ -21,7 +22,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
             return Compare(x as ProgramInfo, y as ProgramInfo);
         }
 
-        public int Compare(ProgramInfo x, ProgramInfo y)
+        public int Compare(ProgramInfoListViewItem x, ProgramInfoListViewItem y)
         {
             try
             {

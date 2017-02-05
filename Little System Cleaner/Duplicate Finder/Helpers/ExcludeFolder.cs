@@ -1,8 +1,8 @@
-﻿using Little_System_Cleaner.Misc;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Helpers
 {

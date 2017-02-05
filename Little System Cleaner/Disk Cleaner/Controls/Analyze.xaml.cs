@@ -17,8 +17,6 @@
 */
 
 using Little_System_Cleaner.Disk_Cleaner.Helpers;
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -29,11 +27,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
 using Little_System_Cleaner.Annotations;
-using Timer = System.Timers.Timer;
+using Shared;
 
 namespace Little_System_Cleaner.Disk_Cleaner.Controls
 {
@@ -103,7 +100,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             {
                 // Show taskbar progress bar
                 Dispatcher.BeginInvoke(
-                    new Action(() => Main.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
+                    new Action(() => Utils.TaskbarProgressState = TaskbarItemProgressState.Indeterminate));
 
                 foreach (var driveInfo in ScanBase.SelectedDrives)
                 {
@@ -112,7 +109,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
                     ScanFiles(driveInfo.RootDirectory);
                 }
 
-                Main.Watcher.EventPeriod("Disk Cleaner", "Analyze",
+                Utils.Watcher.EventPeriod("Disk Cleaner", "Analyze",
                     (int)DateTime.Now.Subtract(Wizard.ScanStartTime).TotalSeconds, true);
 
                 if (Wizard.FileList.Count > 0)
@@ -141,7 +138,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                Main.TaskbarProgressState = TaskbarItemProgressState.None;
+                Utils.TaskbarProgressState = TaskbarItemProgressState.None;
                 ProgressBar.IsIndeterminate = false;
                 TextBlockPleaseWait.Visibility = Visibility.Hidden;
             }));

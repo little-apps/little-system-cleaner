@@ -16,14 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.DataVisualization.Charting;
-using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
+using Shared;
+using PInvoke = Shared.PInvoke;
 
 namespace Little_System_Cleaner.Registry_Optimizer.Controls
 {
@@ -91,7 +90,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
                     "You must restart your computer before the new setting will take effect. Do you want to restart your computer now?",
                     Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 // Restart computer
-                Misc.PInvoke.ExitWindowsEx(Misc.PInvoke.ShutdownFlags.Reboot, Misc.PInvoke.ShutdownReasons.MajorOperatingsystem | Misc.PInvoke.ShutdownReasons.MinorReconfig | Misc.PInvoke.ShutdownReasons.FlagsPlanned);
+                PInvoke.ExitWindowsEx(PInvoke.ShutdownFlags.Reboot, PInvoke.ShutdownReasons.MajorOperatingsystem | PInvoke.ShutdownReasons.MinorReconfig | PInvoke.ShutdownReasons.FlagsPlanned);
 
             _scanBase.MoveFirst();
         }

@@ -1,8 +1,8 @@
 ﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
 {

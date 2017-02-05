@@ -17,7 +17,6 @@
 */
 
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -28,6 +27,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Shared;
 
 namespace Little_System_Cleaner
 {
@@ -153,10 +153,10 @@ namespace Little_System_Cleaner
 
         private void buttonSend_Click(object sender, RoutedEventArgs e)
         {
-            if (Main.Watcher != null)
+            if (Utils.Watcher != null)
             {
-                Main.Watcher.Exception(_exception);
-                Main.Watcher.Stop();
+                Utils.Watcher.Exception(_exception);
+                Utils.Watcher.Stop();
             }
                 
             Close();

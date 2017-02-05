@@ -1,5 +1,4 @@
 ﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -7,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using Shared;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
