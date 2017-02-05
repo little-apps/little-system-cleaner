@@ -1,5 +1,4 @@
 ﻿using Little_System_Cleaner.Annotations;
-using Little_System_Cleaner.Misc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
+using Shared;
 
 namespace Little_System_Cleaner.ProcessInfo
 {

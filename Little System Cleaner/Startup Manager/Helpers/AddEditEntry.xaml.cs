@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
 using Microsoft.Win32;
 using System;
 using System.Drawing;
@@ -24,6 +23,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Shared;
 
 namespace Little_System_Cleaner.Startup_Manager.Helpers
 {

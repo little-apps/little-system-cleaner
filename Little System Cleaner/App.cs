@@ -17,12 +17,14 @@
 */
 
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Shared;
 
 namespace Little_System_Cleaner
 {

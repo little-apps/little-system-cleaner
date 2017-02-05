@@ -19,6 +19,7 @@
 using System;
 using System.Diagnostics;
 using System.Security.Principal;
+using Shared;
 
 namespace Little_System_Cleaner.Misc
 {

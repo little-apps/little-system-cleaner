@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Uninstall_Manager.Helpers;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -30,6 +28,10 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Shared;
+using Shared.Uninstall_Manager;
+using ProgramInfoSorter = Little_System_Cleaner.Uninstall_Manager.Helpers.ProgramInfoSorter;
 
 namespace Little_System_Cleaner.Uninstall_Manager.Controls
 {
@@ -43,7 +45,8 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
             InitializeComponent();
         }
 
-        public ObservableCollection<ProgramInfo> ProgramInfos { get; } = new ObservableCollection<ProgramInfo>();
+        public ObservableCollection<ProgramInfoListViewItem> ProgramInfos { get; } =
+            new ObservableCollection<ProgramInfoListViewItem>();
 
         public void OnLoaded()
         {
@@ -63,7 +66,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
 
         private void PopulateListView()
         {
-            var listProgInfo = new List<ProgramInfo>();
+            var listProgInfo = new List<ProgramInfoListViewItem>();
             RegistryKey regKey = null;
 
             // Clear listview
@@ -100,7 +103,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                             subKey = regKey.OpenSubKey(subKeyName);
 
                             if (subKey != null)
-                                listProgInfo.Add(new ProgramInfo(subKey));
+                                listProgInfo.Add(new ProgramInfoListViewItem(subKey));
                         }
                         catch (Exception ex)
                         {
@@ -144,7 +147,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                                 subKey = regKey.OpenSubKey(subKeyName);
 
                                 if (subKey != null)
-                                    listProgInfo.Add(new ProgramInfo(subKey));
+                                    listProgInfo.Add(new ProgramInfoListViewItem(subKey));
                             }
                             catch (Exception ex)
                             {
@@ -251,7 +254,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                     "Are you sure you want to remove this program from the registry?", Utils.ProductName,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                Main.Watcher.Event("Uninstall Manager", "Remove from registry");
+                Utils.Watcher.Event("Uninstall Manager", "Remove from registry");
                 progInfo?.RemoveFromRegistry();
 
                 PopulateListView();
@@ -276,7 +279,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Controls
                 MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to remove this program?",
                     Utils.ProductName, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                Main.Watcher.Event("Uninstall Manager", "Uninstall");
+                Utils.Watcher.Event("Uninstall Manager", "Uninstall");
                 progInfo?.Uninstall();
 
                 PopulateListView();

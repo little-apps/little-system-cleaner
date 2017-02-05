@@ -16,12 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
+using Shared;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 

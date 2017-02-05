@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Startup_Manager.Helpers;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using Shared;
 
 namespace Little_System_Cleaner.Startup_Manager.Controls
 {
@@ -64,7 +64,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
 
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
-            Main.Watcher.Event("Startup Manager", "Add");
+            Utils.Watcher.Event("Startup Manager", "Add");
 
             var addEditEntryWnd = new AddEditEntry();
             if (addEditEntryWnd.ShowDialog().GetValueOrDefault())
@@ -91,7 +91,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                 return;
             }
 
-            Main.Watcher.Event("Startup Manager", "Edit");
+            Utils.Watcher.Event("Startup Manager", "Edit");
 
             if (selectedItem == null)
                 return;
@@ -125,7 +125,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     var failed = false;
                     var sectionName = node.Parent.SectionName;
 
-                    Main.Watcher.Event("Startup Manager", "Delete Single Entry");
+                    Utils.Watcher.Event("Startup Manager", "Delete Single Entry");
 
                     if (Directory.Exists(sectionName))
                     {
@@ -184,7 +184,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     {
                         var sectionName = node.SectionName;
 
-                        Main.Watcher.Event("Startup Manager", "Delete Multiple Entries");
+                        Utils.Watcher.Event("Startup Manager", "Delete Multiple Entries");
 
                         if (Directory.Exists(sectionName))
                         {
@@ -261,7 +261,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             if (node != null && !node.IsLeaf)
                 return;
 
-            Main.Watcher.Event("Startup Manager", "View");
+            Utils.Watcher.Event("Startup Manager", "View");
 
             if (node != null && node.RegKey == null)
             {
@@ -318,7 +318,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
                     MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            Main.Watcher.Event("Startup Manager", "Run");
+            Utils.Watcher.Event("Startup Manager", "Run");
 
             /*string message;
 

@@ -18,7 +18,6 @@
 
 using Little_System_Cleaner.AutoUpdaterWPF;
 using Little_System_Cleaner.Misc;
-using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Tab_Controls.Options;
 using LittleSoftwareStats;
 using System;
@@ -34,9 +33,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Shell;
 using Little_System_Cleaner.Tab_Controls.Tools;
-using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using Cursors = System.Windows.Input.Cursors;
@@ -48,6 +45,8 @@ using MessageBox = System.Windows.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Orientation = System.Windows.Controls.Orientation;
 using UserControl = System.Windows.Controls.UserControl;
+using System.Windows.Shell;
+using Shared;
 
 namespace Little_System_Cleaner
 {
@@ -57,68 +56,20 @@ namespace Little_System_Cleaner
         
         private bool _ignoreSetTabControl;
 
+        public TaskbarItemInfo TaskBarItemInfoPublic => TaskBarItemInfo;
+
         internal DynamicTabControl TabControl { get; private set; }
 
         public Main()
         {
             InitializeComponent();
-
+            
             BuildControls();
 
+            Utils.MainWindowInstance = this;
             Instance = this;
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
         }
-
-        /// <summary>
-        /// Gets the progress state of the window icon in the task bar
-        /// </summary>
-        internal static TaskbarItemProgressState TaskbarProgressState
-        {
-            get
-            {
-                var main = Application.Current.MainWindow as Main;
-                return main?.TaskBarItemInfo.ProgressState ?? TaskbarItemProgressState.None;
-            }
-            set
-            {
-                if (Application.Current == null)
-                    return;
-                var currentWindow = Application.Current.MainWindow as Main;
-
-                var taskBarItemInfo = currentWindow?.TaskBarItemInfo;
-
-                if (taskBarItemInfo != null)
-                    taskBarItemInfo.ProgressState = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the progress value of the window icon in the task bar
-        /// </summary>
-        internal static double TaskbarProgressValue
-        {
-            get
-            {
-                var main = Application.Current.MainWindow as Main;
-                if (main != null)
-                    return main.TaskBarItemInfo.ProgressValue;
-
-                throw new NullReferenceException();
-            }
-            set
-            {
-                var main = Application.Current.MainWindow as Main;
-                var taskBarItemInfo = main?.TaskBarItemInfo;
-
-                if (taskBarItemInfo != null)
-                    taskBarItemInfo.ProgressValue = value;
-            }
-        }
-
-        /// <summary>
-        /// Watcher object used by Little Software Stats
-        /// </summary>
-        internal static Watcher Watcher { get; private set; }
 
         /// <summary>
         /// Builds the ComboBox and TabControl
@@ -290,12 +241,12 @@ namespace Little_System_Cleaner
             MoveToTabControl(TabControl.Items[0] as TabItem);
 
             // Send usage data to Little Software Stats
-            Watcher = new Watcher();
+            Utils.Watcher = new Watcher();
             Config.Enabled = Settings.Default.optionsUsageStats;
 
             var appVer = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            Watcher.Start("922492147b2e47744961de5b9a5d0886", appVer);
+            Utils.Watcher.Start("922492147b2e47744961de5b9a5d0886", appVer);
 
             // See if we have the current version
             if (Settings.Default.updateAuto)
@@ -336,7 +287,7 @@ namespace Little_System_Cleaner
 
             if (!e.Cancel)
             {
-                Watcher.Stop();
+                Utils.Watcher.Stop();
                 GarbageCollectAndFinalize();
             }
         }
