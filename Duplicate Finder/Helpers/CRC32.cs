@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     public class CRC32 : System.Security.Cryptography.HashAlgorithm
     {

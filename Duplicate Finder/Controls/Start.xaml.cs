@@ -1,16 +1,17 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Controls
+namespace Duplicate_Finder.Controls
 {
     /// <summary>
     ///     Interaction logic for Start.xaml

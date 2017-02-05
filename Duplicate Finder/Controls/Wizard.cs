@@ -1,7 +1,8 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Duplicate_Finder.Controls;
+using Duplicate_Finder.Helpers;
 using Shared;
 
 namespace Little_System_Cleaner.Duplicate_Finder.Controls
@@ -17,8 +18,8 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
             Options = UserOptions.GetUserOptions();
 
             Controls.Add(typeof(Start));
-            Controls.Add(typeof(Scan));
-            Controls.Add(typeof(Results));
+            Controls.Add(typeof(global::Duplicate_Finder.Controls.Scan));
+            Controls.Add(typeof(global::Duplicate_Finder.Controls.Results));
         }
 
         public UserOptions Options { get; }
@@ -51,7 +52,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return true;
             }
 
-            var scan = CurrentControl as Scan;
+            var scan = CurrentControl as global::Duplicate_Finder.Controls.Scan;
             if (scan != null)
             {
                 exit = forceExit ||
@@ -66,7 +67,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
                 return true;
             }
 
-            if (!(CurrentControl is Results))
+            if (!(CurrentControl is global::Duplicate_Finder.Controls.Results))
                 return true;
 
             exit = forceExit ||
@@ -78,18 +79,18 @@ namespace Little_System_Cleaner.Duplicate_Finder.Controls
 
         public void ShowFileInfo(FileEntry fileEntry)
         {
-            if (CurrentControl is Details)
+            if (CurrentControl is global::Duplicate_Finder.Controls.Details)
                 HideFileInfo();
 
             _savedControl = CurrentControl;
 
-            var fileInfoCntrl = new Details(this, fileEntry);
+            var fileInfoCntrl = new global::Duplicate_Finder.Controls.Details(this, fileEntry);
             Content = fileInfoCntrl;
         }
 
         public void HideFileInfo()
         {
-            if (CurrentControl is Results)
+            if (CurrentControl is global::Duplicate_Finder.Controls.Results)
                 return;
 
             if (_savedControl == null)

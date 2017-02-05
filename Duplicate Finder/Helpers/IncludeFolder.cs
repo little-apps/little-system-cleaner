@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     public class IncludeFolder : INotifyPropertyChanged, IEquatable<IncludeFolder>
     {

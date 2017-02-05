@@ -81,7 +81,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Duplicate Finder\Helpers\CRC32.cs" />
     <Compile Include="Misc\DynamicTabControl.cs" />
     <Compile Include="Misc\ParseArgs.cs" />
     <Compile Include="ProcessInfo\ModuleInfo.cs" />
@@ -105,26 +104,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AutoUpdaterWPF\Update.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Duplicate Finder\Controls\Details.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Duplicate Finder\Controls\LoadingResults.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Duplicate Finder\Controls\Results.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Duplicate Finder\Controls\Scan.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Duplicate Finder\Controls\Start.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,30 +163,6 @@
       <DependentUpon>Update.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoUpdaterWPF\UpdateXML.cs" />
-    <Compile Include="Duplicate Finder\Controls\Details.xaml.cs">
-      <DependentUpon>Details.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Duplicate Finder\Controls\LoadingResults.xaml.cs">
-      <DependentUpon>LoadingResults.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Duplicate Finder\Controls\Results.xaml.cs">
-      <DependentUpon>Results.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Duplicate Finder\Controls\Scan.xaml.cs">
-      <DependentUpon>Scan.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Duplicate Finder\Controls\Start.xaml.cs">
-      <DependentUpon>Start.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Duplicate Finder\Controls\Wizard.cs" />
-    <Compile Include="Duplicate Finder\Helpers\FileEntry.cs" />
-    <Compile Include="Duplicate Finder\Helpers\HashAlgorithm.cs" />
-    <Compile Include="Duplicate Finder\Helpers\IncludeDrive.cs" />
-    <Compile Include="Duplicate Finder\Helpers\ExcludeFolder.cs" />
-    <Compile Include="Duplicate Finder\Helpers\IncludeFolder.cs" />
-    <Compile Include="Duplicate Finder\Helpers\Result.cs" />
-    <Compile Include="Duplicate Finder\Helpers\ResultModel.cs" />
-    <Compile Include="Duplicate Finder\Helpers\UserOptions.cs" />
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Misc\WindowWrapper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -327,6 +282,10 @@
     <ProjectReference Include="..\Disk Cleaner\Disk Cleaner.csproj">
       <Project>{e59241ba-2d89-46d3-8515-478695d03d39}</Project>
       <Name>Disk Cleaner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Duplicate Finder\Duplicate Finder.csproj">
+      <Project>{c410626d-8d5d-4a5a-825b-ce5846c2d2dc}</Project>
+      <Name>Duplicate Finder</Name>
     </ProjectReference>
     <ProjectReference Include="..\Registry Cleaner\Registry Cleaner.csproj">
       <Project>{e9835b86-0fb1-4d81-a2d7-05ad52d9a002}</Project>
@@ -585,9 +544,7 @@
   <ItemGroup>
     <None Include="Resources\appinfo.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Disk Cleaner\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     public class HashAlgorithm : INotifyPropertyChanged
     {

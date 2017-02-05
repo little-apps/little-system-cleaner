@@ -1,5 +1,4 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -10,9 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
+using Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Controls
+namespace Duplicate_Finder.Controls
 {
     /// <summary>
     ///     Interaction logic for Scan.xaml

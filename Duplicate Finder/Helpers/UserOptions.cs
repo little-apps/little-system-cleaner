@@ -5,7 +5,7 @@ using System.IO;
 using System.Xml.Serialization;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     [XmlRoot("Options")]
     public class UserOptions : INotifyPropertyChanged

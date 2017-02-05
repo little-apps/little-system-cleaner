@@ -1,11 +1,12 @@
-﻿using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using CommonTools.TreeListView.Tree;
+using Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Controls
+namespace Duplicate_Finder.Controls
 {
     /// <summary>
     ///     Interaction logic for LoadingResults.xaml

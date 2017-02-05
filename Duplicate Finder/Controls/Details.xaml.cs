@@ -1,9 +1,10 @@
-﻿using Little_System_Cleaner.Duplicate_Finder.Helpers;
-using System;
+﻿using System;
 using System.Windows;
+using Duplicate_Finder.Helpers;
+using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Controls
+namespace Duplicate_Finder.Controls
 {
     /// <summary>
     ///     Interaction logic for FileInfo.xaml

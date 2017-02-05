@@ -1,9 +1,10 @@
-﻿using Little_System_Cleaner.Annotations;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using Duplicate_Finder.Annotations;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     [XmlInclude(typeof(IncludeDrive))]
     public class IncludeDrive : INotifyPropertyChanged
@@ -58,7 +59,7 @@ namespace Little_System_Cleaner.Duplicate_Finder.Helpers
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

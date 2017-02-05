@@ -1,10 +1,10 @@
-﻿using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Duplicate_Finder.Controls;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
+using CommonTools.TreeListView.Tree;
+using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     public class ResultModel : ITreeModel
     {

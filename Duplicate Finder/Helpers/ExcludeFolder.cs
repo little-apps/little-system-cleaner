@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Helpers
+namespace Duplicate_Finder.Helpers
 {
     public class ExcludeFolder : INotifyPropertyChanged, IEquatable<ExcludeFolder>
     {
