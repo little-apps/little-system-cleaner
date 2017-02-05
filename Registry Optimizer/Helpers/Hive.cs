@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows;
 using Shared;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Helpers
+namespace Registry_Optimizer.Helpers
 {
     public class Hive : IDisposable
     {

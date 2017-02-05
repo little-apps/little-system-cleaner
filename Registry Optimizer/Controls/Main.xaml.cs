@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System;
 using System.Windows;
+using Registry_Optimizer.Helpers;
 using Shared;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     /// <summary>
     ///     Interaction logic for Main.xaml
@@ -44,7 +44,7 @@ namespace Little_System_Cleaner.Registry_Optimizer.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (App.IsAssemblyLoaded("System.Windows.Controls.DataVisualization.Toolkit", new Version(3, 5, 0), true))
+            if (Utils.IsAssemblyLoaded("System.Windows.Controls.DataVisualization.Toolkit", new Version(3, 5, 0), true))
                 return;
 
             MessageBox.Show(Application.Current.MainWindow,

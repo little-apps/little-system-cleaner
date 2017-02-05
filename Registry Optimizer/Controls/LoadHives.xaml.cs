@@ -1,10 +1,10 @@
-﻿using Little_System_Cleaner.Registry_Optimizer.Helpers;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Microsoft.Win32;
+using Registry_Optimizer.Helpers;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     /// <summary>
     ///     Interaction logic for LoadHives.xaml

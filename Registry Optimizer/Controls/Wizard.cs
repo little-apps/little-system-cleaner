@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Registry_Optimizer.Helpers;
 using Shared;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     public class Wizard : WizardBase
     {

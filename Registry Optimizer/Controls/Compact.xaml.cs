@@ -24,9 +24,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
 using Shared;
-using PInvoke = Little_System_Cleaner.Registry_Optimizer.Helpers.PInvoke;
+using PInvoke = Registry_Optimizer.Helpers.PInvoke;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     /// <summary>
     ///     Interaction logic for Compact.xaml

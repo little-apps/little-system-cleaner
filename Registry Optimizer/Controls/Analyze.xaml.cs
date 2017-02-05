@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Shell;
 using Shared;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     /// <summary>
     ///     Interaction logic for Analyze.xaml

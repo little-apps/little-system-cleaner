@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Helpers
+namespace Registry_Optimizer.Helpers
 {
     internal static class PInvoke
     {

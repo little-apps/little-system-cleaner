@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Registry_Optimizer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.DataVisualization.Charting;
+using Registry_Optimizer.Helpers;
 using Shared;
 using PInvoke = Shared.PInvoke;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     /// <summary>
     ///     Interaction logic for Analyze.xaml

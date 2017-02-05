@@ -161,30 +161,6 @@
       <SubType>Designer</SubType>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
     </Page>
-    <Page Include="Registry Optimizer\Controls\Analyze.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Registry Optimizer\Controls\AnalyzeResults.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Registry Optimizer\Controls\Compact.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Registry Optimizer\Controls\LoadHives.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Registry Optimizer\Controls\Main.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Registry Optimizer\Controls\SecureDesktop.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Startup Manager\Helpers\AddEditEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -286,32 +262,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Registry Optimizer\Controls\Analyze.xaml.cs">
-      <DependentUpon>Analyze.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Registry Optimizer\Controls\AnalyzeResults.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>AnalyzeResults.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Registry Optimizer\Controls\Compact.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Compact.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Registry Optimizer\Controls\LoadHives.xaml.cs">
-      <DependentUpon>LoadHives.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Registry Optimizer\Controls\Main.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Main.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Registry Optimizer\Controls\SecureDesktop.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>SecureDesktop.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Registry Optimizer\Controls\Wizard.cs" />
-    <Compile Include="Registry Optimizer\Helpers\Hive.cs" />
-    <Compile Include="Registry Optimizer\Helpers\HiveManager.cs" />
-    <Compile Include="Registry Optimizer\Helpers\PInvoke.cs" />
     <Compile Include="Startup Manager\Helpers\StartupEntry.cs" />
     <Compile Include="Startup Manager\Helpers\StartupMgrModel.cs" />
     <Compile Include="Tab Controls\Options\Options.xaml.cs">
@@ -424,6 +374,10 @@
     <ProjectReference Include="..\Registry Cleaner\Registry Cleaner.csproj">
       <Project>{e9835b86-0fb1-4d81-a2d7-05ad52d9a002}</Project>
       <Name>Registry Cleaner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Registry Optimizer\Registry Optimizer.csproj">
+      <Project>{006178e8-49ff-46d7-a1ed-8f953333ca7f}</Project>
+      <Name>Registry Optimizer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{c9701140-d874-4a42-a67e-38f918c34e81}</Project>

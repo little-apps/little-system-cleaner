@@ -18,7 +18,7 @@
 
 using System.ComponentModel;
 
-namespace Little_System_Cleaner.Registry_Optimizer.Controls
+namespace Registry_Optimizer.Controls
 {
     /// <summary>
     ///     Interaction logic for SecureDesktop.xaml
