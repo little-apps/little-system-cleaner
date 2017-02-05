@@ -150,7 +150,7 @@ namespace Shared
                     return WebRequest.DefaultWebProxy;
 
                 default:
-                    if (string.IsNullOrEmpty(Settings.Default.optionsProxyHost) ||
+                    if (String.IsNullOrEmpty(Settings.Default.optionsProxyHost) ||
                         Settings.Default.optionsProxyPort <= 0 || Settings.Default.optionsProxyPort >= 65535)
                         return webProxy;
 
@@ -234,10 +234,10 @@ namespace Shared
         /// <returns>Sanitized file path, or, an empty string</returns>
         public static string SanitizeFilePath(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
-                return string.Empty;
+            if (String.IsNullOrEmpty(filePath))
+                return String.Empty;
 
-            var fileName = string.Copy(filePath.Trim().ToLower());
+            var fileName = String.Copy(filePath.Trim().ToLower());
 
             // Remove quotes
             fileName = UnqouteSpaces(fileName);
@@ -246,7 +246,7 @@ namespace Shared
             fileName = Environment.ExpandEnvironmentVariables(fileName);
 
             // Check for illegal characters
-            return FindAnyIllegalChars(fileName) ? string.Empty : fileName;
+            return FindAnyIllegalChars(fileName) ? String.Empty : fileName;
         }
 
         /// <summary>
@@ -282,16 +282,16 @@ namespace Shared
 
             filePath = fileArgs = "";
 
-            if (string.IsNullOrEmpty(cmdLineStrBuilder.ToString()))
+            if (String.IsNullOrEmpty(cmdLineStrBuilder.ToString()))
                 throw new ArgumentNullException(nameof(cmdLine));
 
             fileArgs = Marshal.PtrToStringAuto(PInvoke.PathGetArgs(cmdLineStrBuilder.ToString()));
 
             PInvoke.PathRemoveArgs(cmdLineStrBuilder);
 
-            filePath = string.Copy(cmdLineStrBuilder.ToString());
+            filePath = String.Copy(cmdLineStrBuilder.ToString());
 
-            return !string.IsNullOrEmpty(filePath) && FileExists(filePath);
+            return !String.IsNullOrEmpty(filePath) && FileExists(filePath);
         }
 
         /// <summary>
@@ -304,12 +304,12 @@ namespace Shared
         /// <returns>Returns true if file was located</returns>
         public static bool ExtractArguments2(string cmdLine, out string filePath, out string fileArgs)
         {
-            var cmdLineCopy = string.Copy(cmdLine.ToLower().Trim());
+            var cmdLineCopy = String.Copy(cmdLine.ToLower().Trim());
             var ret = false;
 
             filePath = fileArgs = "";
 
-            if (string.IsNullOrEmpty(cmdLineCopy))
+            if (String.IsNullOrEmpty(cmdLineCopy))
                 throw new ArgumentNullException(cmdLine);
 
             // Remove Quotes
@@ -333,7 +333,7 @@ namespace Shared
                 if (!File.Exists(fileFullPath.ToString()))
                     continue;
 
-                filePath = string.Copy(fileFullPath.ToString());
+                filePath = String.Copy(fileFullPath.ToString());
                 ret = true;
                 break;
             }
@@ -395,7 +395,7 @@ namespace Shared
                 unit = shortFormat ? " GB" : " Gigabytes";
             }
 
-            if (decimal.Subtract(size, size) == decimal.Zero)
+            if (Decimal.Subtract(size, size) == Decimal.Zero)
                 sizeFormatted = size.ToString("0");
             else if (size < 10)
                 sizeFormatted = size.ToString("0.00");
@@ -416,7 +416,7 @@ namespace Shared
         {
             var path = new StringBuilder(260);
 
-            return PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, csidl, false) ? string.Copy(path.ToString()) : "";
+            return PInvoke.SHGetSpecialFolderPath(IntPtr.Zero, path, csidl, false) ? String.Copy(path.ToString()) : "";
         }
 
         /// <summary>
@@ -468,16 +468,16 @@ namespace Shared
         {
             var buffer = new StringBuilder(260);
 
-            var ret = PInvoke.SearchPath(!string.IsNullOrEmpty(path) ? path : null, fileName, null, 260, buffer, null);
+            var ret = PInvoke.SearchPath(!String.IsNullOrEmpty(path) ? path : null, fileName, null, 260, buffer, null);
 
-            if (ret != 0 && !string.IsNullOrWhiteSpace(buffer.ToString()))
+            if (ret != 0 && !String.IsNullOrWhiteSpace(buffer.ToString()))
             {
                 retPath = buffer.ToString();
 
                 return true;
             }
 
-            retPath = string.Empty;
+            retPath = String.Empty;
 
             return false;
         }
@@ -493,7 +493,7 @@ namespace Shared
 
             PInvoke.PathUnquoteSpaces(sb);
 
-            return string.Copy(sb.ToString());
+            return String.Copy(sb.ToString());
         }
 
         /// <summary>
@@ -521,7 +521,7 @@ namespace Shared
                 return true;
 
             // Find any characters in the filename that are illegal.
-            if (!string.IsNullOrEmpty(fullFileName))
+            if (!String.IsNullOrEmpty(fullFileName))
                 if (fullFileName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
                     // Found invalid character in filename
                     return true;
@@ -538,7 +538,7 @@ namespace Shared
         {
             var resultBuffer = new StringBuilder(1024);
 
-            var ret = PInvoke.FindExecutableA(fileName, string.Empty, resultBuffer);
+            var ret = PInvoke.FindExecutableA(fileName, String.Empty, resultBuffer);
 
             return ret >= 32 ? resultBuffer.ToString() : $"Error: ({ret})";
         }
@@ -587,7 +587,7 @@ namespace Shared
             {
                 var keyValue =
                     Registry.GetValue(@"HKEY_CURRENT_USER\Software\Classes\http\shell\open\command", "", null) as string;
-                if (!string.IsNullOrEmpty(keyValue))
+                if (!String.IsNullOrEmpty(keyValue))
                 {
                     var browserPath = keyValue.Replace("%1", webAddress);
                     Process.Start(browserPath);
@@ -689,7 +689,7 @@ namespace Shared
 
             try
             {
-                if (string.IsNullOrEmpty(s))
+                if (String.IsNullOrEmpty(s))
                     return false;
 
                 s = s.Trim();
@@ -781,15 +781,15 @@ namespace Shared
         public static bool CompareWildcard(string wildString, string mask, bool ignoreCase = true)
         {
             // Cannot continue with Mask empty
-            if (string.IsNullOrEmpty(mask))
+            if (String.IsNullOrEmpty(mask))
                 return false;
 
             // If WildString is null -> make it an empty string
             if (wildString == null)
-                wildString = string.Empty;
+                wildString = String.Empty;
 
             // If Mask is * and WildString isn't empty -> return true
-            if (mask == "*" && !string.IsNullOrEmpty(wildString))
+            if (mask == "*" && !String.IsNullOrEmpty(wildString))
                 return true;
 
             // If Mask is ? and WildString length is 1 -> return true
@@ -797,7 +797,7 @@ namespace Shared
                 return true;
 
             // If WildString and Mask match -> no need to go any further
-            if (string.Compare(wildString, mask, ignoreCase) == 0)
+            if (String.Compare(wildString, mask, ignoreCase) == 0)
                 return true;
 
             var regExPattern = "^" + Regex.Escape(mask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
@@ -907,7 +907,7 @@ namespace Shared
                     var o in
                         mc.GetInstances()
                             .Cast<ManagementBaseObject>()
-                            .TakeWhile(o => string.IsNullOrEmpty(hardDriveSerialNo[0])))
+                            .TakeWhile(o => String.IsNullOrEmpty(hardDriveSerialNo[0])))
                 {
                     // Only get the first one
                     try
@@ -935,7 +935,7 @@ namespace Shared
         public static string EncryptString(SecureString input)
         {
             if (input.Length == 0)
-                return string.Empty;
+                return String.Empty;
 
             var encryptedData = ProtectedData.Protect(
                 Encoding.Unicode.GetBytes(ToInsecureString(input)),
@@ -951,7 +951,7 @@ namespace Shared
         /// <returns>SecureString or empty if it couldnt be decrypted</returns>
         public static SecureString DecryptString(string encryptedData)
         {
-            if (string.IsNullOrWhiteSpace(encryptedData))
+            if (String.IsNullOrWhiteSpace(encryptedData))
                 return new SecureString();
 
             try
@@ -1110,7 +1110,7 @@ namespace Shared
                         }
                 }
 
-                if (!string.IsNullOrWhiteSpace(subKey))
+                if (!String.IsNullOrWhiteSpace(subKey))
                     reg = reg.OpenSubKey(subKey, !openReadOnly);
             }
             catch (Exception ex)
@@ -1140,7 +1140,7 @@ namespace Shared
         {
             baseKey = subKey = "";
 
-            if (string.IsNullOrEmpty(inPath))
+            if (String.IsNullOrEmpty(inPath))
                 return false;
 
             var mainKeyName = inPath;

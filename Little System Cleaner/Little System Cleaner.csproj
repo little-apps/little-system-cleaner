@@ -417,10 +417,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common Library\Shared.csproj">
-      <Project>{c9701140-d874-4a42-a67e-38f918c34e81}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common Tools\Common Tools.csproj">
       <Project>{E059BE5F-FCEF-4977-90AE-3335EFBC248A}</Project>
       <Name>Common Tools</Name>
@@ -428,6 +424,10 @@
     <ProjectReference Include="..\Registry Cleaner\Registry Cleaner.csproj">
       <Project>{e9835b86-0fb1-4d81-a2d7-05ad52d9a002}</Project>
       <Name>Registry Cleaner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{c9701140-d874-4a42-a67e-38f918c34e81}</Project>
+      <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

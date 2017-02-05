@@ -137,13 +137,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common Library\Shared.csproj">
-      <Project>{C9701140-D874-4A42-A67E-38F918C34E81}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common Tools\Common Tools.csproj">
       <Project>{e059be5f-fcef-4977-90ae-3335efbc248a}</Project>
       <Name>Common Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{c9701140-d874-4a42-a67e-38f918c34e81}</Project>
+      <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

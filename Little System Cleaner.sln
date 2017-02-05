@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common Tools", "Common Tool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Little System Cleaner", "Little System Cleaner\Little System Cleaner.csproj", "{6EDCB204-95DF-46BE-866F-D1BDC42AB289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Common Library\Shared.csproj", "{C9701140-D874-4A42-A67E-38F918C34E81}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registry Cleaner", "Registry Cleaner\Registry Cleaner.csproj", "{E9835B86-0FB1-4D81-A2D7-05AD52D9A002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{C9701140-D874-4A42-A67E-38F918C34E81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
