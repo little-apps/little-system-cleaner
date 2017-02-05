@@ -20,10 +20,9 @@ using System;
 using System.Windows;
 using System.Windows.Forms;
 using Shared;
-using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.MessageBox;
 
-namespace Little_System_Cleaner.Disk_Cleaner.Helpers
+namespace Disk_Cleaner.Helpers
 {
     /// <summary>
     ///     Interaction logic for AddExcludeFolder.xaml
@@ -43,7 +42,7 @@ namespace Little_System_Cleaner.Disk_Cleaner.Helpers
         {
             if (string.IsNullOrEmpty(TextBox.Text.Trim()))
             {
-                MessageBox.Show(this, "Please enter a folder", Application.ProductName, MessageBoxButton.OK,
+                MessageBox.Show(this, "Please enter a folder", Utils.ProductName, MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }

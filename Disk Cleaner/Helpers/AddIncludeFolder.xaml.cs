@@ -18,59 +18,66 @@
 
 using System;
 using System.Windows;
+using System.Windows.Forms;
 using Shared;
-using Application = System.Windows.Forms.Application;
+using MessageBox = System.Windows.MessageBox;
 
-//using System.Windows.Forms;
-
-namespace Little_System_Cleaner.Disk_Cleaner.Helpers
+namespace Disk_Cleaner.Helpers
 {
     /// <summary>
-    ///     Interaction logic for AddExcludeFileType.xaml
+    ///     Interaction logic for AddExcludeFolder.xaml
     /// </summary>
-    public partial class AddExcludeFileType
+    public partial class AddIncludeFolder
     {
-        public AddExcludeFileType()
+        public AddIncludeFolder()
         {
             this.HideIcon();
 
             InitializeComponent();
         }
 
-        public event AddFileTypeEventHandler AddFileType;
+        public event AddIncFolderEventHandler AddIncFolder;
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(TextBox.Text.Trim()))
             {
-                MessageBox.Show(this, "Please enter a file type", Application.ProductName, MessageBoxButton.OK,
+                MessageBox.Show(this, "Please enter a folder", Utils.ProductName, MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }
-            if (AddFileType != null)
+
+            if (AddIncFolder != null)
             {
-                var eventArgs = new AddFileTypeEventArgs { FileType = TextBox.Text.Trim() };
-                AddFileType(this, eventArgs);
+                var eventArgs = new AddIncFolderEventArgs { FolderPath = TextBox.Text.Trim() };
+                AddIncFolder(this, eventArgs);
             }
 
             Close();
+        }
+
+        private void buttonBrowse_Click(object sender, RoutedEventArgs e)
+        {
+            var browserDlg = new FolderBrowserDialog();
+            browserDlg.ShowDialog(new WindowWrapper(this));
+            TextBox.Text = browserDlg.SelectedPath;
         }
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
             const string message =
                 "Wildcards are supported. Please note a question mark (?) represents a single character and an asterisk (*) represents 0 or more characters\n\n" +
-                "Example: *.old matches files that end with .old";
+                "Example: ?:\\test matches a root folder named test";
 
-            MessageBox.Show(this, message, "Add Exclude File Type Information", MessageBoxButton.OK,
+            MessageBox.Show(this, message, "Add Include Folder Information", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
     }
 
-    public class AddFileTypeEventArgs : EventArgs
+    public class AddIncFolderEventArgs : EventArgs
     {
-        public string FileType { get; set; }
+        public string FolderPath { get; set; }
     }
 
-    public delegate void AddFileTypeEventHandler(object sender, AddFileTypeEventArgs e);
+    public delegate void AddIncFolderEventHandler(object sender, AddIncFolderEventArgs e);
 }

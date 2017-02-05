@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,12 +25,16 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using Disk_Cleaner.Helpers;
 using Shared;
+using AddExcludeFileType = Disk_Cleaner.Helpers.AddExcludeFileType;
+using AddExcludeFolder = Disk_Cleaner.Helpers.AddExcludeFolder;
+using AddIncludeFolder = Disk_Cleaner.Helpers.AddIncludeFolder;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using WindowWrapper = Shared.WindowWrapper;
 
-namespace Little_System_Cleaner.Disk_Cleaner.Controls
+namespace Disk_Cleaner.Controls
 {
     /// <summary>
     ///     Interaction logic for Start.xaml

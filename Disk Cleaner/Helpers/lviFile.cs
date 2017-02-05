@@ -1,4 +1,4 @@
-﻿namespace Little_System_Cleaner.Disk_Cleaner.Helpers
+﻿namespace Disk_Cleaner.Helpers
 {
     public class LviFile
     {

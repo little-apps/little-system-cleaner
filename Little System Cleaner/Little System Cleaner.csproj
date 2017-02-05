@@ -108,31 +108,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Disk Cleaner\Controls\Analyze.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Duplicate Finder\Controls\Details.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Disk Cleaner\Helpers\AddExcludeFileType.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Disk Cleaner\Helpers\AddExcludeFolder.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Disk Cleaner\Helpers\AddIncludeFolder.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Disk Cleaner\Controls\Results.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Disk Cleaner\Controls\Start.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -208,32 +184,9 @@
       <DependentUpon>Update.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoUpdaterWPF\UpdateXML.cs" />
-    <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
-      <DependentUpon>Analyze.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Duplicate Finder\Controls\Details.xaml.cs">
       <DependentUpon>Details.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Disk Cleaner\Helpers\AddExcludeFileType.xaml.cs">
-      <DependentUpon>AddExcludeFileType.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Disk Cleaner\Helpers\AddExcludeFolder.xaml.cs">
-      <DependentUpon>AddExcludeFolder.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Disk Cleaner\Helpers\AddIncludeFolder.xaml.cs">
-      <DependentUpon>AddIncludeFolder.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Disk Cleaner\Controls\Results.xaml.cs">
-      <DependentUpon>Results.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Disk Cleaner\Controls\Start.xaml.cs">
-      <DependentUpon>Start.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Disk Cleaner\Controls\Wizard.cs" />
-    <Compile Include="Disk Cleaner\Helpers\lviDrive.cs" />
-    <Compile Include="Disk Cleaner\Helpers\lviFile.cs" />
-    <Compile Include="Disk Cleaner\Helpers\lviFolder.cs" />
-    <Compile Include="Disk Cleaner\Helpers\ProblemFile.cs" />
     <Compile Include="Duplicate Finder\Controls\LoadingResults.xaml.cs">
       <DependentUpon>LoadingResults.xaml</DependentUpon>
     </Compile>
@@ -370,6 +323,10 @@
     <ProjectReference Include="..\Common Tools\Common Tools.csproj">
       <Project>{E059BE5F-FCEF-4977-90AE-3335EFBC248A}</Project>
       <Name>Common Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Disk Cleaner\Disk Cleaner.csproj">
+      <Project>{e59241ba-2d89-46d3-8515-478695d03d39}</Project>
+      <Name>Disk Cleaner</Name>
     </ProjectReference>
     <ProjectReference Include="..\Registry Cleaner\Registry Cleaner.csproj">
       <Project>{e9835b86-0fb1-4d81-a2d7-05ad52d9a002}</Project>
@@ -627,6 +584,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\appinfo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Disk Cleaner\" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using Disk_Cleaner.Helpers;
 using Shared;
 
-namespace Little_System_Cleaner.Disk_Cleaner.Controls
+namespace Disk_Cleaner.Controls
 {
     public class Wizard : WizardBase
     {

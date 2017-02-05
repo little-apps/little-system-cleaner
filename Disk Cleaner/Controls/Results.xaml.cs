@@ -16,11 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,9 +26,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Disk_Cleaner.Helpers;
 using Shared;
+using System.Drawing;
 
-namespace Little_System_Cleaner.Disk_Cleaner.Controls
+namespace Disk_Cleaner.Controls
 {
     /// <summary>
     ///     Interaction logic for Results.xaml
@@ -48,9 +48,6 @@ namespace Little_System_Cleaner.Disk_Cleaner.Controls
             _fixTask = new Task(FixProblems);
 
             ScanBase = sb;
-
-            // Update last scan stats
-            var elapsedTime = DateTime.Now.Subtract(Wizard.ScanStartTime).Ticks;
 
             ResetInfo();
 

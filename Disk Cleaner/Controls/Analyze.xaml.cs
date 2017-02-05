@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Disk_Cleaner.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -29,10 +28,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Little_System_Cleaner.Annotations;
+using Disk_Cleaner.Annotations;
+using Disk_Cleaner.Helpers;
 using Shared;
 
-namespace Little_System_Cleaner.Disk_Cleaner.Controls
+namespace Disk_Cleaner.Controls
 {
     /// <summary>
     ///     Interaction logic for Analyze.xaml
