@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 
-namespace Little_System_Cleaner.ProcessInfo
+namespace Shared.ProcessInfo
 {
     /// <summary>
     /// Wrapper class for ProcessThread

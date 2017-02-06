@@ -83,12 +83,7 @@
   <ItemGroup>
     <Compile Include="Misc\DynamicTabControl.cs" />
     <Compile Include="Misc\ParseArgs.cs" />
-    <Compile Include="ProcessInfo\ModuleInfo.cs" />
-    <Compile Include="ProcessInfo\ThreadInfo.cs" />
     <Compile Include="Misc\DynamicUserControl.cs" />
-    <Compile Include="ProcessInfo\ProcessInfo.xaml.cs">
-      <DependentUpon>ProcessInfo.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Tab Controls\Tools\Tools.xaml.cs">
       <DependentUpon>Tools.xaml</DependentUpon>
@@ -104,10 +99,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AutoUpdaterWPF\Update.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ProcessInfo\ProcessInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Little_System_Cleaner.ProcessInfo
+namespace Shared.ProcessInfo
 {
     /// <summary>
     /// Wrapper class for ProcessModule

@@ -1,5 +1,4 @@
-﻿using Little_System_Cleaner.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,9 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
-using Shared;
 
-namespace Little_System_Cleaner.ProcessInfo
+namespace Shared.ProcessInfo
 {
     /// <summary>
     ///     Interaction logic for LoadProgram.xaml
