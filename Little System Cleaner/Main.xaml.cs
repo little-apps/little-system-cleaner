@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.AutoUpdaterWPF;
+using AutoUpdaterWPF;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Tab_Controls.Options;
 using LittleSoftwareStats;

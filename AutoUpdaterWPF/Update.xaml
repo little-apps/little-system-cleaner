@@ -1,0 +1,114 @@
+﻿<Window
+    x:Class="AutoUpdaterWPF.Update"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="UpdateWindow"
+    Title="Software Update"
+    Width="659"
+    Height="648"
+    Closed="UpdateWindow_Closed"
+    Icon="pack://siteoforigin:,,,/Resources/update.png"
+    Loaded="UpdateWindow_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Image
+            Width="70"
+            Height="66"
+            Margin="12,14,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            RenderTransformOrigin="0.5,0.5"
+            Source="/Little_System_Cleaner;component/Resources/update.png" />
+        <TextBlock
+            x:Name="TextBlockUpdate"
+            Margin="91,14,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="14"
+            FontWeight="Bold"
+            Text="A new version of {0} is available!"
+            TextWrapping="Wrap" />
+        <TextBlock
+            x:Name="TextBlockDescription"
+            Width="538"
+            Margin="91,50,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            TextWrapping="Wrap">
+            {0} {1} is now available. You have version {2} installed. Would you like to download it now?
+        </TextBlock>
+        <TextBlock
+            x:Name="TextBlockReleaseNotes"
+            Margin="91,90,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="14"
+            FontWeight="Bold"
+            Text="Release Notes :"
+            TextWrapping="Wrap" />
+        <WebBrowser
+            x:Name="WebBrowser"
+            Width="538"
+            Height="432"
+            Margin="91,120,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+        <Button
+            x:Name="ButtonSkip"
+            Width="153"
+            Height="28"
+            Margin="91,570,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Click="buttonSkip_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,5,0"
+                        Source="pack://siteoforigin:,,,/Resources/hand_point.png" />
+                    <TextBlock>Skip this version</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <Button
+            x:Name="ButtonRemindLater"
+            Width="153"
+            Height="28"
+            Margin="321,570,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Click="buttonRemindLater_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="pack://siteoforigin:,,,/Resources/clock_go.png" />
+                    <TextBlock>Remind me later</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <Button
+            x:Name="ButtonUpdate"
+            Width="153"
+            Height="28"
+            Margin="478,570,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Click="buttonUpdate_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="pack://siteoforigin:,,,/Resources/download.png" />
+                    <TextBlock>Update</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+    </Grid>
+</Window>

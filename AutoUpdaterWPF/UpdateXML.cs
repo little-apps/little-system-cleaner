@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Little_System_Cleaner.AutoUpdaterWPF
+namespace AutoUpdaterWPF
 {
     [XmlRoot("items")]
     public class UpdateXml

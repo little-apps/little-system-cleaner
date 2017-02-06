@@ -401,24 +401,6 @@ namespace Little_System_Cleaner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You have the latest version.
-        /// </summary>
-        internal static string updateLatest {
-            get {
-                return ResourceManager.GetString("updateLatest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Software Update.
-        /// </summary>
-        internal static string updateTitle {
-            get {
-                return ResourceManager.GetString("updateTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap view {

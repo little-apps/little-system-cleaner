@@ -1,0 +1,95 @@
+﻿<Window
+    x:Class="AutoUpdaterWPF.RemindLater"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="RemindLaterWindow"
+    Title="Remind me later for update"
+    Width="452"
+    Height="236"
+    x:ClassModifier="internal"
+    Loaded="RemindLaterWindow_Loaded"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid
+            Width="61"
+            Height="48"
+            Margin="13,13,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+            <Image Source="pack://siteoforigin:,,,/Resources/clock_go_32.png" Stretch="None" />
+        </Grid>
+        <TextBlock
+            x:Name="TextBlockTitle"
+            Margin="80,13,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="14"
+            FontWeight="Bold"
+            Text="Do you want to download updates later?"
+            TextWrapping="Wrap" />
+        <TextBlock
+            x:Name="TextBlockDescription"
+            Margin="80,41,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            TextWrapping="Wrap">
+            You should download updates now. This only takes few minutes depending on your internet connection and ensures you have latest version of AutoUpdaterTest.
+        </TextBlock>
+        <RadioButton
+            x:Name="RadioButtonYes"
+            Width="352"
+            Margin="84,118,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            VerticalContentAlignment="Center"
+            Checked="radioButtonYes_Checked">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Yes, please remind me later :</TextBlock>
+                    <ComboBox
+                        x:Name="ComboBoxRemindLater"
+                        Margin="66,0,0,0"
+                        HorizontalAlignment="Right"
+                        IsReadOnly="True"
+                        SelectedIndex="0">
+                        <ComboBoxItem Content="After 30 minutes" />
+                        <ComboBoxItem Content="After 12 hours" />
+                        <ComboBoxItem Content="After 1 day" />
+                        <ComboBoxItem Content="After 2 days" />
+                        <ComboBoxItem Content="After 4 days" />
+                        <ComboBoxItem Content="After 8 days" />
+                        <ComboBoxItem Content="After 10 days" />
+                    </ComboBox>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
+        <RadioButton
+            x:Name="RadioButtonNo"
+            Margin="84,143,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="No, download updates now (recommended)"
+            FontWeight="Bold" />
+        <Button
+            x:Name="ButtonOk"
+            Width="74"
+            Height="32"
+            Margin="362,168,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Click="ButtonOkClick">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,5,0"
+                        Source="pack://siteoforigin:,,,/Resources/clock_go.png" />
+                    <TextBlock>OK</TextBlock>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+    </Grid>
+</Window>

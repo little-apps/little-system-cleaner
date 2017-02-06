@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Little_System_Cleaner.AutoUpdaterWPF
+namespace AutoUpdaterWPF
 {
     /// <summary>
     ///     Interaction logic for RemindLater.xaml

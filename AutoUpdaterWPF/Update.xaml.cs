@@ -1,12 +1,12 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Timers;
 using System.Windows;
+using Microsoft.Win32;
 
-namespace Little_System_Cleaner.AutoUpdaterWPF
+namespace AutoUpdaterWPF
 {
     /// <summary>
     ///     Interaction logic for Update.xaml
@@ -84,7 +84,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
             }
             else
             {
-                var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
+                var downloadDialog = new global::AutoUpdaterWPF.DownloadUpdate(AutoUpdater.DownloadUrl);
 
                 try
                 {
@@ -100,7 +100,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
         {
             if (AutoUpdater.LetUserSelectRemindLater)
             {
-                var remindLaterForm = new RemindLater();
+                var remindLaterForm = new global::AutoUpdaterWPF.RemindLater();
 
                 var dialogResult = remindLaterForm.ShowDialog();
 
@@ -112,7 +112,7 @@ namespace Little_System_Cleaner.AutoUpdaterWPF
                         break;
 
                     case false:
-                        var downloadDialog = new DownloadUpdate(AutoUpdater.DownloadUrl);
+                        var downloadDialog = new global::AutoUpdaterWPF.DownloadUpdate(AutoUpdater.DownloadUrl);
 
                         try
                         {

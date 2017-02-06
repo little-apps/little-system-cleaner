@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows;
 using Shared;
 
-namespace Little_System_Cleaner.AutoUpdaterWPF
+namespace AutoUpdaterWPF
 {
     /// <summary>
     ///     Interaction logic for DownloadUpdate.xaml

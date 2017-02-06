@@ -88,18 +88,6 @@
     <Compile Include="Tab Controls\Tools\Tools.xaml.cs">
       <DependentUpon>Tools.xaml</DependentUpon>
     </Compile>
-    <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="AutoUpdaterWPF\RemindLater.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="AutoUpdaterWPF\Update.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -137,17 +125,6 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Compile Include="App.cs" />
-    <Compile Include="AutoUpdaterWPF\AutoUpdater.cs" />
-    <Compile Include="AutoUpdaterWPF\DownloadUpdate.xaml.cs">
-      <DependentUpon>DownloadUpdate.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdaterWPF\RemindLater.xaml.cs">
-      <DependentUpon>RemindLater.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdaterWPF\Update.xaml.cs">
-      <DependentUpon>Update.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdaterWPF\UpdateXML.cs" />
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Misc\WindowWrapper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -237,6 +214,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AutoUpdaterWPF\AutoUpdaterWPF.csproj">
+      <Project>{85479714-6ec0-4c21-a5d6-54c4715e5800}</Project>
+      <Name>AutoUpdaterWPF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common Tools\Common Tools.csproj">
       <Project>{E059BE5F-FCEF-4977-90AE-3335EFBC248A}</Project>
       <Name>Common Tools</Name>
