@@ -19,7 +19,7 @@ namespace Little_System_Cleaner.Uninstall_Manager.Helpers
 
         public int Compare(object x, object y)
         {
-            return Compare(x as ProgramInfo, y as ProgramInfo);
+            return Compare(x as ProgramInfoListViewItem, y as ProgramInfoListViewItem);
         }
 
         public int Compare(ProgramInfoListViewItem x, ProgramInfoListViewItem y)
