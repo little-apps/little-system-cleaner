@@ -107,10 +107,6 @@
       <SubType>Designer</SubType>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
     </Page>
-    <Page Include="Startup Manager\Helpers\AddEditEntry.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -161,16 +157,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Startup Manager\Helpers\StartupEntry.cs" />
-    <Compile Include="Startup Manager\Helpers\StartupMgrModel.cs" />
     <Compile Include="Tab Controls\Options\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Startup Manager\Helpers\AddEditEntry.xaml.cs">
-      <DependentUpon>AddEditEntry.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Startup Manager\Controls\StartupManager.xaml.cs">
-      <DependentUpon>StartupManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uninstall Manager\Controls\UninstallManager.xaml.cs">
       <DependentUpon>UninstallManager.xaml</DependentUpon>
@@ -183,12 +171,6 @@
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
     <Page Include="Tab Controls\Options\Options.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Startup Manager\Controls\StartupManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -289,6 +271,10 @@
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{c9701140-d874-4a42-a67e-38f918c34e81}</Project>
       <Name>Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Startup Manager\Startup Manager.csproj">
+      <Project>{50cdc8e7-c0f4-4dbf-883d-80d2652a51ed}</Project>
+      <Name>Startup Manager</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.Win32;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Drawing;
 using System.Windows.Input;
+using Microsoft.Win32;
 using Shared;
 
-namespace Little_System_Cleaner.Startup_Manager.Helpers
+namespace Startup_Manager.Helpers
 {
     /// <summary>
     ///     Interaction logic for AddEditEntry.xaml

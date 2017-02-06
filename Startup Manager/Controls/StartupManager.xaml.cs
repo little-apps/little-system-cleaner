@@ -16,14 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.Startup_Manager.Helpers;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Shared;
+using Shared.ProcessInfo;
+using Startup_Manager.Helpers;
+using AddEditEntry = Startup_Manager.Helpers.AddEditEntry;
 
-namespace Little_System_Cleaner.Startup_Manager.Controls
+namespace Startup_Manager.Controls
 {
     public partial class StartupManager
     {
@@ -352,7 +354,7 @@ namespace Little_System_Cleaner.Startup_Manager.Controls
             if (node == null)
                 return;
 
-            var procInfo = new ProcessInfo.ProcessInfo(node.Path, node.Args);
+            var procInfo = new ProcessInfo(node.Path, node.Args);
             procInfo.ShowDialog();
         }
     }

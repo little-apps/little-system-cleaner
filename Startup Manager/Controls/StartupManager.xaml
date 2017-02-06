@@ -1,9 +1,9 @@
 ﻿<UserControl
-    x:Class="Little_System_Cleaner.Startup_Manager.Controls.StartupManager"
+    x:Class="Startup_Manager.Controls.StartupManager"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="clr-namespace:Little_System_Cleaner.Startup_Manager.Helpers"
+    xmlns:helpers1="clr-namespace:Startup_Manager.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tree="clr-namespace:CommonTools.TreeListView.Tree;assembly=CommonTools"
     x:Name="UserControl"
@@ -25,7 +25,7 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <d:StackPanel.DataContext>
-                                            <helpers:StartupEntry />
+                                            <helpers1:StartupEntry />
                                         </d:StackPanel.DataContext>
                                         <tree:RowExpander />
                                         <ContentPresenter

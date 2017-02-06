@@ -1,14 +1,14 @@
-﻿using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Properties;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using CommonTools.TreeListView.Tree;
+using Microsoft.Win32;
 using Shared;
+using Startup_Manager.Properties;
 
-namespace Little_System_Cleaner.Startup_Manager.Helpers
+namespace Startup_Manager.Helpers
 {
     public class StartupMgrModel : ITreeModel
     {

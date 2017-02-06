@@ -1,8 +1,8 @@
-﻿using Microsoft.Win32;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using Microsoft.Win32;
 
-namespace Little_System_Cleaner.Startup_Manager.Helpers
+namespace Startup_Manager.Helpers
 {
     public class StartupEntry
     {
