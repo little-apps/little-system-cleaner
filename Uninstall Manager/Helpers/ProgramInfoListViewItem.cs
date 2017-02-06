@@ -1,10 +1,10 @@
 ﻿using System.Windows.Controls;
-using Little_System_Cleaner.Properties;
 using Microsoft.Win32;
 using Shared;
 using Shared.Uninstall_Manager;
+using Uninstall_Manager.Properties;
 
-namespace Little_System_Cleaner.Uninstall_Manager.Helpers
+namespace Uninstall_Manager.Helpers
 {
     public class ProgramInfoListViewItem : ProgramInfo
     {

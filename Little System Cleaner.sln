@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duplicate Finder", "Duplica
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup Manager", "Startup Manager\Startup Manager.csproj", "{50CDC8E7-C0F4-4DBF-883D-80D2652A51ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uninstall Manager", "Uninstall Manager\Uninstall Manager.csproj", "{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,18 @@ Global
 		{50CDC8E7-C0F4-4DBF-883D-80D2652A51ED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{50CDC8E7-C0F4-4DBF-883D-80D2652A51ED}.Release|Win32.ActiveCfg = Release|Any CPU
 		{50CDC8E7-C0F4-4DBF-883D-80D2652A51ED}.Release|Win32.Build.0 = Release|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Debug|Win32.Build.0 = Debug|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Release|Win32.ActiveCfg = Release|Any CPU
+		{9B4CA45E-3D24-4B28-AC2A-A74984A4AEBC}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Controls;
-using Shared.Uninstall_Manager;
 
-namespace Little_System_Cleaner.Uninstall_Manager.Helpers
+namespace Uninstall_Manager.Helpers
 {
     public class ProgramInfoSorter : IComparer<ProgramInfoListViewItem>, IComparer
     {

@@ -88,8 +88,6 @@
     <Compile Include="Tab Controls\Tools\Tools.xaml.cs">
       <DependentUpon>Tools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Uninstall Manager\Helpers\ProgramInfoListViewItem.cs" />
-    <Compile Include="Uninstall Manager\Helpers\ProgramInfoSorter.cs" />
     <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -160,9 +158,6 @@
     <Compile Include="Tab Controls\Options\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Uninstall Manager\Controls\UninstallManager.xaml.cs">
-      <DependentUpon>UninstallManager.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CrashReporter.xaml.cs">
       <DependentUpon>CrashReporter.xaml</DependentUpon>
@@ -179,12 +174,6 @@
     <Page Include="Tab Controls\Tools\Tools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Uninstall Manager\Controls\UninstallManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="CrashReporter.xaml">
       <SubType>Designer</SubType>
@@ -275,6 +264,10 @@
     <ProjectReference Include="..\Startup Manager\Startup Manager.csproj">
       <Project>{50cdc8e7-c0f4-4dbf-883d-80d2652a51ed}</Project>
       <Name>Startup Manager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uninstall Manager\Uninstall Manager.csproj">
+      <Project>{9b4ca45e-3d24-4b28-ac2a-a74984a4aebc}</Project>
+      <Name>Uninstall Manager</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

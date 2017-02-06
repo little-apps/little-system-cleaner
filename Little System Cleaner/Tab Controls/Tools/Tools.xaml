@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Startup_Manager.Controls;assembly=StartupManager"
-    xmlns:controls1="clr-namespace:Little_System_Cleaner.Uninstall_Manager.Controls"
+    xmlns:controls1="clr-namespace:Uninstall_Manager.Controls;assembly=UninstallManager"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:misc="clr-namespace:Little_System_Cleaner.Misc"

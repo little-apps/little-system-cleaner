@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,12 +27,13 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Little_System_Cleaner.Uninstall_Manager.Helpers;
+using Microsoft.Win32;
 using Shared;
 using Shared.Uninstall_Manager;
-using ProgramInfoSorter = Little_System_Cleaner.Uninstall_Manager.Helpers.ProgramInfoSorter;
+using Uninstall_Manager.Helpers;
+using ProgramInfoSorter = Uninstall_Manager.Helpers.ProgramInfoSorter;
 
-namespace Little_System_Cleaner.Uninstall_Manager.Controls
+namespace Uninstall_Manager.Controls
 {
     public partial class UninstallManager
     {
