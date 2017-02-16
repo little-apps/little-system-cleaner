@@ -12,3 +12,6 @@ before_build:
 
 build:
   verbosity: minimal
+  
+install:
+  - cmd: git submodule -q update --init
