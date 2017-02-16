@@ -52,6 +52,15 @@ namespace Little_System_Cleaner
 {
     public partial class Main
     {
+        private struct ControlInfo
+        {
+            public string Icon;
+            public string Name;
+            public string TabItemName;
+            public string ControlTypeName;
+            public string Assembly;
+        }
+
         public static Main Instance { get; private set; }
         
         private bool _ignoreSetTabControl;
@@ -59,6 +68,42 @@ namespace Little_System_Cleaner
         public TaskbarItemInfo TaskBarItemInfoPublic => TaskBarItemInfo;
 
         internal DynamicTabControl TabControl { get; private set; }
+
+        private static readonly ControlInfo[] ExternalControlInfos =
+        {
+            new ControlInfo
+            {
+                Icon = "Resources/icon.png",
+                Name = "Registry Cleaner",
+                TabItemName = "TabItemRegCleaner",
+                ControlTypeName = "Registry_Cleaner.Controls.Wizard",
+                Assembly = "Registry Cleaner.dll"
+            },
+            new ControlInfo
+            {
+                Icon = "Resources/optimizer.png",
+                Name = "Registry Optimizer",
+                TabItemName = "TabItemRegOptimizer",
+                ControlTypeName = "Registry_Optimizer.Controls.Wizard",
+                Assembly = "Registry Optimizer.dll"
+            },
+            new ControlInfo
+            {
+                Icon = "Resources/disk cleaner/icon.png",
+                Name = "Disk Cleaner",
+                TabItemName = "TabItemDiskCleaner",
+                ControlTypeName = "Disk_Cleaner.Controls.Wizard",
+                Assembly = "Disk Cleaner.dll"
+            },
+            new ControlInfo
+            {
+                Icon = "Resources/duplicate finder/icon.png",
+                Name = "Duplicate Finder",
+                TabItemName = "TabItemDuplicateFinder",
+                ControlTypeName = "Duplicate_Finder.Controls.Wizard",
+                Assembly = "Duplicate Finder.dll"
+            }
+        };
 
         public Main()
         {
@@ -85,23 +130,27 @@ namespace Little_System_Cleaner
 
             var style = FindResource("WindowTabItem") as Style;
 
-            AddComboTabItem(CreateComboBoxItem("Resources/icon.png", "Registry Cleaner"),
-                CreateDynamicTabItem("TabItemRegCleaner", typeof(Registry_Cleaner.Controls.Wizard), style));
+            foreach (var controlInfo in ExternalControlInfos)
+            {
+                try
+                {
+                    var asm = Assembly.LoadFile($"{Environment.CurrentDirectory}\\{controlInfo.Assembly}");
+                    var type = asm.GetType(controlInfo.ControlTypeName);
 
-            AddComboTabItem(CreateComboBoxItem("Resources/optimizer.png", "Registry Optimizer"),
-                CreateDynamicTabItem("TabItemRegOptimizer", typeof(Registry_Optimizer.Controls.Wizard), style));
-
-            AddComboTabItem(CreateComboBoxItem("Resources/disk cleaner/icon.png", "Disk Cleaner"),
-                CreateDynamicTabItem("TabItemDiskCleaner", typeof(Disk_Cleaner.Controls.Wizard), style));
-
-            AddComboTabItem(CreateComboBoxItem("Resources/duplicate finder/icon.png", "Duplicate Cleaner"),
-                CreateDynamicTabItem("TabItemDuplicateFinder", typeof(Duplicate_Finder.Controls.Wizard), style));
+                    AddComboTabItem(CreateComboBoxItem(controlInfo.Icon, controlInfo.Name),
+                        CreateDynamicTabItem(controlInfo.TabItemName, type, style));
+                }
+                catch (Exception)
+                {
+                    // Unable to load assembly, skip..
+                }
+            }
 
             AddComboTabItem(CreateComboBoxItem("Resources/Tools.png", "Tools"),
                 CreateDynamicTabItem("TabItemTools", typeof(Tools), style));
 
             AddComboTabItem(CreateComboBoxItem("Resources/Options.png", "Options"),
-                 CreateTabItem("TabItemOptions", new Options(), style));
+                CreateTabItem("TabItemOptions", new Options(), style));
 
             (Content as Grid)?.Children.Add(TabControl);
         }
