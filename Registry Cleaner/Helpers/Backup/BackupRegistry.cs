@@ -1,4 +1,5 @@
 ﻿using Registry_Cleaner.Helpers.BadRegistryKeys;
+using Shared;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using Shared;
 
 namespace Registry_Cleaner.Helpers.Backup
 {

@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Registry_Cleaner.Helpers;
 using Registry_Cleaner.Helpers.BadRegistryKeys;
 using Registry_Cleaner.Helpers.Sections;
 using Registry_Cleaner.Scanners;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Registry_Cleaner.Helpers;
-using Shared;
 using ScanFunctions = Registry_Cleaner.Helpers.ScanFunctions;
 
 namespace Registry_Cleaner.Controls

@@ -17,9 +17,9 @@
 */
 
 using CommonTools.TreeListView.Tree;
+using Registry_Cleaner.Properties;
 using Registry_Cleaner.Scanners;
 using System.Collections;
-using Registry_Cleaner.Properties;
 
 namespace Registry_Cleaner.Helpers.Sections
 {

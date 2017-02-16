@@ -1,9 +1,9 @@
 ﻿using CommonTools.TreeListView.Tree;
 using Registry_Cleaner.Controls;
 using Registry_Cleaner.Helpers.BadRegistryKeys;
+using Shared;
 using System.Collections;
 using System.Linq;
-using Shared;
 
 namespace Registry_Cleaner.Helpers
 {

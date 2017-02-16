@@ -19,6 +19,7 @@
 using Registry_Cleaner.Helpers;
 using Registry_Cleaner.Helpers.Backup;
 using Registry_Cleaner.Helpers.BadRegistryKeys;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,7 +31,6 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using Shared;
 
 namespace Registry_Cleaner.Controls
 {
@@ -440,7 +440,7 @@ namespace Registry_Cleaner.Controls
                         {
                             var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
                             var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
-                            
+
                             using (var regEditGo = new RegEditGo.RegEditGo(regKeyPath, regKeyValueName))
                             {
                                 regEditGo.GoTo();

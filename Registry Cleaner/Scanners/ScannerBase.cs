@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Registry_Cleaner.Helpers.BadRegistryKeys;
 using System.Threading;
 using System.Windows.Media.Imaging;
-using Registry_Cleaner.Helpers.BadRegistryKeys;
 
 namespace Registry_Cleaner.Scanners
 {

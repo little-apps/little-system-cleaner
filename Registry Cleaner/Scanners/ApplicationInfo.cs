@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Win32;
 using Registry_Cleaner.Controls;
 using Registry_Cleaner.Helpers;
-using Microsoft.Win32;
+using Shared.Uninstall_Manager;
 using System.Diagnostics;
 using System.Linq;
 using System.Security;
-using Shared.Uninstall_Manager;
 
 namespace Registry_Cleaner.Scanners
 {

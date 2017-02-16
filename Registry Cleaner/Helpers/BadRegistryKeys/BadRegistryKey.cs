@@ -17,6 +17,8 @@
 */
 
 using Microsoft.Win32;
+using Registry_Cleaner.Properties;
+using Shared;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -26,8 +28,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Registry_Cleaner.Properties;
-using Shared;
 using Image = System.Windows.Controls.Image;
 
 namespace Registry_Cleaner.Helpers.BadRegistryKeys

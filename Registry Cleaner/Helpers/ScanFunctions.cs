@@ -1,5 +1,6 @@
-﻿using Registry_Cleaner.Controls;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using Registry_Cleaner.Controls;
+using Shared;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -8,7 +9,6 @@ using System.Security;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
-using Shared;
 
 namespace Registry_Cleaner.Helpers
 {

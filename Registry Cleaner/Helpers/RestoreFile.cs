@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Shared;
+using System;
 using System.Globalization;
 using System.IO;
-using Shared;
 
 namespace Registry_Cleaner.Helpers
 {

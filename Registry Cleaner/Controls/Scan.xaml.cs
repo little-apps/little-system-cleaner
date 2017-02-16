@@ -18,6 +18,7 @@
 
 using Registry_Cleaner.Helpers;
 using Registry_Cleaner.Scanners;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,7 +28,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Shell;
-using Shared;
 using Timer = System.Timers.Timer;
 
 namespace Registry_Cleaner.Controls

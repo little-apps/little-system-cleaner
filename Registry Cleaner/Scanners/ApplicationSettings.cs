@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Registry_Cleaner.Controls;
 using Microsoft.Win32;
+using Registry_Cleaner.Controls;
+using Shared;
 using System.Diagnostics;
 using System.Linq;
 using System.Security;
-using Shared;
 
 namespace Registry_Cleaner.Scanners
 {
