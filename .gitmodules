@@ -1,0 +1,3 @@
+[submodule "RegEditGo"]
+	path = RegEditGo
+	url = git@github.com:little-apps/RegEditGo.git

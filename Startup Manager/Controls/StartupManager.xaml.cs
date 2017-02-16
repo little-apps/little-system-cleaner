@@ -287,8 +287,13 @@ namespace Startup_Manager.Controls
 
                 try
                 {
-                    if (node != null)
-                        RegEditGo.GoTo(node.RegKey.Name, node.SectionName);
+                    if (node == null)
+                        return;
+
+                    using (var regEditGo = new RegEditGo.RegEditGo(node.RegKey.Name, node.SectionName))
+                    {
+                        regEditGo.GoTo();
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -68,7 +68,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="RegEditGo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SysRestore.cs" />
     <Compile Include="Uninstall Manager\ProgramInfo.cs" />

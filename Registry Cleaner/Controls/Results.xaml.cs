@@ -440,8 +440,11 @@ namespace Registry_Cleaner.Controls
                         {
                             var regKeyPath = (Tree.SelectedNode.Tag as BadRegistryKey)?.RegKeyPath;
                             var regKeyValueName = (Tree.SelectedNode.Tag as BadRegistryKey)?.ValueName;
-
-                            RegEditGo.GoTo(regKeyPath, regKeyValueName);
+                            
+                            using (var regEditGo = new RegEditGo.RegEditGo(regKeyPath, regKeyValueName))
+                            {
+                                regEditGo.GoTo();
+                            }
                         }
                         catch (Exception ex)
                         {

@@ -76,6 +76,10 @@
       <Project>{E059BE5F-FCEF-4977-90AE-3335EFBC248A}</Project>
       <Name>Common Tools</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RegEditGo\RegEditGo\RegEditGo.csproj">
+      <Project>{2390e428-d9c3-4a3b-abc7-39d7dd114d10}</Project>
+      <Name>RegEditGo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{c9701140-d874-4a42-a67e-38f918c34e81}</Project>
       <Name>Shared</Name>
