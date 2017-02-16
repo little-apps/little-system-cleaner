@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using CommonTools.TreeListView.Tree;
 using Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 
 namespace Duplicate_Finder.Controls

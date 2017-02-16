@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Linq;
 using CommonTools.TreeListView.Tree;
-using Little_System_Cleaner.Duplicate_Finder.Controls;
+using Duplicate_Finder.Controls;
 using Shared;
 
 namespace Duplicate_Finder.Helpers

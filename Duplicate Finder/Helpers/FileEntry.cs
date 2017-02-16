@@ -13,7 +13,6 @@ using System.Security.Principal;
 using System.Text;
 using CommonTools.TagLib;
 using CommonTools.TagLib.Mpeg;
-using Little_System_Cleaner.Duplicate_Finder.Controls;
 using File = CommonTools.TagLib.File;
 using HashAlgorithm = Duplicate_Finder.Helpers.HashAlgorithm;
 using Scan = Duplicate_Finder.Controls.Scan;

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Duplicate_Finder.Controls;
 using Duplicate_Finder.Helpers;
 using Shared;
 
-namespace Little_System_Cleaner.Duplicate_Finder.Controls
+namespace Duplicate_Finder.Controls
 {
     public class Wizard : WizardBase
     {

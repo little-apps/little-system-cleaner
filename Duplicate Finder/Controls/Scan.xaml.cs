@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
 using Duplicate_Finder.Helpers;
-using Little_System_Cleaner.Duplicate_Finder.Controls;
 using Shared;
 
 namespace Duplicate_Finder.Controls
