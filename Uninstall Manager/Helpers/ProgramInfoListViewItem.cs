@@ -1,14 +1,13 @@
-﻿using System.Windows.Controls;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Shared;
 using Shared.Uninstall_Manager;
+using System.Windows.Controls;
 using Uninstall_Manager.Properties;
 
 namespace Uninstall_Manager.Helpers
 {
     public class ProgramInfoListViewItem : ProgramInfo
     {
-
         public Image BitmapImg
             =>
                 Uninstallable
@@ -45,10 +44,8 @@ namespace Uninstall_Manager.Helpers
             }
         }
 
-
         public ProgramInfoListViewItem(RegistryKey regKey) : base(regKey)
         {
-            
         }
     }
 }

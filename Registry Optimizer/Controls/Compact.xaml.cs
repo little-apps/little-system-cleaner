@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Shared;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -23,7 +24,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Shared;
 using PInvoke = Registry_Optimizer.Helpers.PInvoke;
 
 namespace Registry_Optimizer.Controls

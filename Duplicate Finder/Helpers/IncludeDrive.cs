@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using Duplicate_Finder.Annotations;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
-using Duplicate_Finder.Annotations;
 
 namespace Duplicate_Finder.Helpers
 {

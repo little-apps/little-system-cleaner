@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Win32;
+using Shared;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Drawing;
 using System.Windows.Input;
-using Microsoft.Win32;
-using Shared;
 
 namespace Startup_Manager.Helpers
 {

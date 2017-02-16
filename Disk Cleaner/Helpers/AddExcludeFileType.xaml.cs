@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Shared;
 using System;
 using System.Windows;
-using Shared;
 
 namespace Disk_Cleaner.Helpers
 {

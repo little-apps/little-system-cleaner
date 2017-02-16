@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Linq;
-using CommonTools.TreeListView.Tree;
+﻿using CommonTools.TreeListView.Tree;
 using Duplicate_Finder.Controls;
 using Shared;
+using System.Collections;
+using System.Linq;
 
 namespace Duplicate_Finder.Helpers
 {

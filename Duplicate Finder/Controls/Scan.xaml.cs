@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Duplicate_Finder.Helpers;
+using Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,8 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Duplicate_Finder.Helpers;
-using Shared;
 
 namespace Duplicate_Finder.Controls
 {
@@ -217,7 +217,7 @@ namespace Duplicate_Finder.Controls
                 }
 
                 _cancelTokenSource.Token.ThrowIfCancellationRequested();
-                
+
                 completedSucessfully = true;
             }
             catch (OperationCanceledException)
@@ -711,7 +711,7 @@ namespace Duplicate_Finder.Controls
                     ProgressBar.Value = currentIndex;
                     Utils.TaskbarProgressValue = currentIndex / (double)countFileEntries;
                 }), i++);
-                
+
                 var likeImages =
                     _fileList.Where(
                         fileEntry2 =>

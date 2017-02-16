@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Shared;
 using System;
 using System.Windows;
 using System.Windows.Forms;
-using Shared;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Disk_Cleaner.Helpers

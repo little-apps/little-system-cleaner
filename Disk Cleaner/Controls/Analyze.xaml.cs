@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Disk_Cleaner.Annotations;
+using Disk_Cleaner.Helpers;
+using Shared;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -28,9 +31,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
-using Disk_Cleaner.Annotations;
-using Disk_Cleaner.Helpers;
-using Shared;
 
 namespace Disk_Cleaner.Controls
 {

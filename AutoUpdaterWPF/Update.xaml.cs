@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Timers;
 using System.Windows;
-using Microsoft.Win32;
 
 namespace AutoUpdaterWPF
 {

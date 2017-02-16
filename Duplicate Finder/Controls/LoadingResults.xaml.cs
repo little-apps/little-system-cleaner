@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
-using CommonTools.TreeListView.Tree;
+﻿using CommonTools.TreeListView.Tree;
 using Duplicate_Finder.Helpers;
 using Shared;
+using System;
+using System.ComponentModel;
+using System.Windows;
 
 namespace Duplicate_Finder.Controls
 {

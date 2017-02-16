@@ -237,7 +237,7 @@ namespace Shared
         public enum ShutdownFlags : uint
         {
             /// <summary>
-            /// Beginning with Windows 8:  You can prepare the system for a faster startup by combining the HybridShutdown flag with the Shutdown flag. 
+            /// Beginning with Windows 8:  You can prepare the system for a faster startup by combining the HybridShutdown flag with the Shutdown flag.
             /// </summary>
             HybridShutdown = 0x00400000,
 
@@ -467,7 +467,7 @@ namespace Shared
             FlagsUserDefined = 0x40000000,
 
             /// <summary>
-            /// The shutdown was planned. The system generates a System State Data (SSD) file. This file contains system state information such as the processes, threads, memory usage, and configuration. 
+            /// The shutdown was planned. The system generates a System State Data (SSD) file. This file contains system state information such as the processes, threads, memory usage, and configuration.
             /// </summary>
             FlagsPlanned = 0x80000000,
         }
@@ -475,6 +475,7 @@ namespace Shared
         #endregion Enumerations
 
         #region Definitions
+
         // AdjustTokenPrivileges
         public const int SePrivilegeEnabled = 0x00000002;
 

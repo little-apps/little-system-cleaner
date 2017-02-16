@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using LittleSoftwareStats;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -34,8 +36,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using LittleSoftwareStats;
-using Microsoft.Win32;
 using Application = System.Windows.Forms.Application;
 
 namespace Shared
@@ -140,7 +140,7 @@ namespace Shared
         public static IWebProxy GetProxySettings()
         {
             var webProxy = new WebProxy();
-            
+
             switch (Settings.Default.optionsUseProxy)
             {
                 case 0:
@@ -806,7 +806,7 @@ namespace Shared
 
             return regEx.IsMatch(wildString);
         }
-        
+
         /// <summary>
         ///     Displays message box with main window as owner window using thread safe method
         /// </summary>
@@ -872,6 +872,7 @@ namespace Shared
         }
 
         #region SecureString Functions
+
         /// <summary>
         /// Gets hash specific to machine to encrypt strings
         /// </summary>
@@ -1025,7 +1026,7 @@ namespace Shared
         }
 
         /// <summary>
-        /// Checks if registry root and sub key exists 
+        /// Checks if registry root and sub key exists
         /// </summary>
         /// <param name="mainKey">Root key (HKEY_LOCAL_MACHINE, etc)</param>
         /// <param name="subKey">Sub key path</param>

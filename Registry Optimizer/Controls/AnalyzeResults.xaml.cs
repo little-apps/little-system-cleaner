@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Registry_Optimizer.Helpers;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.DataVisualization.Charting;
-using Registry_Optimizer.Helpers;
-using Shared;
 using PInvoke = Shared.PInvoke;
 
 namespace Registry_Optimizer.Controls

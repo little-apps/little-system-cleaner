@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Duplicate_Finder.Helpers;
+using Shared;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Duplicate_Finder.Helpers;
-using Shared;
 
 namespace Duplicate_Finder.Controls
 {

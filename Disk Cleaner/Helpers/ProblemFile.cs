@@ -1,5 +1,5 @@
-﻿using System.IO;
-using Shared;
+﻿using Shared;
+using System.IO;
 
 namespace Disk_Cleaner.Helpers
 {

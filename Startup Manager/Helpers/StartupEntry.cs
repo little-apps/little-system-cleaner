@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using Microsoft.Win32;
 
 namespace Startup_Manager.Helpers
 {

@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Win32;
+using Shared;
+using Shared.Uninstall_Manager;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,9 +30,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Microsoft.Win32;
-using Shared;
-using Shared.Uninstall_Manager;
 using Uninstall_Manager.Helpers;
 using ProgramInfoSorter = Uninstall_Manager.Helpers.ProgramInfoSorter;
 

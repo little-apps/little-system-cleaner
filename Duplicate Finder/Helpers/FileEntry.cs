@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonTools.TagLib;
+using CommonTools.TagLib.Mpeg;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,10 +13,7 @@ using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
-using CommonTools.TagLib;
-using CommonTools.TagLib.Mpeg;
 using File = CommonTools.TagLib.File;
-using HashAlgorithm = Duplicate_Finder.Helpers.HashAlgorithm;
 using Scan = Duplicate_Finder.Controls.Scan;
 
 namespace Duplicate_Finder.Helpers

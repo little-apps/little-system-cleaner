@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Shared;
+using Shared.ProcessInfo;
+using Startup_Manager.Helpers;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using Shared;
-using Shared.ProcessInfo;
-using Startup_Manager.Helpers;
 using AddEditEntry = Startup_Manager.Helpers.AddEditEntry;
 
 namespace Startup_Manager.Controls

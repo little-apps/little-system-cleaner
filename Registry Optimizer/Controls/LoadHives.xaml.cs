@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Registry_Optimizer.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Microsoft.Win32;
-using Registry_Optimizer.Helpers;
 
 namespace Registry_Optimizer.Controls
 {

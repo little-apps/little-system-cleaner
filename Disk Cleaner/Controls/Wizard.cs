@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Disk_Cleaner.Helpers;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using Disk_Cleaner.Helpers;
-using Shared;
 
 namespace Disk_Cleaner.Controls
 {

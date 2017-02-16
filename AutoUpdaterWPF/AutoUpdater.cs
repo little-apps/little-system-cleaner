@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AutoUpdaterWPF.Properties;
+using Microsoft.Win32;
+using Shared;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -10,9 +13,6 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-using AutoUpdaterWPF.Properties;
-using Microsoft.Win32;
-using Shared;
 
 namespace AutoUpdaterWPF
 {

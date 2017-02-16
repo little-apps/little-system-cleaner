@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CommonTools.TreeListView.Tree;
+using Microsoft.Win32;
+using Shared;
+using Startup_Manager.Properties;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using CommonTools.TreeListView.Tree;
-using Microsoft.Win32;
-using Shared;
-using Startup_Manager.Properties;
 
 namespace Startup_Manager.Helpers
 {

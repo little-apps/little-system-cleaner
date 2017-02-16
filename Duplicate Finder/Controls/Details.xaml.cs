@@ -1,7 +1,7 @@
-﻿using System;
-using System.Windows;
-using Duplicate_Finder.Helpers;
+﻿using Duplicate_Finder.Helpers;
 using Shared;
+using System;
+using System.Windows;
 
 namespace Duplicate_Finder.Controls
 {

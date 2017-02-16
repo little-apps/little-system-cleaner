@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Timers;
 using System.Windows;
-using Shared.Annotations;
 
 namespace Shared.ProcessInfo
 {
@@ -17,6 +17,7 @@ namespace Shared.ProcessInfo
     public sealed partial class ProcessInfo : INotifyPropertyChanged
     {
         #region Fields
+
         private static readonly Dictionary<string, string> Props = new Dictionary<string, string>();
         private readonly Timer _timer = new Timer();
         private string _endDateTime;
@@ -28,9 +29,11 @@ namespace Shared.ProcessInfo
 
         private string _status;
         private bool _threadsExpanded;
-        #endregion
-        
+
+        #endregion Fields
+
         #region Properties
+
         /// <summary>
         /// Status of process
         /// </summary>
@@ -162,22 +165,22 @@ namespace Shared.ProcessInfo
         /// Name of process
         /// </summary>
         public string ProcName => TryGetProperty(() => _process?.ProcessName, nameof(ProcName));
-        
+
         /// <summary>
         /// Machine name that process is on
         /// </summary>
         public string ProcMachineName => TryGetProperty(() => _process?.MachineName, nameof(ProcMachineName));
-        
+
         /// <summary>
         /// Process ID
         /// </summary>
         public string ProcId => TryGetProperty(() => _process?.Id.ToString(), nameof(ProcId));
-        
+
         /// <summary>
         /// Process handle
         /// </summary>
         public string ProcHandle => TryGetProperty(() => _process?.Handle.ToString(), nameof(ProcHandle));
-       
+
         /// <summary>
         /// Main module name of process
         /// </summary>
@@ -340,9 +343,11 @@ namespace Shared.ProcessInfo
         /// True if process exited without any further information
         /// </summary>
         public bool ProcessExitedWithoutInfo => string.IsNullOrEmpty(ProcName) && _process.HasExited;
-        #endregion
+
+        #endregion Properties
 
         #region Constructors
+
         /// <summary>
         /// Constructor that takes in file and arguments to start process
         /// </summary>
@@ -366,9 +371,11 @@ namespace Shared.ProcessInfo
         {
             Init(procStartInfo);
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         /// <summary>
         /// Starts process and timer and then fills window with process information
         /// </summary>
@@ -497,9 +504,11 @@ namespace Shared.ProcessInfo
                 return returnErrorMessage ? e.Message : origValue;
             }
         }
-        #endregion
+
+        #endregion Methods
 
         #region INotifyPropertyChanged Members
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -507,8 +516,7 @@ namespace Shared.ProcessInfo
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         #endregion INotifyPropertyChanged Members
-
-
     }
 }

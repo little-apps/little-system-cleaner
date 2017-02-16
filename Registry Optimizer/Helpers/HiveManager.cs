@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Registry_Optimizer.Controls;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Registry_Optimizer.Controls;
 
 namespace Registry_Optimizer.Helpers
 {

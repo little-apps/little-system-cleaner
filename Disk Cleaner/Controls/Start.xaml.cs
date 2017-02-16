@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Disk_Cleaner.Helpers;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,8 +27,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using Disk_Cleaner.Helpers;
-using Shared;
 using AddExcludeFileType = Disk_Cleaner.Helpers.AddExcludeFileType;
 using AddExcludeFolder = Disk_Cleaner.Helpers.AddExcludeFolder;
 using AddIncludeFolder = Disk_Cleaner.Helpers.AddIncludeFolder;
