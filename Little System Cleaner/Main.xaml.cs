@@ -137,6 +137,9 @@ namespace Little_System_Cleaner
                     var asm = Assembly.LoadFile($"{Environment.CurrentDirectory}\\{controlInfo.Assembly}");
                     var type = asm.GetType(controlInfo.ControlTypeName);
 
+                    if (type == null)
+                        continue;
+
                     AddComboTabItem(CreateComboBoxItem(controlInfo.Icon, controlInfo.Name),
                         CreateDynamicTabItem(controlInfo.TabItemName, type, style));
                 }
