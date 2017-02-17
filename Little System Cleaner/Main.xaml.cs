@@ -26,6 +26,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -303,8 +304,17 @@ namespace Little_System_Cleaner
             // See if we have the current version
             if (Settings.Default.updateAuto)
             {
-                AutoUpdater.MainDispatcher = Dispatcher;
-                AutoUpdater.Start(Settings.Default.updateURL);
+                try
+                {
+                    AutoUpdater.MainDispatcher = Dispatcher;
+                    AutoUpdater.Proxy = Utils.GetProxySettings();
+                    AutoUpdater.Start(Settings.Default.updateURL);
+                }
+                catch
+                {
+                    // Not a forced check so silently exit
+                }
+                
             }
 
             TaskBarItemInfo.Description = Utils.ProductName;
@@ -394,7 +404,7 @@ namespace Little_System_Cleaner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void menuItem_Click(object sender, RoutedEventArgs e)
+        private async void menuItem_Click(object sender, RoutedEventArgs e)
         {
             var header = ((MenuItem) sender).Header as string;
 
@@ -423,7 +433,30 @@ namespace Little_System_Cleaner
                 case "Check for updates":
                     {
                         AutoUpdater.MainDispatcher = Dispatcher;
-                        AutoUpdater.Start(true);
+                        AutoUpdater.Proxy = Utils.GetProxySettings();
+                        AutoUpdater.UpdateCheckFinished = updateAvailable =>
+                        {
+                            if (!updateAvailable)
+                                Utils.MessageBoxThreadSafe("You have the latest version", "Software Update",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+                        };
+
+                        try
+                        {
+                            await AutoUpdater.Start(true);
+                        }
+                        catch (AutoUpdaterWPF.Exceptions.AlreadyRunningException ex)
+                        {
+                            Utils.MessageBoxThreadSafe(ex.Message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+                        }
+                        catch (AutoUpdaterWPF.Exceptions.BaseException ex)
+                        {
+                            Utils.MessageBoxThreadSafe(ex.Message, Utils.ProductName, MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                        }
+                        
                         break;
                     }
                 case "About...":

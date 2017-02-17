@@ -226,7 +226,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AutoUpdaterWPF\AutoUpdaterWPF.csproj">
+    <ProjectReference Include="..\AutoUpdaterWPF\AutoUpdaterWPF\AutoUpdaterWPF.csproj">
       <Project>{85479714-6ec0-4c21-a5d6-54c4715e5800}</Project>
       <Name>AutoUpdaterWPF</Name>
     </ProjectReference>

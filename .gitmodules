@@ -1,3 +1,6 @@
 [submodule "RegEditGo"]
 	path = RegEditGo
 	url = https://github.com/little-apps/RegEditGo.git
+[submodule "AutoUpdaterWPF"]
+	path = AutoUpdaterWPF
+	url = https://github.com/little-apps/AutoUpdaterWPF.git
