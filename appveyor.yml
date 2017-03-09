@@ -12,6 +12,7 @@ before_build:
 
 build:
   verbosity: minimal
+  project: Little System Cleaner.sln
   
 install:
   - cmd: git submodule -q update --init
