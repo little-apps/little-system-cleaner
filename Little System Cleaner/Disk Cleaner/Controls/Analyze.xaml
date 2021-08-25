@@ -55,7 +55,7 @@
             VerticalAlignment="Center"
             FontSize="16"
             TextWrapping="Wrap">
-            Please wait until the scan finishes so that you can remove the problems from your computer
+            Please wait
         </TextBlock>
         <ProgressBar
             x:Name="ProgressBar"
@@ -72,14 +72,6 @@
             VerticalAlignment="Center"
             Text="{Binding FilesFound}"
             TextWrapping="Wrap" />
-        <TextBox
-            Grid.Row="3"
-            Margin="0"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            IsReadOnly="True"
-            Text="{Binding CurrentFile}" />
-
         <Button
             x:Name="ButtonCancel"
             Grid.Row="4"

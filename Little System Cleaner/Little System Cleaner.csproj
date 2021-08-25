@@ -761,6 +761,11 @@
   <ItemGroup>
     <Resource Include="Resources\Options.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="New Cleaner\Controls\" />
+    <Folder Include="New Cleaner\Helpers\" />
+    <Folder Include="New Cleaner\Scanners\" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
