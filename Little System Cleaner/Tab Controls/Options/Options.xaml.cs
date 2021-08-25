@@ -43,63 +43,6 @@ namespace Little_System_Cleaner.Tab_Controls.Options
             }
         }
 
-        public int SelectedUpdateDelay
-        {
-            get
-            {
-                switch (Settings.Default.optionsUpdateDelay)
-                {
-                    case 3:
-                        return 0;
-
-                    case 5:
-                        return 1;
-
-                    case 7:
-                        return 2;
-
-                    default:
-                        return 3;
-                }
-            }
-            set
-            {
-                var index = value;
-
-                switch (index)
-                {
-                    case 0:
-                        Settings.Default.optionsUpdateDelay = 3;
-                        break;
-
-                    case 1:
-                        Settings.Default.optionsUpdateDelay = 5;
-                        break;
-
-                    case 2:
-                        Settings.Default.optionsUpdateDelay = 7;
-                        break;
-
-                    default:
-                        Settings.Default.optionsUpdateDelay = 14;
-                        break;
-                }
-
-                OnPropertyChanged(nameof(SelectedUpdateDelay));
-            }
-        }
-
-        public bool? AutoUpdate
-        {
-            get { return Settings.Default.updateAuto; }
-            set
-            {
-                Settings.Default.updateAuto = value.GetValueOrDefault();
-
-                OnPropertyChanged(nameof(AutoUpdate));
-            }
-        }
-
         public bool? SysRestore
         {
             get { return Settings.Default.optionsSysRestore; }
@@ -108,17 +51,6 @@ namespace Little_System_Cleaner.Tab_Controls.Options
                 Settings.Default.optionsSysRestore = value.GetValueOrDefault();
 
                 OnPropertyChanged(nameof(SysRestore));
-            }
-        }
-
-        public bool? UsageStats
-        {
-            get { return Settings.Default.optionsUsageStats; }
-            set
-            {
-                Settings.Default.optionsUsageStats = value.GetValueOrDefault();
-
-                OnPropertyChanged(nameof(UsageStats));
             }
         }
 

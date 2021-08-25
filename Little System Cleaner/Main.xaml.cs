@@ -157,6 +157,8 @@ namespace Little_System_Cleaner
             AddComboTabItem(CreateComboBoxItem("Options"),
                  CreateTabItem("TabItemOptions", new Options(), style));
 
+            //Don't add ComboBox About because it exists in Options
+
             (Content as Grid)?.Children.Add(TabControl);
         }
 

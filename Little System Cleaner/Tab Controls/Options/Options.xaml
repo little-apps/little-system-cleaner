@@ -45,37 +45,13 @@
                 <StackPanel>
                     <GroupBox Header="Options">
                         <StackPanel>
-                            <StackPanel Margin="0,3,0,3" Orientation="Horizontal">
-                                <CheckBox
-                                    Name="CheckBoxAutoUpdate"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    IsChecked="{Binding AutoUpdate}">
-                                    Automatically check for updates every
-                                </CheckBox>
-                                <ComboBox
-                                    Name="ComboBoxUpdateDelay"
-                                    Margin="3,0,0,0"
-                                    IsReadOnly="True"
-                                    SelectedIndex="{Binding Path=SelectedUpdateDelay}">
-                                    <ComboBoxItem>3 Days</ComboBoxItem>
-                                    <ComboBoxItem>5 Days</ComboBoxItem>
-                                    <ComboBoxItem>7 Days</ComboBoxItem>
-                                    <ComboBoxItem>14 Days</ComboBoxItem>
-                                </ComboBox>
-                            </StackPanel>
                             <CheckBox
                                 x:Name="CheckBoxSysRestore"
                                 Margin="0,3,0,3"
                                 IsChecked="{Binding SysRestore}">
                                 Automatically create system restore points
                             </CheckBox>
-                            <CheckBox
-                                x:Name="CheckBoxUsageStats"
-                                Margin="0,3,0,3"
-                                IsChecked="{Binding UsageStats}">
-                                Send anonymous usage statistics
-                            </CheckBox>
+                            
                         </StackPanel>
                     </GroupBox>
                     <GroupBox VerticalAlignment="Top" Header="Select a folder to save the log files to">
