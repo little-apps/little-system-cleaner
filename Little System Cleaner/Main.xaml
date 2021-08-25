@@ -274,12 +274,12 @@
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="TaskBarItemInfo" />
     </Window.TaskbarItemInfo>
-    <Grid Background="{StaticResource LightBrush}">
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="71" />
             <RowDefinition Height="400*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{StaticResource GrayToBlackBrush}">
+        <Grid Grid.Row="0" Background="White">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="55" />

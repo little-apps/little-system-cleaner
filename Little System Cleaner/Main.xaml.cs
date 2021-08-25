@@ -292,7 +292,7 @@ namespace Little_System_Cleaner
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 16,
                 FontWeight = FontWeights.Bold,
-                Foreground = Brushes.White,
+                Foreground = Brushes.Black,
                 Content = text
             };
 
