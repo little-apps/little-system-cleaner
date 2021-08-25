@@ -294,18 +294,6 @@
                     <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Transparent" />
                 </ComboBox.Resources>
             </ComboBox>
-            <Image
-                Name="ImageHelp"
-                Grid.Column="1"
-                Width="48"
-                Height="47"
-                Margin="0,10,10,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                MouseEnter="imageHelp_MouseEnter"
-                MouseLeave="imageHelp_MouseLeave"
-                MouseLeftButtonDown="imageHelp_MouseLeftButtonDown"
-                Source="/Little_System_Cleaner;component/Resources/Help.png" />
         </Grid>
 
     </Grid>
