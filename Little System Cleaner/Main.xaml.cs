@@ -134,22 +134,22 @@ namespace Little_System_Cleaner
 
             var style = FindResource("WindowTabItem") as Style;
 
-            AddComboTabItem(CreateComboBoxItem("Resources/icon.png", "Registry Cleaner"),
+            AddComboTabItem(CreateComboBoxItem("Registry Cleaner"),
                 CreateDynamicTabItem("TabItemRegCleaner", typeof(Registry_Cleaner.Controls.Wizard), style));
 
-            AddComboTabItem(CreateComboBoxItem("Resources/optimizer.png", "Registry Optimizer"),
+            AddComboTabItem(CreateComboBoxItem("Registry Optimizer"),
                 CreateDynamicTabItem("TabItemRegOptimizer", typeof(Registry_Optimizer.Controls.Wizard), style));
 
-            AddComboTabItem(CreateComboBoxItem("Resources/disk cleaner/icon.png", "Disk Cleaner"),
+            AddComboTabItem(CreateComboBoxItem("Disk Cleaner"),
                 CreateDynamicTabItem("TabItemDiskCleaner", typeof(Disk_Cleaner.Controls.Wizard), style));
 
-            AddComboTabItem(CreateComboBoxItem("Resources/duplicate finder/icon.png", "Duplicate Cleaner"),
+            AddComboTabItem(CreateComboBoxItem("Duplicate Cleaner"),
                 CreateDynamicTabItem("TabItemDuplicateFinder", typeof(Duplicate_Finder.Controls.Wizard), style));
 
-            AddComboTabItem(CreateComboBoxItem("Resources/Tools.png", "Tools"),
+            AddComboTabItem(CreateComboBoxItem("Tools"),
                 CreateDynamicTabItem("TabItemTools", typeof(Tools), style));
 
-            AddComboTabItem(CreateComboBoxItem("Resources/Options.png", "Options"),
+            AddComboTabItem(CreateComboBoxItem("Options"),
                  CreateTabItem("TabItemOptions", new Options(), style));
 
             (Content as Grid)?.Children.Add(TabControl);
@@ -266,7 +266,46 @@ namespace Little_System_Cleaner
 
             return comboBoxItem;
         }
-        
+
+
+
+        /// <summary>
+        /// Creates a <see cref="ComboBoxItem"/> for a tab item, but without an icon and different Combo Box Item style
+        /// </summary>
+        /// <param name="text">Text for combo box item</param>
+        /// <param name="isSelected">True if combo box item is selected</param>
+        /// <returns>Combo box item</returns>
+        private static ComboBoxItem CreateComboBoxItem(string text, bool isSelected = false)
+        {
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+
+            var label = new Label
+            {
+                Width = 261,
+                Height = 47,
+                Margin = new Thickness(0),
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 16,
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.White,
+                Content = text
+            };
+
+            stackPanel.Children.Add(label);
+
+            var comboBoxItem = new ComboBoxItem
+            {
+                Content = stackPanel,
+                IsSelected = isSelected
+            };
+
+            return comboBoxItem;
+        }
 
         /// <summary>
         /// Hack that allows user to drag window when left click is held on window
