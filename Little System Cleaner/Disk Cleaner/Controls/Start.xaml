@@ -424,9 +424,6 @@
             <StackPanel Width="Auto"
                         Height="Auto"
                         Orientation="Horizontal">
-                <Image Width="32"
-                       Height="32"
-                       Source="/Little_System_Cleaner;component/Resources/Analyze.png" />
                 <TextBlock Margin="5,0,0,0"
                            VerticalAlignment="Center"
                            FontSize="16"

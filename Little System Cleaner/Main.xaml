@@ -295,10 +295,16 @@
                 </ComboBox.Resources>
             </ComboBox>
 
-            <Label Grid.Column="1" x:Name="SystemIdentifier" FontSize="12" Foreground="#FF82786E" HorizontalAlignment="Right" VerticalAlignment="Center" >
-                Windows 11 Pro x64 (AMD Ryzen 3800X, 3.9 gHZ, 64 GB RAM)
+            <Label
+                x:Name="SystemIdentifier"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="#FF82786E">
+                Windows 11 Pro x64 (AMD Ryzen 3800X) PLACEHOLDER!!!
             </Label>
-            
+
         </Grid>
 
     </Grid>
