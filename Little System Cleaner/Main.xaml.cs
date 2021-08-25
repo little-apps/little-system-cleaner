@@ -64,7 +64,7 @@ namespace Little_System_Cleaner
             InitializeComponent();
 
             BuildControls();
-
+            
             Instance = this;
             //this.Title = string.Format("Little Registry Cleaner v{0}", System.Windows.Forms.Application.ProductVersion);
         }
@@ -119,6 +119,11 @@ namespace Little_System_Cleaner
         /// Watcher object used by Little Software Stats
         /// </summary>
         internal static Watcher Watcher { get; private set; }
+
+
+        
+
+       
 
         /// <summary>
         /// Builds the ComboBox and TabControl
@@ -353,31 +358,16 @@ namespace Little_System_Cleaner
         /// <param name="e"></param>
         private void OnClose(object sender, CancelEventArgs e)
         {
-            if (
-                MessageBox.Show(this, "Are you sure?", Utils.ProductName, MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                TabControl.ForceExit = true;
-                
-                var canExit = TabControl.CanUnload(TabControl.SelectedContent as ContentControl);
+            TabControl.ForceExit = true;
 
-                if (!canExit)
-                {
-                    // NOTE: Invoked function is responsible for displaying message on why it can't exit
-                    e.Cancel = true;
-                    TabControl.ForceExit = false;
-                }
-            }
-            else
+
+            if (!TabControl.CanUnload(TabControl.SelectedContent as ContentControl))
             {
+                // NOTE: Invoked function is responsible for displaying message on why it can't exit
                 e.Cancel = true;
-            }
-
-            if (!e.Cancel)
-            {
-                Watcher.Stop();
-                GarbageCollectAndFinalize();
-            }
+                TabControl.ForceExit = false;
+                }
+           
         }
 
 

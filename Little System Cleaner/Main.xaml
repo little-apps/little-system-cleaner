@@ -279,10 +279,10 @@
             <RowDefinition Height="71" />
             <RowDefinition Height="400*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="White">
+        <Grid Grid.Row="0" Background="#FF4D4D4D">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="55" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <ComboBox
                 x:Name="ComboBoxTab"
@@ -294,6 +294,11 @@
                     <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="Transparent" />
                 </ComboBox.Resources>
             </ComboBox>
+
+            <Label Grid.Column="1" x:Name="SystemIdentifier" FontSize="12" Foreground="#FF82786E" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                Windows 11 Pro x64 (AMD Ryzen 3800X, 3.9 gHZ, 64 GB RAM)
+            </Label>
+            
         </Grid>
 
     </Grid>
