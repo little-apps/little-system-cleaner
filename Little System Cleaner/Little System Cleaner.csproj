@@ -96,18 +96,6 @@
       <DependentUpon>Tools.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uninstall Manager\Helpers\ProgramInfoSorter.cs" />
-    <Page Include="AutoUpdaterWPF\DownloadUpdate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="AutoUpdaterWPF\RemindLater.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="AutoUpdaterWPF\Update.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Disk Cleaner\Controls\Analyze.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -255,17 +243,6 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Compile Include="App.cs" />
-    <Compile Include="AutoUpdaterWPF\AutoUpdater.cs" />
-    <Compile Include="AutoUpdaterWPF\DownloadUpdate.xaml.cs">
-      <DependentUpon>DownloadUpdate.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdaterWPF\RemindLater.xaml.cs">
-      <DependentUpon>RemindLater.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdaterWPF\Update.xaml.cs">
-      <DependentUpon>Update.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AutoUpdaterWPF\UpdateXML.cs" />
     <Compile Include="Disk Cleaner\Controls\Analyze.xaml.cs">
       <DependentUpon>Analyze.xaml</DependentUpon>
     </Compile>

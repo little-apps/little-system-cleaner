@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Little_System_Cleaner.AutoUpdaterWPF;
 using Little_System_Cleaner.Misc;
 using Little_System_Cleaner.Properties;
 using Little_System_Cleaner.Tab_Controls.Options;
@@ -343,12 +342,7 @@ namespace Little_System_Cleaner
 
             Watcher.Start("922492147b2e47744961de5b9a5d0886", appVer);
 
-            // See if we have the current version
-            if (Settings.Default.updateAuto)
-            {
-                AutoUpdater.MainDispatcher = Dispatcher;
-                AutoUpdater.Start(Settings.Default.updateURL);
-            }
+           
 
             TaskBarItemInfo.Description = Utils.ProductName;
         }
